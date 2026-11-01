@@ -71,7 +71,8 @@ a{color:inherit}
   .nav ul a:hover .t{transform:none}
   .cta{margin-left:auto;padding:8px 14px;font-size:12px}
 }
-html{scroll-padding-top:120px}
+html{scroll-padding-top:66px}
+@media (max-width:1100px){html{scroll-padding-top:112px}}
 /* HERO */
 .hero{background:var(--sand)}
 .hero .wrap{padding-block:clamp(40px,7vw,88px) clamp(28px,4vw,48px);display:grid;gap:40px;justify-items:center;text-align:center}
@@ -222,7 +223,7 @@ html{scroll-padding-top:120px}
 .track{display:flex;gap:16px;width:max-content;padding:8px 16px 20px;animation:slide 60s linear infinite}
 .marquee:hover .track{animation-play-state:paused}
 @keyframes slide{to{transform:translateX(-50%)}}
-.q{margin:0;width:min(340px,78vw);flex:none;background:var(--bone);border:1px solid #e6dccb;padding:24px 24px 20px;display:grid;gap:16px;align-content:space-between;position:relative;transition:transform .4s cubic-bezier(.2,.7,.2,1),box-shadow .4s,border-color .4s}
+.q{margin:0;width:min(340px,78vw);flex:none;background:var(--bone);color:var(--ink);border:1px solid #e6dccb;padding:24px 24px 20px;display:grid;gap:16px;align-content:space-between;position:relative;transition:transform .4s cubic-bezier(.2,.7,.2,1),box-shadow .4s,border-color .4s}
 .q::before{content:"\201C";position:absolute;top:-6px;right:18px;font:italic 400 84px/1 var(--display);color:var(--gold-soft)}
 .q:hover{transform:translateY(-6px) rotate(-.6deg);border-color:var(--gold);box-shadow:0 22px 36px -26px rgba(80,55,20,.55)}
 .q blockquote{margin:0;font:400 19px/1.4 var(--display);color:var(--ink)}
@@ -231,7 +232,7 @@ html{scroll-padding-top:120px}
 .q figcaption span{color:var(--muted-l)}
 .auds{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 @media (max-width:760px){.auds{grid-template-columns:minmax(0,1fr)}}
-.aud{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:16px;align-items:center;background:var(--ink);color:var(--bone);padding:16px 20px;border-radius:18px}
+.aud{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:16px;align-items:center;background:#2a2621;border:1px solid #3d362d;color:var(--bone);padding:16px 20px;border-radius:18px}
 .aud-play{width:52px;height:52px;border-radius:50%;border:0;background:var(--gold-soft);cursor:pointer;display:grid;place-items:center;transition:transform .3s}
 .aud-play:hover{transform:scale(1.08)}
 .aud-play span{width:0;height:0;border-left:15px solid var(--ink);border-top:9px solid transparent;border-bottom:9px solid transparent;margin-left:4px}
@@ -247,6 +248,33 @@ html{scroll-padding-top:120px}
 @keyframes pulse{to{transform:scaleY(.6)}}
 .aud-time{font:600 12px var(--body);color:var(--muted-d);font-variant-numeric:tabular-nums}
 @media (prefers-reduced-motion:reduce){.track{animation:none;flex-wrap:wrap;width:auto}.aud.playing .wave i.lit{animation:none}}
+/* TRANSIÇÃO ENTRE SEÇÕES */
+.pt{position:fixed;inset:0;z-index:300;pointer-events:none;display:grid;place-items:center;visibility:hidden}
+.pt .pl{position:absolute;inset:0;transform:translateY(101%)}
+.pt .pl:nth-child(1){background:var(--gold)}
+.pt .pl:nth-child(2){background:var(--ink)}
+.pt .pt-in{position:relative;z-index:2;display:grid;justify-items:center;gap:14px;opacity:0;transform:translateY(24px)}
+.pt .pt-logo{width:min(220px,50vw);aspect-ratio:850/283;background:var(--bone);-webkit-mask:url(img/logo-brius.png) center/contain no-repeat;mask:url(img/logo-brius.png) center/contain no-repeat}
+.pt .pt-name{font:italic 500 clamp(30px,5vw,56px)/1 var(--display);color:var(--gold-soft)}
+.pt .pt-bar{width:120px;height:1px;background:rgba(251,248,243,.25);overflow:hidden}
+.pt .pt-bar::after{content:"";display:block;height:100%;background:var(--gold-soft);transform:scaleX(0);transform-origin:left}
+.pt.go{visibility:visible;pointer-events:auto}
+.pt.go .pl:nth-child(1){animation:plIn .55s cubic-bezier(.7,0,.3,1) forwards}
+.pt.go .pl:nth-child(2){animation:plIn .55s .08s cubic-bezier(.7,0,.3,1) forwards}
+.pt.go .pt-in{animation:ptIn .45s .35s cubic-bezier(.2,.7,.2,1) forwards}
+.pt.go .pt-bar::after{animation:bar .6s .4s ease forwards}
+.pt.out .pl:nth-child(2){animation:plOut .6s cubic-bezier(.7,0,.3,1) forwards}
+.pt.out .pl:nth-child(1){animation:plOut .6s .08s cubic-bezier(.7,0,.3,1) forwards}
+.pt.out .pt-in{animation:ptOut .3s ease forwards}
+@keyframes plIn{from{transform:translateY(101%)}to{transform:translateY(0)}}
+@keyframes plOut{from{transform:translateY(0)}to{transform:translateY(-101%)}}
+@keyframes ptIn{to{opacity:1;transform:none}}
+@keyframes ptOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(-20px)}}
+/* entrada da seção depois da transição */
+.arrive .head{animation:arrive .9s cubic-bezier(.2,.7,.2,1) both}
+.arrive .head + *{animation:arrive .9s .12s cubic-bezier(.2,.7,.2,1) both}
+@keyframes arrive{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.pt{display:none}.arrive .head,.arrive .head + *{animation:none}}
 /* CORPORATE */
 .split{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(24px,4vw,56px);align-items:start}
 .split .phone{max-width:300px;width:100%;justify-self:center}
@@ -467,12 +495,12 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
     <a class="cta" href="#orcamento">Fazer orçamento</a>
     <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navList">Menu</button>
     <ul id="navList">
-      <li><a href="#historia">Sobre</a></li>
       <li><a href="#servicos">Serviços</a></li>
       <li><a href="#casamentos">Eventos</a></li>
       <li><a href="#producoes">Produções</a></li>
       <li><a href="#corporativos">Corporativo</a></li>
       <li><a href="#clientes">Clientes</a></li>
+      <li><a href="#historia">Sobre</a></li>
       <li><a href="#avaliacoes">Avaliações</a></li>
       <li><a href="#contato">Contato</a></li>
     </ul>
@@ -493,41 +521,6 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
     <a class="arrow" href="#servicos" aria-label="Ver serviços">↓</a>
   </div>
 </header>
-
-<section class="band light" id="historia">
-  <div class="wrap">
-    <div class="chapter">
-      <div class="head">
-        <h2 class="mega ltr" aria-label="Sobre a Brius"><span aria-hidden="true"><span class="w"><span class="lt">S</span><span class="lt">o</span><span class="lt">b</span><span class="lt">r</span><span class="lt">e</span></span><span class="sp"> </span><span class="w"><span class="lt">a</span></span><span class="sp"> </span><span class="w"><span class="lt">B</span><span class="lt">r</span><span class="lt">i</span><span class="lt">u</span><span class="lt">s</span></span></span></h2>
-        <div class="text">
-          <p class="eyebrow">Nossa história</p>
-        </div>
-      </div>
-      <div class="story">
-        <div class="name">
-          <div class="name-word" role="group" aria-label="O nome Brius: toque em BRI ou US">
-            <button type="button" id="bBri" aria-pressed="false" aria-controls="pSab">BRI</button><button type="button" id="bUs" aria-pressed="false" aria-controls="pMat">US</button>
-          </div>
-          <p class="name-hint" id="nameHint">Passe o mouse ou toque em BRI e em US.</p>
-          <div class="people" id="people">
-            <div class="person" id="pSab"><span class="pn">Sa<b>BRI</b>na</span><p>Cria as artes e desenvolve as estratégias de marketing e redes sociais.</p></div>
-            <div class="person" id="pMat"><span class="pn">Mathe<b>US</b></span><p>Apaixonado por criação e edição de vídeo, especialista em tráfego pago.</p></div>
-          </div>
-        </div>
-        <div class="about-text">
-          <p class="since">A Brius nasceu há <i>2 anos</i>, criada por Matheus e Sabrina.</p>
-          <p class="lede">Começamos com gestão de redes sociais e hoje fazemos produção de vídeo para casamentos e todo tipo de evento, fotografia e estratégia digital. O nome é a nossa assinatura: <b>BRI</b> de Sabrina e <b>US</b> de Matheus.</p>
-          <ol class="timeline" aria-label="Como trabalhamos">
-            <li><b>Diagnóstico</b><span>Analisamos o seu perfil para entender o público e a melhor estratégia.</span></li>
-            <li><b>Análise</b><span>Juntamos tudo o que foi levantado e alinhamos com o seu objetivo.</span></li>
-            <li><b>Gestão</b><span>Definimos o visual: estética das postagens, biografia, foto de perfil e paleta de cores.</span></li>
-            <li><b>Relatório</b><span>Com a estratégia aprovada, colocamos em prática e avaliamos melhorias todo mês.</span></li>
-          </ol>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <section class="band light" id="servicos">
   <div class="wrap">
@@ -673,7 +666,42 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
   </div>
 </section>
 
-<section class="band light" id="avaliacoes">
+<section class="band light" id="historia">
+  <div class="wrap">
+    <div class="chapter">
+      <div class="head">
+        <h2 class="mega ltr" aria-label="Sobre a Brius"><span aria-hidden="true"><span class="w"><span class="lt">S</span><span class="lt">o</span><span class="lt">b</span><span class="lt">r</span><span class="lt">e</span></span><span class="sp"> </span><span class="w"><span class="lt">a</span></span><span class="sp"> </span><span class="w"><span class="lt">B</span><span class="lt">r</span><span class="lt">i</span><span class="lt">u</span><span class="lt">s</span></span></span></h2>
+        <div class="text">
+          <p class="eyebrow">Nossa história</p>
+        </div>
+      </div>
+      <div class="story">
+        <div class="name">
+          <div class="name-word" role="group" aria-label="O nome Brius: toque em BRI ou US">
+            <button type="button" id="bBri" aria-pressed="false" aria-controls="pSab">BRI</button><button type="button" id="bUs" aria-pressed="false" aria-controls="pMat">US</button>
+          </div>
+          <p class="name-hint" id="nameHint">Passe o mouse ou toque em BRI e em US.</p>
+          <div class="people" id="people">
+            <div class="person" id="pSab"><span class="pn">Sa<b>BRI</b>na</span><p>Cria as artes e desenvolve as estratégias de marketing e redes sociais.</p></div>
+            <div class="person" id="pMat"><span class="pn">Mathe<b>US</b></span><p>Apaixonado por criação e edição de vídeo, especialista em tráfego pago.</p></div>
+          </div>
+        </div>
+        <div class="about-text">
+          <p class="since">A Brius nasceu há <i>2 anos</i>, criada por Matheus e Sabrina.</p>
+          <p class="lede">Começamos com gestão de redes sociais e hoje fazemos produção de vídeo para casamentos e todo tipo de evento, fotografia e estratégia digital. O nome é a nossa assinatura: <b>BRI</b> de Sabrina e <b>US</b> de Matheus.</p>
+          <ol class="timeline" aria-label="Como trabalhamos">
+            <li><b>Diagnóstico</b><span>Analisamos o seu perfil para entender o público e a melhor estratégia.</span></li>
+            <li><b>Análise</b><span>Juntamos tudo o que foi levantado e alinhamos com o seu objetivo.</span></li>
+            <li><b>Gestão</b><span>Definimos o visual: estética das postagens, biografia, foto de perfil e paleta de cores.</span></li>
+            <li><b>Relatório</b><span>Com a estratégia aprovada, colocamos em prática e avaliamos melhorias todo mês.</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band dark" id="avaliacoes">
   <div class="wrap">
     <div class="chapter">
       <div class="head">
@@ -815,6 +843,8 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
   </div>
 </section>
 <footer><div class="wrap"><span>Brius Agência · Matheus e Sabrina</span><span>Fotografia · Vídeo · Storymaker · Redes sociais</span></div></footer>
+
+<div class="pt" id="pt" aria-hidden="true"><div class="pl"></div><div class="pl"></div><div class="pt-in"><div class="pt-logo"></div><div class="pt-name" id="ptName"></div><div class="pt-bar"></div></div></div>
 
 <div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Foto ampliada">
   <img id="lbImg" alt="">
@@ -961,6 +991,27 @@ const ALBUNS=[{"t": "Ensaio de bodas Sirlene & Valdinei", "c": "casamentos", "p"
     btn.addEventListener('click',()=>{if(!a.src)a.src=box.dataset.src;
       if(a.paused){if(cur&&cur!==a)cur.pause();document.querySelectorAll('.aud.playing').forEach(x=>x.classList.remove('playing'));a.play().catch(()=>{});cur=a;box.classList.add('playing');btn.setAttribute('aria-label',btn.getAttribute('aria-label').replace('Ouvir','Pausar'))}
       else{a.pause();box.classList.remove('playing');btn.setAttribute('aria-label',btn.getAttribute('aria-label').replace('Pausar','Ouvir'))}});
+  });
+})();
+// ===== TRANSIÇÃO ENTRE SEÇÕES =====
+(function(){
+  const pt=document.getElementById('pt'),nm=document.getElementById('ptName');
+  if(!pt||matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  let busy=false;
+  document.addEventListener('click',e=>{
+    const a=e.target.closest('a[href^="#"]');if(!a||busy)return;
+    const id=a.getAttribute('href').slice(1),t=id&&document.getElementById(id);if(!t)return;
+    e.preventDefault();busy=true;
+    const label=(a.textContent||'').trim();nm.textContent=label.length>2&&label.length<28?label:'';
+    pt.classList.remove('out');void pt.offsetWidth;pt.classList.add('go');
+    setTimeout(()=>{
+      const html=document.documentElement,prev=html.style.scrollBehavior;html.style.scrollBehavior='auto';
+      t.scrollIntoView({block:'start'});html.style.scrollBehavior=prev;
+      t.querySelectorAll('.reveal.pre').forEach(x=>x.classList.remove('pre'));
+      t.classList.remove('arrive');void t.offsetWidth;t.classList.add('arrive');
+      pt.classList.add('out');
+      setTimeout(()=>{pt.classList.remove('go','out');busy=false;},700);
+    },1050);
   });
 })();
 // ===== NOME BRIUS =====
