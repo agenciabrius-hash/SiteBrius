@@ -1,0 +1,935 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Brius Agência: fotografia, vídeo e gestão de redes sociais. Faça seu orçamento online.">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Brius Agência</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..800;1,400..700&family=Manrope:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: alternating espresso and ivory bands with champagne-gold accents; each band opens with a giant condensed title, photos set as editorial mosaics. Single deliberate look taken from the agency's own portfolio. */
+:root{
+  --ink:#141210;
+  --graphite:#1b1916;
+  --graphite-2:#24211d;
+  --paper:#f4efe7;
+  --sand:#ebe2d3;
+  --bone:#fbf8f3;
+  --muted-d:#b4ab9d;
+  --muted-l:#6b6359;
+  --gold:#b8955a;
+  --gold-soft:#e6d3ae;
+  --serif:"Playfair Display",Georgia,serif;
+  --display:"Playfair Display","Bodoni 72","Didot",Georgia,serif;
+  --body:"Manrope","Segoe UI",system-ui,sans-serif;
+  --gutter-l:max(16px, env(safe-area-inset-left, 0px));
+  --gutter-r:max(16px, env(safe-area-inset-right, 0px));
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:64px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--bone)}
+img,video{display:block;max-width:100%}
+a{color:inherit}
+:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+
+.wrap{max-width:1240px;margin:0 auto;padding-left:var(--gutter-l);padding-right:var(--gutter-r)}
+
+/* NAV */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:color-mix(in srgb,var(--bone) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid rgba(0,0,0,.06)}
+.nav .wrap{display:flex;align-items:center;gap:24px;padding-block:12px}
+.nav-logo{width:96px;aspect-ratio:850/283;object-fit:contain;flex:none}
+.nav ul{order:2;list-style:none;margin:0 0 0 auto;padding:0;display:flex;gap:20px;font-size:13px}
+.nav ul a{text-decoration:none;color:var(--muted-l);white-space:nowrap;position:relative;display:inline-block;overflow:hidden;padding-block:4px;vertical-align:top}
+.nav ul a .t{display:block;transition:transform .35s cubic-bezier(.6,0,.2,1)}
+.nav ul a .t::after{content:attr(data-t);position:absolute;left:0;top:100%;color:var(--ink);font-weight:600}
+.nav ul a::before{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--gold);transform:scaleX(0);transform-origin:right;transition:transform .35s ease}
+.nav ul a:hover .t,.nav ul a:focus-visible .t{transform:translateY(-100%)}
+.nav ul a:hover::before,.nav ul a.on::before{transform:scaleX(1);transform-origin:left}
+.nav ul a.on{color:var(--ink)}
+.cta{order:3;flex:none;font:600 13px var(--body);letter-spacing:.04em;text-decoration:none;color:var(--bone);background:var(--ink);padding:10px 18px;border-radius:999px;position:relative;overflow:hidden;isolation:isolate;transition:color .3s}
+.cta::before{content:"";position:absolute;inset:0;background:var(--gold-soft);transform:translateY(101%);transition:transform .35s cubic-bezier(.6,0,.2,1);z-index:-1}
+.cta:hover{color:var(--ink)}.cta:hover::before{transform:none}
+.nav-toggle{display:none!important;margin-left:auto;order:4;background:none;border:0;font:500 13px var(--body);letter-spacing:.12em;text-transform:uppercase;padding:8px 0;cursor:pointer;color:var(--ink)}
+@media (max-width:1100px){
+  .nav .wrap{flex-wrap:wrap;row-gap:4px;padding-block:10px 0}
+  .nav ul{order:5;flex:1 0 100%;margin:0 calc(-1 * var(--gutter-r)) 0 calc(-1 * var(--gutter-l));padding:2px var(--gutter-r) 10px var(--gutter-l);overflow-x:auto;scrollbar-width:none;gap:8px;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
+  .nav ul::-webkit-scrollbar{display:none}
+  .nav ul li{scroll-snap-align:start}
+  .nav ul a{border:1px solid #ddd2c2;border-radius:999px;padding:6px 14px;font-size:13px;color:var(--ink);background:var(--bone)}
+  .nav ul a::before{display:none}
+  .nav ul a.on{background:var(--ink);color:var(--bone);border-color:var(--ink)}
+  .nav ul a .t::after{display:none}
+  .nav ul a:hover .t{transform:none}
+  .cta{margin-left:auto;padding:8px 14px;font-size:12px}
+}
+html{scroll-padding-top:120px}
+/* HERO */
+.hero{background:var(--sand)}
+.hero .wrap{padding-block:clamp(40px,7vw,88px) clamp(28px,4vw,48px);display:grid;gap:40px;justify-items:center;text-align:center}
+.hero-logo{width:min(420px,72vw);aspect-ratio:850/283;object-fit:contain}
+.hero h1{margin:0;font:400 clamp(24px,3.2vw,38px)/1.2 var(--serif);max-width:26ch;color:var(--muted-l);text-wrap:balance}
+.hero h1 b{font-style:italic;font-weight:400}
+.hero h1 b{color:var(--ink);font-weight:600}
+.hero-strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;width:100%;margin-top:8px}
+.hero-strip img{width:100%;aspect-ratio:3/4;object-fit:cover}
+@media (max-width:640px){.hero-strip{grid-template-columns:repeat(3,minmax(0,1fr))}.hero-strip img:nth-child(n+4){display:none}}
+.arrow{font-size:28px;line-height:1;text-decoration:none;color:var(--ink)}
+
+/* SECTION BASICS */
+.band{padding-block:clamp(48px,6vw,84px)}
+.band.dark,.band.dark2,.contact{position:relative;isolation:isolate}
+.band.dark::before,.band.dark2::before,.contact::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.07;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.band.dark{background:var(--graphite);color:var(--bone)}
+.band.dark2{background:var(--graphite-2);color:var(--bone)}
+.band.light{background:var(--paper)}
+.eyebrow{font:600 12px var(--body);letter-spacing:.2em;text-transform:uppercase;margin:0 0 14px;color:var(--gold);display:flex;align-items:center;gap:12px}
+.eyebrow::before{content:"";width:28px;height:1px;background:currentColor}
+.dark .eyebrow,.dark2 .eyebrow,.contact .eyebrow{color:var(--gold-soft)!important}
+.mega{font:500 clamp(42px,8vw,112px)/.95 var(--display);margin:0;letter-spacing:-.025em;text-wrap:balance}
+.big{font:500 clamp(34px,5.4vw,72px)/1 var(--display);margin:0;letter-spacing:-.02em;text-wrap:balance}
+.ltr .lt{display:inline-block;transition:transform .45s cubic-bezier(.3,1.6,.5,1),color .3s;will-change:transform}
+.ltr .sp{display:inline-block;width:.22em}
+.ltr .w{display:inline-block;white-space:nowrap}
+.ltr .lt.up{transform:translateY(-.12em) rotate(-3deg)}
+.reveal{transition:transform .9s cubic-bezier(.2,.7,.2,1),opacity .9s}
+.reveal.pre{transform:translateY(28px);opacity:.35}
+.lede em{font:italic 400 1.25em/1 var(--serif)}
+.lede{max-width:46ch;margin:0;font-size:15.5px}
+.dark .lede,.dark2 .lede{color:#d9d7d2}
+.client{display:flex;flex-direction:column;gap:2px;font-size:14px;margin-top:6px}
+.client b{font-weight:600}
+.client span{opacity:.7}
+.chapter{display:grid;grid-template-columns:minmax(0,1fr);gap:clamp(22px,3vw,36px)}
+.chapter + .chapter{margin-top:clamp(48px,6vw,80px)}
+.head{display:grid;grid-template-columns:minmax(0,1fr);gap:20px}
+.head .text{justify-self:end;max-width:52ch;width:100%}
+@media (max-width:760px){.head .text{justify-self:start}}
+.head .text{display:grid;gap:14px}
+
+/* MOSAICS */
+.grid{display:grid;gap:8px}
+.grid button{all:unset;cursor:zoom-in;display:block;overflow:hidden;position:relative;background:rgba(127,127,127,.15)}
+.grid button:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+.grid img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+.grid button:hover img{transform:scale(1.035)}
+@media (prefers-reduced-motion:reduce){.grid img,.ltr .lt,.reveal,.nav ul a .t,.svc{transition:none!important}.reveal.pre{transform:none;opacity:1}}
+.g-events{grid-template-columns:repeat(6,minmax(0,1fr));grid-auto-rows:clamp(90px,14vw,180px)}
+.g-events>:nth-child(1){grid-column:span 2;grid-row:span 2}
+.g-events>:nth-child(2){grid-column:span 2;grid-row:span 2}
+.g-events>:nth-child(3){grid-column:span 2;grid-row:span 3}
+.g-events>:nth-child(4){grid-column:span 4;grid-row:span 1}
+.g-four{grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:clamp(150px,24vw,320px)}
+.g-four>:nth-child(1){grid-column:span 2}
+.g-four>:nth-child(2){grid-row:span 2}
+.g-silver{grid-template-columns:repeat(5,minmax(0,1fr));grid-auto-rows:clamp(120px,19vw,260px)}
+.g-silver>:nth-child(1){grid-column:span 2;grid-row:span 2}
+.g-silver>:nth-child(2){grid-row:span 2}
+.g-silver>:nth-child(3){grid-row:span 2}
+.g-silver>:nth-child(4){grid-row:span 2}
+.g-silver>:nth-child(5){grid-column:span 5;grid-row:span 1}
+.g-portrait{grid-template-columns:repeat(4,minmax(0,1fr))}
+.g-portrait button{aspect-ratio:3/4}
+.g-three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g-three button{aspect-ratio:3/4}
+.g-food{grid-auto-flow:dense;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:clamp(130px,20vw,280px)}
+.g-food>:nth-child(1){grid-row:span 2}
+.g-food>:nth-child(6){grid-column:span 2}
+.g-food>:nth-child(8){grid-column:span 2}
+@media (max-width:640px){
+  .g-events,.g-four,.g-silver,.g-food{grid-auto-flow:dense;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:150px}
+  .g-events>*,.g-four>*,.g-silver>*,.g-food>*{grid-column:auto!important;grid-row:auto!important}
+  .g-events>:first-child,.g-silver>:nth-child(5),.g-food>:nth-child(6){grid-column:span 2!important;grid-row:span 1!important}
+  .g-portrait{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .g-three{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .g-three>:first-child{grid-column:span 2;aspect-ratio:4/3}
+}
+
+/* SERVICES */
+.services{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:1px solid var(--ink);margin-top:40px}
+.svc{padding:28px 24px 32px 0;display:grid;gap:14px;align-content:start;border-bottom:1px solid var(--ink);transition:background .35s,color .35s,padding .35s}
+.svc:hover{background:var(--ink);color:var(--bone);padding-left:24px}
+.svc:hover p{color:#cfccc6}
+.svc:hover svg{stroke:var(--bone);transform:rotate(-8deg) scale(1.1)}
+.svc svg{transition:transform .4s}
+.svc + .svc{padding-left:24px;border-left:1px solid var(--ink)}
+.svc .num{font:400 15px var(--display);letter-spacing:.06em;color:var(--muted-l)}
+.svc h3{margin:0;font:500 clamp(30px,3.4vw,44px)/1 var(--display)}
+.svc p{margin:0;font-size:14.5px;color:var(--muted-l)}
+.svc svg{width:40px;height:40px;stroke:var(--ink);fill:none;stroke-width:1.4}
+@media (max-width:640px){.services{grid-template-columns:1fr}.svc,.svc + .svc{padding-left:0;border-left:0}}
+
+/* PRODUCTIONS — phone frames */
+.reels{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:clamp(12px,2vw,22px)}
+.phone{position:relative;aspect-ratio:9/19;border-radius:clamp(16px,2.4vw,28px);padding:5px;background:linear-gradient(145deg,#d9c9b4,#8b7d6d);box-shadow:0 18px 40px -18px rgba(0,0,0,.6)}
+.phone .screen{position:relative;width:100%;height:100%;border-radius:clamp(12px,2vw,24px);overflow:hidden;background:#000}
+.phone .screen::before{content:"";position:absolute;top:6px;left:50%;transform:translateX(-50%);width:34%;height:9px;border-radius:9px;background:#000;z-index:2}
+.phone video{width:100%;height:100%;object-fit:cover}
+.phone button{all:unset;position:absolute;inset:0;cursor:pointer;display:grid;place-items:center;z-index:3}
+.phone button span{width:44px;height:44px;border-radius:50%;background:rgba(245,244,241,.88);display:grid;place-items:center;transition:opacity .25s}
+.phone button span::after{content:"";border-left:13px solid var(--ink);border-top:8px solid transparent;border-bottom:8px solid transparent;margin-left:4px}
+.phone.playing button span{opacity:0}
+.phone button:focus-visible{outline:2px solid var(--bone);outline-offset:4px;border-radius:24px}
+@media (max-width:1000px){.reels{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (max-width:640px){.reels{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.reel{margin:0;display:grid;gap:12px;align-content:start}
+.reel figcaption{display:grid;gap:2px;font-size:13px;line-height:1.35;color:var(--muted-d)}
+.reel figcaption b{color:var(--bone);font-weight:600}
+.reel:hover figcaption b{color:var(--gold-soft)}
+/* CLIENTES */
+.filters{display:flex;flex-wrap:wrap;gap:8px}
+.filters button{font:600 13px var(--body);padding:9px 16px;border-radius:999px;border:1px solid #4a433a;background:transparent;color:var(--bone);cursor:pointer;transition:background .3s,color .3s,border-color .3s,transform .3s}
+.filters button:hover{border-color:var(--gold-soft);transform:translateY(-2px)}
+.filters button.on{background:var(--gold-soft);color:var(--ink);border-color:var(--gold-soft)}
+.cgrid{display:block;columns:4 240px;column-gap:10px}
+.cgrid button{display:block;width:100%;margin:0 0 10px;break-inside:avoid}
+.cgrid img{height:auto}
+.cgrid button.out{display:none}
+.more{display:flex;justify-content:center}
+.more .btn-ghost{color:var(--bone);border-color:var(--gold-soft)}
+.more .btn-ghost:hover{background:var(--gold-soft);color:var(--ink)}
+.albums{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:1000px){.albums{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:640px){.albums{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}}
+.album{all:unset;box-sizing:border-box;cursor:zoom-in;display:block;position:relative;aspect-ratio:4/5;overflow:hidden;background:#2e2a25;isolation:isolate}
+.album[hidden]{display:none}
+.album:focus-visible{outline:2px solid var(--gold-soft);outline-offset:3px}
+.album img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.06);transition:opacity 1s ease,transform 4s ease}
+.album img.on{opacity:1;transform:scale(1)}
+.album:hover img.on{transform:scale(1.05)}
+.album .meta{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:40px 14px 12px;background:linear-gradient(transparent,rgba(12,10,8,.82));display:grid;gap:6px;text-align:left;pointer-events:none}
+.album .meta b{font:500 clamp(15px,1.6vw,19px)/1.15 var(--display);color:#fbf8f3}
+.album .meta span{font:600 11px var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft)}
+.album .dots{position:absolute;top:10px;left:12px;right:12px;z-index:2;display:flex;gap:4px;pointer-events:none}
+.album .dots i{flex:1;height:2px;background:rgba(255,255,255,.3);border-radius:2px;overflow:hidden;position:relative}
+.album .dots i.done::after,.album .dots i.cur::after{content:"";position:absolute;inset:0;background:#fbf8f3;transform-origin:left}
+.album .dots i.cur::after{animation:bar var(--dur,2.8s) linear forwards}
+@keyframes bar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@media (prefers-reduced-motion:reduce){.album img{transition:opacity .3s;transform:none!important}.album .dots i.cur::after{animation:none}}
+/* CORPORATE */
+.split{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(24px,4vw,56px);align-items:start}
+.split .phone{max-width:300px;width:100%;justify-self:center}
+.split .side{display:grid;gap:20px}
+@media (max-width:760px){.split{grid-template-columns:1fr}}
+
+/* BRANDING CARD */
+.brand{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0;border:1px solid var(--ink);background:var(--bone)}
+.brand>div{padding:clamp(22px,3vw,36px)}
+.brand>div + div{border-left:1px solid var(--ink)}
+.brand h4{margin:0 0 18px;font:600 12px var(--body);letter-spacing:.2em;text-transform:uppercase;color:var(--muted-l)}
+.swatches{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.sw{display:grid;gap:8px;font:500 12px/1 var(--body);font-variant-numeric:tabular-nums}
+.sw i{display:block;aspect-ratio:1;border:1px solid rgba(0,0,0,.12)}
+.brand-name{font:500 clamp(32px,4.2vw,52px)/1 var(--display);margin:0}
+.brand-name small{display:block;font:500 13px/1.4 var(--body);letter-spacing:.32em;margin-top:10px;color:#E61F93}
+.brand{transition:box-shadow .5s,border-color .5s}
+.brand:hover{border-color:#E61F93;box-shadow:0 30px 60px -36px rgba(230,31,147,.55)}
+.brand-name{background:linear-gradient(90deg,var(--ink) 0 50%,#E61F93 50% 100%);background-size:200% 100%;background-position:0 0;-webkit-background-clip:text;background-clip:text;color:transparent;transition:background-position .8s cubic-bezier(.2,.7,.2,1)}
+.brand:hover .brand-name{background-position:-100% 0}
+.brand-name small{transition:letter-spacing .6s}
+.brand:hover .brand-name small{letter-spacing:.5em}
+.sw i{transition:transform .5s cubic-bezier(.3,1.6,.5,1),border-radius .5s,box-shadow .5s}
+.brand:hover .sw i{border-radius:50%;transform:translateY(-8px) scale(1.06);box-shadow:0 14px 20px -12px rgba(0,0,0,.35)}
+.brand:hover .sw:nth-child(2) i{transition-delay:.06s}.brand:hover .sw:nth-child(3) i{transition-delay:.12s}.brand:hover .sw:nth-child(4) i{transition-delay:.18s}
+@media (max-width:700px){.brand{grid-template-columns:1fr}.brand>div + div{border-left:0;border-top:1px solid var(--ink)}}
+
+/* SOBRE / NOME INTERATIVO */
+.name{display:grid;gap:clamp(18px,3vw,28px);justify-items:start;min-width:0;container-type:inline-size}
+.name-word{display:flex;align-items:flex-end;gap:0;line-height:.8;user-select:none}
+.name-word button{all:unset;cursor:pointer;font:600 min(26cqw,230px)/.85 var(--display);letter-spacing:-.03em;color:var(--ink);position:relative;transition:color .35s,transform .45s cubic-bezier(.3,1.5,.5,1)}
+.name-word button::after{content:"";position:absolute;left:4%;right:4%;bottom:-14px;height:4px;background:var(--gold);transform:scaleX(0);transition:transform .4s cubic-bezier(.2,.7,.2,1)}
+.name-word button[aria-pressed="true"]{color:var(--gold);font-style:italic;transform:translateY(-8px)}
+.name-word button[aria-pressed="true"]::after{transform:scaleX(1)}
+.name-word button:focus-visible{outline:2px solid var(--gold);outline-offset:6px}
+.name-word .dim{color:#d9cfbf}
+.name-hint{font:italic 400 20px/1.3 var(--serif);color:var(--muted-l);margin:0;min-height:1.3em}
+.people{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;width:100%}
+.person{background:var(--bone);border:1px solid #e3d8c6;padding:22px 24px;display:grid;gap:8px;align-content:start;transition:transform .45s cubic-bezier(.2,.7,.2,1),box-shadow .45s,border-color .35s,opacity .35s}
+.person .pn{font:400 clamp(34px,4.4vw,54px)/1 var(--display)}
+.person .pn b{font-weight:700;font-style:italic;color:var(--gold)}
+.person p{margin:0;font-size:14.5px;color:var(--muted-l)}
+.person.on{border-color:var(--gold);transform:translateY(-6px);box-shadow:0 26px 40px -28px rgba(80,55,20,.55)}
+.people.has-on .person:not(.on){opacity:.45}
+@media (max-width:640px){.people{grid-template-columns:minmax(0,1fr)}}
+.about-text{display:grid;gap:16px;align-content:start}
+.about-text .since{font:400 clamp(26px,3vw,36px)/1.15 var(--serif);margin:0;max-width:24ch;text-wrap:balance}
+.about-text .since i{color:var(--gold)}
+/* HISTORY */
+.story{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(28px,5vw,72px);align-items:start}
+.story .note{border:1px dashed var(--muted-l);padding:18px 20px;font-size:14px;color:var(--muted-l);max-width:46ch}
+.timeline{list-style:none;margin:0;padding:0;display:grid;gap:0;border-top:1px solid var(--ink)}
+.timeline li{display:grid;grid-template-columns:130px minmax(0,1fr);gap:16px;padding:18px 0;border-bottom:1px solid var(--ink)}
+.timeline b{font:italic 500 24px/1.1 var(--display)}
+.timeline span{color:var(--muted-l);font-size:14.5px}
+@media (max-width:760px){.story{grid-template-columns:minmax(0,1fr)}}
+/* ORÇAMENTO */
+.qf{background:var(--bone);padding:clamp(20px,4vw,44px);display:grid;gap:24px;max-width:880px;width:100%;justify-self:center;box-shadow:0 30px 60px -40px rgba(0,0,0,.5)}
+.qf-tabs{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.qf-tabs li{font-size:12.5px;color:var(--muted-l);display:flex;align-items:center;gap:8px;padding-top:10px;border-top:3px solid #d6d3cc;transition:border-color .3s,color .3s}
+.qf-tabs li span{font:400 18px/1 var(--display)}
+.qf-tabs li.on,.qf-tabs li.done{color:var(--ink);border-color:var(--ink)}
+.qf-tabs li.done{cursor:pointer}
+@media (max-width:560px){.qf-tabs li{font-size:0;gap:0}.qf-tabs li span{font-size:18px}}
+.qf fieldset{border:0;margin:0;padding:0;min-width:0;animation:stepIn .45s cubic-bezier(.2,.7,.2,1)}
+@keyframes stepIn{from{transform:translateX(18px);opacity:.3}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.qf fieldset{animation:none}}
+.qf legend{font:500 clamp(30px,4vw,44px)/1 var(--display);padding:0;margin-bottom:22px}
+.qf-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 20px}
+.qf-grid .full{grid-column:1/-1}
+@media (max-width:600px){.qf-grid{grid-template-columns:minmax(0,1fr)}}
+.qf label{display:grid;gap:6px;font-size:13px;font-weight:500}
+.qf label em{font-style:normal;font-weight:400;color:var(--muted-l)}
+.qf input,.qf textarea{font:400 16px var(--body);color:var(--ink);background:#fff;border:1px solid #cfcbc3;border-radius:0;padding:12px 14px;width:100%;transition:border-color .2s,box-shadow .2s}
+.qf input:focus,.qf textarea:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(20,20,20,.12)}
+.qf input[aria-invalid="true"]{border-color:#b3261e}
+.qf small{font-size:12.5px;min-height:1em}
+.qf small.bad{color:#b3261e}.qf small.good{color:#2e6b3a}
+.hp{position:absolute!important;left:-9999px}
+.route{display:flex;flex-wrap:wrap;gap:14px 20px;align-items:center;margin-top:18px}
+.route p{margin:0;font-size:14px;color:var(--muted-l);flex:1 1 260px}
+.route p b{color:var(--ink);font-size:18px}
+.review{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:10px 24px;margin:0;font-size:14.5px}
+.review dt{color:var(--muted-l)}.review dd{margin:0;font-weight:500;overflow-wrap:anywhere}
+@media (max-width:480px){.review{grid-template-columns:minmax(0,1fr);gap:2px}.review dd{margin-bottom:10px}}
+.fine{font-size:12.5px;color:var(--muted-l);margin:0}
+.qf-err{margin:0;color:#b3261e;font-size:14px;min-height:1.2em}
+.qf-nav{display:flex;justify-content:space-between;gap:12px}
+.qf-nav #q-next{margin-left:auto}
+.btn-dark,.btn-ghost{font:600 14px var(--body);padding:13px 24px;border-radius:999px;cursor:pointer;border:1px solid var(--ink);transition:transform .2s,background .2s,color .2s}
+.btn-dark{background:var(--ink);color:var(--bone)}
+.btn-dark:hover{transform:translateY(-2px)}
+.btn-dark[disabled]{opacity:.5;cursor:progress;transform:none}
+.btn-ghost{background:transparent;color:var(--ink)}
+.btn-ghost:hover{background:var(--ink);color:var(--bone)}
+.qf-done{text-align:center;padding:30px 0}
+.big-ok{font:italic 500 clamp(40px,7vw,72px)/1 var(--display);margin:0 0 12px}
+.quote{background:var(--sand)}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:8px}
+.step{background:var(--bone);padding:24px;display:grid;gap:10px;align-content:start;transition:transform .35s,box-shadow .35s}
+.step:hover{transform:translateY(-6px);box-shadow:0 18px 30px -20px rgba(0,0,0,.45)}
+.step .n{font:400 44px/1 var(--display);color:var(--gold)}
+.step h3{margin:0;font:500 28px/1.05 var(--display)}
+.step ul{margin:0;padding-left:18px;font-size:14px;color:var(--muted-l)}
+.soon{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;justify-content:space-between;margin-top:20px;padding:20px 24px;background:var(--ink);color:var(--bone)}
+.soon p{margin:0;font-size:14.5px;max-width:60ch}
+@media (max-width:760px){.steps{grid-template-columns:minmax(0,1fr)}}
+/* CONTACT */
+.contact{background:var(--ink);color:var(--bone)}
+.contact .wrap{padding-block:clamp(72px,11vw,140px);display:grid;gap:40px}
+.contact .mega{font-size:clamp(48px,9.5vw,132px)}
+.channels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:#3a342c;border:1px solid #3a342c}
+.ch{background:var(--ink);padding:clamp(24px,3vw,36px);display:grid;gap:12px;text-decoration:none;color:inherit;align-content:start}
+.ch .ico{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--gold);color:var(--gold-soft);transition:background .4s,color .4s,transform .5s cubic-bezier(.3,1.6,.5,1)}
+.ch .ico svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.ch:hover .ico{background:var(--gold);color:var(--ink);transform:rotate(-10deg) scale(1.08)}
+.ch-link .btn{display:inline-block}
+.ch small{font:600 11px var(--body);letter-spacing:.2em;text-transform:uppercase;color:var(--muted-d)}
+.ch .val{font:500 clamp(17px,2.2vw,24px)/1.3 var(--body);word-break:break-all;user-select:all}
+.ch .row{display:flex;gap:10px;flex-wrap:wrap}
+.btn{font:500 13px var(--body);padding:10px 16px;border:1px solid var(--bone);background:transparent;color:var(--bone);cursor:pointer;text-decoration:none}
+.btn:hover{background:var(--bone);color:var(--ink)}
+@media (max-width:640px){.channels{grid-template-columns:1fr}}
+footer{background:var(--ink);color:var(--muted-d);font-size:12px;border-top:1px solid #2c2c2b}
+footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+/* LIGHTBOX */
+.lb{position:fixed;inset:0;z-index:100;background:rgba(14,14,14,.94);display:grid;place-items:center;padding:calc(48px + env(safe-area-inset-top,0px)) var(--gutter-r) calc(48px + env(safe-area-inset-bottom,0px)) var(--gutter-l)}
+.lb[hidden]{display:none}
+.lb img{max-height:100%;max-width:100%;object-fit:contain}
+.lb button{position:absolute;background:none;border:0;color:var(--bone);font:400 15px var(--body);cursor:pointer;padding:12px}
+.lb .x{top:calc(6px + env(safe-area-inset-top,0px));right:calc(10px + env(safe-area-inset-right,0px))}
+.lb .p{left:calc(4px + env(safe-area-inset-left,0px));top:50%;transform:translateY(-50%);font-size:30px}
+.lb .n{right:calc(4px + env(safe-area-inset-right,0px));top:50%;transform:translateY(-50%);font-size:30px}
+
+/* ===== EFEITOS ===== */
+/* brilho que atravessa o logo */
+.shine{position:relative;display:inline-block;line-height:0}
+.shine::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.95) 45%,#e9d8b4 50%,rgba(255,255,255,.95) 55%,transparent 70%) no-repeat;
+  background-size:250% 100%;background-position:150% 0;
+  -webkit-mask:url(img/logo-brius.png) center/contain no-repeat;mask:url(img/logo-brius.png) center/contain no-repeat}
+.shine:hover::after,.hero .shine::after{animation:sweep 1.1s ease}
+.hero .shine::after{animation:sweep 1.6s .6s ease both}
+.hero .shine:hover::after{animation:sweep 1.1s ease}
+@keyframes sweep{from{background-position:150% 0}to{background-position:-60% 0}}
+.hero .shine{transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.hero .shine:hover{transform:scale(1.03) rotate(-1deg)}
+
+/* fotos: brilho diagonal + legenda */
+.grid button::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.35) 50%,transparent 65%);transform:translateX(-120%);transition:transform .9s cubic-bezier(.2,.7,.2,1)}
+.grid button:hover::after{transform:translateX(120%)}
+.grid button .cap{position:absolute;left:0;right:0;bottom:0;padding:28px 14px 12px;font:500 12.5px/1.35 var(--body);color:#f5f4f1;
+  background:linear-gradient(transparent,rgba(10,10,10,.75));transform:translateY(100%);transition:transform .45s cubic-bezier(.2,.7,.2,1);pointer-events:none;text-align:left}
+.grid button:hover .cap,.grid button:focus-visible .cap{transform:none}
+.grid img{filter:saturate(.92)}
+.grid button:hover img{filter:saturate(1.08) contrast(1.03)}
+.grid img{transition:transform .7s cubic-bezier(.2,.7,.2,1),filter .5s}
+.grid button:hover img{transform:scale(1.06)}
+.grid:hover button:not(:hover) img{filter:saturate(.6) brightness(.8)}
+
+/* faixa de fotos da abertura: leque */
+.hero-strip img{transition:transform .5s cubic-bezier(.2,.7,.2,1),box-shadow .5s,filter .5s}
+.hero-strip:hover img{filter:brightness(.75) saturate(.8)}
+.hero-strip img:hover{transform:translateY(-14px) rotate(-1.5deg) scale(1.04);box-shadow:0 24px 40px -18px rgba(0,0,0,.55);filter:none;position:relative;z-index:2}
+.hero-strip img:nth-child(even):hover{transform:translateY(-14px) rotate(1.5deg) scale(1.04)}
+
+/* holofote que segue o mouse */
+.spot{position:relative;isolation:isolate}
+.spot::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:0;transition:opacity .35s;
+  background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),rgba(233,216,180,.28),transparent 70%)}
+.spot:hover::before{opacity:1}
+.step.spot::before,.qf.spot::before{background:radial-gradient(320px circle at var(--mx,50%) var(--my,50%),rgba(233,216,180,.45),transparent 70%)}
+
+/* celulares inclinam em 3D */
+.reels,.split{perspective:900px}
+.phone{transition:transform .25s ease-out,box-shadow .35s;transform-style:preserve-3d}
+.phone:hover{box-shadow:0 30px 50px -20px rgba(0,0,0,.75)}
+.phone::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .3s;
+  background:radial-gradient(180px circle at var(--mx,50%) var(--my,30%),rgba(255,255,255,.28),transparent 65%)}
+.phone:hover::after{opacity:1}
+
+/* títulos: brilho dourado nas letras ao passar */
+.ltr .lt.up{color:var(--gold);font-style:italic}
+.dark .ltr .lt.up,.dark2 .ltr .lt.up,.contact .ltr .lt.up{color:#e9d8b4}
+
+/* botões magnéticos + brilho */
+.cta,.btn-dark,.btn{position:relative;overflow:hidden}
+.cta::after,.btn-dark::after{content:"";position:absolute;top:0;bottom:0;width:40%;left:-60%;pointer-events:none;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.45),transparent);transform:skewX(-20deg)}
+.cta:hover::after,.btn-dark:hover::after{animation:btnshine .8s ease}
+@keyframes btnshine{to{left:130%}}
+
+/* cursor personalizado (só com mouse) */
+.cur{position:fixed;left:0;top:0;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:#e9d8b4;mix-blend-mode:difference;pointer-events:none;z-index:200;
+  transition:width .3s,height .3s,margin .3s,background .3s;display:grid;place-items:center;font:600 10px var(--body);letter-spacing:.12em;color:transparent}
+.cur.big{width:74px;height:74px;margin:-37px 0 0 -37px;background:rgba(245,244,241,.92);mix-blend-mode:normal;color:#141414}
+.cur[hidden]{display:none}
+
+/* serviços: número cresce */
+.svc h3{transition:letter-spacing .4s}
+.svc:hover h3{letter-spacing:.02em}
+
+/* links do contato */
+.ch{transition:background .35s}
+.ch:hover{background:#1d1d1c}
+.ch .val{transition:color .3s}
+.ch:hover .val{color:#e9d8b4}
+
+@media (hover:none){.grid button .cap{transform:none;background:linear-gradient(transparent,rgba(10,10,10,.6))}.cur{display:none}}
+@media (prefers-reduced-motion:reduce){.shine::after,.grid button::after,.cta::after,.btn-dark::after{display:none}.hero-strip img,.phone{transition:none!important;transform:none!important}}
+</style>
+
+<nav class="nav" id="nav">
+  <div class="wrap">
+    <a href="#inicio" aria-label="Brius Agência, início"><span class="shine"><img class="nav-logo" src="img/logo-brius.png" alt="Brius Agência"></span></a>
+    <a class="cta" href="#orcamento">Fazer orçamento</a>
+    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navList">Menu</button>
+    <ul id="navList">
+      <li><a href="#historia">Sobre</a></li>
+      <li><a href="#servicos">Serviços</a></li>
+      <li><a href="#casamentos">Eventos</a></li>
+      <li><a href="#producoes">Produções</a></li>
+      <li><a href="#corporativos">Corporativo</a></li>
+      <li><a href="#clientes">Clientes</a></li>
+      <li><a href="#contato">Contato</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero" id="inicio">
+  <div class="wrap">
+    <span class="shine"><img class="hero-logo" src="img/logo-brius.png" alt="Brius Agência"></span>
+    <h1>Fotografia, vídeo e estratégia para <b>a sua marca ganhar força no digital.</b></h1>
+    <div class="hero-strip" aria-hidden="true">
+      <img src="img/06.jpg" alt="">
+      <img src="cli/1-ouLRvWyXPEIuYx3g4PEnIIRA5K50Jq8.jpg" alt="">
+      <img src="img/43.jpg" alt="" style="object-position:30% 50%">
+      <img src="img/17.jpg" alt="">
+      <img src="img/47.jpg" alt="">
+    </div>
+    <a class="arrow" href="#servicos" aria-label="Ver serviços">↓</a>
+  </div>
+</header>
+
+<section class="band light" id="historia">
+  <div class="wrap">
+    <div class="chapter">
+      <div class="head">
+        <h2 class="mega ltr" aria-label="Sobre a Brius"><span aria-hidden="true"><span class="w"><span class="lt">S</span><span class="lt">o</span><span class="lt">b</span><span class="lt">r</span><span class="lt">e</span></span><span class="sp"> </span><span class="w"><span class="lt">a</span></span><span class="sp"> </span><span class="w"><span class="lt">B</span><span class="lt">r</span><span class="lt">i</span><span class="lt">u</span><span class="lt">s</span></span></span></h2>
+        <div class="text">
+          <p class="eyebrow">Nossa história</p>
+        </div>
+      </div>
+      <div class="story">
+        <div class="name">
+          <div class="name-word" role="group" aria-label="O nome Brius: toque em BRI ou US">
+            <button type="button" id="bBri" aria-pressed="false" aria-controls="pSab">BRI</button><button type="button" id="bUs" aria-pressed="false" aria-controls="pMat">US</button>
+          </div>
+          <p class="name-hint" id="nameHint">Passe o mouse ou toque em BRI e em US.</p>
+          <div class="people" id="people">
+            <div class="person" id="pSab"><span class="pn">Sa<b>BRI</b>na</span><p>Cria as artes e desenvolve as estratégias de marketing e redes sociais.</p></div>
+            <div class="person" id="pMat"><span class="pn">Mathe<b>US</b></span><p>Apaixonado por criação e edição de vídeo, especialista em tráfego pago.</p></div>
+          </div>
+        </div>
+        <div class="about-text">
+          <p class="since">A Brius nasceu há <i>2 anos</i>, criada por Matheus e Sabrina.</p>
+          <p class="lede">Começamos com gestão de redes sociais e hoje fazemos produção de vídeo para casamentos e todo tipo de evento, fotografia e estratégia digital. O nome é a nossa assinatura: <b>BRI</b> de Sabrina e <b>US</b> de Matheus.</p>
+          <ol class="timeline" aria-label="Como trabalhamos">
+            <li><b>Diagnóstico</b><span>Analisamos o seu perfil para entender o público e a melhor estratégia.</span></li>
+            <li><b>Análise</b><span>Juntamos tudo o que foi levantado e alinhamos com o seu objetivo.</span></li>
+            <li><b>Gestão</b><span>Definimos o visual: estética das postagens, biografia, foto de perfil e paleta de cores.</span></li>
+            <li><b>Relatório</b><span>Com a estratégia aprovada, colocamos em prática e avaliamos melhorias todo mês.</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band light" id="servicos">
+  <div class="wrap">
+    <div class="head">
+      <h2 class="mega ltr" aria-label="Serviços"><span aria-hidden="true"><span class="w"><span class="lt">S</span><span class="lt">e</span><span class="lt">r</span><span class="lt">v</span><span class="lt">i</span><span class="lt">ç</span><span class="lt">o</span><span class="lt">s</span></span></span></h2>
+      <p class="lede">Todos os serviços são feitos sob medida para o seu negócio e podem incluir:</p>
+    </div>
+    <div class="services">
+      <div class="svc">
+        <svg viewBox="0 0 40 40" aria-hidden="true"><rect x="5" y="12" width="22" height="18" rx="2"/><path d="M27 18 L35 13 V29 L27 24"/><circle cx="16" cy="21" r="4"/></svg>
+        <h3>Audiovisual</h3>
+        <p>Fotógrafo, videomaker e storymaker para casamentos, eventos, shows e marcas. Registramos e contamos a sua história.</p>
+      </div>
+      <div class="svc">
+        <svg viewBox="0 0 40 40" aria-hidden="true"><rect x="10" y="4" width="20" height="32" rx="4"/><path d="M15 14 h10 M15 19 h10 M15 24 h6"/></svg>
+        <h3>Gestão de redes sociais</h3>
+        <p>Planejamento, conteúdo e presença constante para a sua audiência crescer.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band dark" id="casamentos">
+  <div class="wrap">
+    <div class="chapter">
+      <div class="head">
+        <h2 class="mega ltr" aria-label="Eventos"><span aria-hidden="true"><span class="w"><span class="lt">E</span><span class="lt">v</span><span class="lt">e</span><span class="lt">n</span><span class="lt">t</span><span class="lt">o</span><span class="lt">s</span></span></span></h2>
+        <div class="text">
+          <p class="eyebrow">Casamentos &amp; Eventos</p>
+          <p class="lede">Cobertura de eventos ao vivo, de bastidores a plateia, com o ritmo e a emoção de quem está lá.</p>
+        </div>
+      </div>
+      <div class="grid g-events" data-gallery>
+        <button><img src="img/03.jpg" alt="Entrevista no palco do Teleton" loading="lazy"></button>
+        <button><img src="img/05.jpg" alt="Apresentador César Filho no palco do Teleton" loading="lazy"></button>
+        <button><img src="img/06.jpg" alt="Evento do Neymar" loading="lazy"></button>
+        <button><img src="img/04.jpg" alt="Público emocionado na Virada da Paulista" loading="lazy"></button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="band dark2" id="producoes">
+  <div class="wrap">
+    <div class="chapter">
+      <div class="head">
+        <h2 class="mega ltr" aria-label="Produções"><span aria-hidden="true"><span class="w"><span class="lt">P</span><span class="lt">r</span><span class="lt">o</span><span class="lt">d</span><span class="lt">u</span><span class="lt">ç</span><span class="lt">õ</span><span class="lt">e</span><span class="lt">s</span></span></span></h2>
+        <div class="text">
+          <p class="eyebrow">Reels &amp; vídeos verticais</p>
+          <p class="lede">Vídeos pensados para o feed e para os stories: roteiro, captação e edição feitos para prender a atenção nos primeiros segundos. Toque em um vídeo para assistir.</p>
+        </div>
+      </div>
+      <div class="reels" id="reels"></div>
+    </div>
+  </div>
+</section>
+
+<section class="band light" id="corporativos">
+  <div class="wrap">
+    <div class="chapter">
+      <div class="head">
+        <h2 class="big ltr" aria-label="Entrega de chaves"><span aria-hidden="true"><span class="w"><span class="lt">E</span><span class="lt">n</span><span class="lt">t</span><span class="lt">r</span><span class="lt">e</span><span class="lt">g</span><span class="lt">a</span></span><span class="sp"> </span><span class="w"><span class="lt">d</span><span class="lt">e</span></span><span class="sp"> </span><span class="w"><span class="lt">c</span><span class="lt">h</span><span class="lt">a</span><span class="lt">v</span><span class="lt">e</span><span class="lt">s</span></span></span></h2>
+        <div class="text">
+          <p class="eyebrow">Eventos corporativos</p>
+          <div class="client"><b>Kazzas Incorporadora</b><span>@kazzas_incorporadora</span></div>
+        </div>
+      </div>
+      <div class="split">
+        <div class="phone" data-video="v/00.mp4" data-poster="v/00.jpg"></div>
+        <div class="side">
+          <p class="lede">Registro de um momento que simboliza conquista e novos começos. A cobertura foi pensada para capturar emoção, detalhes e a atmosfera do evento, transmitindo credibilidade, celebração e a importância dessa realização para cada cliente.</p>
+          <div class="grid g-three" data-gallery>
+            <button><img src="img/17.jpg" alt="Casal feliz com a entrega das chaves" loading="lazy"></button>
+            <button><img src="img/16.jpg" alt="Família sentada entre os prédios" loading="lazy"></button>
+            <button><img src="img/18.jpg" alt="Família comemorando no apartamento novo" loading="lazy"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="head">
+        <h2 class="big ltr" aria-label="Fotografia publicitária"><span aria-hidden="true"><span class="w"><span class="lt">F</span><span class="lt">o</span><span class="lt">t</span><span class="lt">o</span><span class="lt">g</span><span class="lt">r</span><span class="lt">a</span><span class="lt">f</span><span class="lt">i</span><span class="lt">a</span></span><span class="sp"> </span><span class="w"><span class="lt">p</span><span class="lt">u</span><span class="lt">b</span><span class="lt">l</span><span class="lt">i</span><span class="lt">c</span><span class="lt">i</span><span class="lt">t</span><span class="lt">á</span><span class="lt">r</span><span class="lt">i</span><span class="lt">a</span></span></span></h2>
+        <div class="text">
+          <p class="lede">Imagens criadas para destacar textura, caimento e personalidade das peças. A fotografia valoriza cores, detalhes e a essência da marca, transmitindo sensação de qualidade e desejo. Cada clique reforça estilo, leveza e o lifestyle que o público busca.</p>
+          <div class="client"><b>Moda Praia &amp; Moda Íntima</b><span>@doce.menina_25</span></div>
+        </div>
+      </div>
+      <div class="grid g-three" data-gallery>
+        <button><img src="img/19.jpg" alt="Camisola preta com renda dourada" loading="lazy"></button>
+        <button><img src="img/20.jpg" alt="Conjunto de lingerie lilás" loading="lazy"></button>
+        <button><img src="img/21.jpg" alt="Biquíni verde água sobre pelúcia" loading="lazy"></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band dark2" id="clientes">
+  <div class="wrap">
+    <div class="chapter">
+      <div class="head">
+        <h2 class="mega ltr" aria-label="Clientes"><span aria-hidden="true"><span class="w"><span class="lt">C</span><span class="lt">l</span><span class="lt">i</span><span class="lt">e</span><span class="lt">n</span><span class="lt">t</span><span class="lt">e</span><span class="lt">s</span></span></span></h2>
+        <div class="text">
+          <p class="eyebrow">Portfólio completo</p>
+          <p class="lede">Cada cliente tem o seu álbum. As fotos passam sozinhas; toque num álbum para ver todas em tela cheia.</p>
+        </div>
+      </div>
+      <div class="filters" role="group" aria-label="Filtrar fotos dos clientes">
+        <button type="button" class="on" data-f="todos" aria-pressed="true">Todos</button>
+        <button type="button" data-f="casamentos" aria-pressed="false">Casamentos &amp; bodas</button>
+        <button type="button" data-f="quinze" aria-pressed="false">15 anos</button>
+        <button type="button" data-f="batizados" aria-pressed="false">Batizados</button>
+        <button type="button" data-f="chas" aria-pressed="false">Chás</button>
+        <button type="button" data-f="eventos" aria-pressed="false">Eventos</button>
+        <button type="button" data-f="shows" aria-pressed="false">Shows</button>
+        <button type="button" data-f="gastro" aria-pressed="false">Gastronomia</button>
+        <button type="button" data-f="marcas" aria-pressed="false">Marcas</button>
+      </div>
+      <div class="albums" id="albums" aria-live="polite"></div>
+      <div class="more"><button type="button" class="btn-ghost" id="cMore">Ver mais álbuns</button></div>
+    </div>
+  </div>
+</section>
+
+<section class="band quote" id="orcamento">
+  <div class="wrap">
+    <div class="chapter">
+      <div class="head">
+        <h2 class="mega ltr" aria-label="Orçamento"><span aria-hidden="true"><span class="w"><span class="lt">O</span><span class="lt">r</span><span class="lt">ç</span><span class="lt">a</span><span class="lt">m</span><span class="lt">e</span><span class="lt">n</span><span class="lt">t</span><span class="lt">o</span></span></span></h2>
+        <div class="text">
+          <p class="eyebrow">Como funciona</p>
+          <p class="lede">Conte sobre o seu evento em poucos passos. A gente analisa data, equipe e deslocamento e responde com a proposta pelo WhatsApp.</p>
+        </div>
+      </div>
+      <form class="qf" id="qf" novalidate>
+        <ol class="qf-tabs" aria-label="Etapas do orçamento">
+          <li class="on" data-go="0"><span>1</span>Seus dados</li>
+          <li data-go="1"><span>2</span>O evento</li>
+          <li data-go="2"><span>3</span>O local</li>
+          <li data-go="3"><span>4</span>Revisar</li>
+        </ol>
+
+        <fieldset class="qf-step" data-step="0">
+          <legend>Seus dados</legend>
+          <div class="qf-grid">
+            <label class="full">Nome completo<input id="q-nome" name="nome" autocomplete="name" required minlength="5" placeholder="Ex.: Maria Aparecida da Silva"></label>
+            <label>E-mail<input id="q-email" name="email" type="email" autocomplete="email" required placeholder="voce@email.com"></label>
+            <label>WhatsApp<input id="q-whatsapp" name="whatsapp" type="tel" inputmode="numeric" autocomplete="tel" required placeholder="(11) 91234-5678"></label>
+            <label class="hp" aria-hidden="true">Site<input id="q-site" name="site" tabindex="-1" autocomplete="off"></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="qf-step" data-step="1" hidden>
+          <legend>O evento</legend>
+          <div class="qf-grid">
+            <label>Data do evento<input id="q-data" name="data" type="date" required><small id="q-data-msg"></small></label>
+            <label>Horário de início<input id="q-inicio" name="inicio" type="time" required value="18:00"></label>
+            <label>Horas de cobertura<input id="q-horas" name="horas" type="number" min="1" max="16" step="0.5" required value="4"></label>
+            <label>Profissionais <em>(mínimo 2)</em><input id="q-prof" name="profissionais" type="number" min="2" max="10" required value="2"></label>
+            <label class="full">Estilo do evento<input id="q-estilo" name="estilo" required list="estilos" placeholder="Ex.: casamento, aniversário de 15 anos, show, evento corporativo..."></label>
+            <datalist id="estilos"><option value="Casamento"><option value="Pré-wedding / ensaio de casal"><option value="Aniversário"><option value="Chá revelação / chá de bebê"><option value="Show"><option value="Evento corporativo"><option value="Ensaio de produto / gastronomia"><option value="Conteúdo para redes sociais"></datalist>
+            <label>Convidados <em>(aproximado)</em><input id="q-conv" name="convidados" type="number" min="0" placeholder="Ex.: 120"></label>
+            <label class="full">Conte um pouco mais <em>(opcional)</em><textarea id="q-obs" name="obs" rows="3" placeholder="Foto, vídeo ou os dois? Precisa de drone, reels no dia, álbum?"></textarea></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="qf-step" data-step="2" hidden>
+          <legend>O local</legend>
+          <div class="qf-grid">
+            <label class="full">Endereço do evento<input id="q-local" name="local" required autocomplete="street-address" placeholder="Rua, número, bairro, cidade - UF"></label>
+          </div>
+          <div class="route">
+            <button type="button" class="btn-dark" id="q-rota">Calcular deslocamento</button>
+            <p id="q-rota-out" aria-live="polite">Calculamos pelo Google Maps o tempo de carro da nossa base até o local.</p>
+          </div>
+        </fieldset>
+
+        <fieldset class="qf-step" data-step="3" hidden>
+          <legend>Revisar e enviar</legend>
+          <dl class="review" id="q-review"></dl>
+          <p class="fine">Ao enviar, a equipe Brius recebe o seu pedido e responde com a proposta pelo WhatsApp informado.</p>
+        </fieldset>
+
+        <div class="qf-done" id="q-done" hidden>
+          <p class="big-ok">Pedido enviado!</p>
+          <p>Recebemos o seu pedido de orçamento. Em breve a equipe Brius chama você no WhatsApp com a proposta.</p>
+          <p class="fine" id="q-done-id"></p>
+        </div>
+
+        <p class="qf-err" id="q-err" role="alert"></p>
+        <div class="qf-nav" id="q-nav">
+          <button type="button" class="btn-ghost" id="q-back" hidden>Voltar</button>
+          <button type="button" class="btn-dark" id="q-next">Continuar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section class="contact" id="contato">
+  <div class="wrap">
+    <p class="eyebrow" style="color:var(--muted-d)">Contato</p>
+    <h2 class="mega ltr" aria-label="Chegou o momento da sua marca ganhar força no digital."><span aria-hidden="true"><span class="w"><span class="lt">C</span><span class="lt">h</span><span class="lt">e</span><span class="lt">g</span><span class="lt">o</span><span class="lt">u</span></span><span class="sp"> </span><span class="w"><span class="lt">o</span></span><span class="sp"> </span><span class="w"><span class="lt">m</span><span class="lt">o</span><span class="lt">m</span><span class="lt">e</span><span class="lt">n</span><span class="lt">t</span><span class="lt">o</span></span><span class="sp"> </span><span class="w"><span class="lt">d</span><span class="lt">a</span></span><span class="sp"> </span><span class="w"><span class="lt">s</span><span class="lt">u</span><span class="lt">a</span></span><span class="sp"> </span><span class="w"><span class="lt">m</span><span class="lt">a</span><span class="lt">r</span><span class="lt">c</span><span class="lt">a</span></span><span class="sp"> </span><span class="w"><span class="lt">g</span><span class="lt">a</span><span class="lt">n</span><span class="lt">h</span><span class="lt">a</span><span class="lt">r</span></span><span class="sp"> </span><span class="w"><span class="lt">f</span><span class="lt">o</span><span class="lt">r</span><span class="lt">ç</span><span class="lt">a</span></span><span class="sp"> </span><span class="w"><span class="lt">n</span><span class="lt">o</span></span><span class="sp"> </span><span class="w"><span class="lt">d</span><span class="lt">i</span><span class="lt">g</span><span class="lt">i</span><span class="lt">t</span><span class="lt">a</span><span class="lt">l</span><span class="lt">.</span></span></span></h2>
+    <div class="channels">
+      <div class="ch">
+        <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M3.5 6.5l8.5 6.5 8.5-6.5"/></svg></span>
+        <small>E-mail</small>
+        <span class="val" id="mail">agenciabrius@gmail.com</span>
+        <div class="row"><button class="btn" data-copy="agenciabrius@gmail.com">Copiar e-mail</button></div>
+      </div>
+      <a class="ch ch-link" href="https://www.instagram.com/agenciabrius/" target="_blank" rel="noopener">
+        <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"/></svg></span>
+        <small>Instagram</small>
+        <span class="val">@agenciabrius</span>
+        <span class="row"><span class="btn">Ver o perfil →</span></span>
+      </a>
+    </div>
+  </div>
+</section>
+<footer><div class="wrap"><span>Brius Agência · Matheus e Sabrina</span><span>Audiovisual · Redes sociais</span></div></footer>
+
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Foto ampliada">
+  <img id="lbImg" alt="">
+  <button class="x" id="lbX">Fechar ✕</button>
+  <button class="p" id="lbP" aria-label="Foto anterior">‹</button>
+  <button class="n" id="lbN" aria-label="Próxima foto">›</button>
+</div>
+
+<script>
+// Reels
+const reels=document.getElementById('reels');
+const CAP=[
+ ['Chá revelação',''],
+ ['Missa da quarta-feira dos olhos','Basílica Nossa Senhora da Penha'],
+ ['Chegada do ônibus do Corinthians','Neo Química Arena'],
+ ['Copa Omint','Nubank Parque'],
+ ['Missa','Paróquia de Jesus Nazaré'],
+ ['Evento PHN','Canção Nova'],
+ ['Abertura do restaurante do Vini','@rangotapronto · 1,1 milhão de seguidores'],
+ ['Brasatto Restaurante','Pizzaria'],
+ ['Brasatto Restaurante','Pizzaria'],
+ ['Chá revelação Mascarenhas',''],
+ ['Abertura de loja Doce Menina','@doce.menina_25'],
+ ['Teleton 2025','']];
+for(let i=1;i<=12;i++){const n=String(i).padStart(2,'0');const f=document.createElement('figure');f.className='reel';
+  const d=document.createElement('div');d.className='phone';d.dataset.video='v/'+n+'.mp4';d.dataset.poster='v/'+n+'.jpg';
+  const c=document.createElement('figcaption');const t=CAP[i-1];c.innerHTML='<b></b>'+(t[1]?'<span></span>':'');c.querySelector('b').textContent=t[0];if(t[1])c.querySelector('span').textContent=t[1];
+  f.append(d,c);reels.appendChild(f);}
+document.querySelectorAll('.phone').forEach(p=>{
+  p.innerHTML='<div class="screen"><video playsinline loop preload="none" poster="'+p.dataset.poster+'" src="'+p.dataset.video+'"></video></div><button aria-label="Reproduzir vídeo"><span></span></button>';
+  const v=p.querySelector('video'),b=p.querySelector('button');
+  b.addEventListener('click',()=>{
+    if(v.paused){document.querySelectorAll('.phone video').forEach(o=>{if(o!==v){o.pause();o.closest('.phone').classList.remove('playing')}});v.play().catch(()=>{});p.classList.add('playing');b.setAttribute('aria-label','Pausar vídeo')}
+    else{v.pause();p.classList.remove('playing');b.setAttribute('aria-label','Reproduzir vídeo')}
+  });
+});
+// ============ ORÇAMENTO ============
+// Cole aqui o endereço do App da Web do Google Apps Script (termina em /exec)
+const API_URL = '';
+(function(){
+  const f=document.getElementById('qf'); if(!f) return;
+  const steps=[...f.querySelectorAll('.qf-step')], tabs=[...f.querySelectorAll('.qf-tabs li')];
+  const next=document.getElementById('q-next'), back=document.getElementById('q-back'), err=document.getElementById('q-err');
+  const $=id=>document.getElementById(id);
+  let cur=0, reservadas=new Set(), rota=null;
+  // mínimo: amanhã
+  const t=new Date(); t.setDate(t.getDate()+1); $('q-data').min=t.toISOString().slice(0,10);
+  if(API_URL){ fetch(API_URL+'?acao=datas').then(r=>r.json()).then(j=>{ if(j.ok) reservadas=new Set(j.datas); checarData(); }).catch(()=>{}); }
+  // máscara WhatsApp
+  $('q-whatsapp').addEventListener('input',e=>{let d=e.target.value.replace(/\D/g,'').slice(0,11);
+    e.target.value=d.length>10?`(${d.slice(0,2)}) ${d.slice(2,7)}-${d.slice(7)}`:d.length>6?`(${d.slice(0,2)}) ${d.slice(2,6)}-${d.slice(6)}`:d.length>2?`(${d.slice(0,2)}) ${d.slice(2)}`:d;});
+  function checarData(){const v=$('q-data').value,m=$('q-data-msg');if(!v){m.textContent='';m.className='';return true}
+    if(reservadas.has(v)){m.textContent='Data já reservada. Escolha outra data.';m.className='bad';$('q-data').setAttribute('aria-invalid','true');return false}
+    m.textContent=API_URL?'Data disponível.':'';m.className='good';$('q-data').removeAttribute('aria-invalid');return true}
+  $('q-data').addEventListener('change',checarData);
+  $('q-local').addEventListener('input',()=>{rota=null;$('q-rota-out').textContent='Calculamos pelo Google Maps o tempo de carro da nossa base até o local.'});
+  function show(i){cur=i;steps.forEach((s,k)=>s.hidden=k!==i);tabs.forEach((t,k)=>{t.classList.toggle('on',k===i);t.classList.toggle('done',k<i)});
+    back.hidden=i===0;next.textContent=i===3?'Enviar orçamento':'Continuar';err.textContent='';
+    if(i===3) resumo(); f.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});}
+  function validar(i){let ok=true;steps[i].querySelectorAll('input[required]').forEach(inp=>{const bad=!inp.checkValidity()||!inp.value.trim();inp.setAttribute('aria-invalid',bad);if(bad)ok=false});
+    if(!ok){err.textContent='Confira os campos destacados.';return false}
+    if(i===0&&$('q-whatsapp').value.replace(/\D/g,'').length<10){$('q-whatsapp').setAttribute('aria-invalid','true');err.textContent='Informe o WhatsApp com DDD.';return false}
+    if(i===1&&!checarData()){err.textContent='Esta data já está reservada.';return false}
+    if(i===1&&Number($('q-prof').value)<2){$('q-prof').setAttribute('aria-invalid','true');err.textContent='O mínimo é de 2 profissionais.';return false}
+    return true}
+  tabs.forEach((t,k)=>t.addEventListener('click',()=>{if(k<cur)show(k)}));
+  back.addEventListener('click',()=>show(cur-1));
+  async function calcRota(){const dest=$('q-local').value.trim(),out=$('q-rota-out');
+    if(dest.length<8){out.textContent='Digite o endereço completo, com número e cidade.';return null}
+    if(!API_URL){out.textContent='O cálculo pelo Google Maps funciona na versão publicada do site.';return null}
+    out.textContent='Calculando...';$('q-rota').disabled=true;
+    try{const j=await (await fetch(API_URL+'?acao=rota&destino='+encodeURIComponent(dest))).json();
+      if(!j.ok)throw new Error(j.erro);rota=j;
+      out.innerHTML='<b>'+fmtMin(j.minutos)+'</b> de carro · '+String(j.km).replace('.',',')+' km<br>'+esc(j.endereco);return j}
+    catch(e){out.textContent='Não encontramos esse endereço. Confira e tente de novo.';return null}
+    finally{$('q-rota').disabled=false}}
+  $('q-rota').addEventListener('click',calcRota);
+  function fmtMin(m){return m<60?m+' min':Math.floor(m/60)+' h '+(m%60?String(m%60).padStart(2,'0')+' min':'')}
+  function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+  function resumo(){const d=$('q-data').value.split('-').reverse().join('/');
+    const rows=[['Nome',$('q-nome').value],['E-mail',$('q-email').value],['WhatsApp',$('q-whatsapp').value],['Data',d+' às '+$('q-inicio').value],
+      ['Cobertura',$('q-horas').value+' h'],['Estilo',$('q-estilo').value],['Profissionais',$('q-prof').value],['Convidados',$('q-conv').value||'—'],
+      ['Local',rota?rota.endereco:$('q-local').value],['Deslocamento',rota?fmtMin(rota.minutos)+' de carro':'calculado ao enviar'],['Observações',$('q-obs').value||'—']];
+    $('q-review').innerHTML=rows.map(([k,v])=>'<dt>'+k+'</dt><dd>'+esc(v)+'</dd>').join('')}
+  next.addEventListener('click',async()=>{
+    if(cur<2){if(validar(cur))show(cur+1);return}
+    if(cur===2){if(!validar(2))return; if(!rota&&API_URL)await calcRota(); show(3);return}
+    // enviar
+    if(!API_URL){err.textContent='O envio funciona na versão publicada do site. Por enquanto, fale com a gente pelo Instagram @agenciabrius.';return}
+    next.disabled=true;next.textContent='Enviando...';err.textContent='';
+    const data=Object.fromEntries(new FormData(f).entries());
+    try{const j=await (await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)})).json();
+      if(!j.ok)throw new Error(j.erro||'Erro');
+      steps.forEach(s=>s.hidden=true);document.getElementById('q-nav').hidden=true;f.querySelector('.qf-tabs').hidden=true;
+      $('q-done').hidden=false;$('q-done-id').textContent='Número do pedido: '+j.id;}
+    catch(e){err.textContent=e.message&&e.message!=='Failed to fetch'?e.message:'Não foi possível enviar agora. Tente de novo em instantes.';next.disabled=false;next.textContent='Enviar orçamento'}
+  });
+})();
+// ===== CLIENTES (álbuns) =====
+const ALBUNS=[{"t": "Ensaio de bodas Sirlene & Valdinei", "c": "casamentos", "p": ["cli/14iXRdkyGyDbYGFbe8BTxlTZuHTR6kw4U.jpg", "cli/1apkXkkY6C3erZ-qjhI9CXUDhxO4-OKG9.jpg", "cli/1iOrWkklZidzKfpf2uiYVqnluho98Ta3p.jpg", "cli/1ua_YkILjf7JSQHmeP6Ew7EHk7gqzLY8c.jpg", "cli/1-1VYDVGcfeyj7TPAHjdfNO8Kltll030n.jpg", "cli/16PBcp6z9rSWVzVOFB_-bufjcdJ0PJ0pT.jpg"]}, {"t": "Neymar Jr.", "c": "eventos", "p": ["cli/1feosy6RMxHUSHrJ4gxdcY3ojRfVFeIJV.jpg", "cli/1pHBIe_wIXkYRdoGjRa8-W4krhCVhA1W_.jpg"]}, {"t": "Ovos de Páscoa Mary Amory", "c": "gastro", "p": ["cli/1C6YGOnsxg7QEIYAuQVa52A94icNn9EHg.jpg", "cli/1bb0244O5T62u_tosRh4n7sw4DQbRgfqg.jpg", "cli/1u_ZyXYGScTQ57a_Hj4g2GIp_M0s3Ggvx.jpg", "cli/1b2EdsRHS9E11UTraouq1X4Pi2U5ny61q.jpg"]}, {"t": "15 anos Maria Isabel", "c": "quinze", "p": ["cli/133Lf3Wpuky_8cU3AoX1vcSHsZRxmRnUc.jpg", "cli/1ABa8Gk7tzqf8F4EJoawgoN_1AyFo2C06.jpg", "cli/1jij3wsV6LqN07wffUW1GVDIkmeZtNlxz.jpg", "cli/1SxnJapaR4wLbrm9VV9O8yw7ESLvoH7Ni.jpg", "cli/17tsugCF6yICXhng2mH3SblTsk3VzTaZF.jpg", "cli/1XmulOCRi4X4IE30gfFYRxAdhMExbineL.jpg", "cli/1pgQDsp3A8BELmoMibgZA_fghn0elFIpI.jpg", "cli/1tjtnXLwrGdwmQ8UsBJ-WtrdNT6mQ4LsB.jpg"]}, {"t": "Frei Gilson & Padre Marcelo Rossi", "c": "shows", "p": ["img/41.jpg", "img/44.jpg", "img/42.jpg"]}, {"t": "Batizado de Sofia", "c": "batizados", "p": ["cli/1_4FiSEk11XQrG7cJF2D7wSw1fcgQ1WAP.jpg", "cli/17XJUyc-8TDHvB7JrjjgFfpwi-TYx1EFd.jpg", "cli/1YMjElsFKyMlCRCa4jOK8xvZyBtxLCvpQ.jpg", "cli/18YA13UTmX1b5dTWfyXHApNhsy-toHTwn.jpg"]}, {"t": "Chá de bebê Lavínia", "c": "chas", "p": ["cli/1OrwC7OQ9PSmPYDNEFBswHvnr51IFc_Ib.jpg", "cli/1tqoU4p8-Eg9QarKdD2uoyJev5vM1675d.jpg", "cli/1b0_cjigdCmuZH-OfFJjhHks0B2JsJYQN.jpg", "cli/1kreA1rqR6aDo_cVFr2T_RsdhBVDjNxk0.jpg"]}, {"t": "Entrega de chaves", "c": "marcas", "p": ["cli/1vfEGiyb-zp27YS5S8vCQKV1wZvoKG9rZ.jpg", "cli/1l0d-ATYC_Db5wT3YlanA7diGPdvP0MoP.jpg", "cli/1ACzpDDbczfCYt5Nw66f5mIjudE7LfJSk.jpg", "cli/1-qLsNo-n2EDXAvAaTPe7eP_oxE1e1vJP.jpg"]}, {"t": "Casamento Juliana & Daniel", "c": "casamentos", "p": ["cli/1LUByS55DrQB6KbRPsYZRJK59bz6y8fwm.jpg", "cli/19YbdL2-V3UjuriVuw_zkWe_cppb2CBX9.jpg", "cli/1jlXmT44dYOsvR7mHZxQGDhTMPFj-2ZRL.jpg", "cli/1MnK-hF5AR8xhlw9eSMY-W976rCtTe7OM.jpg", "cli/1rRJLHzoogvu7ZmOAB5GAXvzeiiCbqDLh.jpg"]}, {"t": "Aviva Camp", "c": "eventos", "p": ["cli/182O_AMUc9oL7WoDPPp1KLtgU_78b6MBK.jpg", "cli/1xiiE1zJ60_okIN097JJMlXFGg3D_cUyh.jpg", "cli/1qrFtvJ-tESb-yRL3BwclKl99uyxfRy3A.jpg", "cli/1Kk0iFjuEPO6LmCPj6adunTnRbUWsJwbW.jpg", "cli/1s857Fc4S_vjy24734cdY_dcC1I4Gcm16.jpg", "cli/1KjPuzV4-bZ_yJIgFaYsTjEjZDSc7RdbA.jpg"]}, {"t": "Chocotones Trevo Doces Gourmet", "c": "gastro", "p": ["img/29.jpg", "img/30.jpg", "img/31.jpg"]}, {"t": "Ensaio 15 anos", "c": "quinze", "p": ["cli/16saIYJWt92gRhIUp3FMLvAE_yMa1MjIR.jpg", "cli/1WluXCsrCryHl5KYTDXJgrd3PPntrrsIL.jpg", "cli/1PjVUwB-YWSbzY1Ud_aWMVP-ObHTkr9tp.jpg", "cli/1JM-GUUy6KueNd4ELZ0nJdoPKmba2MzaT.jpg", "cli/18EZOQZ5hrTJCza9OLh76m9a642GZD_ZZ.jpg"]}, {"t": "Show do João Gomes", "c": "shows", "p": ["img/43.jpg"]}, {"t": "Batizado Luis Gabriel", "c": "batizados", "p": ["cli/1eHFqC7WJIk282vTYr-Fzwuy7uVPlF5AE.jpg", "cli/1ebTxyQ_T0pYnHmx8K9-KWFUFuzZHnZS9.jpg", "cli/1GJBYEPsZArdlwBtI0bvbMDu2f8jsAN0G.jpg", "cli/1DuxAyj5ql9sV1tvo-CJQPPhT387-9QoH.jpg"]}, {"t": "Chá revelação Cecília", "c": "chas", "p": ["cli/1E8ce8nE5O4bnbPIP2Aed21OTO3HGK_zg.jpg", "cli/1CD-g-8Z2My6BeifV31Zge3YDrdjmpHB1.jpg", "cli/1wW7Vtql7O5L147zA8CRQsH6719WBMGvO.jpg", "cli/13-pbQqTfmkedPvddlFH9V5JJcUHAz7_c.jpg"]}, {"t": "Doce Menina", "c": "marcas", "p": ["cli/1Vy2JST1QpC95jP5E2EsxoID8RvjLslmY.jpg", "cli/1qfvJ5kQ4VmUVcKcm1UU2pGcCAikVbLK6.jpg"]}, {"t": "Casamento Bianca & Matheus", "c": "casamentos", "p": ["cli/1KXO9hLO6YJcaj4zYjUjplc0kJvM-bi5-.jpg", "cli/1CeJiQkomYsTW8c3-IS2x2bI7iIvU4mcV.jpg", "cli/1EKANYK9uZKSCy8DTNhvKst-8UoOKvHdN.jpg", "cli/1PGY1F83hduhXTN0BzJqtG5SPwNffD1bw.jpg", "cli/1Fb56tT9Y1qHqSKt1nL97pyhCeU4k3jvg.jpg"]}, {"t": "Cob Expo", "c": "eventos", "p": ["cli/11Fwt2bsu4lpeJqSgCV2Gq_2-mOFKZsCh.jpg", "cli/1-zaontiQswu-faD-5a8R5nSC9cAkhqhs.jpg", "cli/1t2-9DUIPXh0qcojnbygDVzKhD1IOxl0w.jpg", "cli/1EkYlhCEO3rAfgAS5fSsHeYMeFYEosnkR.jpg", "cli/1YY_zYgP_X7NopMaorgyfewmJOUGBsX9t.jpg"]}, {"t": "Brasatto Restaurante", "c": "gastro", "p": ["img/33.jpg", "img/34.jpg", "img/35.jpg", "img/32.jpg"]}, {"t": "Padre PH", "c": "shows", "p": ["cli/1kT9bN6-lvJ6NmHcrQQgugcXKCO4AmDGZ.jpg", "cli/1QBG00VtkkaU8x5oltw5WFTwBbbdBYjHx.jpg", "cli/1W8tmCqKRkRD2_56GOWedTHaOy998_X57.jpg", "cli/1uSDb9oh75ST53YfwQeVGHxK0AqOJaifK.jpg", "cli/1tW6GNw4i8Qdx6mTDfg8DagpsXzNvEP0r.jpg", "cli/1dryLGqpuG3ktlvmeEic62rKDCcdak4nr.jpg"]}, {"t": "Batizado Manoela", "c": "batizados", "p": ["cli/1-v04pCCo2dKXpuyDTx5FpwmW-9FtFY0B.jpg", "cli/13Lad7lL_HFJ7e6Liydp28QgrKbOAuTse.jpg", "cli/1n_GjEMcGheUC0Fnj9hvoRGnsG0PwnOnT.jpg"]}, {"t": "Chá revelação Mascarenhas", "c": "chas", "p": ["img/47.jpg", "img/48.jpg", "cli/1-VluN-T9e5BlQ-RZrQ6um-J71rw_a31l.jpg", "cli/18aQISGs9ROL8YrwPMq2YCgb4L9X2Wv5I.jpg"]}, {"t": "Espaço Guerir", "c": "marcas", "p": ["cli/12Mb5nI5EzvvN2SpHLGR6aCc4vJq1N7ZA.jpg"]}, {"t": "Bodas de Ouro Elza & Pedro", "c": "casamentos", "p": ["cli/1flrAmUUodRbsT_mGE9doQcVCEPIghGp2.jpg", "cli/1Fb5-dKjqyDVgywvDB0u4eUawnc1GATaP.jpg", "cli/1qW05VGyzaqjy-Gg2Cc5Y2MyhUQnIA_6K.jpg"]}, {"t": "Teleton", "c": "eventos", "p": ["cli/1z2iTYD-5Kgh9p7AkQL63ZF3vcW-g7UKF.jpg", "cli/1ovootHGhhh8KYq-Z150SWGSgSRzev80o.jpg", "cli/1BYFWAn9CU5xlmCBdJF8dBPNM-N1hM-ON.jpg"]}, {"t": "Assados do Rango", "c": "gastro", "p": ["img/38.jpg", "cli/16-XpGm0AQbNqVBjdJCbRQo58hm2VWtP1.jpg", "cli/148XFdB5gcmtSqMiCMN1wak0mdzYUaEdB.jpg", "img/37.jpg", "img/39.jpg"]}, {"t": "Batizado", "c": "batizados", "p": ["cli/1WgfpU7RVugIRtA_LFLld9N-JmpikGObN.jpg", "cli/1NXpO2WUHezv13uvygM0Z4wO8PiI5LsEl.jpg", "cli/1D2NjNtIntzQNT9cm1Qmwj2UMWiV-2TGc.jpg", "cli/1wa5-b6cdU-RPSb2aFwpQ9hTHF7H_nj5v.jpg"]}, {"t": "Chá revelação", "c": "chas", "p": ["img/46.jpg", "cli/1SAJQ2j1_gUNf7XOjvmgQxzo1Y65wD2YG.jpg", "cli/1zPh7QcLvAJTjGfxREND5EEHRT89A_cGG.jpg", "cli/1bhpKNTMymJXx09JGP5-j6nuR4aZcgNjF.jpg"]}, {"t": "Bruna Nails", "c": "marcas", "p": ["cli/1avYqTo0H_wZMKheVSltQkiueo3SvJXIn.jpg"]}, {"t": "Iluminar-te Mind", "c": "eventos", "p": ["cli/1s3L6js_bCuKy3t0ET2l2q57Lk7qs-312.jpg", "cli/19hW6nzzVlFZ3_kv6vArgLZkko7t-XPxi.jpg", "cli/1_TR1SASOEWj_ZxtQEl-lbmcma1T5BbqO.jpg"]}, {"t": "Batismo Maria & Micaela", "c": "batizados", "p": ["cli/18sIA1fUEsIUCDNKe5HnSsGP3b_0SaPVq.jpg", "cli/19rTXxHOiBdPwlKXpj7H7oGW5OT8JHb9K.jpg", "cli/13sWLHPnZX2mX7Kj5sXZ7aS8ExI1cJQ4Q.jpg"]}];
+(function(){
+  const box=document.getElementById('albums');if(!box)return;
+  const more=document.getElementById('cMore'),fb=[...document.querySelectorAll('.filters button')];
+  const calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const cards=ALBUNS.map((al,n)=>{
+    const b=document.createElement('button');b.type='button';b.className='album';b.dataset.cat=al.c;
+    b.setAttribute('aria-label','Abrir álbum: '+al.t+' ('+al.p.length+' fotos)');
+    const max=Math.min(al.p.length,8);
+    b.innerHTML='<div class="dots">'+'<i></i>'.repeat(al.p.length>1?max:0)+'</div><div class="meta"><span></span><b></b></div>';
+    b.querySelector('b').textContent=al.t;b.querySelector('span').textContent=al.p.length+(al.p.length>1?' fotos':' foto');
+    const im=[0,1].map(()=>{const i=document.createElement('img');i.alt='';i.decoding='async';b.prepend(i);return i});
+    let k=0,front=0,timer=null,vis=false,hov=false;
+    const dots=[...b.querySelectorAll('.dots i')];
+    function paint(){dots.forEach((d,j)=>{d.className=j<(k%max)?'done':(j===k%max?'cur':'')});}
+    function load(idx,cb){const t=im[1-front];t.onload=()=>{t.classList.add('on');im[front].classList.remove('on');front=1-front;cb&&cb()};t.alt=al.t;t.src=al.p[idx];}
+    function step(){k=(k+1)%al.p.length;load(k);paint();}
+    const dur=()=>hov?1600:2800+(n%5)*300;
+    function play(){stop();if(al.p.length<2||calm)return;b.style.setProperty('--dur',dur()+'ms');timer=setInterval(()=>{b.style.setProperty('--dur',dur()+'ms');step()},dur());}
+    function stop(){clearInterval(timer);timer=null}
+    b._start=()=>{if(!im[front].src){im[front].src=al.p[0];im[front].alt=al.t;im[front].classList.add('on');paint();}vis=true;play()};
+    b._stop=()=>{vis=false;stop()};
+    b.addEventListener('pointerenter',()=>{hov=true;if(vis){step();play()}});
+    b.addEventListener('pointerleave',()=>{hov=false;if(vis)play()});
+    b.addEventListener('click',()=>{set=al.p.map(src=>{const x=new Image();x.src=src;x.alt=al.t;return x});idx=k;last=b;show();lb.hidden=false;document.getElementById('lbX').focus()});
+    box.appendChild(b);return b;});
+  const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting?e.target._start():e.target._stop()),{rootMargin:'120px'});
+  cards.forEach(c=>io.observe(c));
+  let f='todos',lim=8;
+  function render(){const m=cards.filter(c=>f==='todos'||c.dataset.cat===f);cards.forEach(c=>c.hidden=true);m.slice(0,lim).forEach(c=>c.hidden=false);more.hidden=m.length<=lim;}
+  fb.forEach(b=>b.addEventListener('click',()=>{f=b.dataset.f;lim=8;fb.forEach(x=>{x.classList.toggle('on',x===b);x.setAttribute('aria-pressed',x===b)});render()}));
+  more.addEventListener('click',()=>{lim+=8;render()});
+  render();
+})();
+// ===== NOME BRIUS =====
+(function(){
+  const bri=document.getElementById('bBri'),us=document.getElementById('bUs'),pp=document.getElementById('people'),hint=document.getElementById('nameHint');
+  if(!bri) return;
+  const map=[[bri,'pSab','BRI de Sabrina'],[us,'pMat','US de Matheus']];
+  function set(which){map.forEach(([b,id])=>{const on=b===which;b.setAttribute('aria-pressed',on);b.classList.toggle('dim',!!which&&!on);document.getElementById(id).classList.toggle('on',on)});
+    pp.classList.toggle('has-on',!!which);hint.textContent=which?map.find(m=>m[0]===which)[2]+'.':'Passe o mouse ou toque em BRI e em US.'}
+  map.forEach(([b,id])=>{
+    b.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse')set(b)});
+    let pt='';b.addEventListener('pointerdown',e=>pt=e.pointerType);
+    b.addEventListener('click',()=>{if(pt==='mouse'){set(b)}else{set(b.getAttribute('aria-pressed')==='true'&&pt?null:b)}pt=''});
+    document.getElementById(id).addEventListener('pointerenter',e=>{if(e.pointerType==='mouse')set(b)});
+  });
+  document.querySelector('.name').addEventListener('pointerleave',e=>{if(e.pointerType==='mouse')set(null)});
+})();
+// ===== EFEITOS =====
+(function(){
+  const fine=matchMedia('(hover: hover) and (pointer: fine)').matches, calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // legendas nas fotos
+  document.querySelectorAll('.grid button').forEach(b=>{const i=b.querySelector('img');if(i&&i.alt){const c=document.createElement('span');c.className='cap';c.textContent=i.alt;b.appendChild(c)}});
+  if(!fine) return;
+  // holofote
+  document.querySelectorAll('.svc,.step,.qf,.ch,.brand>div').forEach(el=>{el.classList.add('spot');
+    el.addEventListener('pointermove',e=>{const r=el.getBoundingClientRect();el.style.setProperty('--mx',(e.clientX-r.left)+'px');el.style.setProperty('--my',(e.clientY-r.top)+'px')})});
+  if(calm) return;
+  // celulares 3D
+  document.querySelectorAll('.phone').forEach(p=>{
+    p.addEventListener('pointermove',e=>{const r=p.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+      p.style.transform=`rotateY(${x*16}deg) rotateX(${-y*12}deg) translateZ(10px)`;p.style.setProperty('--mx',(x+.5)*100+'%');p.style.setProperty('--my',(y+.5)*100+'%')});
+    p.addEventListener('pointerleave',()=>{p.style.transform=''})});
+  // botões magnéticos
+  document.querySelectorAll('.cta,.btn-dark,.btn').forEach(b=>{
+    b.addEventListener('pointermove',e=>{const r=b.getBoundingClientRect();b.style.transform=`translate(${(e.clientX-r.left-r.width/2)*.18}px,${(e.clientY-r.top-r.height/2)*.25}px)`});
+    b.addEventListener('pointerleave',()=>{b.style.transform=''})});
+  // cursor
+  const cur=document.createElement('div');cur.className='cur';cur.hidden=true;cur.setAttribute('aria-hidden','true');document.body.appendChild(cur);
+  let x=0,y=0,cx=0,cy=0;
+  addEventListener('pointermove',e=>{x=e.clientX;y=e.clientY;cur.hidden=false;
+    const t=e.target.closest&&e.target.closest('.grid button,.phone,.album');cur.classList.toggle('big',!!t);cur.textContent=t?(t.classList.contains('phone')?'PLAY':(t.classList.contains('album')?'ÁLBUM':'VER')):''},{passive:true});
+  document.addEventListener('pointerleave',()=>cur.hidden=true);
+  (function loop(){cx+=(x-cx)*.22;cy+=(y-cy)*.22;cur.style.transform=`translate(${cx}px,${cy}px)`;requestAnimationFrame(loop)})();
+})();
+// Letters: wave when the pointer passes over a title
+document.querySelectorAll('.ltr').forEach(h=>{const cs=[...h.querySelectorAll(".lt")];
+  cs.forEach((c,i)=>c.addEventListener('pointerenter',()=>{[-1,0,1].forEach(o=>{const t=cs[i+o];if(!t)return;t.classList.add('up');setTimeout(()=>t.classList.remove('up'),280+Math.abs(o)*60)})}));});
+// Reveal on scroll (only for blocks below the first screen)
+if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&'IntersectionObserver' in window){
+  const els=[...document.querySelectorAll('.head,.grid,.services,.reels,.split,.steps,.story,.channels,.filters')].filter(e=>e.getBoundingClientRect().top>innerHeight);
+  els.forEach(e=>e.classList.add('reveal','pre'));
+  const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.remove('pre');io.unobserve(en.target)}}),{rootMargin:'0px 0px -8% 0px'});
+  els.forEach(e=>io.observe(e));
+}
+// Active menu item
+const links=[...document.querySelectorAll('.nav ul a')];
+links.forEach(a=>{const t=a.textContent;a.innerHTML='<span class="t" data-t="'+t+'">'+t+'</span>'});
+const secs=links.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+const io2=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+en.target.id))}}),{rootMargin:'-45% 0px -50% 0px'});
+secs.forEach(s=>io2.observe(s));
+// Nav
+const nav=document.getElementById('nav'),tg=document.getElementById('navToggle');
+tg.addEventListener('click',()=>{const o=nav.classList.toggle('open');tg.setAttribute('aria-expanded',o)});
+nav.querySelectorAll('ul a').forEach(a=>a.addEventListener('click',()=>{nav.classList.remove('open');tg.setAttribute('aria-expanded','false')}));
+// Lightbox
+const lb=document.getElementById('lb'),lbImg=document.getElementById('lbImg');let set=[],idx=0,last=null;
+function show(){lbImg.src=set[idx].src;lbImg.alt=set[idx].alt}
+document.querySelectorAll('[data-gallery]').forEach(g=>{const imgs=[...g.querySelectorAll('img')];
+  g.querySelectorAll('button').forEach((b,i)=>{b.setAttribute('aria-label','Ampliar: '+imgs[i].alt);b.addEventListener('click',()=>{set=imgs;idx=i;last=b;show();lb.hidden=false;document.getElementById('lbX').focus()})})});
+function close(){lb.hidden=true;last&&last.focus()}
+document.getElementById('lbX').onclick=close;
+document.getElementById('lbP').onclick=()=>{idx=(idx-1+set.length)%set.length;show()};
+document.getElementById('lbN').onclick=()=>{idx=(idx+1)%set.length;show()};
+lb.addEventListener('click',e=>{if(e.target===lb)close()});
+document.addEventListener('keydown',e=>{if(lb.hidden)return;if(e.key==='Escape')close();if(e.key==='ArrowLeft')document.getElementById('lbP').click();if(e.key==='ArrowRight')document.getElementById('lbN').click()});
+// Copy
+document.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',()=>{
+  const t=b.dataset.copy;const done=()=>{b.textContent='E-mail copiado';setTimeout(()=>b.textContent='Copiar e-mail',2000)};
+  if(navigator.clipboard){navigator.clipboard.writeText(t).then(done,()=>sel())}else sel();
+  function sel(){const r=document.createRange();r.selectNodeContents(document.getElementById('mail'));const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent='Selecionado, use Ctrl+C'}
+}));
+</script>
+
+</body>
+</html>
