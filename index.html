@@ -216,6 +216,36 @@ html{scroll-padding-top:120px}
 .album .dots i.cur::after{animation:bar var(--dur,2.8s) linear forwards}
 @keyframes bar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 @media (prefers-reduced-motion:reduce){.album img{transition:opacity .3s;transform:none!important}.album .dots i.cur::after{animation:none}}
+/* AVALIAÇÕES */
+.marquee{overflow:hidden;margin-inline:calc(-1 * var(--gutter-l)) calc(-1 * var(--gutter-r));-webkit-mask:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.track{display:flex;gap:16px;width:max-content;padding:8px 16px 20px;animation:slide 60s linear infinite}
+.marquee:hover .track{animation-play-state:paused}
+@keyframes slide{to{transform:translateX(-50%)}}
+.q{margin:0;width:min(340px,78vw);flex:none;background:var(--bone);border:1px solid #e6dccb;padding:24px 24px 20px;display:grid;gap:16px;align-content:space-between;position:relative;transition:transform .4s cubic-bezier(.2,.7,.2,1),box-shadow .4s,border-color .4s}
+.q::before{content:"\201C";position:absolute;top:-6px;right:18px;font:italic 400 84px/1 var(--display);color:var(--gold-soft)}
+.q:hover{transform:translateY(-6px) rotate(-.6deg);border-color:var(--gold);box-shadow:0 22px 36px -26px rgba(80,55,20,.55)}
+.q blockquote{margin:0;font:400 19px/1.4 var(--display);color:var(--ink)}
+.q figcaption{display:grid;gap:2px;font-size:13px}
+.q figcaption b{font-weight:700}
+.q figcaption span{color:var(--muted-l)}
+.auds{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.auds{grid-template-columns:minmax(0,1fr)}}
+.aud{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:16px;align-items:center;background:var(--ink);color:var(--bone);padding:16px 20px;border-radius:18px}
+.aud-play{width:52px;height:52px;border-radius:50%;border:0;background:var(--gold-soft);cursor:pointer;display:grid;place-items:center;transition:transform .3s}
+.aud-play:hover{transform:scale(1.08)}
+.aud-play span{width:0;height:0;border-left:15px solid var(--ink);border-top:9px solid transparent;border-bottom:9px solid transparent;margin-left:4px}
+.aud.playing .aud-play span{width:14px;height:16px;border:0;margin:0;background:linear-gradient(90deg,var(--ink) 0 35%,transparent 35% 65%,var(--ink) 65%)}
+.aud-body{display:grid;gap:2px;min-width:0}
+.aud-body b{font-size:15px}.aud-body>span{font-size:12px;color:var(--muted-d)}
+.aud-body p{margin:6px 0 0;font:italic 400 14px/1.4 var(--display);color:#e8e1d5}
+.wave{display:flex;align-items:center;gap:3px;height:26px;margin-top:6px;--p:0%}
+.wave i{flex:1;max-width:5px;background:#5a5249;border-radius:3px;height:30%}
+.wave i:nth-child(3n){height:70%}.wave i:nth-child(4n){height:45%}.wave i:nth-child(5n){height:95%}.wave i:nth-child(7n){height:55%}
+.wave i.lit{background:var(--gold-soft)}
+.aud.playing .wave i.lit{animation:pulse .6s ease-in-out infinite alternate}
+@keyframes pulse{to{transform:scaleY(.6)}}
+.aud-time{font:600 12px var(--body);color:var(--muted-d);font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:reduce){.track{animation:none;flex-wrap:wrap;width:auto}.aud.playing .wave i.lit{animation:none}}
 /* CORPORATE */
 .split{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(24px,4vw,56px);align-items:start}
 .split .phone{max-width:300px;width:100%;justify-self:center}
@@ -442,6 +472,7 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
       <li><a href="#producoes">Produções</a></li>
       <li><a href="#corporativos">Corporativo</a></li>
       <li><a href="#clientes">Clientes</a></li>
+      <li><a href="#avaliacoes">Avaliações</a></li>
       <li><a href="#contato">Contato</a></li>
     </ul>
   </div>
@@ -617,6 +648,52 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
       </div>
       <div class="albums" id="albums" aria-live="polite"></div>
       <div class="more"><button type="button" class="btn-ghost" id="cMore">Ver mais álbuns</button></div>
+    </div>
+  </div>
+</section>
+
+<section class="band light" id="avaliacoes">
+  <div class="wrap">
+    <div class="chapter">
+      <div class="head">
+        <h2 class="mega ltr" aria-label="Avaliações"><span aria-hidden="true"><span class="w"><span class="lt">A</span><span class="lt">v</span><span class="lt">a</span><span class="lt">l</span><span class="lt">i</span><span class="lt">a</span><span class="lt">ç</span><span class="lt">õ</span><span class="lt">e</span><span class="lt">s</span></span></span></h2>
+        <div class="text">
+          <p class="eyebrow">O que os clientes dizem</p>
+          <p class="lede">Mensagens e áudios reais que recebemos depois das entregas.</p>
+        </div>
+      </div>
+      <div class="marquee" aria-label="Mensagens de clientes">
+        <div class="track">
+          <figure class="q"><blockquote>Eu tô me desintegrando agora 🥹😭 Ficou perfeito.</blockquote><figcaption><b>Cliente</b><span>Vídeo da entrega de chaves</span></figcaption></figure>
+          <figure class="q"><blockquote>Caramba, ficou muito bom!! A qualidade está boa demais, baita upgrade, hein.</blockquote><figcaption><b>Cliente</b><span>Vídeo</span></figcaption></figure>
+          <figure class="q"><blockquote>Gente, fiquei emocionada.</blockquote><figcaption><b>Viviane Olimpio</b><span>Olimpio Consultoria</span></figcaption></figure>
+          <figure class="q"><blockquote>Ficou lindo demais. Muito obrigada por tanta sensibilidade.</blockquote><figcaption><b>Cliente</b><span>Vídeo da entrega de chaves</span></figcaption></figure>
+          <figure class="q"><blockquote>Owww. O vídeo no meu status tá fazendo sucesso! Parabéns.</blockquote><figcaption><b>Cliente</b><span>Vídeo</span></figcaption></figure>
+          <figure class="q"><blockquote>Matheus e sua noiva, vocês são maravilhosos. Deus abençoe infinitamente a vida de vocês, que o sucesso seja sempre consagrado ao Senhor!!! Gratidão 😍</blockquote><figcaption><b>Cliente</b><span>Mensagem</span></figcaption></figure>
+        </div>
+      </div>
+      <div class="auds">
+        <div class="aud" data-src="aud/a1.mp3">
+          <button type="button" class="aud-play" aria-label="Ouvir áudio de Viviane Olimpio"><span></span></button>
+          <div class="aud-body"><b>Viviane Olimpio</b><span>Olimpio Consultoria</span><div class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+          <span class="aud-time">0:00</span>
+        </div>
+        <div class="aud" data-src="aud/a2.mp3">
+          <button type="button" class="aud-play" aria-label="Ouvir áudio de Ale Botini"><span></span></button>
+          <div class="aud-body"><b>Ale Botini</b><span>Botini</span><div class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><p>“Nossa, Matheus, ficou muito bom esse, hein! Conseguimos imprimir autoridade…”</p></div>
+          <span class="aud-time">0:00</span>
+        </div>
+        <div class="aud" data-src="aud/a3.mp3">
+          <button type="button" class="aud-play" aria-label="Ouvir áudio de Cliente"><span></span></button>
+          <div class="aud-body"><b>Cliente</b><span>Áudio de cliente</span><div class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+          <span class="aud-time">0:00</span>
+        </div>
+        <div class="aud" data-src="aud/a4.mp3">
+          <button type="button" class="aud-play" aria-label="Ouvir áudio de Cliente"><span></span></button>
+          <div class="aud-body"><b>Cliente</b><span>Áudio de cliente</span><div class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+          <span class="aud-time">0:00</span>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -850,6 +927,21 @@ const ALBUNS=[{"t": "Ensaio de bodas Sirlene & Valdinei", "c": "casamentos", "p"
   more.addEventListener('click',()=>{lim+=8;render()});
   render();
 })();
+// ===== AVALIAÇÕES =====
+(function(){
+  const tr=document.querySelector('#avaliacoes .track');if(tr&&!matchMedia('(prefers-reduced-motion: reduce)').matches){tr.innerHTML+=tr.innerHTML;tr.querySelectorAll('.q:nth-child(n+7)').forEach(q=>q.setAttribute('aria-hidden','true'))}
+  let cur=null;
+  document.querySelectorAll('.aud').forEach(box=>{
+    const a=new Audio();a.preload='none';const btn=box.querySelector('.aud-play'),bars=[...box.querySelectorAll('.wave i')],t=box.querySelector('.aud-time');
+    const fmt=s=>Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');
+    a.addEventListener('timeupdate',()=>{const p=a.duration?a.currentTime/a.duration:0;bars.forEach((b,i)=>b.classList.toggle('lit',i/bars.length<p));t.textContent=fmt(a.currentTime)});
+    a.addEventListener('loadedmetadata',()=>{if(a.paused)t.textContent=fmt(a.duration)});
+    a.addEventListener('ended',()=>{box.classList.remove('playing');bars.forEach(b=>b.classList.remove('lit'))});
+    btn.addEventListener('click',()=>{if(!a.src)a.src=box.dataset.src;
+      if(a.paused){if(cur&&cur!==a)cur.pause();document.querySelectorAll('.aud.playing').forEach(x=>x.classList.remove('playing'));a.play().catch(()=>{});cur=a;box.classList.add('playing');btn.setAttribute('aria-label',btn.getAttribute('aria-label').replace('Ouvir','Pausar'))}
+      else{a.pause();box.classList.remove('playing');btn.setAttribute('aria-label',btn.getAttribute('aria-label').replace('Pausar','Ouvir'))}});
+  });
+})();
 // ===== NOME BRIUS =====
 (function(){
   const bri=document.getElementById('bBri'),us=document.getElementById('bUs'),pp=document.getElementById('people'),hint=document.getElementById('nameHint');
@@ -897,7 +989,7 @@ document.querySelectorAll('.ltr').forEach(h=>{const cs=[...h.querySelectorAll(".
   cs.forEach((c,i)=>c.addEventListener('pointerenter',()=>{[-1,0,1].forEach(o=>{const t=cs[i+o];if(!t)return;t.classList.add('up');setTimeout(()=>t.classList.remove('up'),280+Math.abs(o)*60)})}));});
 // Reveal on scroll (only for blocks below the first screen)
 if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&'IntersectionObserver' in window){
-  const els=[...document.querySelectorAll('.head,.grid,.services,.reels,.split,.steps,.story,.channels,.filters')].filter(e=>e.getBoundingClientRect().top>innerHeight);
+  const els=[...document.querySelectorAll('.head,.grid,.services,.reels,.split,.steps,.story,.channels,.filters,.auds')].filter(e=>e.getBoundingClientRect().top>innerHeight);
   els.forEach(e=>e.classList.add('reveal','pre'));
   const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.remove('pre');io.unobserve(en.target)}}),{rootMargin:'0px 0px -8% 0px'});
   els.forEach(e=>io.observe(e));
