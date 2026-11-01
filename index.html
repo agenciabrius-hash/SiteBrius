@@ -365,6 +365,17 @@ html{scroll-padding-top:66px}
 .qf small{font-size:12.5px;min-height:1em}
 .qf small.bad{color:#b3261e}.qf small.good{color:#2e6b3a}
 .hp{position:absolute!important;left:-9999px}
+.svc-pick{border:0;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.svc-pick legend{font:500 13px var(--body);margin:0 0 8px;padding:0}
+.qf .pick{display:block;cursor:pointer;margin:0}
+.pick input{position:absolute;opacity:0;width:1px;height:1px}
+.pick span{display:grid;gap:3px;border:1px solid #cfcbc3;background:#fff;padding:14px;transition:border-color .25s,background .25s,transform .25s;height:100%;box-sizing:border-box}
+.pick span b{font:500 18px var(--display)}.pick span small{font-weight:400;color:var(--muted-l);font-size:12.5px}
+.pick:hover span{transform:translateY(-2px)}
+.pick input:checked + span{border-color:var(--ink);background:var(--sand);box-shadow:inset 0 0 0 1px var(--ink)}
+.pick input:checked + span b::after{content:" ✓";color:var(--gold)}
+.pick input:focus-visible + span{outline:2px solid var(--gold);outline-offset:2px}
+@media (max-width:600px){.svc-pick{grid-template-columns:minmax(0,1fr)}}
 .route{display:flex;flex-wrap:wrap;gap:14px 20px;align-items:center;margin-top:18px}
 .route p{margin:0;font-size:14px;color:var(--muted-l);flex:1 1 260px}
 .route p b{color:var(--ink);font-size:18px}
@@ -792,7 +803,12 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
             <label>Data do evento<input id="q-data" name="data" type="date" required><small id="q-data-msg"></small></label>
             <label>Horário de início<input id="q-inicio" name="inicio" type="time" required value="18:00"></label>
             <label>Horas de cobertura<input id="q-horas" name="horas" type="number" min="1" max="16" step="0.5" required value="4"></label>
-            <label>Profissionais <em>(mínimo 2)</em><input id="q-prof" name="profissionais" type="number" min="2" max="10" required value="2"></label>
+            <fieldset class="full svc-pick" id="q-svcs"><legend>Serviços que você quer</legend>
+              <label class="pick"><input type="checkbox" value="fotografia" checked><span><b>Fotografia</b><small>Fotos profissionais do evento</small></span></label>
+              <label class="pick"><input type="checkbox" value="videomaker"><span><b>Videomaker</b><small>Vídeo gravado e editado</small></span></label>
+              <label class="pick"><input type="checkbox" value="storymaker" checked><span><b>Storymaker</b><small>Stories em tempo real no dia</small></span></label>
+              <input type="hidden" name="servicos" id="q-servicos">
+            </fieldset>
             <label class="full">Estilo do evento<input id="q-estilo" name="estilo" required list="estilos" placeholder="Ex.: casamento, aniversário de 15 anos, show, evento corporativo..."></label>
             <datalist id="estilos"><option value="Casamento"><option value="Pré-wedding / ensaio de casal"><option value="Aniversário"><option value="Chá revelação / chá de bebê"><option value="Show"><option value="Evento corporativo"><option value="Ensaio de produto / gastronomia"><option value="Conteúdo para redes sociais"></datalist>
             <label>Convidados <em>(aproximado)</em><input id="q-conv" name="convidados" type="number" min="0" placeholder="Ex.: 120"></label>
@@ -919,7 +935,7 @@ const API_URL = '';
     if(!ok){err.textContent='Confira os campos destacados.';return false}
     if(i===0&&$('q-whatsapp').value.replace(/\D/g,'').length<10){$('q-whatsapp').setAttribute('aria-invalid','true');err.textContent='Informe o WhatsApp com DDD.';return false}
     if(i===1&&!checarData()){err.textContent='Esta data já está reservada.';return false}
-    if(i===1&&Number($('q-prof').value)<2){$('q-prof').setAttribute('aria-invalid','true');err.textContent='O mínimo é de 2 profissionais.';return false}
+    if(i===1){const sv=[...document.querySelectorAll('#q-svcs input:checked')].map(x=>x.value);$('q-servicos').value=sv.join(',');if(!sv.length){err.textContent='Escolha pelo menos um serviço.';return false}}
     return true}
   tabs.forEach((t,k)=>t.addEventListener('click',()=>{if(k<cur)show(k)}));
   back.addEventListener('click',()=>show(cur-1));
@@ -937,7 +953,7 @@ const API_URL = '';
   function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
   function resumo(){const d=$('q-data').value.split('-').reverse().join('/');
     const rows=[['Nome',$('q-nome').value],['E-mail',$('q-email').value],['WhatsApp',$('q-whatsapp').value],['Data',d+' às '+$('q-inicio').value],
-      ['Cobertura',$('q-horas').value+' h'],['Estilo',$('q-estilo').value],['Profissionais',$('q-prof').value],['Convidados',$('q-conv').value||'—'],
+      ['Cobertura',$('q-horas').value+' h'],['Estilo',$('q-estilo').value],['Serviços',[...document.querySelectorAll('#q-svcs input:checked')].map(x=>x.closest('label').querySelector('b').textContent).join(', ')],['Convidados',$('q-conv').value||'—'],
       ['Local',rota?rota.endereco:$('q-local').value],['Deslocamento',rota?fmtMin(rota.minutos)+' de carro':'calculado ao enviar'],['Observações',$('q-obs').value||'—']];
     $('q-review').innerHTML=rows.map(([k,v])=>'<dt>'+k+'</dt><dd>'+esc(v)+'</dd>').join('')}
   next.addEventListener('click',async()=>{
