@@ -274,6 +274,17 @@ html{scroll-padding-top:66px}
 .arrive .head{animation:arrive .9s cubic-bezier(.2,.7,.2,1) both}
 .arrive .head + *{animation:arrive .9s .12s cubic-bezier(.2,.7,.2,1) both}
 @keyframes arrive{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:none}}
+/* cortina ao rolar até cada seção */
+.sc{position:absolute;inset:0;z-index:5;pointer-events:none;display:grid;justify-items:center;align-items:start;padding-top:min(26vh,30%);overflow:hidden}
+.sc i{position:absolute;inset:0;transform-origin:top}
+.sc i:nth-child(1){background:var(--gold)}
+.sc i:nth-child(2){background:var(--ink)}
+.sc b{position:relative;z-index:2;font:italic 500 clamp(28px,4.5vw,52px)/1 var(--display);color:var(--gold-soft);transition:opacity .35s,transform .5s cubic-bezier(.2,.7,.2,1)}
+.sc.open i:nth-child(2){transform:scaleY(0);transition:transform .9s .5s cubic-bezier(.7,0,.3,1)}
+.sc.open i:nth-child(1){transform:scaleY(0);transition:transform .9s .62s cubic-bezier(.7,0,.3,1)}
+.sc.open b{opacity:0;transform:translateY(-30px);transition-delay:.4s}
+.sc.done{display:none}
+@media (prefers-reduced-motion:reduce){.sc{display:none}}
 @media (prefers-reduced-motion:reduce){.pt{display:none}.arrive .head,.arrive .head + *{animation:none}}
 /* CORPORATE */
 .split{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(24px,4vw,56px);align-items:start}
@@ -1006,13 +1017,25 @@ const ALBUNS=[{"t": "Ensaio de bodas Sirlene & Valdinei", "c": "casamentos", "p"
     pt.classList.remove('out');void pt.offsetWidth;pt.classList.add('go');
     setTimeout(()=>{
       const html=document.documentElement,prev=html.style.scrollBehavior;html.style.scrollBehavior='auto';
-      t.scrollIntoView({block:'start'});html.style.scrollBehavior=prev;
+      window.__openCurtain&&window.__openCurtain(t);t.scrollIntoView({block:'start'});html.style.scrollBehavior=prev;
       t.querySelectorAll('.reveal.pre').forEach(x=>x.classList.remove('pre'));
       t.classList.remove('arrive');void t.offsetWidth;t.classList.add('arrive');
       pt.classList.add('out');
       setTimeout(()=>{pt.classList.remove('go','out');busy=false;},700);
     },1050);
   });
+})();
+// ===== CORTINA AO ROLAR =====
+(function(){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window))return;
+  const names={servicos:'Serviços',casamentos:'Eventos',producoes:'Produções',corporativos:'Corporativo',clientes:'Clientes',historia:'Sobre',avaliacoes:'Avaliações',orcamento:'Orçamento',contato:'Contato'};
+  const secs=[...document.querySelectorAll('section[id]')].filter(x=>names[x.id]&&x.getBoundingClientRect().top>innerHeight*.9);
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;const c=e.target._sc;io.unobserve(e.target);
+    requestAnimationFrame(()=>{c.classList.add('open');const sec=e.target;sec.classList.remove('arrive');void sec.offsetWidth;sec.classList.add('arrive');setTimeout(()=>c.classList.add('done'),1700)})}),{threshold:.18});
+  secs.forEach(sec=>{if(getComputedStyle(sec).position==='static')sec.style.position='relative';
+    const c=document.createElement('div');c.className='sc';c.setAttribute('aria-hidden','true');c.innerHTML='<i></i><i></i><b></b>';c.querySelector('b').textContent=names[sec.id];
+    sec.prepend(c);sec._sc=c;io.observe(sec);});
+  window.__openCurtain=sec=>{if(sec&&sec._sc&&!sec._sc.classList.contains('done')){io.unobserve(sec);sec._sc.classList.add('open','done')}};
 })();
 // ===== NOME BRIUS =====
 (function(){
