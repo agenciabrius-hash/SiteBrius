@@ -1048,7 +1048,7 @@ const ALBUNS=[{"t": "Ensaio de bodas Sirlene & Valdinei", "c": "casamentos", "p"
   const box=document.getElementById('albums');if(!box)return;
   const more=document.getElementById('cMore'),fb=[...document.querySelectorAll('.filters button')];
   const calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const cards=ALBUNS.map((al,n)=>{
+  const mk=(al,n)=>{
     const b=document.createElement('button');b.type='button';b.className='album';b.dataset.cat=al.c;
     b.setAttribute('aria-label','Abrir álbum: '+al.t+' ('+al.p.length+' fotos)');
     const max=Math.min(al.p.length,8);
@@ -1068,7 +1068,8 @@ const ALBUNS=[{"t": "Ensaio de bodas Sirlene & Valdinei", "c": "casamentos", "p"
     b.addEventListener('pointerenter',()=>{hov=true;if(vis){step();play()}});
     b.addEventListener('pointerleave',()=>{hov=false;if(vis)play()});
     b.addEventListener('click',()=>{set=al.p.map(src=>{const x=new Image();x.src=src;x.alt=al.t;return x});idx=k;last=b;show();lb.hidden=false;document.getElementById('lbX').focus()});
-    box.appendChild(b);return b;});
+    box.appendChild(b);return b;};
+  let cards=ALBUNS.map(mk);
   const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting?e.target._start():e.target._stop()),{rootMargin:'120px'});
   cards.forEach(c=>io.observe(c));
   let f='todos',lim=8;
@@ -1076,6 +1077,15 @@ const ALBUNS=[{"t": "Ensaio de bodas Sirlene & Valdinei", "c": "casamentos", "p"
   fb.forEach(b=>b.addEventListener('click',()=>{f=b.dataset.f;lim=8;fb.forEach(x=>{x.classList.toggle('on',x===b);x.setAttribute('aria-pressed',x===b)});render()}));
   more.addEventListener('click',()=>{lim+=8;render()});
   render();
+  // Álbuns ao vivo do Google Drive (pasta [Clientes]); se falhar, ficam os álbuns acima
+  if(API_URL){fetch(API_URL+'?acao=albuns').then(r=>r.json()).then(j=>{
+    if(!j.ok||!j.albuns||!j.albuns.length)return;
+    const norm=t=>t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/&/g,' e ').replace(/[^a-z0-9]+/g,' ').trim();
+    const vivos=new Set(j.albuns.map(a=>norm(a.t)));
+    const lista=j.albuns.concat(ALBUNS.filter(a=>!vivos.has(norm(a.t))));
+    cards.forEach(c=>{io.unobserve(c);c._stop();c.remove()});
+    cards=lista.map(mk);cards.forEach(c=>io.observe(c));render();
+  }).catch(()=>{})}
 })();
 // ===== AVALIAÇÕES =====
 (function(){
