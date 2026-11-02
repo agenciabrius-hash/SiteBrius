@@ -80,9 +80,9 @@ html{scroll-padding-top:66px}
 .hero h1{margin:0;font:400 clamp(24px,3.2vw,38px)/1.2 var(--serif);max-width:26ch;color:var(--muted-l);text-wrap:balance}
 .hero h1 b{font-style:italic;font-weight:400}
 .hero h1 b{color:var(--ink);font-weight:600}
-.hero-strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;width:100%;margin-top:8px}
-.hero-strip img{width:100%;aspect-ratio:3/4;object-fit:cover}
-@media (max-width:640px){.hero-strip{grid-template-columns:repeat(3,minmax(0,1fr))}.hero-strip img:nth-child(n+4){display:none}}
+.hero-strip{display:flex;gap:6px;width:100%;margin-top:8px;height:clamp(200px,26vw,340px)}
+.hero-strip img{flex:1 1 0;min-width:0;width:auto;height:100%;object-fit:cover}
+@media (max-width:640px){.hero-strip{height:200px}.hero-strip img:nth-child(n+4){display:none}}
 .arrow{font-size:28px;line-height:1;text-decoration:none;color:var(--ink)}
 
 /* SECTION BASICS */
@@ -286,6 +286,23 @@ html{scroll-padding-top:66px}
 .sc.done{display:none}
 @media (prefers-reduced-motion:reduce){.sc{display:none}}
 @media (prefers-reduced-motion:reduce){.pt{display:none}.arrive .head,.arrive .head + *{animation:none}}
+/* EFEITOS DE MÍDIA */
+.grid,.albums{perspective:1100px}
+.grid button,.album{transform-style:preserve-3d;transition:transform .35s ease-out,box-shadow .45s}
+.grid button.tilt,.album.tilt{box-shadow:0 30px 50px -28px rgba(0,0,0,.65);z-index:2}
+.glare{position:absolute;inset:0;z-index:3;pointer-events:none;opacity:0;transition:opacity .3s;mix-blend-mode:soft-light;
+  background:radial-gradient(260px circle at var(--gx,50%) var(--gy,50%),rgba(255,255,255,.75),transparent 60%)}
+.tilt .glare{opacity:1}
+.peek-chip{position:absolute;left:50%;bottom:14px;transform:translateX(-50%) translateY(8px);z-index:4;opacity:0;transition:opacity .3s,transform .3s;
+  font:600 10.5px var(--body);letter-spacing:.12em;text-transform:uppercase;color:#141210;background:rgba(251,248,243,.92);padding:6px 10px;border-radius:999px;white-space:nowrap;pointer-events:none}
+.phone.peek .peek-chip{opacity:1;transform:translateX(-50%)}
+.phone.peek button span{opacity:0}
+.phone .screen video{transition:transform 6s ease,filter .4s}
+.phone.peek .screen video{transform:scale(1.04)}
+.phone .prog{position:absolute;left:10%;right:10%;bottom:8px;height:2px;background:rgba(255,255,255,.25);border-radius:2px;z-index:4;overflow:hidden;opacity:0;transition:opacity .3s}
+.phone .prog i{display:block;height:100%;width:0;background:var(--gold-soft)}
+.phone.peek .prog,.phone.playing .prog{opacity:1}
+@media (prefers-reduced-motion:reduce){.grid button,.album{transition:none}.glare{display:none}}
 /* CORPORATE */
 .split{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(24px,4vw,56px);align-items:start}
 .split .phone{max-width:300px;width:100%;justify-self:center}
@@ -462,10 +479,11 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
 .grid:hover button:not(:hover) img{filter:saturate(.6) brightness(.8)}
 
 /* faixa de fotos da abertura: leque */
-.hero-strip img{transition:transform .5s cubic-bezier(.2,.7,.2,1),box-shadow .5s,filter .5s}
-.hero-strip:hover img{filter:brightness(.75) saturate(.8)}
-.hero-strip img:hover{transform:translateY(-14px) rotate(-1.5deg) scale(1.04);box-shadow:0 24px 40px -18px rgba(0,0,0,.55);filter:none;position:relative;z-index:2}
-.hero-strip img:nth-child(even):hover{transform:translateY(-14px) rotate(1.5deg) scale(1.04)}
+.hero-strip img{transition:flex-grow .7s cubic-bezier(.2,.7,.2,1),filter .5s,border-radius .5s}
+.hero-strip:hover img{filter:brightness(.7) saturate(.75)}
+.hero-strip img:hover{flex-grow:2.6;filter:none;border-radius:14px}
+@media (hover:none){.hero-strip img{animation:breathe 9s ease-in-out infinite}.hero-strip img:nth-child(2){animation-delay:-3s}.hero-strip img:nth-child(3){animation-delay:-6s}}
+@keyframes breathe{0%,100%{flex-grow:1}33%{flex-grow:1.8}}
 
 /* holofote que segue o mouse */
 .spot{position:relative;isolation:isolate}
@@ -1106,6 +1124,33 @@ const ALBUNS=[{"t": "Ensaio de bodas Sirlene & Valdinei", "c": "casamentos", "p"
     const c=document.createElement('div');c.className='sc';c.setAttribute('aria-hidden','true');c.innerHTML='<i></i><i></i><b></b>';c.querySelector('b').textContent=names[sec.id];
     sec.prepend(c);sec._sc=c;io.observe(sec);});
   window.__openCurtain=sec=>{if(sec&&sec._sc&&!sec._sc.classList.contains('done')){io.unobserve(sec);sec._sc.classList.add('open','done')}};
+})();
+// ===== EFEITOS DE MÍDIA (prévia de vídeo e fotos 3D) =====
+(function(){
+  const fine=matchMedia('(hover: hover) and (pointer: fine)').matches, calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Vídeos: prévia sem som ao passar o mouse; clique toca com som
+  document.querySelectorAll('.phone').forEach(p=>{
+    const v=p.querySelector('video'),btn=p.querySelector('button');if(!v)return;
+    const chip=document.createElement('span');chip.className='peek-chip';chip.textContent='Prévia sem som';p.appendChild(chip);
+    const pr=document.createElement('div');pr.className='prog';pr.innerHTML='<i></i>';p.appendChild(pr);const bar=pr.firstChild;
+    v.addEventListener('timeupdate',()=>{if(v.duration)bar.style.width=(v.currentTime/v.duration*100)+'%'});
+    btn.addEventListener('click',()=>{v.muted=false;p.classList.remove('peek')},true);
+    if(!fine||calm)return;
+    let tmr;
+    p.addEventListener('pointerenter',()=>{if(p.classList.contains('playing'))return;clearTimeout(tmr);
+      tmr=setTimeout(()=>{v.muted=true;v.preload='auto';const pl=v.play();p.classList.add('peek');if(pl)pl.catch(()=>p.classList.remove('peek'))},120)});
+    p.addEventListener('pointerleave',()=>{clearTimeout(tmr);if(p.classList.contains('playing'))return;p.classList.remove('peek');v.pause();try{v.currentTime=0}catch(e){}bar.style.width='0'});
+  });
+  if(!fine||calm)return;
+  // Fotos e álbuns: inclinação 3D com reflexo seguindo o mouse
+  function tilt(el,max){const g=document.createElement('span');g.className='glare';el.appendChild(g);
+    el.addEventListener('pointermove',e=>{const r=el.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;
+      el.classList.add('tilt');el.style.transform='rotateY('+((x-.5)*max)+'deg) rotateX('+((.5-y)*max)+'deg) translateZ(14px)';
+      el.style.setProperty('--gx',x*100+'%');el.style.setProperty('--gy',y*100+'%')});
+    el.addEventListener('pointerleave',()=>{el.classList.remove('tilt');el.style.transform=''});}
+  document.querySelectorAll('.grid button').forEach(b=>tilt(b,8));
+  const watch=new MutationObserver(()=>document.querySelectorAll('.album:not([data-t])').forEach(a=>{a.dataset.t=1;tilt(a,10)}));
+  const box=document.getElementById('albums');if(box){watch.observe(box,{childList:true});document.querySelectorAll('.album').forEach(a=>{a.dataset.t=1;tilt(a,10)})}
 })();
 // ===== NOME BRIUS =====
 (function(){
