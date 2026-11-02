@@ -344,7 +344,7 @@ html{scroll-padding-top:66px}
 @media (max-width:760px){.story{grid-template-columns:minmax(0,1fr)}}
 /* ORÇAMENTO */
 .qf{background:var(--bone);padding:clamp(20px,4vw,44px);display:grid;gap:24px;max-width:880px;width:100%;justify-self:center;box-shadow:0 30px 60px -40px rgba(0,0,0,.5)}
-.qf-tabs{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.qf-tabs{list-style:none;margin:0;padding:0;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:6px}
 .qf-tabs li{font-size:12.5px;color:var(--muted-l);display:flex;align-items:center;gap:8px;padding-top:10px;border-top:3px solid #d6d3cc;transition:border-color .3s,color .3s}
 .qf-tabs li span{font:400 18px/1 var(--display)}
 .qf-tabs li.on,.qf-tabs li.done{color:var(--ink);border-color:var(--ink)}
@@ -375,7 +375,9 @@ html{scroll-padding-top:66px}
 .pick input:checked + span{border-color:var(--ink);background:var(--sand);box-shadow:inset 0 0 0 1px var(--ink)}
 .pick input:checked + span b::after{content:" ✓";color:var(--gold)}
 .pick input:focus-visible + span{outline:2px solid var(--gold);outline-offset:2px}
-@media (max-width:600px){.svc-pick{grid-template-columns:minmax(0,1fr)}}
+.cards2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.big-pick span{padding:22px;gap:8px}.big-pick span b{font-size:24px}.big-pick span small{font-size:14px;line-height:1.5}
+@media (max-width:600px){.svc-pick,.cards2{grid-template-columns:minmax(0,1fr)}}
 .route{display:flex;flex-wrap:wrap;gap:14px 20px;align-items:center;margin-top:18px}
 .route p{margin:0;font-size:14px;color:var(--muted-l);flex:1 1 260px}
 .route p b{color:var(--ink);font-size:18px}
@@ -780,14 +782,9 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
         </div>
       </div>
       <form class="qf" id="qf" novalidate>
-        <ol class="qf-tabs" aria-label="Etapas do orçamento">
-          <li class="on" data-go="0"><span>1</span>Seus dados</li>
-          <li data-go="1"><span>2</span>O evento</li>
-          <li data-go="2"><span>3</span>O local</li>
-          <li data-go="3"><span>4</span>Revisar</li>
-        </ol>
+        <ol class="qf-tabs" id="qf-tabs" aria-label="Etapas do orçamento"></ol>
 
-        <fieldset class="qf-step" data-step="0">
+        <fieldset class="qf-step" data-step="dados">
           <legend>Seus dados</legend>
           <div class="qf-grid">
             <label class="full">Nome completo<input id="q-nome" name="nome" autocomplete="name" required minlength="5" placeholder="Ex.: Maria Aparecida da Silva"></label>
@@ -797,29 +794,37 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
           </div>
         </fieldset>
 
-        <fieldset class="qf-step" data-step="1" hidden>
-          <legend>O evento</legend>
-          <div class="qf-grid">
-            <label>Data do evento<input id="q-data" name="data" type="date" required><small id="q-data-msg"></small></label>
-            <label>Horário de início<input id="q-inicio" name="inicio" type="time" required value="18:00"></label>
-            <label>Horas de cobertura<input id="q-horas" name="horas" type="number" min="1" max="16" step="0.5" required value="4"></label>
-            <fieldset class="full svc-pick" id="q-svcs"><legend>Serviços que você quer</legend>
-              <label class="pick"><input type="checkbox" value="fotografia" checked><span><b>Fotografia</b><small>Fotos profissionais do evento</small></span></label>
-              <label class="pick"><input type="checkbox" value="videomaker"><span><b>Videomaker</b><small>Vídeo gravado e editado</small></span></label>
-              <label class="pick"><input type="checkbox" value="storymaker" checked><span><b>Storymaker</b><small>Stories em tempo real no dia</small></span></label>
-              <input type="hidden" name="servicos" id="q-servicos">
-            </fieldset>
-            <label class="full">Estilo do evento<input id="q-estilo" name="estilo" required list="estilos" placeholder="Ex.: casamento, aniversário de 15 anos, show, evento corporativo..."></label>
-            <datalist id="estilos"><option value="Casamento"><option value="Pré-wedding / ensaio de casal"><option value="Aniversário"><option value="Chá revelação / chá de bebê"><option value="Show"><option value="Evento corporativo"><option value="Ensaio de produto / gastronomia"><option value="Conteúdo para redes sociais"></datalist>
-            <label>Convidados <em>(aproximado)</em><input id="q-conv" name="convidados" type="number" min="0" placeholder="Ex.: 120"></label>
-            <label class="full">Conte um pouco mais <em>(opcional)</em><textarea id="q-obs" name="obs" rows="3" placeholder="Foto, vídeo ou os dois? Precisa de drone, reels no dia, álbum?"></textarea></label>
+        <fieldset class="qf-step" data-step="tipo" hidden>
+          <legend>Do que você precisa?</legend>
+          <div class="cards2" role="radiogroup" aria-label="Tipo de serviço">
+            <label class="pick big-pick"><input type="radio" name="tipo" value="evento"><span><b>Cobertura de evento</b><small>Fotografia, videomaker e storymaker para casamentos, aniversários, chás, shows e eventos corporativos.</small></span></label>
+            <label class="pick big-pick"><input type="radio" name="tipo" value="gestao"><span><b>Gestão de redes sociais</b><small>Cuidamos do seu perfil todo mês: planejamento, posts, vídeos, stories e relatório de resultados.</small></span></label>
           </div>
         </fieldset>
 
-        <fieldset class="qf-step" data-step="2" hidden>
+        <fieldset class="qf-step" data-step="evento" hidden>
+          <legend>O evento</legend>
+          <div class="qf-grid">
+            <fieldset class="full svc-pick" id="q-svcs"><legend>Marque pelo menos 2 serviços</legend>
+              <label class="pick"><input type="checkbox" value="fotografia"><span><b>Fotografia</b><small>Fotos profissionais do evento</small></span></label>
+              <label class="pick"><input type="checkbox" value="videomaker"><span><b>Videomaker</b><small>Vídeo gravado e editado</small></span></label>
+              <label class="pick"><input type="checkbox" value="storymaker"><span><b>Storymaker</b><small>Stories em tempo real no dia</small></span></label>
+              <input type="hidden" name="servicos" id="q-servicos">
+            </fieldset>
+            <label>Data do evento<input id="q-data" name="data" type="date" data-req><small id="q-data-msg"></small></label>
+            <label>Horário de início<input id="q-inicio" name="inicio" type="time" data-req value="18:00"></label>
+            <label>Horas de cobertura<input id="q-horas" name="horas" type="number" min="1" max="16" step="0.5" data-req value="4"></label>
+            <label>Convidados <em>(aproximado)</em><input id="q-conv" name="convidados" type="number" min="0" placeholder="Ex.: 120"></label>
+            <label class="full">Estilo do evento<input id="q-estilo" name="estilo" data-req list="estilos" placeholder="Ex.: casamento, 15 anos, chá revelação, palestra..."></label>
+            <datalist id="estilos"><option value="Casamento"><option value="Bodas"><option value="Aniversário"><option value="15 anos"><option value="Batizado"><option value="Chá revelação / chá de bebê"><option value="Show"><option value="Evento corporativo"><option value="Palestra"><option value="Ensaio de produto / gastronomia"></datalist>
+            <label class="full">Conte um pouco mais <em>(opcional)</em><textarea id="q-obs" name="obs" rows="3" placeholder="Algum momento especial que não pode faltar?"></textarea></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="qf-step" data-step="local" hidden>
           <legend>O local</legend>
           <div class="qf-grid">
-            <label class="full">Endereço do evento<input id="q-local" name="local" required autocomplete="street-address" placeholder="Rua, número, bairro, cidade - UF"></label>
+            <label class="full">Endereço do evento<input id="q-local" name="local" data-req autocomplete="street-address" placeholder="Rua, número, bairro, cidade - UF"></label>
           </div>
           <div class="route">
             <button type="button" class="btn-dark" id="q-rota">Calcular deslocamento</button>
@@ -827,7 +832,35 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
           </div>
         </fieldset>
 
-        <fieldset class="qf-step" data-step="3" hidden>
+        <fieldset class="qf-step" data-step="marca" hidden>
+          <legend>Sua marca</legend>
+          <div class="qf-grid">
+            <label>Nome da empresa ou marca<input id="q-empresa" name="empresa" data-req placeholder="Ex.: Doce Menina"></label>
+            <label>@ do Instagram<input id="q-insta" name="instagram" placeholder="@suamarca"></label>
+            <label class="full">Segmento<input id="q-seg" name="segmento" data-req list="segmentos" placeholder="Ex.: restaurante, moda, saúde, imobiliária..."></label>
+            <datalist id="segmentos"><option value="Restaurante / gastronomia"><option value="Moda"><option value="Beleza / estética"><option value="Saúde"><option value="Imobiliária / construtora"><option value="Igreja / ministério"><option value="Profissional liberal"></datalist>
+            <fieldset class="full svc-pick" id="q-redes"><legend>Quais redes vamos cuidar?</legend>
+              <label class="pick"><input type="checkbox" value="Instagram" checked><span><b>Instagram</b></span></label>
+              <label class="pick"><input type="checkbox" value="Facebook"><span><b>Facebook</b></span></label>
+              <label class="pick"><input type="checkbox" value="TikTok"><span><b>TikTok</b></span></label>
+              <input type="hidden" name="redes" id="q-redes-v">
+            </fieldset>
+            <fieldset class="full svc-pick" role="radiogroup"><legend>Posts por semana</legend>
+              <label class="pick"><input type="radio" name="posts" value="3" checked><span><b>3 posts</b><small>Presença constante</small></span></label>
+              <label class="pick"><input type="radio" name="posts" value="4"><span><b>4 posts</b><small>Mais alcance</small></span></label>
+              <label class="pick"><input type="radio" name="posts" value="5"><span><b>5 posts</b><small>Máxima presença</small></span></label>
+            </fieldset>
+            <fieldset class="full svc-pick" role="radiogroup"><legend>Vídeos (reels) por semana</legend>
+              <label class="pick"><input type="radio" name="videos" value="1" checked><span><b>1 vídeo</b></span></label>
+              <label class="pick"><input type="radio" name="videos" value="2"><span><b>2 vídeos</b></span></label>
+              <label class="pick"><input type="radio" name="videos" value="3+"><span><b>3 ou mais</b></span></label>
+            </fieldset>
+            <label>Quando quer começar?<input id="q-mes" name="inicio_gestao" type="month"></label>
+            <label class="full">Qual o seu objetivo? <em>(opcional)</em><textarea id="q-obj" name="obs_gestao" rows="3" placeholder="Ex.: atrair mais clientes, lançar um produto, profissionalizar o perfil..."></textarea></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="qf-step" data-step="revisar" hidden>
           <legend>Revisar e enviar</legend>
           <dl class="review" id="q-review"></dl>
           <p class="fine">Ao enviar, a equipe Brius recebe o seu pedido e responde com a proposta pelo WhatsApp informado.</p>
@@ -913,14 +946,18 @@ document.querySelectorAll('.phone').forEach(p=>{
 const API_URL = '';
 (function(){
   const f=document.getElementById('qf'); if(!f) return;
-  const steps=[...f.querySelectorAll('.qf-step')], tabs=[...f.querySelectorAll('.qf-tabs li')];
-  const next=document.getElementById('q-next'), back=document.getElementById('q-back'), err=document.getElementById('q-err');
   const $=id=>document.getElementById(id);
-  let cur=0, reservadas=new Set(), rota=null;
-  // mínimo: amanhã
-  const t=new Date(); t.setDate(t.getDate()+1); $('q-data').min=t.toISOString().slice(0,10);
-  if(API_URL){ fetch(API_URL+'?acao=datas').then(r=>r.json()).then(j=>{ if(j.ok) reservadas=new Set(j.datas); checarData(); }).catch(()=>{}); }
-  // máscara WhatsApp
+  const steps={};f.querySelectorAll('.qf-step').forEach(s=>steps[s.dataset.step]=s);
+  const NOMES={dados:'Seus dados',tipo:'O que precisa',evento:'O evento',local:'O local',marca:'Sua marca',revisar:'Revisar'};
+  const FLUXO={'':['dados','tipo','revisar'],evento:['dados','tipo','evento','local','revisar'],gestao:['dados','tipo','marca','revisar']};
+  const tabsEl=$('qf-tabs'),next=$('q-next'),back=$('q-back'),err=$('q-err');
+  let cur=0,reservadas=new Set(),rota=null;
+  const tipo=()=>(f.querySelector('input[name=tipo]:checked')||{}).value||'';
+  const fluxo=()=>FLUXO[tipo()];
+  function drawTabs(){tabsEl.innerHTML=fluxo().map((k,i)=>'<li data-i="'+i+'"><span>'+(i+1)+'</span>'+NOMES[k]+'</li>').join('');
+    [...tabsEl.children].forEach((t,i)=>{t.classList.toggle('on',i===cur);t.classList.toggle('done',i<cur);t.onclick=()=>{if(i<cur)show(i)}});}
+  const tm=new Date();tm.setDate(tm.getDate()+1);$('q-data').min=tm.toISOString().slice(0,10);
+  if(API_URL){fetch(API_URL+'?acao=datas').then(r=>r.json()).then(j=>{if(j.ok)reservadas=new Set(j.datas);checarData()}).catch(()=>{})}
   $('q-whatsapp').addEventListener('input',e=>{let d=e.target.value.replace(/\D/g,'').slice(0,11);
     e.target.value=d.length>10?`(${d.slice(0,2)}) ${d.slice(2,7)}-${d.slice(7)}`:d.length>6?`(${d.slice(0,2)}) ${d.slice(2,6)}-${d.slice(6)}`:d.length>2?`(${d.slice(0,2)}) ${d.slice(2)}`:d;});
   function checarData(){const v=$('q-data').value,m=$('q-data-msg');if(!v){m.textContent='';m.className='';return true}
@@ -928,47 +965,56 @@ const API_URL = '';
     m.textContent=API_URL?'Data disponível.':'';m.className='good';$('q-data').removeAttribute('aria-invalid');return true}
   $('q-data').addEventListener('change',checarData);
   $('q-local').addEventListener('input',()=>{rota=null;$('q-rota-out').textContent='Calculamos pelo Google Maps o tempo de carro da nossa base até o local.'});
-  function show(i){cur=i;steps.forEach((s,k)=>s.hidden=k!==i);tabs.forEach((t,k)=>{t.classList.toggle('on',k===i);t.classList.toggle('done',k<i)});
-    back.hidden=i===0;next.textContent=i===3?'Enviar orçamento':'Continuar';err.textContent='';
-    if(i===3) resumo(); f.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});}
-  function validar(i){let ok=true;steps[i].querySelectorAll('input[required]').forEach(inp=>{const bad=!inp.checkValidity()||!inp.value.trim();inp.setAttribute('aria-invalid',bad);if(bad)ok=false});
+  f.querySelectorAll('input[name=tipo]').forEach(r=>r.addEventListener('change',()=>{drawTabs();err.textContent=''}));
+  // limite de 3 serviços fica livre; mínimo 2 verificado ao continuar
+  function show(i){cur=i;const fl=fluxo(),k=fl[i];Object.entries(steps).forEach(([n,s])=>s.hidden=n!==k);drawTabs();
+    back.hidden=i===0;next.textContent=k==='revisar'?'Enviar orçamento':'Continuar';err.textContent='';
+    if(k==='revisar')resumo();f.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});}
+  function validar(k){const st=steps[k];let ok=true;
+    st.querySelectorAll('input[required],input[data-req]').forEach(inp=>{const bad=!inp.value.trim()||!inp.checkValidity();inp.setAttribute('aria-invalid',bad);if(bad)ok=false});
     if(!ok){err.textContent='Confira os campos destacados.';return false}
-    if(i===0&&$('q-whatsapp').value.replace(/\D/g,'').length<10){$('q-whatsapp').setAttribute('aria-invalid','true');err.textContent='Informe o WhatsApp com DDD.';return false}
-    if(i===1&&!checarData()){err.textContent='Esta data já está reservada.';return false}
-    if(i===1){const sv=[...document.querySelectorAll('#q-svcs input:checked')].map(x=>x.value);$('q-servicos').value=sv.join(',');if(!sv.length){err.textContent='Escolha pelo menos um serviço.';return false}}
+    if(k==='dados'&&$('q-whatsapp').value.replace(/\D/g,'').length<10){$('q-whatsapp').setAttribute('aria-invalid','true');err.textContent='Informe o WhatsApp com DDD.';return false}
+    if(k==='tipo'&&!tipo()){err.textContent='Escolha uma opção para continuar.';return false}
+    if(k==='evento'){const sv=[...document.querySelectorAll('#q-svcs input:checked')].map(x=>x.value);$('q-servicos').value=sv.join(',');
+      if(sv.length<2){err.textContent='Marque pelo menos 2 serviços: fotografia, videomaker ou storymaker.';return false}
+      if(!checarData()){err.textContent='Esta data já está reservada.';return false}}
+    if(k==='marca'){const rd=[...document.querySelectorAll('#q-redes input:checked')].map(x=>x.value);$('q-redes-v').value=rd.join(', ');
+      if(!rd.length){err.textContent='Escolha pelo menos uma rede social.';return false}}
     return true}
-  tabs.forEach((t,k)=>t.addEventListener('click',()=>{if(k<cur)show(k)}));
   back.addEventListener('click',()=>show(cur-1));
   async function calcRota(){const dest=$('q-local').value.trim(),out=$('q-rota-out');
     if(dest.length<8){out.textContent='Digite o endereço completo, com número e cidade.';return null}
     if(!API_URL){out.textContent='O cálculo pelo Google Maps funciona na versão publicada do site.';return null}
     out.textContent='Calculando...';$('q-rota').disabled=true;
-    try{const j=await (await fetch(API_URL+'?acao=rota&destino='+encodeURIComponent(dest))).json();
-      if(!j.ok)throw new Error(j.erro);rota=j;
+    try{const j=await (await fetch(API_URL+'?acao=rota&destino='+encodeURIComponent(dest))).json();if(!j.ok)throw new Error(j.erro);rota=j;
       out.innerHTML='<b>'+fmtMin(j.minutos)+'</b> de carro · '+String(j.km).replace('.',',')+' km<br>'+esc(j.endereco);return j}
     catch(e){out.textContent='Não encontramos esse endereço. Confira e tente de novo.';return null}
     finally{$('q-rota').disabled=false}}
   $('q-rota').addEventListener('click',calcRota);
   function fmtMin(m){return m<60?m+' min':Math.floor(m/60)+' h '+(m%60?String(m%60).padStart(2,'0')+' min':'')}
   function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
-  function resumo(){const d=$('q-data').value.split('-').reverse().join('/');
-    const rows=[['Nome',$('q-nome').value],['E-mail',$('q-email').value],['WhatsApp',$('q-whatsapp').value],['Data',d+' às '+$('q-inicio').value],
-      ['Cobertura',$('q-horas').value+' h'],['Estilo',$('q-estilo').value],['Serviços',[...document.querySelectorAll('#q-svcs input:checked')].map(x=>x.closest('label').querySelector('b').textContent).join(', ')],['Convidados',$('q-conv').value||'—'],
-      ['Local',rota?rota.endereco:$('q-local').value],['Deslocamento',rota?fmtMin(rota.minutos)+' de carro':'calculado ao enviar'],['Observações',$('q-obs').value||'—']];
+  const val=n=>(f.querySelector('[name="'+n+'"]:checked')||{}).value||'';
+  function resumo(){let rows=[['Nome',$('q-nome').value],['E-mail',$('q-email').value],['WhatsApp',$('q-whatsapp').value]];
+    if(tipo()==='evento'){rows=rows.concat([['Serviços',[...document.querySelectorAll('#q-svcs input:checked')].map(x=>x.closest('label').querySelector('b').textContent).join(', ')],
+      ['Data',$('q-data').value.split('-').reverse().join('/')+' às '+$('q-inicio').value],['Cobertura',$('q-horas').value+' h'],['Estilo',$('q-estilo').value],
+      ['Convidados',$('q-conv').value||'—'],['Local',rota?rota.endereco:$('q-local').value],['Deslocamento',rota?fmtMin(rota.minutos)+' de carro':'calculado ao enviar'],['Observações',$('q-obs').value||'—']])}
+    else{const m=$('q-mes').value;rows=rows.concat([['Serviço','Gestão de redes sociais'],['Marca',$('q-empresa').value+($('q-insta').value?' · '+$('q-insta').value:'')],['Segmento',$('q-seg').value],
+      ['Redes',$('q-redes-v').value],['Posts por semana',val('posts')],['Vídeos por semana',val('videos')],['Início',m?m.split('-').reverse().join('/'):'—'],['Objetivo',$('q-obj').value||'—']])}
     $('q-review').innerHTML=rows.map(([k,v])=>'<dt>'+k+'</dt><dd>'+esc(v)+'</dd>').join('')}
   next.addEventListener('click',async()=>{
-    if(cur<2){if(validar(cur))show(cur+1);return}
-    if(cur===2){if(!validar(2))return; if(!rota&&API_URL)await calcRota(); show(3);return}
-    // enviar
+    const fl=fluxo(),k=fl[cur];
+    if(k!=='revisar'){if(!validar(k))return;if(k==='local'&&!rota&&API_URL)await calcRota();show(cur+1);return}
     if(!API_URL){err.textContent='O envio funciona na versão publicada do site. Por enquanto, fale com a gente pelo Instagram @agenciabrius.';return}
     next.disabled=true;next.textContent='Enviando...';err.textContent='';
     const data=Object.fromEntries(new FormData(f).entries());
+    if(data.tipo==='gestao'){['data','inicio','horas','estilo','local','servicos','convidados','obs'].forEach(x=>delete data[x]);data.obs=data.obs_gestao||''}
+    else{['empresa','instagram','segmento','redes','posts','videos','inicio_gestao','obs_gestao'].forEach(x=>delete data[x])}
     try{const j=await (await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)})).json();
       if(!j.ok)throw new Error(j.erro||'Erro');
-      steps.forEach(s=>s.hidden=true);document.getElementById('q-nav').hidden=true;f.querySelector('.qf-tabs').hidden=true;
-      $('q-done').hidden=false;$('q-done-id').textContent='Número do pedido: '+j.id;}
+      Object.values(steps).forEach(s=>s.hidden=true);$('q-nav').hidden=true;tabsEl.hidden=true;$('q-done').hidden=false;$('q-done-id').textContent='Número do pedido: '+j.id;}
     catch(e){err.textContent=e.message&&e.message!=='Failed to fetch'?e.message:'Não foi possível enviar agora. Tente de novo em instantes.';next.disabled=false;next.textContent='Enviar orçamento'}
   });
+  show(0);
 })();
 // ===== CLIENTES (álbuns) =====
 const ALBUNS=[{"t": "Ensaio de bodas Sirlene & Valdinei", "c": "casamentos", "p": ["cli/14iXRdkyGyDbYGFbe8BTxlTZuHTR6kw4U.jpg", "cli/1apkXkkY6C3erZ-qjhI9CXUDhxO4-OKG9.jpg", "cli/1iOrWkklZidzKfpf2uiYVqnluho98Ta3p.jpg", "cli/1ua_YkILjf7JSQHmeP6Ew7EHk7gqzLY8c.jpg", "cli/1-1VYDVGcfeyj7TPAHjdfNO8Kltll030n.jpg", "cli/16PBcp6z9rSWVzVOFB_-bufjcdJ0PJ0pT.jpg"]}, {"t": "Neymar Jr.", "c": "eventos", "p": ["cli/1feosy6RMxHUSHrJ4gxdcY3ojRfVFeIJV.jpg", "cli/1pHBIe_wIXkYRdoGjRa8-W4krhCVhA1W_.jpg"]}, {"t": "Ovos de Páscoa Mary Amory", "c": "gastro", "p": ["cli/1C6YGOnsxg7QEIYAuQVa52A94icNn9EHg.jpg", "cli/1bb0244O5T62u_tosRh4n7sw4DQbRgfqg.jpg", "cli/1u_ZyXYGScTQ57a_Hj4g2GIp_M0s3Ggvx.jpg", "cli/1b2EdsRHS9E11UTraouq1X4Pi2U5ny61q.jpg"]}, {"t": "15 anos Maria Isabel", "c": "quinze", "p": ["cli/133Lf3Wpuky_8cU3AoX1vcSHsZRxmRnUc.jpg", "cli/1ABa8Gk7tzqf8F4EJoawgoN_1AyFo2C06.jpg", "cli/1jij3wsV6LqN07wffUW1GVDIkmeZtNlxz.jpg", "cli/1SxnJapaR4wLbrm9VV9O8yw7ESLvoH7Ni.jpg", "cli/17tsugCF6yICXhng2mH3SblTsk3VzTaZF.jpg", "cli/1XmulOCRi4X4IE30gfFYRxAdhMExbineL.jpg", "cli/1pgQDsp3A8BELmoMibgZA_fghn0elFIpI.jpg", "cli/1tjtnXLwrGdwmQ8UsBJ-WtrdNT6mQ4LsB.jpg"]}, {"t": "Frei Gilson & Padre Marcelo Rossi", "c": "shows", "p": ["img/41.jpg", "img/44.jpg", "img/42.jpg"]}, {"t": "Batizado de Sofia", "c": "batizados", "p": ["cli/1_4FiSEk11XQrG7cJF2D7wSw1fcgQ1WAP.jpg", "cli/17XJUyc-8TDHvB7JrjjgFfpwi-TYx1EFd.jpg", "cli/1YMjElsFKyMlCRCa4jOK8xvZyBtxLCvpQ.jpg", "cli/18YA13UTmX1b5dTWfyXHApNhsy-toHTwn.jpg"]}, {"t": "Chá de bebê Lavínia", "c": "chas", "p": ["cli/1OrwC7OQ9PSmPYDNEFBswHvnr51IFc_Ib.jpg", "cli/1tqoU4p8-Eg9QarKdD2uoyJev5vM1675d.jpg", "cli/1b0_cjigdCmuZH-OfFJjhHks0B2JsJYQN.jpg", "cli/1kreA1rqR6aDo_cVFr2T_RsdhBVDjNxk0.jpg"]}, {"t": "Entrega de chaves", "c": "marcas", "p": ["cli/1vfEGiyb-zp27YS5S8vCQKV1wZvoKG9rZ.jpg", "cli/1l0d-ATYC_Db5wT3YlanA7diGPdvP0MoP.jpg", "cli/1ACzpDDbczfCYt5Nw66f5mIjudE7LfJSk.jpg", "cli/1-qLsNo-n2EDXAvAaTPe7eP_oxE1e1vJP.jpg"]}, {"t": "Casamento Juliana & Daniel", "c": "casamentos", "p": ["cli/1LUByS55DrQB6KbRPsYZRJK59bz6y8fwm.jpg", "cli/19YbdL2-V3UjuriVuw_zkWe_cppb2CBX9.jpg", "cli/1jlXmT44dYOsvR7mHZxQGDhTMPFj-2ZRL.jpg", "cli/1MnK-hF5AR8xhlw9eSMY-W976rCtTe7OM.jpg", "cli/1rRJLHzoogvu7ZmOAB5GAXvzeiiCbqDLh.jpg"]}, {"t": "Aviva Camp", "c": "eventos", "p": ["cli/182O_AMUc9oL7WoDPPp1KLtgU_78b6MBK.jpg", "cli/1xiiE1zJ60_okIN097JJMlXFGg3D_cUyh.jpg", "cli/1qrFtvJ-tESb-yRL3BwclKl99uyxfRy3A.jpg", "cli/1Kk0iFjuEPO6LmCPj6adunTnRbUWsJwbW.jpg", "cli/1s857Fc4S_vjy24734cdY_dcC1I4Gcm16.jpg", "cli/1KjPuzV4-bZ_yJIgFaYsTjEjZDSc7RdbA.jpg"]}, {"t": "Chocotones Trevo Doces Gourmet", "c": "gastro", "p": ["img/29.jpg", "img/30.jpg", "img/31.jpg"]}, {"t": "Ensaio 15 anos", "c": "quinze", "p": ["cli/16saIYJWt92gRhIUp3FMLvAE_yMa1MjIR.jpg", "cli/1WluXCsrCryHl5KYTDXJgrd3PPntrrsIL.jpg", "cli/1PjVUwB-YWSbzY1Ud_aWMVP-ObHTkr9tp.jpg", "cli/1JM-GUUy6KueNd4ELZ0nJdoPKmba2MzaT.jpg", "cli/18EZOQZ5hrTJCza9OLh76m9a642GZD_ZZ.jpg"]}, {"t": "Show do João Gomes", "c": "shows", "p": ["img/43.jpg"]}, {"t": "Batizado Luis Gabriel", "c": "batizados", "p": ["cli/1eHFqC7WJIk282vTYr-Fzwuy7uVPlF5AE.jpg", "cli/1ebTxyQ_T0pYnHmx8K9-KWFUFuzZHnZS9.jpg", "cli/1GJBYEPsZArdlwBtI0bvbMDu2f8jsAN0G.jpg", "cli/1DuxAyj5ql9sV1tvo-CJQPPhT387-9QoH.jpg"]}, {"t": "Chá revelação Cecília", "c": "chas", "p": ["cli/1E8ce8nE5O4bnbPIP2Aed21OTO3HGK_zg.jpg", "cli/1CD-g-8Z2My6BeifV31Zge3YDrdjmpHB1.jpg", "cli/1wW7Vtql7O5L147zA8CRQsH6719WBMGvO.jpg", "cli/13-pbQqTfmkedPvddlFH9V5JJcUHAz7_c.jpg"]}, {"t": "Doce Menina", "c": "marcas", "p": ["cli/1Vy2JST1QpC95jP5E2EsxoID8RvjLslmY.jpg", "cli/1qfvJ5kQ4VmUVcKcm1UU2pGcCAikVbLK6.jpg"]}, {"t": "Casamento Bianca & Matheus", "c": "casamentos", "p": ["cli/1KXO9hLO6YJcaj4zYjUjplc0kJvM-bi5-.jpg", "cli/1CeJiQkomYsTW8c3-IS2x2bI7iIvU4mcV.jpg", "cli/1EKANYK9uZKSCy8DTNhvKst-8UoOKvHdN.jpg", "cli/1PGY1F83hduhXTN0BzJqtG5SPwNffD1bw.jpg", "cli/1Fb56tT9Y1qHqSKt1nL97pyhCeU4k3jvg.jpg"]}, {"t": "Cob Expo", "c": "eventos", "p": ["cli/11Fwt2bsu4lpeJqSgCV2Gq_2-mOFKZsCh.jpg", "cli/1-zaontiQswu-faD-5a8R5nSC9cAkhqhs.jpg", "cli/1t2-9DUIPXh0qcojnbygDVzKhD1IOxl0w.jpg", "cli/1EkYlhCEO3rAfgAS5fSsHeYMeFYEosnkR.jpg", "cli/1YY_zYgP_X7NopMaorgyfewmJOUGBsX9t.jpg"]}, {"t": "Brasatto Restaurante", "c": "gastro", "p": ["img/33.jpg", "img/34.jpg", "img/35.jpg", "img/32.jpg"]}, {"t": "Padre PH", "c": "shows", "p": ["cli/1kT9bN6-lvJ6NmHcrQQgugcXKCO4AmDGZ.jpg", "cli/1QBG00VtkkaU8x5oltw5WFTwBbbdBYjHx.jpg", "cli/1W8tmCqKRkRD2_56GOWedTHaOy998_X57.jpg", "cli/1uSDb9oh75ST53YfwQeVGHxK0AqOJaifK.jpg", "cli/1tW6GNw4i8Qdx6mTDfg8DagpsXzNvEP0r.jpg", "cli/1dryLGqpuG3ktlvmeEic62rKDCcdak4nr.jpg"]}, {"t": "Batizado Manoela", "c": "batizados", "p": ["cli/1-v04pCCo2dKXpuyDTx5FpwmW-9FtFY0B.jpg", "cli/13Lad7lL_HFJ7e6Liydp28QgrKbOAuTse.jpg", "cli/1n_GjEMcGheUC0Fnj9hvoRGnsG0PwnOnT.jpg"]}, {"t": "Chá revelação Mascarenhas", "c": "chas", "p": ["img/47.jpg", "img/48.jpg", "cli/1-VluN-T9e5BlQ-RZrQ6um-J71rw_a31l.jpg", "cli/18aQISGs9ROL8YrwPMq2YCgb4L9X2Wv5I.jpg"]}, {"t": "Espaço Guerir", "c": "marcas", "p": ["cli/12Mb5nI5EzvvN2SpHLGR6aCc4vJq1N7ZA.jpg"]}, {"t": "Bodas de Ouro Elza & Pedro", "c": "casamentos", "p": ["cli/1flrAmUUodRbsT_mGE9doQcVCEPIghGp2.jpg", "cli/1Fb5-dKjqyDVgywvDB0u4eUawnc1GATaP.jpg", "cli/1qW05VGyzaqjy-Gg2Cc5Y2MyhUQnIA_6K.jpg"]}, {"t": "Teleton", "c": "eventos", "p": ["cli/1z2iTYD-5Kgh9p7AkQL63ZF3vcW-g7UKF.jpg", "cli/1ovootHGhhh8KYq-Z150SWGSgSRzev80o.jpg", "cli/1BYFWAn9CU5xlmCBdJF8dBPNM-N1hM-ON.jpg"]}, {"t": "Assados do Rango", "c": "gastro", "p": ["img/38.jpg", "cli/16-XpGm0AQbNqVBjdJCbRQo58hm2VWtP1.jpg", "cli/148XFdB5gcmtSqMiCMN1wak0mdzYUaEdB.jpg", "img/37.jpg", "img/39.jpg"]}, {"t": "Batizado", "c": "batizados", "p": ["cli/1WgfpU7RVugIRtA_LFLld9N-JmpikGObN.jpg", "cli/1NXpO2WUHezv13uvygM0Z4wO8PiI5LsEl.jpg", "cli/1D2NjNtIntzQNT9cm1Qmwj2UMWiV-2TGc.jpg", "cli/1wa5-b6cdU-RPSb2aFwpQ9hTHF7H_nj5v.jpg"]}, {"t": "Chá revelação", "c": "chas", "p": ["img/46.jpg", "cli/1SAJQ2j1_gUNf7XOjvmgQxzo1Y65wD2YG.jpg", "cli/1zPh7QcLvAJTjGfxREND5EEHRT89A_cGG.jpg", "cli/1bhpKNTMymJXx09JGP5-j6nuR4aZcgNjF.jpg"]}, {"t": "Bruna Nails", "c": "marcas", "p": ["cli/1avYqTo0H_wZMKheVSltQkiueo3SvJXIn.jpg"]}, {"t": "Iluminar-te Mind", "c": "eventos", "p": ["cli/1s3L6js_bCuKy3t0ET2l2q57Lk7qs-312.jpg", "cli/19hW6nzzVlFZ3_kv6vArgLZkko7t-XPxi.jpg", "cli/1_TR1SASOEWj_ZxtQEl-lbmcma1T5BbqO.jpg"]}, {"t": "Batismo Maria & Micaela", "c": "batizados", "p": ["cli/18sIA1fUEsIUCDNKe5HnSsGP3b_0SaPVq.jpg", "cli/19rTXxHOiBdPwlKXpj7H7oGW5OT8JHb9K.jpg", "cli/13sWLHPnZX2mX7Kj5sXZ7aS8ExI1cJQ4Q.jpg"]}];
