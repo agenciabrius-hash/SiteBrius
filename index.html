@@ -816,7 +816,7 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
           <legend>Do que você precisa?</legend>
           <div class="cards2" role="radiogroup" aria-label="Tipo de serviço">
             <label class="pick big-pick"><input type="radio" name="tipo" value="evento"><span><b>Cobertura de evento</b><small>Fotografia, videomaker e storymaker para casamentos, aniversários, chás, shows e eventos corporativos.</small></span></label>
-            <label class="pick big-pick"><input type="radio" name="tipo" value="gestao"><span><b>Gestão de redes sociais</b><small>Cuidamos do seu perfil todo mês: planejamento, posts, vídeos, stories e relatório de resultados.</small></span></label>
+            <label class="pick big-pick"><input type="radio" name="tipo" value="gestao"><span><b>Gestão de redes sociais</b><small>Cuidamos do seu perfil todo mês. Conte sobre a sua marca e já marque uma reunião online com a gente.</small></span></label>
           </div>
         </fieldset>
 
@@ -875,6 +875,20 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
             </fieldset>
             <label>Quando quer começar?<input id="q-mes" name="inicio_gestao" type="month"></label>
             <label class="full">Qual o seu objetivo? <em>(opcional)</em><textarea id="q-obj" name="obs_gestao" rows="3" placeholder="Ex.: atrair mais clientes, lançar um produto, profissionalizar o perfil..."></textarea></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="qf-step" data-step="reuniao" hidden>
+          <legend>Reunião online</legend>
+          <p class="fine" style="margin:-8px 0 18px;font-size:14px">Para montar a proposta certa para a sua marca, vamos conversar por chamada de vídeo no Google Meet (cerca de 30 minutos). Escolha o melhor dia e horário:</p>
+          <div class="qf-grid">
+            <label>Dia da reunião<input id="q-rdata" name="reuniao_data" type="date" data-req><small id="q-rdata-msg"></small></label>
+            <span></span>
+            <fieldset class="full svc-pick" id="q-horas-r" role="radiogroup"><legend>Horário</legend>
+              <label class="pick"><input type="radio" name="reuniao_hora" value="10:00"><span><b>10h</b><small>Manhã</small></span></label>
+              <label class="pick"><input type="radio" name="reuniao_hora" value="19:00"><span><b>19h</b><small>Noite</small></span></label>
+              <label class="pick"><input type="radio" name="reuniao_hora" value="20:00"><span><b>20h</b><small>Noite</small></span></label>
+            </fieldset>
           </div>
         </fieldset>
 
@@ -966,8 +980,8 @@ const API_URL = '';
   const f=document.getElementById('qf'); if(!f) return;
   const $=id=>document.getElementById(id);
   const steps={};f.querySelectorAll('.qf-step').forEach(s=>steps[s.dataset.step]=s);
-  const NOMES={dados:'Seus dados',tipo:'O que precisa',evento:'O evento',local:'O local',marca:'Sua marca',revisar:'Revisar'};
-  const FLUXO={'':['dados','tipo','revisar'],evento:['dados','tipo','evento','local','revisar'],gestao:['dados','tipo','marca','revisar']};
+  const NOMES={dados:'Seus dados',tipo:'O que precisa',evento:'O evento',local:'O local',marca:'Sua marca',reuniao:'Reunião',revisar:'Revisar'};
+  const FLUXO={'':['dados','tipo','revisar'],evento:['dados','tipo','evento','local','revisar'],gestao:['dados','tipo','marca','reuniao','revisar']};
   const tabsEl=$('qf-tabs'),next=$('q-next'),back=$('q-back'),err=$('q-err');
   let cur=0,reservadas=new Set(),rota=null;
   const tipo=()=>(f.querySelector('input[name=tipo]:checked')||{}).value||'';
@@ -975,6 +989,17 @@ const API_URL = '';
   function drawTabs(){tabsEl.innerHTML=fluxo().map((k,i)=>'<li data-i="'+i+'"><span>'+(i+1)+'</span>'+NOMES[k]+'</li>').join('');
     [...tabsEl.children].forEach((t,i)=>{t.classList.toggle('on',i===cur);t.classList.toggle('done',i<cur);t.onclick=()=>{if(i<cur)show(i)}});}
   const tm=new Date();tm.setDate(tm.getDate()+1);$('q-data').min=tm.toISOString().slice(0,10);
+  const hj=new Date();$('q-rdata').min=new Date(hj.getTime()-hj.getTimezoneOffset()*60000).toISOString().slice(0,10);
+  const rmsg=$('q-rdata-msg');
+  function horariosDoDia(){const d=$('q-rdata').value;const rs=[...f.querySelectorAll('input[name=reuniao_hora]')];
+    rs.forEach(x=>{x.disabled=false;x.closest('label').style.opacity=''});rmsg.textContent='';rmsg.className='';if(!d)return;
+    const agora=new Date();rs.forEach(x=>{const [h,m]=x.value.split(':');const dt=new Date(d+'T'+h.padStart(2,'0')+':'+m+':00');if(dt-agora<2*3600e3){x.disabled=true;x.checked=false;x.closest('label').style.opacity=.35}});
+    if(!API_URL)return;rmsg.textContent='Verificando a agenda...';
+    fetch(API_URL+'?acao=horarios&data='+d).then(r=>r.json()).then(j=>{if(!j.ok)throw 0;const livres=new Set(j.horarios);
+      rs.forEach(x=>{if(!livres.has(x.value)){x.disabled=true;x.checked=false;x.closest('label').style.opacity=.35}});
+      rmsg.textContent=livres.size?'Horários livres em destaque.':'Sem horários livres neste dia. Escolha outro dia.';rmsg.className=livres.size?'good':'bad'}).catch(()=>{rmsg.textContent=''})}
+  $('q-rdata').addEventListener('change',horariosDoDia);
+  f.addEventListener('input',e=>{if(e.target.matches('input,textarea'))e.target.removeAttribute('aria-invalid')});f.addEventListener('change',e=>{if(e.target.matches('input'))e.target.removeAttribute('aria-invalid')});
   if(API_URL){fetch(API_URL+'?acao=datas').then(r=>r.json()).then(j=>{if(j.ok)reservadas=new Set(j.datas);checarData()}).catch(()=>{})}
   $('q-whatsapp').addEventListener('input',e=>{let d=e.target.value.replace(/\D/g,'').slice(0,11);
     e.target.value=d.length>10?`(${d.slice(0,2)}) ${d.slice(2,7)}-${d.slice(7)}`:d.length>6?`(${d.slice(0,2)}) ${d.slice(2,6)}-${d.slice(6)}`:d.length>2?`(${d.slice(0,2)}) ${d.slice(2)}`:d;});
@@ -996,6 +1021,7 @@ const API_URL = '';
     if(k==='evento'){const sv=[...document.querySelectorAll('#q-svcs input:checked')].map(x=>x.value);$('q-servicos').value=sv.join(',');
       if(sv.length<2){err.textContent='Marque pelo menos 2 serviços: fotografia, videomaker ou storymaker.';return false}
       if(!checarData()){err.textContent='Esta data já está reservada.';return false}}
+    if(k==='reuniao'&&!val('reuniao_hora')){err.textContent='Escolha um horário para a reunião.';return false}
     if(k==='marca'){const rd=[...document.querySelectorAll('#q-redes input:checked')].map(x=>x.value);$('q-redes-v').value=rd.join(', ');
       if(!rd.length){err.textContent='Escolha pelo menos uma rede social.';return false}}
     return true}
@@ -1017,7 +1043,7 @@ const API_URL = '';
       ['Data',$('q-data').value.split('-').reverse().join('/')+' às '+$('q-inicio').value],['Cobertura',$('q-horas').value+' h'],['Estilo',$('q-estilo').value],
       ['Convidados',$('q-conv').value||'—'],['Local',rota?rota.endereco:$('q-local').value],['Deslocamento',rota?fmtMin(rota.minutos)+' de carro':'calculado ao enviar'],['Observações',$('q-obs').value||'—']])}
     else{const m=$('q-mes').value;rows=rows.concat([['Serviço','Gestão de redes sociais'],['Marca',$('q-empresa').value+($('q-insta').value?' · '+$('q-insta').value:'')],['Segmento',$('q-seg').value],
-      ['Redes',$('q-redes-v').value],['Posts por semana',val('posts')],['Vídeos por semana',val('videos')],['Início',m?m.split('-').reverse().join('/'):'—'],['Objetivo',$('q-obj').value||'—']])}
+      ['Redes',$('q-redes-v').value],['Posts por semana',val('posts')],['Vídeos por semana',val('videos')],['Início',m?m.split('-').reverse().join('/'):'—'],['Objetivo',$('q-obj').value||'—'],['Reunião online',$('q-rdata').value.split('-').reverse().join('/')+' às '+val('reuniao_hora')+' (Google Meet)']])}
     $('q-review').innerHTML=rows.map(([k,v])=>'<dt>'+k+'</dt><dd>'+esc(v)+'</dd>').join('')}
   next.addEventListener('click',async()=>{
     const fl=fluxo(),k=fl[cur];
@@ -1034,10 +1060,11 @@ const API_URL = '';
     next.disabled=true;next.textContent='Enviando...';err.textContent='';
     const data=Object.fromEntries(new FormData(f).entries());
     if(data.tipo==='gestao'){['data','inicio','horas','estilo','local','servicos','convidados','obs'].forEach(x=>delete data[x]);data.obs=data.obs_gestao||''}
-    else{['empresa','instagram','segmento','redes','posts','videos','inicio_gestao','obs_gestao'].forEach(x=>delete data[x])}
+    else{['empresa','instagram','segmento','redes','posts','videos','inicio_gestao','obs_gestao','reuniao_data','reuniao_hora'].forEach(x=>delete data[x])}
     try{const j=await (await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)})).json();
       if(!j.ok)throw new Error(j.erro||'Erro');
-      Object.values(steps).forEach(s=>s.hidden=true);$('q-nav').hidden=true;tabsEl.hidden=true;$('q-done').hidden=false;$('q-done-id').textContent='Número do pedido: '+j.id;}
+      Object.values(steps).forEach(s=>s.hidden=true);$('q-nav').hidden=true;tabsEl.hidden=true;$('q-done').hidden=false;$('q-done-id').textContent='Número do pedido: '+j.id;
+      if(j.reuniao){f.querySelector('.big-ok').textContent='Reunião marcada!';$('q-done-msg').textContent='Nossa conversa está marcada para '+j.reuniao+'. Enviamos o convite com o link do Google Meet para o seu e-mail.'}}
     catch(e){err.textContent=e.message&&e.message!=='Failed to fetch'?e.message:'Não foi possível enviar agora. Tente de novo em instantes.';next.disabled=false;next.textContent='Enviar orçamento'}
   });
   show(0);
