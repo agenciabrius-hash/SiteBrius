@@ -868,7 +868,7 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
 
         <div class="qf-done" id="q-done" hidden>
           <p class="big-ok">Pedido enviado!</p>
-          <p>Recebemos o seu pedido de orçamento. Em breve a equipe Brius chama você no WhatsApp com a proposta.</p>
+          <p id="q-done-msg">Recebemos o seu pedido de orçamento. Em breve a equipe Brius chama você no WhatsApp com a proposta.</p>
           <p class="fine" id="q-done-id"></p>
         </div>
 
@@ -1004,7 +1004,15 @@ const API_URL = '';
   next.addEventListener('click',async()=>{
     const fl=fluxo(),k=fl[cur];
     if(k!=='revisar'){if(!validar(k))return;if(k==='local'&&!rota&&API_URL)await calcRota();show(cur+1);return}
-    if(!API_URL){err.textContent='O envio funciona na versão publicada do site. Por enquanto, fale com a gente pelo Instagram @agenciabrius.';return}
+    if(!API_URL){
+      // Enquanto a automação não está ligada: o pedido vai pronto para o WhatsApp da Brius
+      const linhas=[...document.querySelectorAll('#q-review dt')].map(dt=>'*'+dt.textContent+':* '+dt.nextElementSibling.textContent);
+      const txt='Olá, Brius! Quero um orçamento 😊\n\n'+linhas.join('\n');
+      const url='https://wa.me/5511940809443?text='+encodeURIComponent(txt);
+      window.open(url,'_blank')||(location.href=url);
+      Object.values(steps).forEach(s=>s.hidden=true);$('q-nav').hidden=true;tabsEl.hidden=true;$('q-done').hidden=false;
+      $('q-done-msg').textContent='Seu pedido abriu no WhatsApp da Brius com todas as informações. É só tocar em enviar que a gente responde com a proposta.';$('q-done-id').innerHTML='Se o WhatsApp não abriu, <a href="'+url+'" target="_blank" rel="noopener">toque aqui para enviar</a>.';
+      return}
     next.disabled=true;next.textContent='Enviando...';err.textContent='';
     const data=Object.fromEntries(new FormData(f).entries());
     if(data.tipo==='gestao'){['data','inicio','horas','estilo','local','servicos','convidados','obs'].forEach(x=>delete data[x]);data.obs=data.obs_gestao||''}
