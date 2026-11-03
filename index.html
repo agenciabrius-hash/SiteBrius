@@ -416,6 +416,7 @@ html{scroll-padding-top:66px}
 .cards2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .big-pick span{padding:22px;gap:8px}.big-pick span b{font-size:24px}.big-pick span small{font-size:14px;line-height:1.5}
 @media (max-width:600px){.svc-pick,.cards2{grid-template-columns:minmax(0,1fr)}}
+.qf-nota{font-size:12px;color:var(--muted-l);margin:10px 0 0}
 .qmapa{margin-top:14px}.qmapa iframe{display:block;width:100%;height:260px;border:0;border-radius:12px;background:#e9e2d6}.qmapa p{font-size:13px;line-height:1.5;margin:8px 0 0;color:var(--muted-l)}.qmapa a{color:var(--ink);font-weight:600;white-space:nowrap}
 .route{display:flex;flex-wrap:wrap;gap:14px 20px;align-items:center;margin-top:18px}
 .route p{margin:0;font-size:14px;color:var(--muted-l);flex:1 1 260px}
@@ -833,6 +834,7 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
             <label>WhatsApp<input id="q-whatsapp" name="whatsapp" type="tel" inputmode="numeric" autocomplete="tel" required placeholder="(11) 91234-5678"></label>
             <label class="hp" aria-hidden="true">Site<input id="q-site" name="site" tabindex="-1" autocomplete="off"></label>
           </div>
+          <p class="qf-nota">Usamos seus dados só para falar com você sobre este orçamento.</p>
         </fieldset>
 
         <fieldset class="qf-step" data-step="tipo" hidden>
@@ -1011,6 +1013,15 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbxv6WLxKRDICMjAqAGWB8Uu
   const FLUXO={'':['dados','tipo','revisar'],evento:['dados','tipo','evento','local','revisar'],gestao:['dados','tipo','marca','reuniao','revisar']};
   const tabsEl=$('qf-tabs'),next=$('q-next'),back=$('q-back'),err=$('q-err');
   let cur=0,reservadas=new Set(),rota=null;
+  // salva o andamento a cada etapa: se a pessoa não terminar, a Brius recebe o contato
+  const RID=(self.crypto&&crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2)).replace(/-/g,'');
+  function rascunho(){if(!API_URL||$('q-site').value)return;const k=fluxo()?fluxo()[cur]:'tipo';
+    const det=[];const add=(r,v)=>{if(v)det.push(r+': '+v)};
+    if(tipo()==='evento'){add('Serviços',[...document.querySelectorAll('#q-svcs input:checked')].map(x=>x.closest('label').querySelector('b').textContent).join(', '));
+      add('Data',$('q-data').value&&$('q-data').value.split('-').reverse().join('/'));add('Estilo',$('q-estilo').value);add('Local',rota?rota.endereco:$('q-local').value)}
+    else if(tipo()==='gestao'){add('Marca',$('q-empresa').value);add('Instagram',$('q-insta').value)}
+    const body=JSON.stringify({acao:'rascunho',rid:RID,nome:$('q-nome').value,email:$('q-email').value,whatsapp:$('q-whatsapp').value,tipo:tipo(),etapa:NOMES[k]||k,detalhes:det.join(' · ')});
+    try{fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body,keepalive:true}).catch(()=>{})}catch(e){}}
   const tipo=()=>(f.querySelector('input[name=tipo]:checked')||{}).value||'';
   const fluxo=()=>FLUXO[tipo()];
   function drawTabs(){tabsEl.innerHTML=fluxo().map((k,i)=>'<li data-i="'+i+'"><span>'+(i+1)+'</span>'+NOMES[k]+'</li>').join('');
@@ -1075,7 +1086,7 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbxv6WLxKRDICMjAqAGWB8Uu
     $('q-review').innerHTML=rows.map(([k,v])=>'<dt>'+k+'</dt><dd>'+esc(v)+'</dd>').join('')}
   next.addEventListener('click',async()=>{
     const fl=fluxo(),k=fl[cur];
-    if(k!=='revisar'){if(!validar(k))return;if(k==='local'&&!rota&&API_URL)await calcRota();show(cur+1);return}
+    if(k!=='revisar'){if(!validar(k))return;if(k==='local'&&!rota&&API_URL)await calcRota();show(cur+1);rascunho();return}
     if(!API_URL){
       // Enquanto a automação não está ligada: o pedido vai pronto para o WhatsApp da Brius
       const linhas=[...document.querySelectorAll('#q-review dt')].map(dt=>'*'+dt.textContent+':* '+dt.nextElementSibling.textContent);
@@ -1086,7 +1097,7 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbxv6WLxKRDICMjAqAGWB8Uu
       $('q-done-msg').textContent='Seu pedido abriu no WhatsApp da Brius com todas as informações. É só tocar em enviar que a gente responde com a proposta.';$('q-done-id').innerHTML='Se o WhatsApp não abriu, <a href="'+url+'" target="_blank" rel="noopener">toque aqui para enviar</a>.';
       return}
     next.disabled=true;next.textContent='Enviando...';err.textContent='';
-    const data=Object.fromEntries(new FormData(f).entries());
+    const data=Object.fromEntries(new FormData(f).entries());data.rascunho=RID;
     if(data.tipo==='gestao'){['data','inicio','horas','estilo','local','servicos','convidados','obs'].forEach(x=>delete data[x]);data.obs=data.obs_gestao||''}
     else{['empresa','instagram','segmento','redes','posts','videos','inicio_gestao','obs_gestao','reuniao_data','reuniao_hora'].forEach(x=>delete data[x])}
     try{const j=await (await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)})).json();
@@ -1160,8 +1171,9 @@ const ALBUNS=[{"t": "Ensaio de bodas Sirlene & Valdinei", "c": "casamentos", "p"
 // ===== ENDEREÇO LIMPO: o site sempre abre no início =====
 (function(){
   try{history.scrollRestoration='manual'}catch(e){}
-  if(location.hash){try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}}
-  window.scrollTo(0,0);addEventListener('load',()=>window.scrollTo(0,0));
+  const irOrc=/[?&]orcamento\b/.test(location.search);
+  if(location.hash||irOrc){try{history.replaceState(null,'',location.pathname)}catch(e){}}
+  window.scrollTo(0,0);addEventListener('load',()=>{window.scrollTo(0,0);if(irOrc){const o=document.getElementById('orcamento');if(o){window.__openCurtain&&window.__openCurtain(o);o.scrollIntoView({block:'start'})}}});
   addEventListener('pageshow',e=>{if(e.persisted)window.scrollTo(0,0)});
   // links do menu rolam até a seção sem colocar #secao no endereço
   document.addEventListener('DOMContentLoaded',()=>document.addEventListener('click',e=>{
