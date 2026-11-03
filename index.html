@@ -568,6 +568,40 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
 @media (prefers-reduced-motion:reduce){.shine::after,.grid button::after,.cta::after,.btn-dark::after{display:none}.hero-strip img,.phone{transition:none!important;transform:none!important}}
 
 
+
+/* ===== INSTAGRAM ===== */
+.ig-seguir{width:fit-content;display:inline-flex;align-items:center;gap:8px;margin-top:16px;padding:12px 20px;border-radius:999px;color:#fff;text-decoration:none;font:700 14px var(--body);background:linear-gradient(90deg,#f58529,#dd2a7b 45%,#8134af 75%,#515bd4)}
+.ig-seguir:focus-visible{outline:2px solid var(--gold-soft);outline-offset:3px}
+.ig-stories{display:flex;gap:16px;overflow-x:auto;padding:4px 2px 18px;margin-bottom:8px;scrollbar-width:none}
+.ig-stories::-webkit-scrollbar{display:none}
+.ig-st{all:unset;cursor:pointer;display:grid;justify-items:center;gap:6px;flex:none;color:var(--bone);font:500 12px var(--body)}
+.ig-st span.ring{width:78px;height:78px;border-radius:50%;padding:3px;background:conic-gradient(#f58529,#dd2a7b,#8134af,#515bd4,#f58529);display:block}
+.ig-st img{width:100%;height:100%;border-radius:50%;object-fit:cover;border:3px solid var(--graphite);box-sizing:border-box;display:block}
+.ig-st:focus-visible span.ring{outline:2px solid var(--gold-soft);outline-offset:3px}
+.ig-feed{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+@media (max-width:760px){.ig-feed{grid-template-columns:repeat(3,minmax(0,1fr));gap:3px}}
+.ig-post{position:relative;display:block;aspect-ratio:4/5;overflow:hidden;background:#2e2a25}
+.ig-post img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s ease,filter .4s}
+.ig-post:hover img{transform:scale(1.05);filter:brightness(.75)}
+.ig-post .ico{position:absolute;top:8px;right:8px;width:22px;height:22px;color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.6))}
+.ig-post .cap{position:absolute;left:0;right:0;bottom:0;padding:26px 10px 10px;background:linear-gradient(transparent,rgba(0,0,0,.75));color:#fff;font:500 12px/1.4 var(--body);opacity:0;transition:opacity .3s;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.ig-post:hover .cap,.ig-post:focus-visible .cap{opacity:1}
+.igv{position:fixed;inset:0;z-index:120;background:rgba(10,9,8,.95);display:grid;place-items:center}
+.igv[hidden]{display:none}
+.igv-box{position:relative;width:min(420px,100vw);height:min(100dvh,760px);background:#000;border-radius:14px;overflow:hidden}
+@media (max-width:500px){.igv-box{border-radius:0;height:100dvh}}
+.igv-media,.igv-media img,.igv-media video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.igv-bars{position:absolute;top:10px;left:10px;right:10px;z-index:3;display:flex;gap:4px}
+.igv-bars i{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.35);overflow:hidden;position:relative}
+.igv-bars i.f::after,.igv-bars i.c::after{content:"";position:absolute;inset:0;background:#fff;transform-origin:left}
+.igv-bars i.c::after{animation:bar var(--dur,5s) linear forwards}
+.igv-top{position:absolute;top:22px;left:12px;right:12px;z-index:3;display:flex;align-items:center;gap:8px;color:#fff;font:600 13px var(--body)}
+.igv-top img{width:30px;height:30px;border-radius:50%}
+.igv-top span{font-weight:400;opacity:.8}
+.igv-top button{margin-left:auto;background:none;border:0;color:#fff;font-size:20px;cursor:pointer;padding:6px}
+.igv-p,.igv-n{position:absolute;top:70px;bottom:70px;z-index:2;width:40%;background:none;border:0;cursor:pointer}
+.igv-p{left:0}.igv-n{right:0}
+.igv-link{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);z-index:3;background:rgba(255,255,255,.92);color:#141210;text-decoration:none;font:700 13px var(--body);padding:10px 16px;border-radius:999px}
 /* ===== DÚVIDAS ===== */
 .faq{max-width:820px;border-top:1px solid #ddd2c2}
 .fq{border-bottom:1px solid #ddd2c2}
@@ -867,6 +901,28 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
     </div>
   </div>
 </section>
+
+<section class="band dark2" id="instagram" hidden>
+  <div class="wrap">
+    <div class="chapter">
+      <div class="head">
+        <h2 class="mega ltr" aria-label="Instagram"><span aria-hidden="true"><span class="w"><span class="lt">I</span><span class="lt">n</span><span class="lt">s</span><span class="lt">t</span><span class="lt">a</span><span class="lt">g</span><span class="lt">r</span><span class="lt">a</span><span class="lt">m</span></span></span></h2>
+        <div class="text">
+          <p class="eyebrow">@agenciabrius</p>
+          <p class="lede">Os bastidores e os trabalhos mais recentes, direto do nosso Instagram.</p>
+          <a class="ig-seguir" href="https://www.instagram.com/agenciabrius/" target="_blank" rel="noopener">Seguir no Instagram</a>
+        </div>
+      </div>
+      <div class="ig-stories" id="igStories" hidden></div>
+      <div class="ig-feed" id="igFeed"></div>
+    </div>
+  </div>
+</section>
+<div class="igv" id="igv" hidden role="dialog" aria-modal="true" aria-label="Story do Instagram">
+  <div class="igv-box"><div class="igv-bars" id="igvBars"></div><div class="igv-top"><img src="img/icone-192.png" alt=""><b>agenciabrius</b><span id="igvQuando"></span><button id="igvX" aria-label="Fechar">✕</button></div>
+  <div class="igv-media" id="igvMedia"></div><button class="igv-p" id="igvP" aria-label="Anterior"></button><button class="igv-n" id="igvN" aria-label="Próximo"></button>
+  <a class="igv-link" id="igvLink" target="_blank" rel="noopener">Ver no Instagram</a></div>
+</div>
 
 <section class="band light" id="duvidas">
   <div class="wrap">
@@ -1239,6 +1295,36 @@ const ALBUNS=[{"t": "Ensaio de bodas Sirlene & Valdinei", "c": "casamentos", "p"
     cards.forEach(c=>{io.unobserve(c);c._stop();c.remove()});
     cards=lista.map(mk);cards.forEach(c=>io.observe(c));render();
   }).catch(()=>{})}
+})();
+// ===== INSTAGRAM (posts recentes + stories do dia) =====
+(function(){
+  const sec=document.getElementById('instagram');if(!sec||!API_URL)return;
+  const feed=document.getElementById('igFeed'),stBox=document.getElementById('igStories');
+  const icoVideo='<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>';
+  const icoCarr='<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="14" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 7v12a2 2 0 0 0 2 2h12" fill="none" stroke="currentColor" stroke-width="2"/></svg>';
+  const tempo=t=>{if(!t)return'';const h=Math.max(1,Math.round((Date.now()-new Date(t))/3600000));return h<24?h+' h':Math.round(h/24)+' d'};
+  fetch(API_URL+'?acao=instagram').then(r=>r.json()).then(j=>{
+    if(!j||!j.ok||!(j.posts||[]).length)return;
+    j.posts.slice(0,innerWidth<760?9:8).forEach(p=>{const a=document.createElement('a');a.className='ig-post';a.href=p.link;a.target='_blank';a.rel='noopener';
+      a.setAttribute('aria-label','Abrir post no Instagram'+(p.texto?': '+p.texto.slice(0,60):''));
+      a.innerHTML='<img loading="lazy" alt="">'+(p.tipo==='VIDEO'?icoVideo:p.tipo==='CAROUSEL_ALBUM'?icoCarr:'')+'<span class="cap"></span>';
+      a.querySelector('img').src=p.img;a.querySelector('.cap').textContent=p.texto;feed.appendChild(a)});
+    const st=j.stories||[];
+    if(st.length){stBox.hidden=false;const b=document.createElement('button');b.className='ig-st';b.setAttribute('aria-label','Ver stories de hoje');
+      b.innerHTML='<span class="ring"><img alt=""></span>Stories de hoje';b.querySelector('img').src=st[0].img;b.onclick=()=>abrir(st,0);stBox.appendChild(b)}
+    sec.hidden=false;
+  }).catch(()=>{});
+  // visualizador de stories
+  const v=document.getElementById('igv'),media=document.getElementById('igvMedia'),bars=document.getElementById('igvBars');let lista=[],k=0,tmr=null;
+  function abrir(l,i){lista=l;v.hidden=false;document.body.style.overflow='hidden';bars.innerHTML=l.map(()=>'<i></i>').join('');mostrar(i);document.getElementById('igvX').focus()}
+  function mostrar(i){clearTimeout(tmr);if(i<0)i=0;if(i>=lista.length)return fechar();k=i;const s=lista[k];media.innerHTML='';
+    [...bars.children].forEach((b,j)=>b.className=j<k?'f':(j===k?'c':''));document.getElementById('igvQuando').textContent=tempo(s.quando);document.getElementById('igvLink').href=s.link;
+    if(s.tipo==='VIDEO'&&s.video){const vd=document.createElement('video');vd.src=s.video;vd.playsInline=true;vd.autoplay=true;vd.muted=false;vd.poster=s.img;media.appendChild(vd);
+      vd.play().catch(()=>{vd.muted=true;vd.play().catch(()=>{})});vd.onloadedmetadata=()=>bars.children[k].style.setProperty('--dur',vd.duration+'s');vd.onended=()=>mostrar(k+1)}
+    else{const im=new Image();im.src=s.img;im.alt='';media.appendChild(im);bars.children[k].style.setProperty('--dur','5s');tmr=setTimeout(()=>mostrar(k+1),5000)}}
+  function fechar(){clearTimeout(tmr);media.innerHTML='';v.hidden=true;document.body.style.overflow=''}
+  document.getElementById('igvX').onclick=fechar;document.getElementById('igvP').onclick=()=>mostrar(k-1);document.getElementById('igvN').onclick=()=>mostrar(k+1);
+  v.addEventListener('click',e=>{if(e.target===v)fechar()});document.addEventListener('keydown',e=>{if(v.hidden)return;if(e.key==='Escape')fechar();if(e.key==='ArrowRight')mostrar(k+1);if(e.key==='ArrowLeft')mostrar(k-1)});
 })();
 // ===== AVALIAÇÕES =====
 (function(){
