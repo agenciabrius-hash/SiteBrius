@@ -20,6 +20,7 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Brius Agência: fotos de eventos e casais">
 <meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Em quanto tempo recebo as fotos?", "acceptedAnswer": {"@type": "Answer", "text": "De 3 dias a uma semana depois do evento. Você recebe um e-mail com o acesso à sua Área do Cliente, onde ficam todas as fotos e vídeos."}}, {"@type": "Question", "name": "Quantas fotos eu recebo?", "acceptedAnswer": {"@type": "Answer", "text": "Todas as fotos do evento. Não tem limite de quantidade nem pacote de \"x fotos\": o que a gente registra, você recebe."}}, {"@type": "Question", "name": "Como faço para reservar a data?", "acceptedAnswer": {"@type": "Answer", "text": "Peça o orçamento aqui no site. Com a proposta aprovada, a data fica reservada com o sinal de 30% via Pix. O restante (70%) é pago até a semana do evento."}}, {"@type": "Question", "name": "E se eu precisar mudar a data?", "acceptedAnswer": {"@type": "Answer", "text": "O sinal não é devolvido, mas vale para a nova data, desde que ela esteja livre na nossa agenda."}}, {"@type": "Question", "name": "Vocês atendem fora de São Paulo?", "acceptedAnswer": {"@type": "Answer", "text": "Sim! Atendemos todo o Brasil e também fora do país. Para eventos fora de São Paulo, o valor aumenta e os custos de transporte, hospedagem e alimentação da equipe ficam por conta do contratante."}}, {"@type": "Question", "name": "Como funciona a Área do Cliente?", "acceptedAnswer": {"@type": "Answer", "text": "É a sua galeria particular no nosso site. No primeiro acesso você cria uma senha e vê só as suas fotos e vídeos. Dá para ver em tela cheia, marcar as favoritas e baixar tudo de uma vez. No celular, as fotos vão direto para a galeria (no iPhone, para o app Fotos). A galeria fica disponível pelo prazo combinado, e a gente avisa antes de encerrar."}}, {"@type": "Question", "name": "Como funciona a gestão de redes sociais?", "acceptedAnswer": {"@type": "Answer", "text": "Escolha \"Gestão de redes sociais\" no orçamento e marque uma conversa online pelo Google Meet. Na reunião a gente entende a sua marca e monta a proposta."}}]}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "ProfessionalService", "name": "Brius Agência", "alternateName": "Brius", "url": "https://agenciabrius.com.br/", "image": "https://agenciabrius.com.br/img/capa-compartilhar.jpg", "logo": "https://agenciabrius.com.br/img/icone-512.png", "description": "Fotografia, videomaker, storymaker e gestão de redes sociais para casamentos, eventos, marcas e empresas. De São Paulo para todo o Brasil.", "telephone": "+55-11-94080-9443", "email": "agenciabrius@gmail.com", "areaServed": {"@type": "Country", "name": "Brasil"}, "address": {"@type": "PostalAddress", "addressLocality": "São Paulo", "addressRegion": "SP", "addressCountry": "BR"}, "founder": [{"@type": "Person", "name": "Matheus"}, {"@type": "Person", "name": "Sabrina"}], "sameAs": ["https://www.instagram.com/agenciabrius/"], "knowsAbout": ["Fotografia de casamento", "Fotografia de eventos", "Videomaker", "Storymaker", "Gestão de redes sociais", "Fotografia publicitária"]}</script>
 <title>Brius Agência · Fotografia, vídeo e redes sociais em São Paulo</title>
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
@@ -557,6 +558,16 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
 @media (hover:none){.grid button .cap{transform:none;background:linear-gradient(transparent,rgba(10,10,10,.6))}.cur{display:none}}
 @media (prefers-reduced-motion:reduce){.shine::after,.grid button::after,.cta::after,.btn-dark::after{display:none}.hero-strip img,.phone{transition:none!important;transform:none!important}}
 
+
+/* ===== DÚVIDAS ===== */
+.faq{max-width:820px;border-top:1px solid #ddd2c2}
+.fq{border-bottom:1px solid #ddd2c2}
+.fq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:20px 2px;font:500 clamp(18px,1.8vw,22px)/1.3 var(--display);color:var(--ink)}
+.fq summary::-webkit-details-marker{display:none}
+.fq summary::after{content:"+";flex:none;width:32px;height:32px;border-radius:50%;border:1px solid #cdbfa8;display:grid;place-items:center;font:400 20px/1 var(--body);color:var(--ink);transition:transform .3s,background .3s}
+.fq[open] summary::after{transform:rotate(45deg);background:var(--gold-soft);border-color:var(--gold-soft)}
+.fq summary:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
+.fq p{margin:0 0 22px;max-width:62ch;font:400 16px/1.7 var(--body);color:var(--muted-l)}
 /* ===== HERO: mesa de fotos ===== */
 .hero2{background:radial-gradient(120% 90% at 85% 40%,#2a241d 0%,var(--ink) 60%);color:var(--bone);overflow:hidden;position:relative}
 .hero2 .wrap{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);align-items:center;gap:clamp(24px,5vw,72px);padding-block:clamp(48px,8vw,104px)}
@@ -605,6 +616,7 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
       <li><a href="#clientes">Clientes</a></li>
       <li><a href="#historia">Sobre</a></li>
       <li><a href="#avaliacoes">Avaliações</a></li>
+      <li><a href="#duvidas">Dúvidas</a></li>
       <li><a href="#contato">Contato</a></li>
     </ul>
   </div>
@@ -843,6 +855,21 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
           <span class="aud-time">0:00</span>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<section class="band light" id="duvidas">
+  <div class="wrap">
+    <div class="chapter">
+      <div class="head">
+        <h2 class="mega ltr" aria-label="Dúvidas frequentes"><span aria-hidden="true"><span class="w"><span class="lt">D</span><span class="lt">ú</span><span class="lt">v</span><span class="lt">i</span><span class="lt">d</span><span class="lt">a</span><span class="lt">s</span></span></span></h2>
+        <div class="text">
+          <p class="eyebrow">Perguntas frequentes</p>
+          <p class="lede">O que mais perguntam pra gente antes de fechar. Ficou alguma dúvida? Chama no WhatsApp.</p>
+        </div>
+      </div>
+      <div class="faq"><details class="fq"><summary>Em quanto tempo recebo as fotos?</summary><p>De 3 dias a uma semana depois do evento. Você recebe um e-mail com o acesso à sua Área do Cliente, onde ficam todas as fotos e vídeos.</p></details><details class="fq"><summary>Quantas fotos eu recebo?</summary><p>Todas as fotos do evento. Não tem limite de quantidade nem pacote de "x fotos": o que a gente registra, você recebe.</p></details><details class="fq"><summary>Como faço para reservar a data?</summary><p>Peça o orçamento aqui no site. Com a proposta aprovada, a data fica reservada com o sinal de 30% via Pix. O restante (70%) é pago até a semana do evento.</p></details><details class="fq"><summary>E se eu precisar mudar a data?</summary><p>O sinal não é devolvido, mas vale para a nova data, desde que ela esteja livre na nossa agenda.</p></details><details class="fq"><summary>Vocês atendem fora de São Paulo?</summary><p>Sim! Atendemos todo o Brasil e também fora do país. Para eventos fora de São Paulo, o valor aumenta e os custos de transporte, hospedagem e alimentação da equipe ficam por conta do contratante.</p></details><details class="fq"><summary>Como funciona a Área do Cliente?</summary><p>É a sua galeria particular no nosso site. No primeiro acesso você cria uma senha e vê só as suas fotos e vídeos. Dá para ver em tela cheia, marcar as favoritas e baixar tudo de uma vez. No celular, as fotos vão direto para a galeria (no iPhone, para o app Fotos). A galeria fica disponível pelo prazo combinado, e a gente avisa antes de encerrar.</p></details><details class="fq"><summary>Como funciona a gestão de redes sociais?</summary><p>Escolha "Gestão de redes sociais" no orçamento e marque uma conversa online pelo Google Meet. Na reunião a gente entende a sua marca e monta a proposta.</p></details></div>
     </div>
   </div>
 </section>
@@ -1364,7 +1391,7 @@ document.querySelectorAll('.ltr').forEach(h=>{const cs=[...h.querySelectorAll(".
 // Reveal on scroll (only for blocks below the first screen)
 if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&'IntersectionObserver' in window){
   // cada bloco surge de baixo para cima; em grades, os itens surgem um depois do outro
-  const blocos=[...document.querySelectorAll('.head,.split,.story,.filters,.qf,.contact,.client')];
+  const blocos=[...document.querySelectorAll('.head,.split,.story,.filters,.qf,.contact,.client,.faq')];
   const grupos=[...document.querySelectorAll('.grid,.services,.reels,.steps,.channels,.auds')];
   const els=blocos.concat(...grupos.map(g=>{const k=[...g.children];k.forEach((c,i)=>c.style.setProperty('--d',i%6));return k}))
     .filter((e,i,a)=>a.indexOf(e)===i&&e.getBoundingClientRect().top>innerHeight*.92);
