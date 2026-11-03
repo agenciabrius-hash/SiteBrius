@@ -11,7 +11,17 @@
 .bcal-h button:disabled{opacity:.3;cursor:default}
 .bcal-g{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center}
 .bcal-g i{font:600 10px/2.2 var(--body,system-ui);color:#8d8478;font-style:normal;text-transform:uppercase}
-.bcal-g span,.bcal-g a{aspect-ratio:1;display:grid;place-items:center;border-radius:50%;font:500 13px var(--body,system-ui);color:#b4ab9d}
+.bcal-g span,.bcal-g a,.bcal-g button{aspect-ratio:1;display:grid;place-items:center;border-radius:50%;font:500 13px var(--body,system-ui);color:#b4ab9d}
+.bcal-g button{all:unset;aspect-ratio:1;display:grid;place-items:center;border-radius:50%;font:500 13px var(--body,system-ui);color:#b4ab9d;cursor:pointer;transition:background .2s,transform .2s}
+.bcal-g button:hover{background:rgba(230,211,174,.12)}
+.bcal-g button:focus-visible{outline:2px solid #e6d3ae;outline-offset:1px}
+.bcal-g button.ev{background:#e6d3ae;color:#141210;font-weight:700}
+.bcal-g button.ev:hover{transform:scale(1.12)}
+.bcal-g button.sel{box-shadow:0 0 0 2px #141210,0 0 0 4px #e6d3ae}
+.bcal-g button.sel:not(.ev){background:rgba(230,211,174,.2);color:#fbf8f3}
+.bcal-t{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 2px;font:600 12px var(--body,system-ui);letter-spacing:.14em;text-transform:uppercase;color:#b8955a}
+.bcal-t button{all:unset;cursor:pointer;color:#b4ab9d;font:600 12px var(--body,system-ui);letter-spacing:0;text-transform:none;text-decoration:underline}
+.bcal-vazio{padding:22px;border:1px dashed rgba(230,211,174,.22);border-radius:14px;color:#b4ab9d;font:400 15px/1.6 var(--body,system-ui)}
 .bcal-g a{position:relative;background:#e6d3ae;color:#141210;font-weight:700;text-decoration:none;transition:transform .2s}
 .bcal-g a:hover,.bcal-g a:focus-visible{transform:scale(1.12)}
 .bcal-g .hj{box-shadow:inset 0 0 0 1px rgba(230,211,174,.5)}
@@ -27,9 +37,9 @@
   window.BriusCalendario=function(el,base){
     if(!el)return;base=base||'';
     if(!document.getElementById('bcal-css')){const st=document.createElement('style');st.id='bcal-css';st.textContent=css;document.head.appendChild(st)}
-    el.innerHTML='<div class="bcal"><div class="bcal-m"><div class="bcal-h"><button type="button" data-d="-1" aria-label="Mês anterior">‹</button><b aria-live="polite"></b><button type="button" data-d="1" aria-label="Próximo mês">›</button></div><div class="bcal-g"></div></div><div class="bcal-l"><p class="bcal-v">Carregando eventos…</p></div></div>';
+    el.innerHTML='<div class="bcal"><div class="bcal-m"><div class="bcal-h"><button type="button" data-d="-1" aria-label="Mês anterior">‹</button><b aria-live="polite"></b><button type="button" data-d="1" aria-label="Próximo mês">›</button></div><div class="bcal-g"></div></div><div class="bcal-l" aria-live="polite"><p class="bcal-v">Carregando eventos…</p></div></div>';
     const tit=el.querySelector('.bcal-h b'),grade=el.querySelector('.bcal-g'),lista=el.querySelector('.bcal-l');
-    let evs=[],ano,mes;const hoje=new Date();ano=hoje.getFullYear();mes=hoje.getMonth();
+    let evs=[],ano,mes,dia=null;const hoje=new Date();ano=hoje.getFullYear();mes=hoje.getMonth();
     const link=e=>base+'eventos/?e='+encodeURIComponent(e.e);
     const dataBR=d=>{const [a,m,dd]=d.split('-');return dd+' de '+MESES[+m-1]+' de '+a};
     function pintar(){
@@ -39,16 +49,23 @@
       let h=['D','S','T','Q','Q','S','S'].map(x=>'<i>'+x+'</i>').join('');
       const ini=new Date(ano,mes,1).getDay(),dias=new Date(ano,mes+1,0).getDate();
       for(let i=0;i<ini;i++)h+='<span></span>';
-      for(let d=1;d<=dias;d++){const hj=(d===hoje.getDate()&&mes===hoje.getMonth()&&ano===hoje.getFullYear())?' class="hj"':'';
-        h+=porDia[d]?'<a href="'+link(porDia[d][0])+'" title="'+esc(porDia[d].map(e=>e.nome).join(', '))+'">'+d+'</a>':'<span'+hj+'>'+d+'</span>'}
+      for(let d=1;d<=dias;d++){const cl=[porDia[d]?'ev':'',(d===hoje.getDate()&&mes===hoje.getMonth()&&ano===hoje.getFullYear())?'hj':'',d===dia?'sel':''].filter(Boolean).join(' ');
+        const rot=d+' de '+MESES[mes]+(porDia[d]?': '+porDia[d].map(e=>e.nome).join(', '):': sem eventos');
+        h+='<button type="button" data-dia="'+d+'"'+(cl?' class="'+cl+'"':'')+' aria-label="'+esc(rot)+'"'+(d===dia?' aria-pressed="true"':'')+'>'+d+'</button>'}
       grade.innerHTML=h;
-      lista.innerHTML=doMes.length?doMes.map(e=>'<a class="bcal-c" href="'+link(e)+'"><img src="'+esc(e.capa)+'" alt="" loading="lazy"><span><small>'+esc(dataBR(e.data))+'</small><b>'+esc(e.nome)+'</b><em>'+(e.pronto?'Encontrar minhas fotos →':'Fotos em preparação')+'</em></span></a>').join('')
+      const card=e=>'<a class="bcal-c" href="'+link(e)+'"><img src="'+esc(e.capa)+'" alt="" loading="lazy"><span><small>'+esc(dataBR(e.data))+'</small><b>'+esc(e.nome)+'</b><em>'+(e.pronto?'Encontrar minhas fotos →':'Fotos em preparação')+'</em></span></a>';
+      if(dia){const doDia=porDia[dia]||[];
+        lista.innerHTML='<p class="bcal-t"><span>'+dia+' de '+MESES[mes]+' de '+ano+'</span>'+(doMes.length?'<button type="button" data-todos>Ver o mês todo</button>':'')+'</p>'+
+          (doDia.length?doDia.map(card).join(''):'<p class="bcal-vazio">Não temos eventos neste dia.</p>');
+        const t=lista.querySelector('[data-todos]');if(t)t.onclick=()=>{dia=null;pintar()};
+      } else lista.innerHTML=doMes.length?doMes.map(card).join('')
         :'<p class="bcal-v">'+(evs.length?'Nenhum evento com fotos em '+MESES[mes]+'. Use as setas para ver outros meses.':'Em breve as fotos dos nossos próximos eventos aparecem aqui. Esteve em um evento da Brius? Volte depois e encontre suas fotos com uma selfie.')+'</p>';
       const prim=evs.length?evs[evs.length-1].data:null,ult=evs.length?evs[0].data:null,cur=ano*12+mes;
       el.querySelector('[data-d="-1"]').disabled=!prim||cur<=(+prim.slice(0,4))*12+(+prim.slice(5,7)-1);
       el.querySelector('[data-d="1"]').disabled=!ult||cur>=Math.max((+ult.slice(0,4))*12+(+ult.slice(5,7)-1),hoje.getFullYear()*12+hoje.getMonth());
     }
-    el.querySelectorAll('.bcal-h button').forEach(b=>b.onclick=()=>{mes+=+b.dataset.d;if(mes<0){mes=11;ano--}if(mes>11){mes=0;ano++}pintar()});
+    grade.addEventListener('click',e=>{const b=e.target.closest('button[data-dia]');if(!b)return;const d=+b.dataset.dia;dia=(dia===d)?null:d;pintar();const f=grade.querySelector('[data-dia="'+d+'"]');if(f)f.focus({preventScroll:true});if(dia&&innerWidth<760)lista.scrollIntoView({block:'nearest',behavior:'smooth'})});
+    el.querySelectorAll('.bcal-h button').forEach(b=>b.onclick=()=>{dia=null;mes+=+b.dataset.d;if(mes<0){mes=11;ano--}if(mes>11){mes=0;ano++}pintar()});
     pintar();
     fetch(API+'?acao=eventos').then(r=>r.json()).then(j=>{
       evs=(j&&j.eventos||[]).filter(e=>e.data).sort((a,b)=>b.data.localeCompare(a.data));
