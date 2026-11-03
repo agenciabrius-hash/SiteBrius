@@ -419,6 +419,8 @@ html{scroll-padding-top:66px}
 .big-pick span{padding:22px;gap:8px}.big-pick span b{font-size:24px}.big-pick span small{font-size:14px;line-height:1.5}
 @media (max-width:600px){.svc-pick,.cards2{grid-template-columns:minmax(0,1fr)}}
 .qf-nota{font-size:12px;color:var(--muted-l);margin:10px 0 0}
+.qviagem{margin-top:14px;background:#fff7e6;border:1px solid #e6c98e;border-radius:12px;padding:14px 16px}.qviagem p{margin:0 0 10px;font-size:14px;line-height:1.5}
+.qv-ok{display:flex!important;gap:10px;align-items:flex-start;font-size:14px;line-height:1.5;cursor:pointer;font-weight:400!important}.qv-ok input{width:20px;height:20px;flex:none;margin-top:2px;accent-color:#141210}.qv-ok[aria-invalid=true]{color:#b3261e}
 .qmapa{margin-top:14px}.qmapa iframe{display:block;width:100%;height:260px;border:0;border-radius:12px;background:#e9e2d6}.qmapa p{font-size:13px;line-height:1.5;margin:8px 0 0;color:var(--muted-l)}.qmapa a{color:var(--ink);font-weight:600;white-space:nowrap}
 .route{display:flex;flex-wrap:wrap;gap:14px 20px;align-items:center;margin-top:18px}
 .route p{margin:0;font-size:14px;color:var(--muted-l);flex:1 1 260px}
@@ -875,6 +877,10 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
             <button type="button" class="btn-dark" id="q-rota">Calcular deslocamento</button>
             <p id="q-rota-out" aria-live="polite">Calculamos pelo Google Maps o tempo de carro da nossa base até o local.</p>
           </div>
+          <div class="qviagem" id="q-viagem" hidden>
+            <p><b>Este evento é fora de São Paulo.</b> Para eventos fora de São Paulo, o valor aumenta e os custos de viagem de toda a equipe ficam por conta do contratante.</p>
+            <label class="qv-ok"><input type="checkbox" id="q-ciente" name="ciente_viagem" value="sim"> <span>Estou ciente de que, fora de São Paulo, o valor aumenta e que eu arco com os custos de <b>transporte, hospedagem e alimentação</b> de toda a equipe.</span></label>
+          </div>
           <div class="qmapa" id="q-mapa" hidden>
             <iframe id="q-mapa-f" title="Mapa do local do evento" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             <p><b>O pino está no lugar certo?</b> Se não estiver, complete o endereço (número, bairro e cidade) e toque em “Calcular deslocamento” de novo. <a id="q-mapa-a" target="_blank" rel="noopener">Abrir no Google Maps</a></p>
@@ -1048,7 +1054,8 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbxv6WLxKRDICMjAqAGWB8Uu
     if(reservadas.has(v)){m.textContent='Data já reservada. Escolha outra data.';m.className='bad';$('q-data').setAttribute('aria-invalid','true');return false}
     m.textContent=API_URL?'Data disponível.':'';m.className='good';$('q-data').removeAttribute('aria-invalid');return true}
   $('q-data').addEventListener('change',checarData);
-  $('q-local').addEventListener('input',()=>{rota=null;$('q-mapa').hidden=true;next.textContent='Continuar';$('q-rota-out').textContent='Calculamos pelo Google Maps o tempo de carro da nossa base até o local.'});
+  $('q-ciente').addEventListener('change',()=>{$('q-ciente').closest('label').removeAttribute('aria-invalid');err.textContent=''});
+  $('q-local').addEventListener('input',()=>{rota=null;$('q-mapa').hidden=true;$('q-viagem').hidden=true;$('q-ciente').checked=false;next.textContent='Continuar';$('q-rota-out').textContent='Calculamos pelo Google Maps o tempo de carro da nossa base até o local.'});
   f.querySelectorAll('input[name=tipo]').forEach(r=>r.addEventListener('change',()=>{drawTabs();err.textContent=''}));
   // limite de 3 serviços fica livre; mínimo 2 verificado ao continuar
   function show(i){cur=i;const fl=fluxo(),k=fl[i];Object.entries(steps).forEach(([n,s])=>s.hidden=n!==k);drawTabs();
@@ -1059,6 +1066,7 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbxv6WLxKRDICMjAqAGWB8Uu
     if(!ok){err.textContent='Confira os campos destacados.';return false}
     if(k==='dados'&&$('q-whatsapp').value.replace(/\D/g,'').length<10){$('q-whatsapp').setAttribute('aria-invalid','true');err.textContent='Informe o WhatsApp com DDD.';return false}
     if(k==='tipo'&&!tipo()){err.textContent='Escolha uma opção para continuar.';return false}
+    if(k==='local'&&rota&&rota.viagem&&!$('q-ciente').checked){$('q-ciente').closest('label').setAttribute('aria-invalid','true');err.textContent='Marque que está ciente dos custos de viagem para continuar.';$('q-viagem').scrollIntoView({block:'center',behavior:'smooth'});return false}
     if(k==='evento'){const sv=[...document.querySelectorAll('#q-svcs input:checked')].map(x=>x.value);$('q-servicos').value=sv.join(',');
       if(sv.length<2){err.textContent='Marque pelo menos 2 serviços: fotografia, videomaker ou storymaker.';return false}
       if(!checarData()){err.textContent='Esta data já está reservada.';return false}}
@@ -1073,7 +1081,7 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbxv6WLxKRDICMjAqAGWB8Uu
     out.textContent='Calculando...';$('q-rota').disabled=true;
     try{const j=await (await fetch(API_URL+'?acao=rota&destino='+encodeURIComponent(dest))).json();if(!j.ok)throw new Error(j.erro);rota=j;
       out.innerHTML='<b>'+fmtMin(j.minutos)+'</b> de carro · '+String(j.km).replace('.',',')+' km<br>'+esc(j.endereco);
-      const q=encodeURIComponent(j.endereco||dest);$('q-mapa-f').src='https://maps.google.com/maps?q='+q+'&z=16&output=embed';$('q-mapa-a').href='https://www.google.com/maps/search/?api=1&query='+q;$('q-mapa').hidden=false;next.textContent='Confirmar local e continuar';return j}
+      const q=encodeURIComponent(j.endereco||dest);$('q-mapa-f').src='https://maps.google.com/maps?q='+q+'&z=16&output=embed';$('q-mapa-a').href='https://www.google.com/maps/search/?api=1&query='+q;$('q-mapa').hidden=false;next.textContent='Confirmar local e continuar';$('q-viagem').hidden=!j.viagem;if(!j.viagem)$('q-ciente').checked=false;return j}
     catch(e){out.textContent='Não encontramos esse endereço. Confira e tente de novo.';$('q-mapa').hidden=true;return null}
     finally{$('q-rota').disabled=false}}
   $('q-rota').addEventListener('click',calcRota);
@@ -1083,7 +1091,7 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbxv6WLxKRDICMjAqAGWB8Uu
   function resumo(){let rows=[['Nome',$('q-nome').value],['E-mail',$('q-email').value],['WhatsApp',$('q-whatsapp').value]];
     if(tipo()==='evento'){rows=rows.concat([['Serviços',[...document.querySelectorAll('#q-svcs input:checked')].map(x=>x.closest('label').querySelector('b').textContent).join(', ')],
       ['Data',$('q-data').value.split('-').reverse().join('/')+' às '+$('q-inicio').value],['Cobertura',$('q-horas').value+' h'],['Estilo',$('q-estilo').value],
-      ['Convidados',$('q-conv').value||'—'],['Local',rota?rota.endereco:$('q-local').value],['Deslocamento',rota?fmtMin(rota.minutos)+' de carro':'calculado ao enviar'],['Observações',$('q-obs').value||'—']])}
+      ['Convidados',$('q-conv').value||'—'],['Local',rota?rota.endereco:$('q-local').value],['Deslocamento',rota?fmtMin(rota.minutos)+' de carro'+(rota.viagem?' · fora de SP: ciente dos custos de transporte, hospedagem e alimentação da equipe':''):'calculado ao enviar'],['Observações',$('q-obs').value||'—']])}
     else{const m=$('q-mes').value;rows=rows.concat([['Serviço','Gestão de redes sociais'],['Marca',$('q-empresa').value+($('q-insta').value?' · '+$('q-insta').value:'')],['Segmento',$('q-seg').value],
       ['Redes',$('q-redes-v').value],['Posts por semana',val('posts')],['Vídeos por semana',val('videos')],['Início',m?m.split('-').reverse().join('/'):'—'],['Objetivo',$('q-obj').value||'—'],['Reunião online',$('q-rdata').value.split('-').reverse().join('/')+' às '+val('reuniao_hora')+' (Google Meet)']])}
     $('q-review').innerHTML=rows.map(([k,v])=>'<dt>'+k+'</dt><dd>'+esc(v)+'</dd>').join('')}
