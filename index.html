@@ -649,20 +649,27 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
   box-shadow:0 0 0 2px #3a352f,0 40px 70px -24px rgba(0,0,0,.85);text-decoration:none;color:#111;transform:rotate(5deg);animation:hpflut 6s ease-in-out infinite}
 .hphone::before{content:"";position:absolute;top:13px;left:50%;transform:translateX(-50%);width:54px;height:15px;border-radius:12px;background:#0d0c0b;z-index:3}
 @keyframes hpflut{0%,100%{transform:rotate(5deg) translateY(0)}50%{transform:rotate(3deg) translateY(-14px)}}
-.hp-scr{display:flex;flex-direction:column;height:100%;border-radius:24px;background:#fff;overflow:hidden;font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
-.hp-top{padding:32px 12px 6px;font-size:13px}
-.hp-prof{display:flex;align-items:center;gap:9px;padding:0 12px}
-.hp-prof .igp-av{width:48px;height:48px;padding:2px}
-.hp-prof .igp-av img{border-width:2px}
-.hp-bio{display:grid;gap:1px;font-size:10.5px;line-height:1.25}.hp-bio span{color:#555}
-.hp-follow{margin:9px 12px;padding:5px;border-radius:6px;background:#0095f6;color:#fff;text-align:center;font-size:11px;font-weight:600}
-.hp-rol{flex:1;overflow:hidden;position:relative;border-top:1px solid #efefef}
+.hp-scr{display:flex;flex-direction:column;height:100%;border-radius:24px;background:#000;color:#f5f5f5;overflow:hidden;font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.hp-top{padding:31px 11px 7px;font-size:13px;display:flex;align-items:center;gap:4px}
+.hp-prof{display:flex;align-items:center;gap:8px;padding:0 11px}
+.hphone .igp-av{width:50px;height:50px;padding:2px;background:#363636}
+.hphone .igp-av img{border:2px solid #000;background:#000}
+.hp-num{flex:1;display:grid;grid-template-columns:repeat(3,1fr);text-align:center;font-size:8.5px;line-height:1.2;color:#d6d6d6}
+.hp-num b{display:block;font-size:12px;color:#fff}
+.hp-bio{display:grid;gap:1px;padding:6px 11px 0;font-size:9.5px;line-height:1.3;color:#e8e8e8}.hp-bio b{font-size:10px;color:#fff}
+.hp-bts{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:7px 11px 0}
+.hp-bts span{padding:5px 0;border-radius:6px;background:#262626;text-align:center;font-size:9.5px;font-weight:600}
+.hp-bts .seg{background:#0095f6;color:#fff}
+.hp-hl{display:flex;gap:7px;padding:8px 11px 7px;overflow:hidden}
+.hp-hl span{flex:none;display:grid;justify-items:center;gap:2px;width:36px;font-size:7px;color:#e8e8e8;white-space:nowrap}
+.hp-hl img{width:34px;height:34px;border-radius:50%;object-fit:cover;filter:grayscale(1) contrast(1.05);border:2px solid #000;box-shadow:0 0 0 1.5px #363636}
+.hp-rol{flex:1;overflow:hidden;position:relative;border-top:1px solid #262626}
 .hp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5px;animation:hprol 40s linear infinite}
 .hphone:hover .hp-grid,.hphone:focus-visible .hp-grid{animation-play-state:paused}
-.hp-grid img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;background:#eee}
+.hp-grid img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;background:#1a1a1a}
 @keyframes hprol{from{transform:translateY(0)}to{transform:translateY(-50%)}}
 .hphone:focus-visible{outline:2px solid var(--gold-soft);outline-offset:4px}
-@media (max-width:860px){.h2-vis{height:clamp(360px,100vw,460px);order:2;margin-top:8px}.h2-vis .deck{inset:0 26% 0 0}.h2-vis .pr{width:clamp(170px,48vw,250px)}.hphone{width:clamp(140px,36vw,180px);border-radius:24px;padding:6px}.hp-scr{border-radius:19px}.hp-bio span{display:none}.hp-prof .igp-av{width:38px;height:38px}.hp-top{padding-top:26px;font-size:12px}}
+@media (max-width:860px){.h2-vis{height:clamp(360px,100vw,460px);order:2;margin-top:8px}.h2-vis .deck{inset:0 26% 0 0}.h2-vis .pr{width:clamp(170px,48vw,250px)}.hphone{width:clamp(150px,40vw,190px);border-radius:24px;padding:6px}.hp-scr{border-radius:19px}.hp-bio span,.hp-hl,.hp-bts span:last-child{display:none}.hp-bts{grid-template-columns:1fr}.hphone .igp-av{width:34px;height:34px}.hp-prof{flex-wrap:wrap;gap:4px;padding:0 8px}.hp-num{flex-basis:100%;font-size:7px}.hp-num b{font-size:10px}.hp-bio{padding:5px 8px 0}.hp-bts{margin:6px 8px 7px}.hp-top{padding:25px 8px 6px;font-size:11px}}
 @media (prefers-reduced-motion:reduce){.hphone,.hp-grid{animation:none}.hp-rol{overflow-y:auto}}
 /* ===== HERO: mesa de fotos ===== */
 .hero2{background:radial-gradient(120% 90% at 85% 40%,#2a241d 0%,var(--ink) 60%);color:var(--bone);overflow:hidden;position:relative}
@@ -730,9 +737,11 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
       <div class="deck" id="deck" role="button" tabindex="0" aria-label="Passar para a próxima foto"><figure class="pr" style="--r:-3deg"><img src="cli/1-ouLRvWyXPEIuYx3g4PEnIIRA5K50Jq8.webp" alt="Casal se beijando em ensaio ao ar livre" decoding="async" fetchpriority="high"></figure><figure class="pr" style="--r:5deg"><img src="img/06.webp" alt="Público no evento do Neymar" decoding="async"></figure><figure class="pr" style="--r:-7deg"><img src="img/14.webp" alt="Casal de mãos dadas na escadaria de um palácio" decoding="async"></figure><figure class="pr" style="--r:3deg"><img src="img/18.webp" alt="Família comemorando no apartamento novo" decoding="async"></figure><figure class="pr" style="--r:-5deg"><img src="img/44.webp" alt="Cantor em show ao vivo" decoding="async"></figure><figure class="pr" style="--r:7deg"><img src="img/37.webp" alt="Foto publicitária de salada" decoding="async"></figure><figure class="pr" style="--r:-2deg"><img src="img/46.webp" alt="Casal no chá revelação" decoding="async"></figure></div>
       <a class="hphone" href="https://www.instagram.com/agenciabrius/" target="_blank" rel="noopener" aria-label="Instagram da Brius: @agenciabrius">
         <span class="hp-scr">
-          <span class="hp-top"><b>agenciabrius</b></span>
-          <span class="hp-prof"><span class="igp-av" id="igAvatar"><img src="img/icone-192.png" alt=""></span><span class="hp-bio"><b>Brius Agência</b><span>Fotografia · Vídeo · Redes</span></span></span>
-          <span class="hp-follow">Seguir</span>
+          <span class="hp-top"><b id="igUser">agenciabrius</b></span>
+          <span class="hp-prof"><span class="igp-av" id="igAvatar"><img src="img/icone-192.png" alt=""></span><span class="hp-num"><span><b id="igPosts">55</b>posts</span><span><b id="igSeg">305</b>seguidores</span><span><b id="igSegd">28</b>seguindo</span></span></span>
+          <span class="hp-bio"><b id="igNome">Brius | Marketing &amp; Conteúdo</b><span>Mídias Sociais | Videomaker | Storymaker | Fotografia</span></span>
+          <span class="hp-bts"><span class="seg">Seguir</span><span>Mensagem</span></span>
+          <span class="hp-hl"><span><img src="img/18.webp" alt="" loading="lazy">Audiovisual</span><span><img src="img/06.webp" alt="" loading="lazy">Captação</span><span><img src="img/44.webp" alt="" loading="lazy">Storymaker</span><span><img src="img/37.webp" alt="" loading="lazy">Portfólio</span><span><img src="img/14.webp" alt="" loading="lazy">Eventos</span></span>
           <span class="hp-rol"><span class="hp-grid" id="igFeed"></span></span>
         </span>
       </a>
@@ -1356,7 +1365,11 @@ const ALBUNS=[{"t": "Ensaio de bodas Sirlene & Valdinei", "c": "casamentos", "p"
   if(!API_URL)return;
   const tempo=t=>{if(!t)return'';const h=Math.max(1,Math.round((Date.now()-new Date(t))/3600000));return h<24?h+' h':Math.round(h/24)+' d'};
   fetch(API_URL+'?acao=instagram').then(r=>r.json()).then(j=>{
-    if(!j||!j.ok||!(j.posts||[]).length)return;
+    if(!j||!j.ok)return;
+    const pf=j.perfil,num=n=>n>=10000?(n/1000).toFixed(n>=100000?0:1).replace('.',',')+' mil':String(n),pt=(id,v)=>{const e=document.getElementById(id);if(e&&v!=null&&v!=='')e.textContent=v};
+    if(pf){pt('igPosts',num(pf.posts));pt('igSeg',num(pf.seguidores));pt('igSegd',num(pf.seguindo));pt('igNome',pf.nome);pt('igUser',pf.usuario);
+      if(pf.foto){const im=av.querySelector('img');const t=new Image();t.onload=()=>{im.src=pf.foto};t.src=pf.foto}}
+    if(!(j.posts||[]).length)return;
     encher(j.posts.slice(0,12).map(p=>p.img));
     const st=j.stories||[];if(st.length){window.__igStories=st;av.classList.add('st');av.setAttribute('role','button');av.setAttribute('tabindex','0');av.setAttribute('aria-label','Ver os stories de hoje');av.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();abrir(st,0)}})}
   }).catch(()=>{});
