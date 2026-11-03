@@ -51,6 +51,26 @@
 .bcal-p .cap .dt b{font-size:21px}
 .bcal-p.im>div:last-child{align-self:center}
 .bcal-p .lk{display:flex;gap:16px;flex-wrap:wrap;margin-top:6px}
+.bcal-p{position:relative;isolation:isolate}
+.bcal-p::before{content:"";position:absolute;inset:-1px;border-radius:15px;padding:1px;z-index:-1;background:linear-gradient(110deg,rgba(230,211,174,.15) 20%,#e6d3ae 40%,rgba(230,211,174,.15) 60%);background-size:250% 100%;-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:bcBrilho 4.5s linear infinite}
+@keyframes bcBrilho{from{background-position:120% 0}to{background-position:-120% 0}}
+.bcal-p .cap img{animation:bcZoom 14s ease-in-out infinite alternate}
+@keyframes bcZoom{from{transform:scale(1)}to{transform:scale(1.12)}}
+.bcal-p .dt{animation:bcPulso 2.6s ease-in-out infinite}
+@keyframes bcPulso{0%,100%{box-shadow:0 0 0 0 rgba(230,211,174,.55)}60%{box-shadow:0 0 0 9px rgba(230,211,174,0)}}
+.bcal-g button.px{animation:bcAnel 2.2s ease-out infinite}
+@keyframes bcAnel{0%{box-shadow:inset 0 0 0 2px #e6d3ae,0 0 0 0 rgba(230,211,174,.6)}70%,100%{box-shadow:inset 0 0 0 2px #e6d3ae,0 0 0 8px rgba(230,211,174,0)}}
+.bcal-cd{display:flex;gap:6px;margin:9px 0 2px}
+.bcal-cd span{display:grid;place-items:center;min-width:48px;padding:6px 6px 5px;border-radius:9px;background:rgba(20,18,16,.6);border:1px solid rgba(230,211,174,.2);font:600 9.5px var(--body,system-ui);letter-spacing:.08em;text-transform:uppercase;color:#8d8478}
+.bcal-cd b{font:600 19px/1.1 var(--serif,Georgia,serif);color:#e6d3ae;letter-spacing:0}
+.bcal-cd b.vira{animation:bcVira .5s ease}
+@keyframes bcVira{from{transform:translateY(-6px);opacity:0}to{transform:none;opacity:1}}
+.bcal-l>*{animation:bcEntra .6s cubic-bezier(.2,.7,.2,1) both}
+.bcal-l>*:nth-child(2){animation-delay:.08s}.bcal-l>*:nth-child(3){animation-delay:.16s}.bcal-l>*:nth-child(4){animation-delay:.24s}.bcal-l>*:nth-child(5){animation-delay:.32s}.bcal-l>*:nth-child(n+6){animation-delay:.4s}
+@keyframes bcEntra{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.bcal-g button{animation:bcDia .45s ease both}
+@keyframes bcDia{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.bcal-p::before,.bcal-p .cap img,.bcal-p .dt,.bcal-g button,.bcal-g button.px,.bcal-l>*,.bcal-cd b.vira{animation:none!important}}
 @media (max-width:480px){.bcal-p.im{grid-template-columns:1fr}.bcal-p .cap{min-height:0;aspect-ratio:1/1}}
 .bcal-p .nota{display:block;font-size:12.5px;color:#8d8478;margin-top:4px}
 .bcal-v{color:#b4ab9d;font:400 15px/1.6 var(--body,system-ui);margin:0}
@@ -70,7 +90,14 @@
       const dt='<div class="dt"><b>'+(+d)+'</b><small>'+MESES[+m-1].slice(0,3)+'</small></div>';
       const src=p.img?(/^img\//.test(p.img)?base+p.img:p.img):'';
       const links=(p.local?'<a href="'+mapa+'" target="_blank" rel="noopener">Ver no mapa</a>':'')+(p.link?'<a href="'+esc(p.link)+'" target="_blank" rel="noopener">'+(/instagram\.com/.test(p.link)?'Instagram do evento':'Site do evento')+'</a>':'');
-      return '<div class="bcal-p'+(src?' im':'')+'">'+(src?'<div class="cap"><img src="'+esc(src)+'" alt="'+esc(p.nome)+'" loading="lazy">'+dt+'</div>':dt)+'<div><h4>'+esc(p.nome)+'</h4><p>'+esc(sem.charAt(0).toUpperCase()+sem.slice(1))+', '+(+d)+' de '+MESES[+m-1]+(p.hora?' · '+esc(horaBR(p.hora)):'')+(p.local?'<br>'+esc(p.local):'')+(links?'<span class="lk">'+links+'</span>':'')+'<span class="nota">Depois do evento, as fotos aparecem aqui para você se encontrar com uma selfie.</span></p></div></div>'};
+      return '<div class="bcal-p'+(src?' im':'')+'">'+(src?'<div class="cap"><img src="'+esc(src)+'" alt="'+esc(p.nome)+'" loading="lazy">'+dt+'</div>':dt)+'<div><h4>'+esc(p.nome)+'</h4><p>'+esc(sem.charAt(0).toUpperCase()+sem.slice(1))+', '+(+d)+' de '+MESES[+m-1]+(p.hora?' · '+esc(horaBR(p.hora)):'')+(p.local?'<br>'+esc(p.local):'')+'<span class="bcal-cd" data-quando="'+esc(p.data+'T'+(p.hora||'00:00')+':00-03:00')+'"></span>'+(links?'<span class="lk">'+links+'</span>':'')+'<span class="nota">Depois do evento, as fotos aparecem aqui para você se encontrar com uma selfie.</span></p></div></div>'};
+    let primeira=true;
+    function contar(){lista.querySelectorAll('.bcal-cd').forEach(c=>{const t=new Date(c.dataset.quando)-Date.now();
+      if(isNaN(t))return;if(t<=0){c.innerHTML='<span><b>Hoje</b>é o dia</span>';return}
+      const v=[Math.floor(t/864e5),Math.floor(t/36e5)%24,Math.floor(t/6e4)%60,Math.floor(t/1e3)%60],nomes=['dias','horas','min','seg'];
+      if(!c.children.length)c.innerHTML=nomes.map(n=>'<span><b>0</b>'+n+'</span>').join('');
+      [...c.querySelectorAll('b')].forEach((b,i)=>{const s=String(v[i]).padStart(i?2:1,'0');if(b.textContent!==s){b.textContent=s;if(i<3){b.classList.remove('vira');void b.offsetWidth;b.classList.add('vira')}}})})}
+    setInterval(()=>{if(!document.hidden)contar()},1000);
     function pintar(){
       tit.textContent=MESES[mes]+' '+ano;
       const doMes=evs.filter(e=>e.data&&+e.data.slice(0,4)===ano&&+e.data.slice(5,7)===mes+1);
@@ -85,6 +112,7 @@
         const rot=d+' de '+MESES[mes]+(nomes.length?': '+nomes.join(', '):': sem eventos');
         h+='<button type="button" data-dia="'+d+'"'+(cl?' class="'+cl+'"':'')+' aria-label="'+esc(rot)+'"'+(d===dia?' aria-pressed="true"':'')+'>'+d+'</button>'}
       grade.innerHTML=h;
+      if(primeira){[...grade.querySelectorAll('button')].forEach((b,i)=>b.style.animationDelay=(i*12)+'ms');}else grade.querySelectorAll('button').forEach(b=>b.style.animation='none');
       const card=e=>'<a class="bcal-c" href="'+link(e)+'"><img src="'+esc(e.capa)+'" alt="" loading="lazy"><span><small>'+esc(dataBR(e.data))+'</small><b>'+esc(e.nome)+'</b><em>'+(e.pronto?'Encontrar minhas fotos →':'Fotos em preparação')+'</em></span></a>';
       if(dia){const doDia=porDia[dia]||[],pxD=pxDia[dia]||[];
         lista.innerHTML='<p class="bcal-t"><span>'+dia+' de '+MESES[mes]+' de '+ano+'</span><button type="button" data-todos>Ver todos</button></p>'+
@@ -96,6 +124,7 @@
         if(doMes.length)h2+='<p class="bcal-s">Fotos de '+MESES[mes]+'</p>'+doMes.map(card).join('');
         lista.innerHTML=h2||'<p class="bcal-v">'+(evs.length?'Nenhum evento com fotos em '+MESES[mes]+'. Use as setas para ver outros meses.':'Em breve nossos próximos eventos aparecem aqui. Esteve em um evento da Brius? Volte depois e encontre suas fotos com uma selfie.')+'</p>';
       }
+      contar();
       const mi=d=>(+d.slice(0,4))*12+(+d.slice(5,7)-1),agora=hoje.getFullYear()*12+hoje.getMonth(),cur=ano*12+mes;
       const todas=evs.map(e=>mi(e.data)).concat(prox.map(p=>mi(p.data)),[agora]);
       el.querySelector('[data-d="-1"]').disabled=cur<=Math.min(...todas);
@@ -109,6 +138,7 @@
       prox=(j&&j.proximos||[]).filter(p=>p.data);
       const mi=d=>(+d.slice(0,4))*12+(+d.slice(5,7)-1),cur=hoje.getFullYear()*12+hoje.getMonth();
       const temNoMes=evs.some(e=>mi(e.data)===cur)||prox.some(p=>mi(p.data)===cur);
+      setTimeout(()=>{primeira=false},50);
       if(!temNoMes){const alvo=prox.length?prox[0].data:(evs.length?evs[0].data:null);if(alvo){ano=+alvo.slice(0,4);mes=+alvo.slice(5,7)-1}}
       pintar();
     }).catch(()=>{lista.innerHTML='<p class="bcal-v">Não foi possível carregar os eventos agora.</p>'});
