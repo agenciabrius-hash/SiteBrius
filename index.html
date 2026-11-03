@@ -570,6 +570,15 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
 
 
 /* ===== INSTAGRAM ===== */
+.band.igband{padding-block:clamp(28px,4vw,44px)}
+.ig-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px 24px;margin-bottom:20px}
+.ig-perfil{display:flex;align-items:center;gap:14px;color:var(--bone);text-decoration:none}
+.ig-perfil img{width:56px;height:56px;border-radius:50%;padding:2px;background:conic-gradient(#f58529,#dd2a7b,#8134af,#515bd4,#f58529)}
+.ig-perfil>span{display:grid;gap:2px}.ig-perfil b{font:600 clamp(20px,2vw,26px)/1.1 var(--display)}.ig-perfil>span>span{font:400 14px var(--body);color:var(--muted-d)}
+.igband .ig-seguir{margin-top:0}
+.ig-head .ig-stories{padding:0;margin:0 0 0 auto}.ig-head .ig-st span.ring{width:60px;height:60px}
+@media (max-width:640px){.ig-head .ig-stories{margin:0}}
+
 .ig-seguir{width:fit-content;display:inline-flex;align-items:center;gap:8px;margin-top:16px;padding:12px 20px;border-radius:999px;color:#fff;text-decoration:none;font:700 14px var(--body);background:linear-gradient(90deg,#f58529,#dd2a7b 45%,#8134af 75%,#515bd4)}
 .ig-seguir:focus-visible{outline:2px solid var(--gold-soft);outline-offset:3px}
 .ig-stories{display:flex;gap:16px;overflow-x:auto;padding:4px 2px 18px;margin-bottom:8px;scrollbar-width:none}
@@ -676,6 +685,25 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
     <div class="deck" id="deck" role="button" tabindex="0" aria-label="Passar para a próxima foto"><figure class="pr" style="--r:-3deg"><img src="cli/1-ouLRvWyXPEIuYx3g4PEnIIRA5K50Jq8.webp" alt="Casal se beijando em ensaio ao ar livre" decoding="async" fetchpriority="high"></figure><figure class="pr" style="--r:5deg"><img src="img/06.webp" alt="Público no evento do Neymar" decoding="async"></figure><figure class="pr" style="--r:-7deg"><img src="img/14.webp" alt="Casal de mãos dadas na escadaria de um palácio" decoding="async"></figure><figure class="pr" style="--r:3deg"><img src="img/18.webp" alt="Família comemorando no apartamento novo" decoding="async"></figure><figure class="pr" style="--r:-5deg"><img src="img/44.webp" alt="Cantor em show ao vivo" decoding="async"></figure><figure class="pr" style="--r:7deg"><img src="img/37.webp" alt="Foto publicitária de salada" decoding="async"></figure><figure class="pr" style="--r:-2deg"><img src="img/46.webp" alt="Casal no chá revelação" decoding="async"></figure></div>
   </div>
 </header>
+
+<section class="band dark2 igband" id="instagram" hidden>
+  <div class="wrap">
+    <div class="chapter">
+      <div class="ig-head">
+        <a class="ig-perfil" href="https://www.instagram.com/agenciabrius/" target="_blank" rel="noopener"><img src="img/icone-192.png" alt="" width="56" height="56"><span><b>@agenciabrius</b><span>Novidades e bastidores, direto do nosso Instagram</span></span></a>
+        <div class="ig-stories" id="igStories" hidden></div>
+        <a class="ig-seguir" href="https://www.instagram.com/agenciabrius/" target="_blank" rel="noopener">Seguir no Instagram</a>
+      </div>
+      <div class="ig-feed" id="igFeed"></div>
+    </div>
+  </div>
+</section>
+<div class="igv" id="igv" hidden role="dialog" aria-modal="true" aria-label="Story do Instagram">
+  <div class="igv-box"><div class="igv-bars" id="igvBars"></div><div class="igv-top"><img src="img/icone-192.png" alt=""><b>agenciabrius</b><span id="igvQuando"></span><button id="igvX" aria-label="Fechar">✕</button></div>
+  <div class="igv-media" id="igvMedia"></div><button class="igv-p" id="igvP" aria-label="Anterior"></button><button class="igv-n" id="igvN" aria-label="Próximo"></button>
+  <a class="igv-link" id="igvLink" target="_blank" rel="noopener">Ver no Instagram</a></div>
+</div>
+
 
 <section class="band light" id="servicos">
   <div class="wrap">
@@ -901,28 +929,6 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
     </div>
   </div>
 </section>
-
-<section class="band dark2" id="instagram" hidden>
-  <div class="wrap">
-    <div class="chapter">
-      <div class="head">
-        <h2 class="mega ltr" aria-label="Instagram"><span aria-hidden="true"><span class="w"><span class="lt">I</span><span class="lt">n</span><span class="lt">s</span><span class="lt">t</span><span class="lt">a</span><span class="lt">g</span><span class="lt">r</span><span class="lt">a</span><span class="lt">m</span></span></span></h2>
-        <div class="text">
-          <p class="eyebrow">@agenciabrius</p>
-          <p class="lede">Os bastidores e os trabalhos mais recentes, direto do nosso Instagram.</p>
-          <a class="ig-seguir" href="https://www.instagram.com/agenciabrius/" target="_blank" rel="noopener">Seguir no Instagram</a>
-        </div>
-      </div>
-      <div class="ig-stories" id="igStories" hidden></div>
-      <div class="ig-feed" id="igFeed"></div>
-    </div>
-  </div>
-</section>
-<div class="igv" id="igv" hidden role="dialog" aria-modal="true" aria-label="Story do Instagram">
-  <div class="igv-box"><div class="igv-bars" id="igvBars"></div><div class="igv-top"><img src="img/icone-192.png" alt=""><b>agenciabrius</b><span id="igvQuando"></span><button id="igvX" aria-label="Fechar">✕</button></div>
-  <div class="igv-media" id="igvMedia"></div><button class="igv-p" id="igvP" aria-label="Anterior"></button><button class="igv-n" id="igvN" aria-label="Próximo"></button>
-  <a class="igv-link" id="igvLink" target="_blank" rel="noopener">Ver no Instagram</a></div>
-</div>
 
 <section class="band light" id="duvidas">
   <div class="wrap">
