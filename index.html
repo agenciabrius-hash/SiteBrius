@@ -1130,6 +1130,19 @@ const ALBUNS=[{"t": "Ensaio de bodas Sirlene & Valdinei", "c": "casamentos", "p"
       else{a.pause();box.classList.remove('playing');btn.setAttribute('aria-label',btn.getAttribute('aria-label').replace('Pausar','Ouvir'))}});
   });
 })();
+// ===== ENDEREÇO LIMPO: o site sempre abre no início =====
+(function(){
+  try{history.scrollRestoration='manual'}catch(e){}
+  if(location.hash){try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}}
+  window.scrollTo(0,0);addEventListener('load',()=>window.scrollTo(0,0));
+  addEventListener('pageshow',e=>{if(e.persisted)window.scrollTo(0,0)});
+  // links do menu rolam até a seção sem colocar #secao no endereço
+  document.addEventListener('DOMContentLoaded',()=>document.addEventListener('click',e=>{
+    const a=e.target.closest('a[href^="#"]');if(!a||e.defaultPrevented)return;
+    const id=a.getAttribute('href').slice(1),t=id?document.getElementById(id):null;
+    e.preventDefault();(t||document.body).scrollIntoView({behavior:'smooth',block:'start'});
+  }));
+})();
 // ===== TRANSIÇÃO ENTRE SEÇÕES =====
 (function(){
   const pt=document.getElementById('pt'),nm=document.getElementById('ptName');
