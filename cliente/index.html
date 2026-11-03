@@ -56,7 +56,12 @@ input:focus{border-color:var(--gold)}
 .abas button[aria-pressed="true"]{background:var(--gold-soft);color:var(--ink);border-color:var(--gold-soft)}
 .grupo{font-family:var(--serif);font-size:22px;margin:30px 0 12px;color:var(--gold-soft)}
 .grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(46%,210px),1fr));gap:8px}
-.item{position:relative;aspect-ratio:1;border:0;padding:0;background:var(--graphite);border-radius:6px;overflow:hidden;cursor:zoom-in}
+.cel{position:relative}
+.fav{position:absolute;top:6px;right:6px;width:36px;height:36px;border-radius:50%;border:0;background:rgba(20,18,16,.55);color:#fbf8f3;font-size:19px;line-height:1;cursor:pointer;display:grid;place-items:center;transition:transform .2s,background .2s}
+.fav:hover{transform:scale(1.08)}.fav.on{background:#fbf8f3;color:#c0392b}
+.lb-top .lbfav{font-size:16px;padding:7px 13px}.lb-top .lbfav.on{color:#e05a4a}
+.filtro{display:flex;gap:8px;margin:0 0 12px}.filtro button{background:var(--graphite);border:1px solid #3a352f;color:var(--muted-d);padding:8px 14px;border-radius:999px;font:600 13px var(--body);cursor:pointer}.filtro button[aria-pressed="true"]{background:var(--gold-soft);color:var(--ink);border-color:var(--gold-soft)}
+.item{position:relative;width:100%;aspect-ratio:1;border:0;padding:0;background:var(--graphite);border-radius:6px;overflow:hidden;cursor:zoom-in}
 .item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s,opacity .4s;opacity:0}
 .item img.ok{opacity:1}
 .item:hover img{transform:scale(1.05)}
@@ -156,7 +161,7 @@ input:focus{border-color:var(--gold)}
 </main>
 
 <div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Visualizar arquivo">
-  <div class="lb-top"><span class="nome" id="lbNome"></span><span class="bts"><button id="lbBaixar">Baixar</button><button id="lbFechar" aria-label="Fechar">Fechar ✕</button></span></div>
+  <div class="lb-top"><span class="nome" id="lbNome"></span><span class="bts"><button id="lbFav" class="lbfav">♡</button><button id="lbBaixar">Baixar</button><button id="lbFechar" aria-label="Fechar">Fechar ✕</button></span></div>
   <div class="lb-meio" id="lbMeio"><button class="lb-seta p" id="lbAnt" aria-label="Anterior">‹</button><button class="lb-seta n" id="lbProx" aria-label="Próxima">›</button></div>
   <div class="lb-rod" id="lbRod"></div>
 </div>
@@ -231,26 +236,50 @@ async function carregarGaleria(){
     abrir(Math.max(0,galerias.findIndex(g=>g.aberto)));mostrar('telaGal');
   }catch(err){mostrar('telaLogin');msg($('mLogin'),'Não foi possível carregar agora. Tente de novo.',true)}
 }
-function abrir(i){
+let filtro='todas';
+function abrir(i,manterFiltro){
   atual=i;const g=galerias[i];[...$('gAbas').children].forEach((b,k)=>b.setAttribute('aria-pressed',k===i));
+  if(!manterFiltro)filtro='todas';
   $('gTitulo').textContent=g.evento;const cont=$('gConteudo');cont.innerHTML='';$('gAcoes').innerHTML='';
   if(!g.aberto){$('gPrazo').textContent='';
     cont.innerHTML='<div class="exp"><h2 class="grupo">Esta galeria não está mais disponível</h2><p class="lead">O prazo para baixar terminou'+(g.expira?' em '+g.expira:'')+'. Se precisar de mais tempo, fale com a gente.</p><a class="btn" style="width:auto" href="https://wa.me/5511940809443?text='+encodeURIComponent('Oi! Preciso de mais tempo para baixar as fotos de: '+g.evento)+'" target="_blank" rel="noopener">Falar no WhatsApp</a></div>';return}
   $('gPrazo').innerHTML=g.expira?'Disponível para baixar até <b>'+g.expira+'</b>':'';
-  const fotos=g.arquivos.filter(a=>a.t==='foto').length,videos=g.arquivos.length-fotos;
-  $('gAcoes').innerHTML='<button class="btn" id="btTudo">Baixar tudo</button>';$('btTudo').onclick=()=>abrirBaixarTudo(g);
+  g.fav=new Set(g.fav||[]);
+  const favs=g.arquivos.filter(a=>g.fav.has(a.id));
+  const tudo=document.createElement('button');tudo.className='btn';tudo.textContent='Baixar tudo';tudo.onclick=()=>abrirBaixarTudo(g);
+  $('gAcoes').appendChild(tudo);
+  if(favs.length){const bf=document.createElement('button');bf.className='btn sec';bf.textContent='Baixar favoritas ('+favs.length+')';
+    bf.onclick=()=>abrirBaixarTudo({evento:g.evento+' - favoritas',arquivos:g.arquivos.filter(a=>g.fav.has(a.id))});$('gAcoes').appendChild(bf)}
   if(!g.arquivos.length){cont.innerHTML='<p class="vazio">Seus arquivos ainda estão sendo preparados. Volte em breve!</p>';return}
+  const fotos=g.arquivos.filter(a=>a.t==='foto').length,videos=g.arquivos.length-fotos;
+  const barra=document.createElement('div');barra.className='filtro';
+  barra.innerHTML='<button data-f="todas">Todas ('+g.arquivos.length+')</button><button data-f="fav">♥ Favoritas ('+favs.length+')</button>';
+  barra.querySelectorAll('button').forEach(b=>{b.setAttribute('aria-pressed',b.dataset.f===filtro);b.onclick=()=>{filtro=b.dataset.f;abrir(atual,true)}});
+  cont.appendChild(barra);
   const resumo=document.createElement('p');resumo.className='prazo';resumo.style.margin='0 0 6px';
-  resumo.textContent=[fotos?fotos+(fotos>1?' fotos':' foto'):'',videos?videos+(videos>1?' vídeos':' vídeo'):''].filter(Boolean).join(' · ')+' · toque para ver e baixar';
+  resumo.textContent=filtro==='fav'?(favs.length?'Suas favoritas · a Brius também recebe esta lista':'Toque no ♡ das fotos para marcar suas favoritas.'):
+    [fotos?fotos+(fotos>1?' fotos':' foto'):'',videos?videos+(videos>1?' vídeos':' vídeo'):''].filter(Boolean).join(' · ')+' · toque para ver e baixar · ♡ para favoritar';
   cont.appendChild(resumo);
-  lista=g.arquivos;let grupo=null,grade;
+  lista=filtro==='fav'?favs:g.arquivos;let grupo=null,grade;
   lista.forEach((a,k)=>{
-    if(a.g!==grupo){grupo=a.g;if(grupo){const h=document.createElement('h2');h.className='grupo';h.textContent=grupo;cont.appendChild(h)}grade=document.createElement('div');grade.className='grade';cont.appendChild(grade)}
+    if(a.g!==grupo||!grade){grupo=a.g;if(grupo){const h=document.createElement('h2');h.className='grupo';h.textContent=grupo;cont.appendChild(h)}grade=document.createElement('div');grade.className='grade';cont.appendChild(grade)}
+    const cel=document.createElement('div');cel.className='cel';
     const b=document.createElement('button');b.className='item';b.setAttribute('aria-label',(a.t==='video'?'Vídeo ':'Foto ')+a.n);
     const im=new Image();im.loading='lazy';im.alt='';im.src=thumb(a.id);im.onload=()=>im.classList.add('ok');b.appendChild(im);
-    if(a.t==='video'){const s=document.createElement('span');s.className='play';s.textContent='▶ Vídeo';b.appendChild(s)}
-    b.onclick=()=>verItem(k);grade.appendChild(b);
+    if(a.t==='video'){const sp=document.createElement('span');sp.className='play';sp.textContent='▶ Vídeo';b.appendChild(sp)}
+    b.onclick=()=>verItem(k);
+    const f=document.createElement('button');f.className='fav';f.dataset.id=a.id;pintarFav(f,g.fav.has(a.id));f.onclick=()=>alternarFav(a);
+    cel.append(b,f);grade.appendChild(cel);
   });
+}
+function pintarFav(b,on){b.textContent=on?'♥':'♡';b.classList.toggle('on',on);b.setAttribute('aria-pressed',on);b.setAttribute('aria-label',on?'Tirar das favoritas':'Marcar como favorita')}
+let favFila=Promise.resolve();
+function alternarFav(a){
+  const g=galerias[atual];const on=!g.fav.has(a.id);on?g.fav.add(a.id):g.fav.delete(a.id);
+  document.querySelectorAll('.fav[data-id="'+a.id+'"]').forEach(b=>pintarFav(b,on));
+  if(!$('lb').hidden&&lista[pos]===a)pintarFav($('lbFav'),on);
+  if($('lb').hidden){const y=scrollY;abrir(atual,true);window.scrollTo(0,y)}
+  favFila=favFila.then(()=>api({acao:'favorito',sessao:guardar.get(),id:a.id,fav:on})).then(j=>{if(j&&!j.ok&&j.sair){guardar.set('');location.reload()}}).catch(()=>{});
 }
 // ---- visualizador
 let pos=0;
@@ -259,12 +288,12 @@ function verItem(k){
   meio.querySelectorAll('img,iframe').forEach(x=>x.remove());
   let el;if(a.t==='video'){el=document.createElement('iframe');el.src='https://drive.google.com/file/d/'+a.id+'/preview';el.allow='autoplay; fullscreen';el.allowFullscreen=true}
   else{el=new Image();el.alt=a.n;el.src=thumb(a.id);const g=new Image();g.onload=()=>{if(lista[pos]===a)el.src=g.src};g.src=grande(a.id)}
-  meio.prepend(el);$('lbNome').textContent=a.n;rotuloBaixar(a);
+  meio.prepend(el);$('lbNome').textContent=a.n;rotuloBaixar(a);pintarFav($('lbFav'),galerias[atual].fav.has(a.id));
   $('lbRod').textContent=(pos+1)+' de '+lista.length;$('lb').hidden=false;document.body.style.overflow='hidden';
   if(a.t!=='video'){const p=new Image();p.src=grande(lista[(pos+1)%lista.length].id)}
 }
-function fechar(){$('lb').hidden=true;$('lbMeio').querySelectorAll('img,iframe').forEach(x=>x.remove());document.body.style.overflow=''}
-$('lbFechar').onclick=fechar;
+function fechar(){$('lb').hidden=true;{const y=scrollY;abrir(atual,true);window.scrollTo(0,y)}$('lbMeio').querySelectorAll('img,iframe').forEach(x=>x.remove());document.body.style.overflow=''}
+$('lbFechar').onclick=fechar;$('lbFav').onclick=()=>alternarFav(lista[pos]);
 // No iPhone o arquivo é preparado antes e salvo pelo menu "Compartilhar" (Salvar imagem / Salvar vídeo -> app Fotos).
 // No Android o arquivo é baixado solto (não em .zip) e aparece na Galeria / Google Fotos.
 const prontos=new Map();
