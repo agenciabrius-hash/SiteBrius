@@ -440,6 +440,15 @@ html{scroll-padding-top:66px}
 .btn-ghost{background:transparent;color:var(--ink)}
 .btn-ghost:hover{background:var(--ink);color:var(--bone)}
 .qf-done{text-align:center;padding:30px 0}
+.igcard{display:grid;gap:14px;max-width:420px;margin:26px auto 0;text-align:left;padding:18px;border-radius:18px;background:#fbf8f3;color:#141210;text-decoration:none;box-shadow:0 18px 40px -22px rgba(0,0,0,.45);border:1px solid #e3d8c6;transition:transform .25s,box-shadow .25s}
+.igcard:hover{transform:translateY(-3px);box-shadow:0 26px 50px -24px rgba(0,0,0,.55)}
+.igcard:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
+.ig-top{display:flex;align-items:center;gap:12px}
+.ig-top img{width:52px;height:52px;border-radius:50%;padding:2px;background:conic-gradient(#f58529,#dd2a7b,#8134af,#515bd4,#f58529);object-fit:cover}
+.ig-who{display:grid;gap:2px}.ig-who b{font:700 16px var(--body)}.ig-who span{font:400 13px var(--body);color:#6b6359}
+.ig-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}.ig-grid img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px;display:block}
+.ig-txt{font:400 14px/1.5 var(--body);color:#4a443d}
+.ig-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 18px;border-radius:999px;color:#fff;font:700 15px var(--body);background:linear-gradient(90deg,#f58529,#dd2a7b 45%,#8134af 75%,#515bd4)}
 .big-ok{font:italic 500 clamp(40px,7vw,72px)/1 var(--display);margin:0 0 12px}
 .quote{background:var(--sand)}
 .steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:8px}
@@ -993,9 +1002,15 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
         </fieldset>
 
         <div class="qf-done" id="q-done" hidden>
-          <p class="big-ok">Pedido enviado!</p>
+          <p class="big-ok">Orçamento enviado!</p>
           <p id="q-done-msg">Recebemos o seu pedido de orçamento. Em breve a equipe Brius chama você no WhatsApp com a proposta.</p>
           <p class="fine" id="q-done-id"></p>
+          <a class="igcard" href="https://www.instagram.com/agenciabrius/" target="_blank" rel="noopener" aria-label="Seguir a Brius no Instagram">
+            <span class="ig-top"><img src="img/icone-192.png" alt="" width="52" height="52"><span class="ig-who"><b>@agenciabrius</b><span>Brius Agência · Fotografia, vídeo e redes sociais</span></span></span>
+            <span class="ig-grid"><img src="img/14.webp" alt="" loading="lazy"><img src="cli/1-ouLRvWyXPEIuYx3g4PEnIIRA5K50Jq8.webp" alt="" loading="lazy"><img src="img/18.webp" alt="" loading="lazy"></span>
+            <span class="ig-txt">Enquanto a proposta não chega, acompanhe nossos trabalhos e bastidores no Instagram.</span>
+            <span class="ig-btn"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.3" fill="currentColor"/></svg>Seguir no Instagram</span>
+          </a>
         </div>
 
         <p class="qf-err" id="q-err" role="alert"></p>
