@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Brius Agência: fotografia, videomaker, editor de vídeo, storymaker e gestão de redes sociais. Faça seu orçamento online.">
+<meta name="description" content="Brius Agência: fotografia, videomaker, storymaker e gestão de redes sociais em São Paulo. Casamentos, eventos, marcas e empresas. Faça seu orçamento online.">
+<link rel="canonical" href="https://agenciabrius.com.br/">
 <meta name="theme-color" content="#141210">
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="192x192" href="img/icone-192.png">
@@ -19,7 +20,8 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Brius Agência: fotos de eventos e casais">
 <meta name="twitter:card" content="summary_large_image">
-<title>Brius Agência · Fotografia, vídeo e redes sociais</title>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "ProfessionalService", "name": "Brius Agência", "alternateName": "Brius", "url": "https://agenciabrius.com.br/", "image": "https://agenciabrius.com.br/img/capa-compartilhar.jpg", "logo": "https://agenciabrius.com.br/img/icone-512.png", "description": "Fotografia, videomaker, storymaker e gestão de redes sociais para casamentos, eventos, marcas e empresas em São Paulo.", "telephone": "+55-11-94080-9443", "email": "agenciabrius@gmail.com", "areaServed": [{"@type": "City", "name": "São Paulo"}, {"@type": "AdministrativeArea", "name": "Grande São Paulo"}], "address": {"@type": "PostalAddress", "addressLocality": "São Paulo", "addressRegion": "SP", "addressCountry": "BR"}, "founder": [{"@type": "Person", "name": "Matheus"}, {"@type": "Person", "name": "Sabrina"}], "sameAs": ["https://www.instagram.com/agenciabrius/"], "knowsAbout": ["Fotografia de casamento", "Fotografia de eventos", "Videomaker", "Storymaker", "Gestão de redes sociais", "Fotografia publicitária"]}</script>
+<title>Brius Agência · Fotografia, vídeo e redes sociais em São Paulo</title>
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -578,11 +580,11 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
     <span class="shine"><img class="hero-logo" src="img/logo-brius.webp" alt="Brius Agência"></span>
     <h1>Fotografia, vídeo e estratégia para <b>a sua marca ganhar força no digital.</b></h1>
     <div class="hero-strip" aria-hidden="true">
-      <img loading="lazy" decoding="async" src="img/06.webp" alt="">
-      <img loading="lazy" decoding="async" src="cli/1-ouLRvWyXPEIuYx3g4PEnIIRA5K50Jq8.webp" alt="">
-      <img loading="lazy" decoding="async" src="img/43.webp" alt="" style="object-position:30% 50%">
-      <img loading="lazy" decoding="async" src="img/17.webp" alt="">
-      <img loading="lazy" decoding="async" src="img/47.webp" alt="">
+      <img decoding="async" src="img/06.webp" alt="">
+      <img decoding="async" src="cli/1-ouLRvWyXPEIuYx3g4PEnIIRA5K50Jq8.webp" alt="">
+      <img decoding="async" src="img/43.webp" alt="" style="object-position:30% 50%">
+      <img decoding="async" src="img/17.webp" alt="">
+      <img decoding="async" src="img/47.webp" alt="">
     </div>
     <a class="arrow" href="#servicos" aria-label="Ver serviços">↓</a>
   </div>
@@ -834,7 +836,7 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
             <label>WhatsApp<input id="q-whatsapp" name="whatsapp" type="tel" inputmode="numeric" autocomplete="tel" required placeholder="(11) 91234-5678"></label>
             <label class="hp" aria-hidden="true">Site<input id="q-site" name="site" tabindex="-1" autocomplete="off"></label>
           </div>
-          <p class="qf-nota">Usamos seus dados só para falar com você sobre este orçamento.</p>
+          <p class="qf-nota">Usamos seus dados só para falar com você sobre este orçamento. <a href="privacidade/">Política de privacidade</a></p>
         </fieldset>
 
         <fieldset class="qf-step" data-step="tipo" hidden>
@@ -963,7 +965,7 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
     </div>
   </div>
 </section>
-<footer><div class="wrap"><span>Brius Agência · Matheus e Sabrina</span><span>Fotografia · Vídeo · Storymaker · Redes sociais</span><a href="cliente/" style="color:inherit">Área do cliente</a></div></footer>
+<footer><div class="wrap"><span>Brius Agência · Matheus e Sabrina</span><span>Fotografia · Vídeo · Storymaker · Redes sociais</span><a href="cliente/" style="color:inherit">Área do cliente</a><a href="privacidade/" style="color:inherit">Privacidade</a></div></footer>
 
 <div class="pt" id="pt" aria-hidden="true"><div class="pl"></div><div class="pl"></div><div class="pt-in"><div class="pt-logo"></div><div class="pt-name" id="ptName"></div><div class="pt-bar"></div></div></div>
 
@@ -1012,7 +1014,8 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbxv6WLxKRDICMjAqAGWB8Uu
   const NOMES={dados:'Seus dados',tipo:'O que precisa',evento:'O evento',local:'O local',marca:'Sua marca',reuniao:'Reunião',revisar:'Revisar'};
   const FLUXO={'':['dados','tipo','revisar'],evento:['dados','tipo','evento','local','revisar'],gestao:['dados','tipo','marca','reuniao','revisar']};
   const tabsEl=$('qf-tabs'),next=$('q-next'),back=$('q-back'),err=$('q-err');
-  let cur=0,reservadas=new Set(),rota=null;
+  let cur=0,reservadas=new Set(),rota=null,inicioForm=0;
+  ['focusin','input'].forEach(ev=>f.addEventListener(ev,()=>{if(!inicioForm)inicioForm=Date.now()},{once:true}));
   // salva o andamento a cada etapa: se a pessoa não terminar, a Brius recebe o contato
   const RID=(self.crypto&&crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2)).replace(/-/g,'');
   function rascunho(){if(!API_URL||$('q-site').value)return;const k=fluxo()?fluxo()[cur]:'tipo';
@@ -1097,7 +1100,7 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbxv6WLxKRDICMjAqAGWB8Uu
       $('q-done-msg').textContent='Seu pedido abriu no WhatsApp da Brius com todas as informações. É só tocar em enviar que a gente responde com a proposta.';$('q-done-id').innerHTML='Se o WhatsApp não abriu, <a href="'+url+'" target="_blank" rel="noopener">toque aqui para enviar</a>.';
       return}
     next.disabled=true;next.textContent='Enviando...';err.textContent='';
-    const data=Object.fromEntries(new FormData(f).entries());data.rascunho=RID;
+    const data=Object.fromEntries(new FormData(f).entries());data.rascunho=RID;data.t=Date.now()-(inicioForm||Date.now());
     if(data.tipo==='gestao'){['data','inicio','horas','estilo','local','servicos','convidados','obs'].forEach(x=>delete data[x]);data.obs=data.obs_gestao||''}
     else{['empresa','instagram','segmento','redes','posts','videos','inicio_gestao','obs_gestao','reuniao_data','reuniao_hora'].forEach(x=>delete data[x])}
     try{const j=await (await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)})).json();
@@ -1167,6 +1170,21 @@ const ALBUNS=[{"t": "Ensaio de bodas Sirlene & Valdinei", "c": "casamentos", "p"
       if(a.paused){if(cur&&cur!==a)cur.pause();document.querySelectorAll('.aud.playing').forEach(x=>x.classList.remove('playing'));a.play().catch(()=>{});cur=a;box.classList.add('playing');btn.setAttribute('aria-label',btn.getAttribute('aria-label').replace('Ouvir','Pausar'))}
       else{a.pause();box.classList.remove('playing');btn.setAttribute('aria-label',btn.getAttribute('aria-label').replace('Pausar','Ouvir'))}});
   });
+})();
+// ===== CONTADOR DE VISITAS (sem cookies, sem dados pessoais: só a origem da visita) =====
+(function(){
+  try{
+    if(navigator.webdriver||/bot|crawl|spider|preview|facebookexternalhit|whatsapp/i.test(navigator.userAgent))return;
+    if(sessionStorage.getItem('brius_v'))return;sessionStorage.setItem('brius_v','1');
+  }catch(e){return}
+  const q=new URLSearchParams(location.search),utm=(q.get('utm_source')||q.get('ref')||'').toLowerCase();
+  let host='';try{host=document.referrer?new URL(document.referrer).hostname:''}catch(e){}
+  if(host===location.hostname)return;
+  const t=utm||host;
+  const origem=/instagram|^ig$/.test(t)?'instagram':/google/.test(t)?'google':/facebook|fb\.|^fb$/.test(t)?'facebook':/tiktok/.test(t)?'tiktok':/whatsapp|^wa$/.test(t)||!t?'direto':'outros';
+  const url='https://script.google.com/macros/s/AKfycbxv6WLxKRDICMjAqAGWB8Uu5oZnL-zMWQWgFxdwFTwFRyiFFvH6YV5cxWbDOoV7hOQm/exec';
+  const body=JSON.stringify({acao:'visita',origem});
+  setTimeout(()=>{try{fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body,keepalive:true}).catch(()=>{})}catch(e){}},1500);
 })();
 // ===== ENDEREÇO LIMPO: o site sempre abre no início =====
 (function(){
