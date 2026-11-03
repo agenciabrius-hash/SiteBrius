@@ -1,0 +1,33 @@
+<html><head><meta charset="utf-8"><style>
+@page{size:A4;margin:0}
+body{margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;color:#1e1e1e;font-size:10.5px}
+.pad{padding:0 34px}
+.tt{text-align:center;padding-top:4px}
+.ac{font-size:14px;font-weight:bold;margin:0}
+.cli{font-size:12px;letter-spacing:.4px;margin:1px 0 8px}
+.info{font-size:11.5px;line-height:1.5;margin:0 0 10px}
+table.t{width:100%;border-collapse:collapse}
+table.t td{border:1px solid #2b2b2b;padding:5px 9px;vertical-align:middle}
+td.n{width:24%;font-weight:bold;font-size:12px}
+td.d{width:52%;font-size:11px}
+td.d ul{margin:0;padding-left:15px}
+td.d li{margin:0;line-height:1.35}
+td.v{width:24%;text-align:center;font-size:11.5px;line-height:1.4}
+h4{margin:9px 0 2px;font-size:11px}
+ul.c{margin:0;padding-left:16px;font-size:10px;line-height:1.4}
+p.s{margin:0;font-size:10px}
+</style></head><body>
+<table width="100%" cellpadding="0" cellspacing="0" bgcolor="#1f2121" style="background-color:#1f2121"><tr><td style="padding:20px 34px;background-color:#1f2121" bgcolor="#1f2121"><img src="data:image/png;base64,{{LOGO}}" height="40"></td></tr></table>
+<div class="pad">
+<div class="tt"><img src="data:image/png;base64,{{TITULO}}" height="52"></div>
+<p class="ac">A/C:</p><p class="cli">{{NOME}}</p>
+<p class="info">{{INFO}}</p>
+<table class="t" cellpadding="0" cellspacing="0">{{LINHAS}}</table>
+<table width="100%" cellpadding="0" cellspacing="0" style="margin-top:8px"><tr><td></td><td width="230" bgcolor="#a9a9a9" style="background-color:#a9a9a9;color:#ffffff;font-size:17px;letter-spacing:3px;text-align:center;padding:8px 10px">{{TOTAL}}</td></tr></table>
+{{CONDICOES}}
+<h4>Validade do Orçamento:</h4><p class="s">Este orçamento é válido até {{VALIDADE}}.</p>
+</div>
+<table width="100%" cellpadding="0" cellspacing="0" bgcolor="#1f2121" style="background-color:#1f2121;margin-top:16px"><tr>
+<td bgcolor="#1f2121" style="background-color:#1f2121;color:#ffffff;font-weight:bold;font-size:11px;padding:13px 34px">E-mail: {{EMAIL}}</td>
+<td bgcolor="#1f2121" style="background-color:#1f2121;color:#ffffff;font-weight:bold;font-size:11px;padding:13px 34px;text-align:right">WhatsApp: {{TELEFONE}}</td></tr></table>
+</body></html>
