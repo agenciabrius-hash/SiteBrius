@@ -31,7 +31,7 @@ button.sec{background:none;color:var(--muted);border:1px solid #3a352f;padding:8
 <body>
 <main>
   <h1>Preparar fotos dos eventos</h1>
-  <p class="sub">Esta página lê os rostos das fotos de cada evento, aqui no seu computador, para os convidados encontrarem as próprias fotos com uma selfie. Deixe a aba aberta até terminar.</p>
+  <p class="sub">Esta página lê os rostos das fotos de cada evento, aqui no seu computador, para os convidados encontrarem as próprias fotos com uma selfie. Deixe esta aba aberta e na frente até terminar (se trocar de aba, o navegador deixa a leitura mais lenta).</p>
   <div id="lista"><p class="sub">Carregando eventos…</p></div>
   <div class="dica">
     <b>Como adicionar um evento:</b> no Google Drive, abra a pasta <b>Eventos · Reconhecimento facial</b> e crie uma subpasta com a data e o nome, assim: <b>[18/12/2026] Casamento Ana e Pedro</b>. Coloque as fotos (JPG) dentro dela. Marque com estrela ⭐ a foto que deve ser a capa. Depois volte aqui e clique em <b>Preparar</b>.<br><br>
@@ -45,7 +45,10 @@ const FACE='https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/';
 const K=new URLSearchParams(location.search).get('k')||'';
 const lista=document.getElementById('lista');
 const esc=t=>String(t||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const post=d=>fetch(API,{method:'POST',body:JSON.stringify(Object.assign({k:K},d))}).then(r=>r.json());
+// envia com limite de tempo e tenta de novo se o Google demorar demais
+async function post(d,tent=0){const c=new AbortController(),t=setTimeout(()=>c.abort(),120000);
+  try{return await fetch(API,{method:'POST',body:JSON.stringify(Object.assign({k:K},d)),signal:c.signal}).then(r=>r.json())}
+  catch(x){if(tent<2){await new Promise(o=>setTimeout(o,3000));return post(d,tent+1)}throw new Error('o Google não respondeu')}finally{clearTimeout(t)}}
 let ocupado=false;
 
 async function carregar(){
