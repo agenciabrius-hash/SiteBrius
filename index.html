@@ -416,6 +416,7 @@ html{scroll-padding-top:66px}
 .cards2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .big-pick span{padding:22px;gap:8px}.big-pick span b{font-size:24px}.big-pick span small{font-size:14px;line-height:1.5}
 @media (max-width:600px){.svc-pick,.cards2{grid-template-columns:minmax(0,1fr)}}
+.qmapa{margin-top:14px}.qmapa iframe{display:block;width:100%;height:260px;border:0;border-radius:12px;background:#e9e2d6}.qmapa p{font-size:13px;line-height:1.5;margin:8px 0 0;color:var(--muted-l)}.qmapa a{color:var(--ink);font-weight:600;white-space:nowrap}
 .route{display:flex;flex-wrap:wrap;gap:14px 20px;align-items:center;margin-top:18px}
 .route p{margin:0;font-size:14px;color:var(--muted-l);flex:1 1 260px}
 .route p b{color:var(--ink);font-size:18px}
@@ -870,6 +871,10 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
             <button type="button" class="btn-dark" id="q-rota">Calcular deslocamento</button>
             <p id="q-rota-out" aria-live="polite">Calculamos pelo Google Maps o tempo de carro da nossa base até o local.</p>
           </div>
+          <div class="qmapa" id="q-mapa" hidden>
+            <iframe id="q-mapa-f" title="Mapa do local do evento" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <p><b>O pino está no lugar certo?</b> Se não estiver, complete o endereço (número, bairro e cidade) e toque em “Calcular deslocamento” de novo. <a id="q-mapa-a" target="_blank" rel="noopener">Abrir no Google Maps</a></p>
+          </div>
         </fieldset>
 
         <fieldset class="qf-step" data-step="marca" hidden>
@@ -1029,7 +1034,7 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbxv6WLxKRDICMjAqAGWB8Uu
     if(reservadas.has(v)){m.textContent='Data já reservada. Escolha outra data.';m.className='bad';$('q-data').setAttribute('aria-invalid','true');return false}
     m.textContent=API_URL?'Data disponível.':'';m.className='good';$('q-data').removeAttribute('aria-invalid');return true}
   $('q-data').addEventListener('change',checarData);
-  $('q-local').addEventListener('input',()=>{rota=null;$('q-rota-out').textContent='Calculamos pelo Google Maps o tempo de carro da nossa base até o local.'});
+  $('q-local').addEventListener('input',()=>{rota=null;$('q-mapa').hidden=true;$('q-rota-out').textContent='Calculamos pelo Google Maps o tempo de carro da nossa base até o local.'});
   f.querySelectorAll('input[name=tipo]').forEach(r=>r.addEventListener('change',()=>{drawTabs();err.textContent=''}));
   // limite de 3 serviços fica livre; mínimo 2 verificado ao continuar
   function show(i){cur=i;const fl=fluxo(),k=fl[i];Object.entries(steps).forEach(([n,s])=>s.hidden=n!==k);drawTabs();
@@ -1053,8 +1058,9 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbxv6WLxKRDICMjAqAGWB8Uu
     if(!API_URL){out.textContent='O cálculo pelo Google Maps funciona na versão publicada do site.';return null}
     out.textContent='Calculando...';$('q-rota').disabled=true;
     try{const j=await (await fetch(API_URL+'?acao=rota&destino='+encodeURIComponent(dest))).json();if(!j.ok)throw new Error(j.erro);rota=j;
-      out.innerHTML='<b>'+fmtMin(j.minutos)+'</b> de carro · '+String(j.km).replace('.',',')+' km<br>'+esc(j.endereco);return j}
-    catch(e){out.textContent='Não encontramos esse endereço. Confira e tente de novo.';return null}
+      out.innerHTML='<b>'+fmtMin(j.minutos)+'</b> de carro · '+String(j.km).replace('.',',')+' km<br>'+esc(j.endereco);
+      const q=encodeURIComponent(j.endereco||dest);$('q-mapa-f').src='https://maps.google.com/maps?q='+q+'&z=16&output=embed';$('q-mapa-a').href='https://www.google.com/maps/search/?api=1&query='+q;$('q-mapa').hidden=false;return j}
+    catch(e){out.textContent='Não encontramos esse endereço. Confira e tente de novo.';$('q-mapa').hidden=true;return null}
     finally{$('q-rota').disabled=false}}
   $('q-rota').addEventListener('click',calcRota);
   function fmtMin(m){return m<60?m+' min':Math.floor(m/60)+' h '+(m%60?String(m%60).padStart(2,'0')+' min':'')}
