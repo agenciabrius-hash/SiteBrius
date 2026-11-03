@@ -125,8 +125,8 @@ html{scroll-padding-top:66px}
 .ltr .sp{display:inline-block;width:.22em}
 .ltr .w{display:inline-block;white-space:nowrap}
 .ltr .lt.up{transform:translateY(-.12em) rotate(-3deg)}
-.reveal{transition:transform .9s cubic-bezier(.2,.7,.2,1),opacity .9s}
-.reveal.pre{transform:translateY(28px);opacity:.35}
+.reveal{transition:transform .75s cubic-bezier(.2,.75,.25,1),opacity .6s ease;transition-delay:calc(var(--d,0) * 85ms)}
+.reveal.pre{transform:translateY(46px);opacity:0}
 .lede em{font:italic 400 1.25em/1 var(--serif)}
 .lede{max-width:46ch;margin:0;font-size:15.5px}
 .dark .lede,.dark2 .lede{color:#d9d7d2}
@@ -1255,7 +1255,7 @@ const ALBUNS=[{"t": "Ensaio de bodas Sirlene & Valdinei", "c": "casamentos", "p"
 // ===== TRANSIÇÃO ENTRE SEÇÕES =====
 (function(){
   const pt=document.getElementById('pt'),nm=document.getElementById('ptName');
-  if(!pt||matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  return; // trocado por rolagem direta + elementos surgindo de baixo para cima
   let busy=false;
   document.addEventListener('click',e=>{
     const a=e.target.closest('a[href^="#"]');if(!a||busy)return;
@@ -1275,7 +1275,7 @@ const ALBUNS=[{"t": "Ensaio de bodas Sirlene & Valdinei", "c": "casamentos", "p"
 })();
 // ===== CORTINA AO ROLAR =====
 (function(){
-  if(matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window))return;
+  return; // cortinas desligadas
   const names={servicos:'Serviços',casamentos:'Eventos',producoes:'Produções',corporativos:'Corporativo',clientes:'Clientes',historia:'Sobre',avaliacoes:'Avaliações',orcamento:'Orçamento',contato:'Contato'};
   const secs=[...document.querySelectorAll('section[id]')].filter(x=>names[x.id]&&x.getBoundingClientRect().top>innerHeight*.9);
   const io=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;const c=e.target._sc;io.unobserve(e.target);
@@ -1359,9 +1359,14 @@ document.querySelectorAll('.ltr').forEach(h=>{const cs=[...h.querySelectorAll(".
   cs.forEach((c,i)=>c.addEventListener('pointerenter',()=>{[-1,0,1].forEach(o=>{const t=cs[i+o];if(!t)return;t.classList.add('up');setTimeout(()=>t.classList.remove('up'),280+Math.abs(o)*60)})}));});
 // Reveal on scroll (only for blocks below the first screen)
 if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&'IntersectionObserver' in window){
-  const els=[...document.querySelectorAll('.head,.grid,.services,.reels,.split,.steps,.story,.channels,.filters,.auds')].filter(e=>e.getBoundingClientRect().top>innerHeight);
+  // cada bloco surge de baixo para cima; em grades, os itens surgem um depois do outro
+  const blocos=[...document.querySelectorAll('.head,.split,.story,.filters,.qf,.contact,.client')];
+  const grupos=[...document.querySelectorAll('.grid,.services,.reels,.steps,.channels,.auds')];
+  const els=blocos.concat(...grupos.map(g=>{const k=[...g.children];k.forEach((c,i)=>c.style.setProperty('--d',i%6));return k}))
+    .filter((e,i,a)=>a.indexOf(e)===i&&e.getBoundingClientRect().top>innerHeight*.92);
   els.forEach(e=>e.classList.add('reveal','pre'));
-  const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.remove('pre');io.unobserve(en.target)}}),{rootMargin:'0px 0px -8% 0px'});
+  const fim=e=>{e.classList.remove('reveal');e.style.removeProperty('--d')};
+  const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){const t=en.target;t.classList.remove('pre');io.unobserve(t);setTimeout(()=>fim(t),1400)}}),{rootMargin:'0px 0px -6% 0px'});
   els.forEach(e=>io.observe(e));
 }
 // Active menu item
