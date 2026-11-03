@@ -641,6 +641,29 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
 .fq[open] summary::after{transform:rotate(45deg);background:var(--gold-soft);border-color:var(--gold-soft)}
 .fq summary:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
 .fq p{margin:0 0 22px;max-width:62ch;font:400 16px/1.7 var(--body);color:var(--muted-l)}
+
+/* celular do Instagram no início */
+.h2-vis{position:relative;height:clamp(400px,42vw,580px)}
+.h2-vis .deck{position:absolute;inset:0 22% 0 0;height:auto}
+.hphone{position:absolute;right:0;bottom:2%;z-index:8;display:block;width:clamp(178px,15.5vw,222px);aspect-ratio:9/19;border-radius:30px;padding:7px;background:#0d0c0b;
+  box-shadow:0 0 0 2px #3a352f,0 40px 70px -24px rgba(0,0,0,.85);text-decoration:none;color:#111;transform:rotate(5deg);animation:hpflut 6s ease-in-out infinite}
+.hphone::before{content:"";position:absolute;top:13px;left:50%;transform:translateX(-50%);width:54px;height:15px;border-radius:12px;background:#0d0c0b;z-index:3}
+@keyframes hpflut{0%,100%{transform:rotate(5deg) translateY(0)}50%{transform:rotate(3deg) translateY(-14px)}}
+.hp-scr{display:flex;flex-direction:column;height:100%;border-radius:24px;background:#fff;overflow:hidden;font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.hp-top{padding:32px 12px 6px;font-size:13px}
+.hp-prof{display:flex;align-items:center;gap:9px;padding:0 12px}
+.hp-prof .igp-av{width:48px;height:48px;padding:2px}
+.hp-prof .igp-av img{border-width:2px}
+.hp-bio{display:grid;gap:1px;font-size:10.5px;line-height:1.25}.hp-bio span{color:#555}
+.hp-follow{margin:9px 12px;padding:5px;border-radius:6px;background:#0095f6;color:#fff;text-align:center;font-size:11px;font-weight:600}
+.hp-rol{flex:1;overflow:hidden;position:relative;border-top:1px solid #efefef}
+.hp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5px;animation:hprol 40s linear infinite}
+.hphone:hover .hp-grid,.hphone:focus-visible .hp-grid{animation-play-state:paused}
+.hp-grid img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;background:#eee}
+@keyframes hprol{from{transform:translateY(0)}to{transform:translateY(-50%)}}
+.hphone:focus-visible{outline:2px solid var(--gold-soft);outline-offset:4px}
+@media (max-width:860px){.h2-vis{height:clamp(360px,100vw,460px);order:2;margin-top:8px}.h2-vis .deck{inset:0 26% 0 0}.h2-vis .pr{width:clamp(170px,48vw,250px)}.hphone{width:clamp(140px,36vw,180px);border-radius:24px;padding:6px}.hp-scr{border-radius:19px}.hp-bio span{display:none}.hp-prof .igp-av{width:38px;height:38px}.hp-top{padding-top:26px;font-size:12px}}
+@media (prefers-reduced-motion:reduce){.hphone,.hp-grid{animation:none}.hp-rol{overflow-y:auto}}
 /* ===== HERO: mesa de fotos ===== */
 .hero2{background:radial-gradient(120% 90% at 85% 40%,#2a241d 0%,var(--ink) 60%);color:var(--bone);overflow:hidden;position:relative}
 .hero2 .wrap{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);align-items:center;gap:clamp(24px,5vw,72px);padding-block:clamp(48px,8vw,104px)}
@@ -703,34 +726,21 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
       <div class="h2-cta"><a class="h2-b" href="#orcamento">Fazer orçamento</a><a class="h2-l" href="#casamentos">Ver trabalhos</a></div>
       <p class="h2-srv">Fotografia <i></i> Videomaker <i></i> Storymaker <i></i> Gestão de redes sociais</p>
     </div>
-    <div class="deck" id="deck" role="button" tabindex="0" aria-label="Passar para a próxima foto"><figure class="pr" style="--r:-3deg"><img src="cli/1-ouLRvWyXPEIuYx3g4PEnIIRA5K50Jq8.webp" alt="Casal se beijando em ensaio ao ar livre" decoding="async" fetchpriority="high"></figure><figure class="pr" style="--r:5deg"><img src="img/06.webp" alt="Público no evento do Neymar" decoding="async"></figure><figure class="pr" style="--r:-7deg"><img src="img/14.webp" alt="Casal de mãos dadas na escadaria de um palácio" decoding="async"></figure><figure class="pr" style="--r:3deg"><img src="img/18.webp" alt="Família comemorando no apartamento novo" decoding="async"></figure><figure class="pr" style="--r:-5deg"><img src="img/44.webp" alt="Cantor em show ao vivo" decoding="async"></figure><figure class="pr" style="--r:7deg"><img src="img/37.webp" alt="Foto publicitária de salada" decoding="async"></figure><figure class="pr" style="--r:-2deg"><img src="img/46.webp" alt="Casal no chá revelação" decoding="async"></figure></div>
+    <div class="h2-vis">
+      <div class="deck" id="deck" role="button" tabindex="0" aria-label="Passar para a próxima foto"><figure class="pr" style="--r:-3deg"><img src="cli/1-ouLRvWyXPEIuYx3g4PEnIIRA5K50Jq8.webp" alt="Casal se beijando em ensaio ao ar livre" decoding="async" fetchpriority="high"></figure><figure class="pr" style="--r:5deg"><img src="img/06.webp" alt="Público no evento do Neymar" decoding="async"></figure><figure class="pr" style="--r:-7deg"><img src="img/14.webp" alt="Casal de mãos dadas na escadaria de um palácio" decoding="async"></figure><figure class="pr" style="--r:3deg"><img src="img/18.webp" alt="Família comemorando no apartamento novo" decoding="async"></figure><figure class="pr" style="--r:-5deg"><img src="img/44.webp" alt="Cantor em show ao vivo" decoding="async"></figure><figure class="pr" style="--r:7deg"><img src="img/37.webp" alt="Foto publicitária de salada" decoding="async"></figure><figure class="pr" style="--r:-2deg"><img src="img/46.webp" alt="Casal no chá revelação" decoding="async"></figure></div>
+      <a class="hphone" href="https://www.instagram.com/agenciabrius/" target="_blank" rel="noopener" aria-label="Instagram da Brius: @agenciabrius">
+        <span class="hp-scr">
+          <span class="hp-top"><b>agenciabrius</b></span>
+          <span class="hp-prof"><span class="igp-av" id="igAvatar"><img src="img/icone-192.png" alt=""></span><span class="hp-bio"><b>Brius Agência</b><span>Fotografia · Vídeo · Redes</span></span></span>
+          <span class="hp-follow">Seguir</span>
+          <span class="hp-rol"><span class="hp-grid" id="igFeed"></span></span>
+        </span>
+      </a>
+    </div>
   </div>
 </header>
 
-<section class="band dark2 igband" id="instagram" hidden>
-  <div class="wrap ig2">
-    <div class="ig2-txt">
-      <p class="eyebrow">@agenciabrius</p>
-      <h2 class="ig2-t">A gente também está no Instagram</h2>
-      <p class="ig2-p">Bastidores, trabalhos novos e os stories do dia. Toque na foto do perfil para ver os stories.</p>
-      <a class="ig-seguir" href="https://www.instagram.com/agenciabrius/" target="_blank" rel="noopener">Seguir no Instagram</a>
-    </div>
-    <div class="igphone" aria-label="Perfil do Instagram da Brius">
-      <div class="igp-screen">
-        <div class="igp-status"><span>9:41</span><i></i></div>
-        <div class="igp-bar"><b>agenciabrius</b><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M7 10l5 5 5-5z"/></svg></div>
-        <div class="igp-prof">
-          <button type="button" class="igp-av" id="igAvatar" aria-label="Abrir o perfil"><img src="img/icone-192.png" alt=""></button>
-          <div class="igp-nums"><span><b id="igQtd">·</b>recentes</span><span><b id="igFotos">·</b>fotos</span><span><b id="igVids">·</b>vídeos</span></div>
-        </div>
-        <div class="igp-bio"><b>Brius Agência</b><span>Fotografia · Vídeo · Storymaker · Redes sociais<br>De São Paulo para todo o Brasil</span></div>
-        <a class="igp-follow" href="https://www.instagram.com/agenciabrius/" target="_blank" rel="noopener">Seguir</a>
-        <div class="igp-tabs"><i class="on"></i><i></i></div>
-        <div class="igp-grid" id="igFeed"></div>
-      </div>
-    </div>
-  </div>
-</section>
+
 <div class="igv" id="igv" hidden role="dialog" aria-modal="true" aria-label="Story do Instagram">
   <div class="igv-box"><div class="igv-bars" id="igvBars"></div><div class="igv-top"><img src="img/icone-192.png" alt=""><b>agenciabrius</b><span id="igvQuando"></span><button id="igvX" aria-label="Fechar">✕</button></div>
   <div class="igv-media" id="igvMedia"></div><button class="igv-p" id="igvP" aria-label="Anterior"></button><button class="igv-n" id="igvN" aria-label="Próximo"></button>
@@ -1336,30 +1346,26 @@ const ALBUNS=[{"t": "Ensaio de bodas Sirlene & Valdinei", "c": "casamentos", "p"
     cards=lista.map(mk);cards.forEach(c=>io.observe(c));render();
   }).catch(()=>{})}
 })();
-// ===== INSTAGRAM (posts recentes + stories do dia) =====
+// ===== INSTAGRAM no celular do início (posts recentes + stories do dia) =====
 (function(){
-  const sec=document.getElementById('instagram');if(!sec||!API_URL)return;
-  const feed=document.getElementById('igFeed'),av=document.getElementById('igAvatar');
-  const icoVideo='<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>';
-  const icoCarr='<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="14" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 7v12a2 2 0 0 0 2 2h12" fill="none" stroke="currentColor" stroke-width="2"/></svg>';
+  const feed=document.getElementById('igFeed'),av=document.getElementById('igAvatar');if(!feed)return;
+  const encher=lista=>{feed.innerHTML='';const imgs=lista.concat(lista);imgs.forEach((src,i)=>{const im=new Image();im.alt='';im.decoding='async';if(i>8)im.loading='lazy';im.src=src;feed.appendChild(im)})};
+  // enquanto o Instagram não responde, mostra trabalhos do portfólio
+  encher(['img/14.webp','img/18.webp','img/06.webp','img/44.webp','img/46.webp','img/37.webp','img/17.webp','img/47.webp','img/16.webp','cli/1-ouLRvWyXPEIuYx3g4PEnIIRA5K50Jq8.webp','img/03.webp','img/19.webp']);
+  av.addEventListener('click',e=>{if(av.classList.contains('st')){e.preventDefault();e.stopPropagation();abrir(window.__igStories,0)}});
+  if(!API_URL)return;
   const tempo=t=>{if(!t)return'';const h=Math.max(1,Math.round((Date.now()-new Date(t))/3600000));return h<24?h+' h':Math.round(h/24)+' d'};
   fetch(API_URL+'?acao=instagram').then(r=>r.json()).then(j=>{
     if(!j||!j.ok||!(j.posts||[]).length)return;
-    document.getElementById('igQtd').textContent=j.posts.length;document.getElementById('igVids').textContent=j.posts.filter(p=>p.tipo==='VIDEO').length;document.getElementById('igFotos').textContent=j.posts.filter(p=>p.tipo!=='VIDEO').length;j.posts.slice(0,12).forEach(p=>{const a=document.createElement('a');a.className='ig-post';a.href=p.link;a.target='_blank';a.rel='noopener';
-      a.setAttribute('aria-label','Abrir post no Instagram'+(p.texto?': '+p.texto.slice(0,60):''));
-      a.innerHTML='<img loading="lazy" alt="">'+(p.tipo==='VIDEO'?icoVideo:p.tipo==='CAROUSEL_ALBUM'?icoCarr:'')+'<span class="cap"></span>';
-      a.querySelector('img').src=p.img;a.querySelector('.cap').textContent=p.texto;feed.appendChild(a)});
-    const st=j.stories||[];
-    if(st.length){av.classList.add('st');av.setAttribute('aria-label','Ver os stories de hoje');av.onclick=()=>abrir(st,0)}
-    else av.onclick=()=>window.open('https://www.instagram.com/agenciabrius/','_blank','noopener');
-    sec.hidden=false;
+    encher(j.posts.slice(0,12).map(p=>p.img));
+    const st=j.stories||[];if(st.length){window.__igStories=st;av.classList.add('st');av.setAttribute('role','button');av.setAttribute('tabindex','0');av.setAttribute('aria-label','Ver os stories de hoje');av.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();abrir(st,0)}})}
   }).catch(()=>{});
   // visualizador de stories
   const v=document.getElementById('igv'),media=document.getElementById('igvMedia'),bars=document.getElementById('igvBars');let lista=[],k=0,tmr=null;
-  function abrir(l,i){lista=l;v.hidden=false;document.body.style.overflow='hidden';bars.innerHTML=l.map(()=>'<i></i>').join('');mostrar(i);document.getElementById('igvX').focus()}
+  function abrir(l,i){if(!l||!l.length)return;lista=l;v.hidden=false;document.body.style.overflow='hidden';bars.innerHTML=l.map(()=>'<i></i>').join('');mostrar(i);document.getElementById('igvX').focus()}
   function mostrar(i){clearTimeout(tmr);if(i<0)i=0;if(i>=lista.length)return fechar();k=i;const s=lista[k];media.innerHTML='';
     [...bars.children].forEach((b,j)=>b.className=j<k?'f':(j===k?'c':''));document.getElementById('igvQuando').textContent=tempo(s.quando);document.getElementById('igvLink').href=s.link;
-    if(s.tipo==='VIDEO'&&s.video){const vd=document.createElement('video');vd.src=s.video;vd.playsInline=true;vd.autoplay=true;vd.muted=false;vd.poster=s.img;media.appendChild(vd);
+    if(s.tipo==='VIDEO'&&s.video){const vd=document.createElement('video');vd.src=s.video;vd.playsInline=true;vd.autoplay=true;vd.poster=s.img;media.appendChild(vd);
       vd.play().catch(()=>{vd.muted=true;vd.play().catch(()=>{})});vd.onloadedmetadata=()=>bars.children[k].style.setProperty('--dur',vd.duration+'s');vd.onended=()=>mostrar(k+1)}
     else{const im=new Image();im.src=s.img;im.alt='';media.appendChild(im);bars.children[k].style.setProperty('--dur','5s');tmr=setTimeout(()=>mostrar(k+1),5000)}}
   function fechar(){clearTimeout(tmr);media.innerHTML='';v.hidden=true;document.body.style.overflow=''}
