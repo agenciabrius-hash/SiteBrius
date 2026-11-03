@@ -556,6 +556,39 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
 
 @media (hover:none){.grid button .cap{transform:none;background:linear-gradient(transparent,rgba(10,10,10,.6))}.cur{display:none}}
 @media (prefers-reduced-motion:reduce){.shine::after,.grid button::after,.cta::after,.btn-dark::after{display:none}.hero-strip img,.phone{transition:none!important;transform:none!important}}
+
+/* ===== HERO: mesa de fotos ===== */
+.hero2{background:radial-gradient(120% 90% at 85% 40%,#2a241d 0%,var(--ink) 60%);color:var(--bone);overflow:hidden;position:relative}
+.hero2 .wrap{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);align-items:center;gap:clamp(24px,5vw,72px);padding-block:clamp(48px,8vw,104px)}
+.h2-txt h1{font:500 clamp(40px,6.2vw,84px)/1.02 var(--display);letter-spacing:-.015em;margin:0 0 22px;max-width:12ch;text-wrap:balance}
+.h2-sub{font:400 clamp(16px,1.35vw,19px)/1.6 var(--body);color:#d9cfbf;max-width:44ch;margin:0 0 30px}
+.h2-cta{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center;margin:0 0 34px}
+.h2-b{background:var(--gold-soft);color:var(--ink);text-decoration:none;font:700 15px var(--body);padding:15px 26px;border-radius:999px;transition:background .25s,transform .25s}
+.h2-b:hover{background:#f3e4c6;transform:translateY(-2px)}
+.h2-l{color:var(--bone);font:600 15px var(--body);text-decoration:underline;text-decoration-color:var(--gold);text-underline-offset:6px;text-decoration-thickness:1.5px}
+.h2-l:hover{color:var(--gold-soft)}
+.h2-b:focus-visible,.h2-l:focus-visible,.deck:focus-visible{outline:2px solid var(--gold-soft);outline-offset:4px}
+.h2-srv{margin:0;color:var(--muted-d);font:500 14px var(--body);display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px}
+.h2-srv i{width:4px;height:4px;border-radius:50%;background:var(--gold);display:inline-block}
+.deck{position:relative;height:clamp(380px,40vw,560px);cursor:pointer;outline:none;-webkit-tap-highlight-color:transparent}
+.pr{position:absolute;left:50%;top:50%;width:clamp(220px,25vw,350px);aspect-ratio:4/5;margin:0;background:#fbf8f3;padding:10px 10px 38px;
+  box-shadow:0 30px 60px -20px rgba(0,0,0,.65),0 2px 6px rgba(0,0,0,.3);
+  transform:translate(-50%,-50%) translate(var(--x,0),var(--y,0)) rotate(var(--rr,var(--r)));transition:transform .9s cubic-bezier(.2,.75,.2,1),opacity .6s;will-change:transform}
+.pr img{width:100%;height:100%;object-fit:cover;display:block;background:#2a241d}
+.pr[data-p="0"]{z-index:6;--rr:-2deg}
+.pr[data-p="1"]{z-index:5;--x:9%;--y:3%;--rr:6deg}
+.pr[data-p="2"]{z-index:4;--x:-11%;--y:5%;--rr:-8deg}
+.pr[data-p="3"]{z-index:3;--x:4%;--y:-6%;--rr:2deg;opacity:.9}
+.pr[data-p="4"],.pr[data-p="5"],.pr[data-p="6"]{z-index:1;opacity:0}
+.pr.sai{z-index:7;--x:-62%;--y:12%;--rr:-24deg;opacity:0;transition:transform .75s cubic-bezier(.5,0,.75,0),opacity .75s}
+.deck:hover .pr[data-p="0"]{--rr:0deg;--y:-2%}
+@media (max-width:860px){
+  .hero2 .wrap{grid-template-columns:1fr;padding-block:40px 32px;gap:8px}
+  .h2-txt h1{font-size:clamp(38px,11vw,56px);max-width:14ch}
+  .deck{height:clamp(330px,95vw,440px);order:2}
+  .pr{width:clamp(190px,58vw,270px)}
+}
+@media (prefers-reduced-motion:reduce){.pr{transition:none}}
 </style>
 
 <nav class="nav" id="nav">
@@ -577,18 +610,15 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
   </div>
 </nav>
 
-<header class="hero" id="inicio">
+<header class="hero2" id="inicio">
   <div class="wrap">
-    <span class="shine"><img class="hero-logo" src="img/logo-brius.webp" alt="Brius Agência"></span>
-    <h1>Fotografia, vídeo e estratégia para <b>a sua marca ganhar força no digital.</b></h1>
-    <div class="hero-strip" aria-hidden="true">
-      <img decoding="async" src="img/06.webp" alt="">
-      <img decoding="async" src="cli/1-ouLRvWyXPEIuYx3g4PEnIIRA5K50Jq8.webp" alt="">
-      <img decoding="async" src="img/43.webp" alt="" style="object-position:30% 50%">
-      <img decoding="async" src="img/17.webp" alt="">
-      <img decoding="async" src="img/47.webp" alt="">
+    <div class="h2-txt">
+      <h1>Fotografia e vídeo para guardar o que importa.</h1>
+      <p class="h2-sub">Casamentos, eventos e marcas: do clique ao conteúdo pronto para as redes. Somos Matheus e Sabrina, de São Paulo para todo o Brasil.</p>
+      <div class="h2-cta"><a class="h2-b" href="#orcamento">Fazer orçamento</a><a class="h2-l" href="#casamentos">Ver trabalhos</a></div>
+      <p class="h2-srv">Fotografia <i></i> Videomaker <i></i> Storymaker <i></i> Gestão de redes sociais</p>
     </div>
-    <a class="arrow" href="#servicos" aria-label="Ver serviços">↓</a>
+    <div class="deck" id="deck" role="button" tabindex="0" aria-label="Passar para a próxima foto"><figure class="pr" style="--r:-3deg"><img src="cli/1-ouLRvWyXPEIuYx3g4PEnIIRA5K50Jq8.webp" alt="Casal se beijando em ensaio ao ar livre" decoding="async" fetchpriority="high"></figure><figure class="pr" style="--r:5deg"><img src="img/06.webp" alt="Público no evento do Neymar" decoding="async"></figure><figure class="pr" style="--r:-7deg"><img src="img/14.webp" alt="Casal de mãos dadas na escadaria de um palácio" decoding="async"></figure><figure class="pr" style="--r:3deg"><img src="img/18.webp" alt="Família comemorando no apartamento novo" decoding="async"></figure><figure class="pr" style="--r:-5deg"><img src="img/44.webp" alt="Cantor em show ao vivo" decoding="async"></figure><figure class="pr" style="--r:7deg"><img src="img/37.webp" alt="Foto publicitária de salada" decoding="async"></figure><figure class="pr" style="--r:-2deg"><img src="img/46.webp" alt="Casal no chá revelação" decoding="async"></figure></div>
   </div>
 </header>
 
@@ -1178,6 +1208,20 @@ const ALBUNS=[{"t": "Ensaio de bodas Sirlene & Valdinei", "c": "casamentos", "p"
       if(a.paused){if(cur&&cur!==a)cur.pause();document.querySelectorAll('.aud.playing').forEach(x=>x.classList.remove('playing'));a.play().catch(()=>{});cur=a;box.classList.add('playing');btn.setAttribute('aria-label',btn.getAttribute('aria-label').replace('Ouvir','Pausar'))}
       else{a.pause();box.classList.remove('playing');btn.setAttribute('aria-label',btn.getAttribute('aria-label').replace('Pausar','Ouvir'))}});
   });
+})();
+// ===== HERO: as fotos se revezam como cópias sobre a mesa =====
+(function(){
+  const deck=document.getElementById('deck');if(!deck)return;
+  const cards=[...deck.querySelectorAll('.pr')];let ordem=cards.map((_,i)=>i),ocupado=false,tmr=null,parado=false;
+  const pintar=()=>ordem.forEach((c,p)=>cards[c].dataset.p=p);pintar();
+  function proxima(){if(ocupado)return;ocupado=true;const topo=cards[ordem[0]];topo.classList.add('sai');
+    setTimeout(()=>{topo.style.transition='none';ordem.push(ordem.shift());pintar();topo.classList.remove('sai');void topo.offsetWidth;topo.style.transition='';ocupado=false},760)}
+  const reduz=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const iniciar=()=>{if(reduz||parado)return;clearInterval(tmr);tmr=setInterval(()=>{if(!document.hidden)proxima()},3800)};
+  deck.addEventListener('click',()=>{proxima();iniciar()});
+  deck.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();proxima();iniciar()}});
+  deck.addEventListener('mouseenter',()=>{parado=true;clearInterval(tmr)});deck.addEventListener('mouseleave',()=>{parado=false;iniciar()});
+  if('IntersectionObserver' in window)new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)iniciar();else clearInterval(tmr)})).observe(deck);else iniciar();
 })();
 // ===== CONTADOR DE VISITAS (sem cookies, sem dados pessoais: só a origem da visita) =====
 (function(){
