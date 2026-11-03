@@ -1045,7 +1045,7 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbxv6WLxKRDICMjAqAGWB8Uu
     if(reservadas.has(v)){m.textContent='Data já reservada. Escolha outra data.';m.className='bad';$('q-data').setAttribute('aria-invalid','true');return false}
     m.textContent=API_URL?'Data disponível.':'';m.className='good';$('q-data').removeAttribute('aria-invalid');return true}
   $('q-data').addEventListener('change',checarData);
-  $('q-local').addEventListener('input',()=>{rota=null;$('q-mapa').hidden=true;$('q-rota-out').textContent='Calculamos pelo Google Maps o tempo de carro da nossa base até o local.'});
+  $('q-local').addEventListener('input',()=>{rota=null;$('q-mapa').hidden=true;next.textContent='Continuar';$('q-rota-out').textContent='Calculamos pelo Google Maps o tempo de carro da nossa base até o local.'});
   f.querySelectorAll('input[name=tipo]').forEach(r=>r.addEventListener('change',()=>{drawTabs();err.textContent=''}));
   // limite de 3 serviços fica livre; mínimo 2 verificado ao continuar
   function show(i){cur=i;const fl=fluxo(),k=fl[i];Object.entries(steps).forEach(([n,s])=>s.hidden=n!==k);drawTabs();
@@ -1070,7 +1070,7 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbxv6WLxKRDICMjAqAGWB8Uu
     out.textContent='Calculando...';$('q-rota').disabled=true;
     try{const j=await (await fetch(API_URL+'?acao=rota&destino='+encodeURIComponent(dest))).json();if(!j.ok)throw new Error(j.erro);rota=j;
       out.innerHTML='<b>'+fmtMin(j.minutos)+'</b> de carro · '+String(j.km).replace('.',',')+' km<br>'+esc(j.endereco);
-      const q=encodeURIComponent(j.endereco||dest);$('q-mapa-f').src='https://maps.google.com/maps?q='+q+'&z=16&output=embed';$('q-mapa-a').href='https://www.google.com/maps/search/?api=1&query='+q;$('q-mapa').hidden=false;return j}
+      const q=encodeURIComponent(j.endereco||dest);$('q-mapa-f').src='https://maps.google.com/maps?q='+q+'&z=16&output=embed';$('q-mapa-a').href='https://www.google.com/maps/search/?api=1&query='+q;$('q-mapa').hidden=false;next.textContent='Confirmar local e continuar';return j}
     catch(e){out.textContent='Não encontramos esse endereço. Confira e tente de novo.';$('q-mapa').hidden=true;return null}
     finally{$('q-rota').disabled=false}}
   $('q-rota').addEventListener('click',calcRota);
@@ -1086,7 +1086,7 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbxv6WLxKRDICMjAqAGWB8Uu
     $('q-review').innerHTML=rows.map(([k,v])=>'<dt>'+k+'</dt><dd>'+esc(v)+'</dd>').join('')}
   next.addEventListener('click',async()=>{
     const fl=fluxo(),k=fl[cur];
-    if(k!=='revisar'){if(!validar(k))return;if(k==='local'&&!rota&&API_URL)await calcRota();show(cur+1);rascunho();return}
+    if(k!=='revisar'){if(!validar(k))return;if(k==='local'&&!rota&&API_URL){await calcRota();if(rota){next.textContent='Confirmar local e continuar';return}}show(cur+1);rascunho();return}
     if(!API_URL){
       // Enquanto a automação não está ligada: o pedido vai pronto para o WhatsApp da Brius
       const linhas=[...document.querySelectorAll('#q-review dt')].map(dt=>'*'+dt.textContent+':* '+dt.nextElementSibling.textContent);
