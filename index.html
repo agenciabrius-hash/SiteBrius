@@ -23,7 +23,10 @@
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Em quanto tempo recebo as fotos?", "acceptedAnswer": {"@type": "Answer", "text": "De 3 dias a uma semana depois do evento. Você recebe um e-mail com o acesso à sua Área do Cliente, onde ficam todas as fotos e vídeos."}}, {"@type": "Question", "name": "Quantas fotos eu recebo?", "acceptedAnswer": {"@type": "Answer", "text": "Todas as fotos do evento. Não tem limite de quantidade nem pacote de \"x fotos\": o que a gente registra, você recebe."}}, {"@type": "Question", "name": "Como faço para reservar a data?", "acceptedAnswer": {"@type": "Answer", "text": "Peça o orçamento aqui no site. Com a proposta aprovada, a data fica reservada com o sinal de 30% via Pix. O restante (70%) é pago até a semana do evento."}}, {"@type": "Question", "name": "E se eu precisar mudar a data?", "acceptedAnswer": {"@type": "Answer", "text": "O sinal não é devolvido, mas vale para a nova data, desde que ela esteja livre na nossa agenda."}}, {"@type": "Question", "name": "Vocês atendem fora de São Paulo?", "acceptedAnswer": {"@type": "Answer", "text": "Sim! Atendemos todo o Brasil e também fora do país. Para eventos fora de São Paulo, o valor aumenta e os custos de transporte, hospedagem e alimentação da equipe ficam por conta do contratante."}}, {"@type": "Question", "name": "Como funciona a Área do Cliente?", "acceptedAnswer": {"@type": "Answer", "text": "É a sua galeria particular no nosso site. No primeiro acesso você cria uma senha e vê só as suas fotos e vídeos. Dá para ver em tela cheia, marcar as favoritas e baixar tudo de uma vez. No celular, as fotos vão direto para a galeria (no iPhone, para o app Fotos). A galeria fica disponível pelo prazo combinado, e a gente avisa antes de encerrar."}}, {"@type": "Question", "name": "Como funciona a gestão de redes sociais?", "acceptedAnswer": {"@type": "Answer", "text": "Escolha \"Gestão de redes sociais\" no orçamento e marque uma conversa online pelo Google Meet. Na reunião a gente entende a sua marca e monta a proposta."}}]}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "ProfessionalService", "name": "Brius Agência", "alternateName": "Brius", "url": "https://agenciabrius.com.br/", "image": "https://agenciabrius.com.br/img/capa-compartilhar.jpg", "logo": "https://agenciabrius.com.br/img/icone-512.png", "description": "Fotografia, videomaker, storymaker e gestão de redes sociais para casamentos, eventos, marcas e empresas. De São Paulo para todo o Brasil.", "telephone": "+55-11-94080-9443", "email": "agenciabrius@gmail.com", "areaServed": {"@type": "Country", "name": "Brasil"}, "address": {"@type": "PostalAddress", "addressLocality": "São Paulo", "addressRegion": "SP", "addressCountry": "BR"}, "founder": [{"@type": "Person", "name": "Matheus"}, {"@type": "Person", "name": "Sabrina"}], "sameAs": ["https://www.instagram.com/agenciabrius/", "https://share.google/xA3URr027ojB6FcuD"], "knowsAbout": ["Fotografia de casamento", "Fotografia de eventos", "Videomaker", "Storymaker", "Gestão de redes sociais", "Fotografia publicitária"]}</script>
 <title>Brius Agência · Fotografia, vídeo e redes sociais em São Paulo</title>
-<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}.evfotos{margin-top:clamp(48px,7vw,90px);padding-top:clamp(36px,5vw,56px);border-top:1px solid rgba(230,211,174,.14)}
+.evfotos h3{font:400 clamp(30px,4.4vw,46px)/1.08 var(--serif);margin:8px 0 10px;color:var(--bone)}
+.evfotos .lede{max-width:58ch;margin:0 0 28px}
+</style>
 </head>
 <body>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -815,6 +818,12 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
         <button><img src="img/04.webp" alt="Público emocionado na Virada da Paulista" loading="lazy"></button>
       </div>
     </div>
+    <div class="evfotos">
+      <p class="eyebrow">Encontre suas fotos</p>
+      <h3>Esteve em um evento nosso?</h3>
+      <p class="lede">Escolha o evento no calendário, tire uma selfie e veja só as fotos em que você aparece. O reconhecimento facial acontece no seu próprio celular.</p>
+      <div id="evCal"></div>
+    </div>
 
   </div>
 </section>
@@ -1589,5 +1598,7 @@ document.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',(
 }));
 </script>
 
+<script src="eventos/cal.js" defer></script>
+<script>addEventListener('DOMContentLoaded',()=>{const el=document.getElementById('evCal');if(!el||!window.BriusCalendario)return;const io=new IntersectionObserver(es=>{if(es.some(x=>x.isIntersecting)){io.disconnect();BriusCalendario(el,'')}},{rootMargin:'400px'});io.observe(el)})</script>
 </body>
 </html>

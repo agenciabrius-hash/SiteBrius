@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Preparar fotos dos eventos · Brius</title>
+<link rel="icon" href="../favicon.ico" sizes="any">
+<style>
+:root{--ink:#141210;--graphite:#1b1916;--bone:#fbf8f3;--muted:#b4ab9d;--gold:#e6d3ae}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--bone);font:15px/1.55 "Segoe UI",system-ui,sans-serif}
+main{max-width:860px;margin:0 auto;padding:36px 16px 60px}
+h1{font:400 34px Georgia,serif;margin:0 0 6px}
+.sub{color:var(--muted);margin:0 0 26px}
+.ev{display:grid;grid-template-columns:90px 1fr auto;gap:14px;align-items:center;background:var(--graphite);border:1px solid #2f2b26;border-radius:14px;padding:12px;margin-bottom:10px}
+.ev img{width:90px;height:68px;object-fit:cover;border-radius:8px;background:#24211d}
+.ev b{display:block;font-size:16px}
+.ev small{color:var(--muted)}
+button{background:var(--gold);color:var(--ink);border:0;border-radius:999px;padding:11px 18px;font:700 14px system-ui;cursor:pointer}
+button:disabled{opacity:.5;cursor:wait}
+button.sec{background:none;color:var(--muted);border:1px solid #3a352f;padding:8px 12px;font-size:12px}
+.barra{grid-column:1/-1;height:5px;border-radius:5px;background:#2c2925;overflow:hidden}
+.barra i{display:block;height:100%;width:0;background:var(--gold);transition:width .3s}
+.st{grid-column:1/-1;font-size:13px;color:var(--gold);min-height:18px}
+.dica{margin-top:30px;padding:16px 18px;border:1px solid #2f2b26;border-radius:14px;color:var(--muted);font-size:14px}
+.dica b{color:var(--bone)}
+@media (max-width:600px){.ev{grid-template-columns:70px 1fr}.ev img{width:70px;height:54px}.ev .acoes{grid-column:1/-1}}
+</style>
+</head>
+<body>
+<main>
+  <h1>Preparar fotos dos eventos</h1>
+  <p class="sub">Esta página lê os rostos das fotos de cada evento, aqui no seu computador, para os convidados encontrarem as próprias fotos com uma selfie. Deixe a aba aberta até terminar.</p>
+  <div id="lista"><p class="sub">Carregando eventos…</p></div>
+  <div class="dica">
+    <b>Como adicionar um evento:</b> no Google Drive, abra a pasta <b>Eventos · Reconhecimento facial</b> e crie uma subpasta com a data e o nome, assim: <b>[18/12/2026] Casamento Ana e Pedro</b>. Coloque as fotos (JPG) dentro dela. Marque com estrela ⭐ a foto que deve ser a capa. Depois volte aqui e clique em <b>Preparar</b>.<br><br>
+    Colocou mais fotos depois? Clique em <b>Preparar</b> de novo: só as fotos novas são lidas.<br>
+    Para tirar um evento do site, apague a subpasta do evento (as fotos e os códigos dos rostos saem juntos; o site atualiza em até 10 minutos).
+  </div>
+</main>
+<script type="module">
+const API='https://script.google.com/macros/s/AKfycbxv6WLxKRDICMjAqAGWB8Uu5oZnL-zMWQWgFxdwFTwFRyiFFvH6YV5cxWbDOoV7hOQm/exec';
+const FACE='https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/';
+const K=new URLSearchParams(location.search).get('k')||'';
+const lista=document.getElementById('lista');
+const esc=t=>String(t||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const post=d=>fetch(API,{method:'POST',body:JSON.stringify(Object.assign({k:K},d))}).then(r=>r.json());
+let ocupado=false;
+
+async function carregar(){
+  if(!K){lista.innerHTML='<p class="sub">Abra esta página pelo link do painel de resultados.</p>';return}
+  const j=await fetch(API+'?acao=eventosadmin&k='+encodeURIComponent(K)).then(r=>r.json()).catch(()=>null);
+  if(!j||!j.ok){lista.innerHTML='<p class="sub">'+esc(j&&j.erro||'Não foi possível carregar.')+'</p>';return}
+  if(!j.eventos.length){lista.innerHTML='<p class="sub">Nenhum evento com fotos ainda. Veja abaixo como adicionar.</p>';return}
+  lista.innerHTML=j.eventos.map(e=>'<div class="ev" data-e="'+esc(e.e)+'"><img src="'+esc(e.capa)+'" alt=""><div><b>'+esc(e.nome)+'</b><small>'+esc(e.data.split('-').reverse().join('/'))+' · '+e.fotos+' fotos · <span class="n">'+e.indexadas+'</span> lidas</small></div>'+
+    '<div class="acoes"><button class="go">'+(e.indexadas>=e.fotos?'Atualizar':'Preparar')+'</button> <button class="sec re" title="Lê todas as fotos de novo">Refazer tudo</button> <a class="sec" style="font-size:12px;margin-left:6px;color:#b4ab9d" href="./?e='+esc(e.e)+'" target="_blank">Ver página</a></div><div class="barra" hidden><i></i></div><div class="st"></div></div>').join('');
+  lista.querySelectorAll('.ev').forEach(el=>{el.querySelector('.go').onclick=()=>preparar(el,false);el.querySelector('.re').onclick=()=>{if(confirmarRefazer(el))preparar(el,true)}});
+}
+function confirmarRefazer(el){const b=el.querySelector('.re');if(b.dataset.c){return true}b.dataset.c=1;b.textContent='Clique de novo para confirmar';setTimeout(()=>{delete b.dataset.c;b.textContent='Refazer tudo'},4000);return false}
+
+let faceapi=null;
+async function modelos(){if(faceapi)return;faceapi=await import(FACE+'dist/face-api.esm.js');await faceapi.tf.ready();
+  await Promise.all([faceapi.nets.ssdMobilenetv1.loadFromUri(FACE+'model/'),faceapi.nets.faceLandmark68Net.loadFromUri(FACE+'model/'),faceapi.nets.faceRecognitionNet.loadFromUri(FACE+'model/')])}
+const carregarImg=src=>new Promise((ok,ruim)=>{const im=new Image();im.crossOrigin='anonymous';im.onload=()=>ok(im);im.onerror=ruim;im.src=src});
+let usarProxy=false;
+async function imagem(id){
+  if(!usarProxy){try{const im=await carregarImg('https://lh3.googleusercontent.com/d/'+id+'=w1600');const c=desenhar(im);c.getContext('2d').getImageData(0,0,1,1);return c}catch(x){usarProxy=true}}
+  const j=await fetch(API+'?acao=fotoevento&k='+encodeURIComponent(K)+'&id='+encodeURIComponent(id)).then(r=>r.json());
+  if(!j.ok)throw new Error(j.erro||'foto');
+  return desenhar(await carregarImg('data:'+j.tipo+';base64,'+j.b64));
+}
+function desenhar(im){const k=Math.min(1,1600/Math.max(im.naturalWidth,im.naturalHeight));const c=document.createElement('canvas');c.width=Math.round(im.naturalWidth*k);c.height=Math.round(im.naturalHeight*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);return c}
+
+async function preparar(el,recomecar){
+  if(ocupado)return;ocupado=true;
+  const st=el.querySelector('.st'),bar=el.querySelector('.barra'),bi=bar.firstElementChild,bts=el.querySelectorAll('button');bts.forEach(b=>b.disabled=true);
+  const fim=t=>{st.textContent=t;bts.forEach(b=>b.disabled=false);ocupado=false};
+  try{
+    st.textContent='Liberando as fotos para o site…';
+    let r;do{r=await post({acao:'prepararevento',e:el.dataset.e});if(!r.ok)return fim(r.erro||'Erro')}while(!r.completo);
+    const feitas=new Set(recomecar?[]:r.jaIndexadas);const falta=r.fotos.filter(f=>!feitas.has(f));
+    if(!falta.length)return fim('Tudo pronto! Todas as '+r.total+' fotos já estão lidas.');
+    st.textContent='Carregando o reconhecimento facial…';await modelos();
+    bar.hidden=false;let lote=[],n=0,rostos=0,primeiro=recomecar,erros=0;
+    const enviar=async()=>{if(!lote.length)return;const x=await post({acao:'indice',e:el.dataset.e,fotos:lote,recomecar:primeiro});if(!x.ok)throw new Error(x.erro);primeiro=false;lote=[];el.querySelector('.n').textContent=x.indexadas};
+    for(const id of falta){
+      try{const c=await imagem(id);
+        const det=await faceapi.detectAllFaces(c,new faceapi.SsdMobilenetv1Options({minConfidence:.45})).withFaceLandmarks().withFaceDescriptors();
+        const f=det.filter(d=>d.detection.box.width>=28).map(d=>Array.from(d.descriptor));rostos+=f.length;lote.push({id,f});
+      }catch(x){erros++;console.warn(id,x)}
+      n++;bi.style.width=(n/falta.length*100)+'%';st.textContent='Lendo rostos: '+n+' de '+falta.length+' fotos ('+rostos+' rostos encontrados)'+(erros?' · '+erros+' com erro':'');
+      if(lote.length>=15)await enviar();
+    }
+    await enviar();
+    fim('Pronto! '+n+' fotos lidas, '+rostos+' rostos encontrados.'+(erros?' '+erros+' fotos não abriram; clique em Atualizar para tentar de novo.':' Os convidados já podem buscar as fotos.'));
+  }catch(x){console.error(x);fim('Parou: '+(x.message||x)+'. Clique em Preparar de novo para continuar de onde parou.')}
+}
+carregar();
+</script>
+</body>
+</html>
