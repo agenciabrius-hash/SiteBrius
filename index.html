@@ -572,14 +572,33 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
 .gbtn{display:inline-flex;align-items:center;gap:10px;width:fit-content;margin-top:16px;padding:11px 18px;border-radius:999px;background:#fff;color:#1f1f1f;text-decoration:none;font:600 14px var(--body)}
 .gbtn:hover{background:#f1f1f1}.gbtn:focus-visible{outline:2px solid var(--gold-soft);outline-offset:3px}
 /* ===== INSTAGRAM ===== */
-.band.igband{padding-block:clamp(28px,4vw,44px)}
-.ig-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px 24px;margin-bottom:20px}
-.ig-perfil{display:flex;align-items:center;gap:14px;color:var(--bone);text-decoration:none}
-.ig-perfil img{width:56px;height:56px;border-radius:50%;padding:2px;background:conic-gradient(#f58529,#dd2a7b,#8134af,#515bd4,#f58529)}
-.ig-perfil>span{display:grid;gap:2px}.ig-perfil b{font:600 clamp(20px,2vw,26px)/1.1 var(--display)}.ig-perfil>span>span{font:400 14px var(--body);color:var(--muted-d)}
-.igband .ig-seguir{margin-top:0}
-.ig-head .ig-stories{padding:0;margin:0 0 0 auto}.ig-head .ig-st span.ring{width:60px;height:60px}
-@media (max-width:640px){.ig-head .ig-stories{margin:0}}
+.band.igband{padding-block:clamp(40px,6vw,80px)}
+.ig2{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:clamp(28px,6vw,90px)}
+@media (max-width:820px){.ig2{grid-template-columns:1fr;justify-items:center;text-align:center}.ig2-txt{display:grid;justify-items:center}}
+.ig2-t{font:500 clamp(32px,4.4vw,56px)/1.05 var(--display);margin:8px 0 14px;color:var(--bone);max-width:14ch}
+.ig2-p{font:400 16px/1.6 var(--body);color:var(--muted-d);margin:0 0 22px;max-width:40ch}
+.igphone{text-align:left;width:clamp(270px,26vw,320px);aspect-ratio:9/18.6;border-radius:44px;padding:11px;background:#0d0c0b;box-shadow:0 0 0 2px #3a352f,0 40px 80px -30px rgba(0,0,0,.8);position:relative}
+.igphone::before{content:"";position:absolute;top:18px;left:50%;transform:translateX(-50%);width:84px;height:22px;border-radius:20px;background:#0d0c0b;z-index:3}
+.igp-screen{height:100%;border-radius:34px;background:#fff;color:#111;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.igp-screen::-webkit-scrollbar{display:none}
+.igp-status{display:flex;justify-content:space-between;align-items:center;padding:14px 26px 6px;font-size:12px;font-weight:600}
+.igp-status i{width:22px;height:10px;border:1.5px solid #111;border-radius:3px;display:block}
+.igp-bar{display:flex;align-items:center;gap:2px;padding:6px 14px 10px;font-size:16px}
+.igp-prof{display:flex;align-items:center;gap:14px;padding:0 14px}
+.igp-av{all:unset;cursor:pointer;flex:none;width:74px;height:74px;border-radius:50%;padding:2.5px;background:#dbdbdb;display:block}
+.igp-av.st{background:conic-gradient(#f58529,#dd2a7b,#8134af,#515bd4,#f58529)}
+.igp-av img{width:100%;height:100%;border-radius:50%;border:3px solid #fff;box-sizing:border-box;display:block;object-fit:cover}
+.igp-av:focus-visible{outline:2px solid #0095f6;outline-offset:2px}
+.igp-nums{flex:1;display:flex;justify-content:space-around;text-align:center;font-size:11px;color:#333}
+.igp-nums span{display:grid}.igp-nums b{font-size:15px;color:#111}
+.igp-bio{display:grid;gap:2px;padding:10px 14px 0;font-size:12px;line-height:1.35}.igp-bio span{color:#333}
+.igp-follow{display:block;margin:12px 14px 10px;padding:7px;border-radius:8px;background:#0095f6;color:#fff;text-align:center;text-decoration:none;font-size:13px;font-weight:600}
+.igp-tabs{display:flex;border-top:1px solid #efefef}.igp-tabs i{flex:1;height:30px;display:block;border-bottom:1px solid transparent}.igp-tabs i.on{border-bottom-color:#111}
+.igp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.igp-grid .ig-post{aspect-ratio:3/4}
+.igp-grid .ig-post .ico{width:16px;height:16px;top:5px;right:5px}
+.igp-grid .ig-post .cap{display:none}
+
 
 .ig-seguir{width:fit-content;display:inline-flex;align-items:center;gap:8px;margin-top:16px;padding:12px 20px;border-radius:999px;color:#fff;text-decoration:none;font:700 14px var(--body);background:linear-gradient(90deg,#f58529,#dd2a7b 45%,#8134af 75%,#515bd4)}
 .ig-seguir:focus-visible{outline:2px solid var(--gold-soft);outline-offset:3px}
@@ -689,14 +708,26 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
 </header>
 
 <section class="band dark2 igband" id="instagram" hidden>
-  <div class="wrap">
-    <div class="chapter">
-      <div class="ig-head">
-        <a class="ig-perfil" href="https://www.instagram.com/agenciabrius/" target="_blank" rel="noopener"><img src="img/icone-192.png" alt="" width="56" height="56"><span><b>@agenciabrius</b><span>Novidades e bastidores, direto do nosso Instagram</span></span></a>
-        <div class="ig-stories" id="igStories" hidden></div>
-        <a class="ig-seguir" href="https://www.instagram.com/agenciabrius/" target="_blank" rel="noopener">Seguir no Instagram</a>
+  <div class="wrap ig2">
+    <div class="ig2-txt">
+      <p class="eyebrow">@agenciabrius</p>
+      <h2 class="ig2-t">A gente também está no Instagram</h2>
+      <p class="ig2-p">Bastidores, trabalhos novos e os stories do dia. Toque na foto do perfil para ver os stories.</p>
+      <a class="ig-seguir" href="https://www.instagram.com/agenciabrius/" target="_blank" rel="noopener">Seguir no Instagram</a>
+    </div>
+    <div class="igphone" aria-label="Perfil do Instagram da Brius">
+      <div class="igp-screen">
+        <div class="igp-status"><span>9:41</span><i></i></div>
+        <div class="igp-bar"><b>agenciabrius</b><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M7 10l5 5 5-5z"/></svg></div>
+        <div class="igp-prof">
+          <button type="button" class="igp-av" id="igAvatar" aria-label="Abrir o perfil"><img src="img/icone-192.png" alt=""></button>
+          <div class="igp-nums"><span><b id="igQtd">·</b>posts</span><span><b id="igFotos">·</b>fotos</span><span><b id="igVids">·</b>vídeos</span></div>
+        </div>
+        <div class="igp-bio"><b>Brius Agência</b><span>Fotografia · Vídeo · Storymaker · Redes sociais<br>De São Paulo para todo o Brasil</span></div>
+        <a class="igp-follow" href="https://www.instagram.com/agenciabrius/" target="_blank" rel="noopener">Seguir</a>
+        <div class="igp-tabs"><i class="on"></i><i></i></div>
+        <div class="igp-grid" id="igFeed"></div>
       </div>
-      <div class="ig-feed" id="igFeed"></div>
     </div>
   </div>
 </section>
@@ -1308,19 +1339,19 @@ const ALBUNS=[{"t": "Ensaio de bodas Sirlene & Valdinei", "c": "casamentos", "p"
 // ===== INSTAGRAM (posts recentes + stories do dia) =====
 (function(){
   const sec=document.getElementById('instagram');if(!sec||!API_URL)return;
-  const feed=document.getElementById('igFeed'),stBox=document.getElementById('igStories');
+  const feed=document.getElementById('igFeed'),av=document.getElementById('igAvatar');
   const icoVideo='<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>';
   const icoCarr='<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="14" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 7v12a2 2 0 0 0 2 2h12" fill="none" stroke="currentColor" stroke-width="2"/></svg>';
   const tempo=t=>{if(!t)return'';const h=Math.max(1,Math.round((Date.now()-new Date(t))/3600000));return h<24?h+' h':Math.round(h/24)+' d'};
   fetch(API_URL+'?acao=instagram').then(r=>r.json()).then(j=>{
     if(!j||!j.ok||!(j.posts||[]).length)return;
-    j.posts.slice(0,innerWidth<760?9:8).forEach(p=>{const a=document.createElement('a');a.className='ig-post';a.href=p.link;a.target='_blank';a.rel='noopener';
+    document.getElementById('igQtd').textContent=j.posts.length;document.getElementById('igVids').textContent=j.posts.filter(p=>p.tipo==='VIDEO').length;document.getElementById('igFotos').textContent=j.posts.filter(p=>p.tipo!=='VIDEO').length;j.posts.slice(0,12).forEach(p=>{const a=document.createElement('a');a.className='ig-post';a.href=p.link;a.target='_blank';a.rel='noopener';
       a.setAttribute('aria-label','Abrir post no Instagram'+(p.texto?': '+p.texto.slice(0,60):''));
       a.innerHTML='<img loading="lazy" alt="">'+(p.tipo==='VIDEO'?icoVideo:p.tipo==='CAROUSEL_ALBUM'?icoCarr:'')+'<span class="cap"></span>';
       a.querySelector('img').src=p.img;a.querySelector('.cap').textContent=p.texto;feed.appendChild(a)});
     const st=j.stories||[];
-    if(st.length){stBox.hidden=false;const b=document.createElement('button');b.className='ig-st';b.setAttribute('aria-label','Ver stories de hoje');
-      b.innerHTML='<span class="ring"><img alt=""></span>Stories de hoje';b.querySelector('img').src=st[0].img;b.onclick=()=>abrir(st,0);stBox.appendChild(b)}
+    if(st.length){av.classList.add('st');av.setAttribute('aria-label','Ver os stories de hoje');av.onclick=()=>abrir(st,0)}
+    else av.onclick=()=>window.open('https://www.instagram.com/agenciabrius/','_blank','noopener');
     sec.hidden=false;
   }).catch(()=>{});
   // visualizador de stories
