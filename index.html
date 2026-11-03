@@ -1027,8 +1027,12 @@ const CAP=[
  ['Brasatto Restaurante','Pizzaria'],
  ['Chá revelação Mascarenhas',''],
  ['Abertura de loja Doce Menina','@doce.menina_25'],
- ['Teleton 2025','']];
-for(let i=1;i<=12;i++){const n=String(i).padStart(2,'0');const f=document.createElement('figure');f.className='reel';
+ ['Teleton 2025',''],
+ ['Conteúdo para marca','Estúdio de beleza'],
+ ['Futebol no estádio',''],
+ ['SBT Tour',''],
+ ['SBT Tour','Bastidores']];
+for(let i=1;i<=CAP.length;i++){const n=String(i).padStart(2,'0');const f=document.createElement('figure');f.className='reel';
   const d=document.createElement('div');d.className='phone';d.dataset.video='v/'+n+'.mp4';d.dataset.poster='v/'+n+'.webp';
   const c=document.createElement('figcaption');const t=CAP[i-1];c.innerHTML='<b></b>'+(t[1]?'<span></span>':'');c.querySelector('b').textContent=t[0];if(t[1]){const sp=c.querySelector('span'),m=t[1].match(/^@([\w.]+)(.*)$/);if(m){const a=document.createElement('a');a.href='https://www.instagram.com/'+m[1]+'/';a.target='_blank';a.rel='noopener';a.style.color='inherit';a.textContent='@'+m[1];sp.append(a,m[2])}else sp.textContent=t[1]}
   f.append(d,c);reels.appendChild(f);}
