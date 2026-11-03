@@ -23,6 +23,12 @@ button.sec{background:none;color:var(--muted);border:1px solid #3a352f;padding:8
 .barra{grid-column:1/-1;height:5px;border-radius:5px;background:#2c2925;overflow:hidden}
 .barra i{display:block;height:100%;width:0;background:var(--gold);transition:width .3s}
 .st{grid-column:1/-1;font-size:13px;color:var(--gold);min-height:18px}
+.info{grid-column:1/-1;font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center}
+[hidden]{display:none!important}
+.info b{color:var(--bone);display:inline;font-size:13px}.info .alerta{color:#f0a28f}
+.qr{grid-column:1/-1;display:flex;gap:16px;align-items:center;flex-wrap:wrap;background:#fff;color:#141210;border-radius:12px;padding:14px}
+.qr canvas,.qr img{width:150px;height:150px}
+.qr p{margin:0;font-size:13px;line-height:1.5;max-width:420px;word-break:break-all}
 .dica{margin-top:30px;padding:16px 18px;border:1px solid #2f2b26;border-radius:14px;color:var(--muted);font-size:14px}
 .dica b{color:var(--bone)}
 @media (max-width:600px){.ev{grid-template-columns:70px 1fr}.ev img{width:70px;height:54px}.ev .acoes{grid-column:1/-1}}
@@ -34,11 +40,14 @@ button.sec{background:none;color:var(--muted);border:1px solid #3a352f;padding:8
   <p class="sub">Esta página lê os rostos das fotos de cada evento, aqui no seu computador, para os convidados encontrarem as próprias fotos com uma selfie. Deixe esta aba aberta e na frente até terminar (se trocar de aba, o navegador deixa a leitura mais lenta).</p>
   <div id="lista"><p class="sub">Carregando eventos…</p></div>
   <div class="dica">
-    <b>Como adicionar um evento:</b> no Google Drive, abra a pasta <b>Eventos · Reconhecimento facial</b> e crie uma subpasta com a data e o nome, assim: <b>[18/12/2026] Casamento Ana e Pedro</b>. Coloque as fotos (JPG) dentro dela. Marque com estrela ⭐ a foto que deve ser a capa. Depois volte aqui e clique em <b>Preparar</b>.<br><br>
+    <b>Como adicionar um evento:</b> no Google Drive, abra a pasta <b>Eventos · Reconhecimento facial</b> e crie uma subpasta com a data e o nome, assim: <b>[18/12/2026] Casamento Ana e Pedro</b>. Coloque as fotos (JPG) dentro dela. Marque com estrela ⭐ a foto que deve ser a capa. <b>Coloque um código de acesso</b> no fim do nome, com #, assim: <b>[18/12/2026] Casamento Ana e Pedro #ANA25</b>. Só quem tiver o código (no QR code, convite ou plaquinha) consegue buscar. Depois volte aqui e clique em <b>Preparar</b>.<br><br>
+    <b>Prazo:</b> cada evento fica no ar pelos dias definidos em DIAS_EVENTO_NO_AR na planilha (padrão 60 dias depois da data). Depois disso ele sai do site sozinho e os códigos dos rostos são apagados.<br>
+    <b>Eventos infantis:</b> evite usar a busca por rosto, ou use só com autorização dos pais.<br><br>
     Colocou mais fotos depois? Clique em <b>Preparar</b> de novo: só as fotos novas são lidas.<br>
     Para tirar um evento do site, apague a subpasta do evento (as fotos e os códigos dos rostos saem juntos; o site atualiza em até 10 minutos).
   </div>
 </main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script type="module">
 const API='https://script.google.com/macros/s/AKfycbxv6WLxKRDICMjAqAGWB8Uu5oZnL-zMWQWgFxdwFTwFRyiFFvH6YV5cxWbDOoV7hOQm/exec';
 const FACE='https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/';
@@ -56,8 +65,18 @@ async function carregar(){
   const j=await fetch(API+'?acao=eventosadmin&k='+encodeURIComponent(K)).then(r=>r.json()).catch(()=>null);
   if(!j||!j.ok){lista.innerHTML='<p class="sub">'+esc(j&&j.erro||'Não foi possível carregar.')+'</p>';return}
   if(!j.eventos.length){lista.innerHTML='<p class="sub">Nenhum evento com fotos ainda. Veja abaixo como adicionar.</p>';return}
-  lista.innerHTML=j.eventos.map(e=>'<div class="ev" data-e="'+esc(e.e)+'"><img src="'+esc(e.capa)+'" alt=""><div><b>'+esc(e.nome)+'</b><small>'+esc(e.data.split('-').reverse().join('/'))+' · '+e.fotos+' fotos · <span class="n">'+e.indexadas+'</span> lidas</small></div>'+
-    '<div class="acoes"><button class="go">'+(e.indexadas>=e.fotos?'Atualizar':'Preparar')+'</button> <button class="sec re" title="Lê todas as fotos de novo">Refazer tudo</button> <a class="sec" style="font-size:12px;margin-left:6px;color:#b4ab9d" href="./?e='+esc(e.e)+'" target="_blank">Ver página</a></div><div class="barra" hidden><i></i></div><div class="st"></div></div>').join('');
+  const br=d=>d?d.split('-').reverse().join('/'):'';
+  lista.innerHTML=j.eventos.map(e=>{const link='https://agenciabrius.com.br/eventos/?e='+encodeURIComponent(e.e)+(e.codigo?'&c='+encodeURIComponent(e.codigo):'');
+    return '<div class="ev" data-e="'+esc(e.e)+'" data-link="'+esc(link)+'"><img src="'+esc(e.capa)+'" alt=""><div><b>'+esc(e.nome)+'</b><small>'+esc(br(e.data))+' · '+e.fotos+' fotos · <span class="n">'+e.indexadas+'</span> lidas</small></div>'+
+    '<div class="acoes"><button class="go">'+(e.indexadas>=e.fotos?'Atualizar':'Preparar')+'</button> <button class="sec re" title="Lê todas as fotos de novo">Refazer tudo</button> <button class="sec qrb">QR code</button> <a class="sec" style="font-size:12px;margin-left:6px;color:#b4ab9d" href="'+esc(link)+'" target="_blank">Ver página</a></div>'+
+    '<div class="info">'+(e.codigo?'<span>Código: <b>'+esc(e.codigo)+'</b></span>':'<span class="alerta">Sem código: qualquer pessoa pode buscar. Acrescente um código no nome da pasta, ex.: #ANA25</span>')+
+    '<span>'+(e.noAr?'No ar até <b>'+esc(br(e.ate))+'</b>':'<span class="alerta">Fora do ar (prazo acabou em '+esc(br(e.ate))+')</span>')+'</span>'+(e.retirados?'<span>'+e.retirados+' pessoa(s) pediram para sair da busca</span>':'')+'</div>'+
+    '<div class="qr" hidden></div><div class="barra" hidden><i></i></div><div class="st"></div></div>'}).join('');
+  lista.querySelectorAll('.qrb').forEach(b=>b.onclick=()=>{const el=b.closest('.ev'),q=el.querySelector('.qr');if(!q.hidden){q.hidden=true;return}
+    q.hidden=false;q.innerHTML='<div class="cv"></div><p><b>Link para os convidados</b><br>'+esc(el.dataset.link)+'<br><br><a href="#" class="bx" style="color:#141210;font-weight:700">Baixar QR code</a> · <a href="#" class="cp" style="color:#141210;font-weight:700">Copiar link</a></p>';
+    new QRCode(q.querySelector('.cv'),{text:el.dataset.link,width:600,height:600,correctLevel:QRCode.CorrectLevel.M});
+    q.querySelector('.bx').onclick=ev=>{ev.preventDefault();const c=q.querySelector('canvas');const a=document.createElement('a');a.href=c.toDataURL('image/png');a.download='qr-'+el.querySelector('b').textContent.replace(/\W+/g,'-')+'.png';a.click()};
+    q.querySelector('.cp').onclick=ev=>{ev.preventDefault();navigator.clipboard.writeText(el.dataset.link).then(()=>{ev.target.textContent='Copiado!'})}});
   lista.querySelectorAll('.ev').forEach(el=>{el.querySelector('.go').onclick=()=>preparar(el,false);el.querySelector('.re').onclick=()=>{if(confirmarRefazer(el))preparar(el,true)}});
 }
 function confirmarRefazer(el){const b=el.querySelector('.re');if(b.dataset.c){return true}b.dataset.c=1;b.textContent='Clique de novo para confirmar';setTimeout(()=>{delete b.dataset.c;b.textContent='Refazer tudo'},4000);return false}

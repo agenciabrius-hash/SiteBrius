@@ -64,6 +64,13 @@ h1 em{color:var(--gold-soft)}
 .lb-img img{max-width:100%;max-height:calc(100dvh - 90px);object-fit:contain;border-radius:6px}
 .lb-n{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:50%;border:0;background:rgba(255,255,255,.1);color:#fff;font-size:24px;cursor:pointer}
 .lb-n.p{left:4px}.lb-n.n{right:4px}
+.cod{display:grid;gap:7px;font-size:13px;font-weight:600;color:var(--muted-d);margin:0 0 14px}
+.cod input{font:600 17px var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--bone);background:var(--ink);border:1px solid #3a352f;border-radius:10px;padding:12px 14px;outline:none}
+.cod input:focus{border-color:var(--gold)}
+.menor{font-size:12.5px;color:#8d8478;margin:-8px 0 16px;line-height:1.5}
+.sair{margin-top:34px;padding:18px 20px;border:1px solid #2f2b26;border-radius:14px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;color:var(--muted-d);font-size:14px;line-height:1.5}
+.sair button{background:none;border:1px solid #5a4f43;color:var(--bone);border-radius:999px;padding:10px 16px;font:600 13px var(--body);cursor:pointer}
+.sair button:hover{border-color:#f0a28f;color:#f0a28f}
 .lgpd{margin-top:50px;padding-top:22px;border-top:1px solid #2c2925;color:#8d8478;font-size:13px;line-height:1.6;max-width:75ch}
 @media (max-width:820px){.ev{grid-template-columns:1fr}.capa{aspect-ratio:16/9}.bts{grid-template-columns:1fr}}
 </style>
@@ -94,7 +101,9 @@ h1 em{color:var(--gold-soft)}
       <div class="passo" id="passo">
         <h2>Ache suas fotos com uma selfie</h2>
         <p>Tire uma selfie de frente, com o rosto bem iluminado e sem óculos escuros. A foto <b>não sai do seu aparelho</b>: o reconhecimento é feito aqui mesmo, e só um código numérico do rosto é usado para comparar com as fotos do evento. Nada é guardado.</p>
+        <label class="cod" id="codBox" hidden>Código do evento<input id="codigo" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="20" placeholder="Ex.: ANA25"><span style="font-weight:400;font-size:12.5px">Está no convite, na plaquinha ou no QR code do evento.</span></label>
         <label class="ok"><input type="checkbox" id="aceito"> <span>Concordo com o uso da minha selfie para encontrar minhas fotos neste evento, conforme a <a href="../privacidade/#rosto" target="_blank">Política de Privacidade</a>.</span></label>
+        <p class="menor">Menor de 18 anos? Peça para seu pai, mãe ou responsável fazer a busca com você.</p>
         <div class="selfie" id="minha" hidden><img id="minhaImg" alt="Sua selfie"><span style="font-size:14px;color:var(--muted-d)">Sua selfie</span></div>
         <div class="bts">
           <label class="btn" id="btCam" aria-disabled="true" tabindex="0">📷 Tirar selfie<input type="file" accept="image/*" capture="user" hidden id="inCam"></label>
@@ -108,10 +117,11 @@ h1 em{color:var(--gold-soft)}
       <h2 id="resTit"></h2>
       <p class="sub" id="resSub"></p>
       <div class="grade" id="grade"></div>
+      <div class="sair" id="sair" hidden><span>Não quer aparecer na busca deste evento? Seu rosto é retirado na hora e a Brius é avisada.</span><button type="button" id="btSair">Me retirar da busca</button></div>
     </div>
   </section>
 
-  <p class="lgpd">O reconhecimento facial é opcional e acontece no seu navegador. Não guardamos sua selfie nem o código do seu rosto. As fotos dos eventos ficam disponíveis por tempo limitado. Quer que alguma foto em que você aparece seja retirada? Escreva para <a href="mailto:agenciabrius@gmail.com">agenciabrius@gmail.com</a>.</p>
+  <p class="lgpd">O reconhecimento facial é opcional e acontece no seu navegador. Não guardamos sua selfie nem o código do seu rosto. As fotos dos eventos ficam disponíveis por tempo limitado e depois saem do site. Não quer aparecer? Use o botão "Me retirar da busca" depois de buscar, ou escreva para <a href="mailto:agenciabrius@gmail.com">agenciabrius@gmail.com</a>.</p>
 </main>
 
 <div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Foto">
@@ -142,7 +152,9 @@ async function iniciarEvento(){
   document.title=ev.nome+' · Brius Agência';
   $('evData').textContent=ev.data?d+' de '+MESES[+m-1]+' de '+a:'Evento';
   $('evNome').textContent=ev.nome;
-  $('evInfo').textContent=ev.fotos+' fotos no evento.'+(ev.pronto?' Tire uma selfie para ver as suas.':'');
+  const br=d=>d?d.split('-').reverse().join('/'):'';
+  $('evInfo').textContent=ev.fotos+' fotos no evento. Tire uma selfie para ver as suas.'+(ev.ate?' Disponível até '+br(ev.ate)+'.':'');
+  if(ev.codigo){$('codBox').hidden=false;const c=new URLSearchParams(location.search).get('c');if(c)$('codigo').value=c.toUpperCase()}
   $('evCapa').src=ev.capa;
   if(!ev.pronto){$('passo').querySelector('p').textContent='As fotos deste evento ainda estão sendo preparadas. Volte em breve!';$('passo').querySelector('.ok').hidden=true;$('passo').querySelector('.bts').hidden=true;return}
   const ativar=()=>{const ok=$('aceito').checked;['btCam','btArq'].forEach(b=>$(b).setAttribute('aria-disabled',ok?'false':'true'));if(ok)carregarModelos()};
@@ -177,18 +189,29 @@ async function buscar(file){
     if(!det.length){barra(null);return msg('Não encontramos um rosto nessa foto. Tente outra selfie, de frente e com boa luz.',true)}
     const maior=det.sort((a,b)=>b.detection.box.area-a.detection.box.area)[0];
     barra(.75);msg('Procurando você nas fotos do evento…');
-    const r=await (await fetch(API,{method:'POST',body:JSON.stringify({acao:'buscarrosto',e:id,d:Array.from(maior.descriptor).map(x=>Math.round(x*10000)/10000)})})).json();
+    meuRosto=Array.from(maior.descriptor).map(x=>Math.round(x*10000)/10000);
+    const r=await (await fetch(API,{method:'POST',body:JSON.stringify({acao:'buscarrosto',e:id,c:$('codigo').value,d:meuRosto})})).json();
     barra(null);
-    if(!r.ok)return msg(r.erro||'Não foi possível buscar agora. Tente de novo.',true);
+    if(!r.ok){if(r.codigo){$('codigo').focus()}return msg(r.erro||'Não foi possível buscar agora. Tente de novo.',true)}
     msg('');mostrar(r.fotos||[]);
   }catch(x){console.error(x);barra(null);msg('Algo deu errado ao ler a foto. Tente de novo, de preferência no Chrome ou no Safari atualizados.',true)}
 }
 
-let lista=[],k=0;
+let lista=[],k=0,meuRosto=null;
+$('btSair').addEventListener('click',async()=>{
+  const b=$('btSair');if(!meuRosto)return;
+  if(!b.dataset.c){b.dataset.c=1;b.textContent='Toque de novo para confirmar';setTimeout(()=>{delete b.dataset.c;b.textContent='Me retirar da busca'},5000);return}
+  b.disabled=true;b.textContent='Retirando…';
+  try{const r=await (await fetch(API,{method:'POST',body:JSON.stringify({acao:'retirarrosto',e:id,c:$('codigo').value,d:meuRosto})})).json();
+    if(!r.ok)throw new Error(r.erro);
+    $('grade').innerHTML='';$('resTit').textContent='Pronto, você foi retirado da busca';$('resSub').textContent='Seu rosto não aparece mais na busca deste evento. A Brius foi avisada e pode retirar também as fotos. Se precisar de algo mais, escreva para agenciabrius@gmail.com.';$('sair').hidden=true;meuRosto=null;
+  }catch(x){b.disabled=false;b.textContent='Me retirar da busca';msg((x&&x.message)||'Não foi possível agora. Escreva para agenciabrius@gmail.com.',true)}
+});
 function mostrar(ids){
   lista=ids;$('res').hidden=false;
   $('resTit').textContent=ids.length?(ids.length===1?'Encontramos 1 foto sua':'Encontramos '+ids.length+' fotos suas'):'Não encontramos você neste evento';
   $('resSub').textContent=ids.length?'Toque em uma foto para ver em tamanho grande e baixar.':'Tente outra selfie, de frente, com boa luz e sem óculos escuros. Se mesmo assim não aparecer, fale com a gente.';
+  $('sair').hidden=!ids.length;$('btSair').disabled=false;$('btSair').textContent='Me retirar da busca';
   $('grade').innerHTML=ids.map((f,i)=>'<button data-i="'+i+'" aria-label="Ver foto '+(i+1)+'"><img src="'+foto(f,500)+'" alt="" loading="lazy"></button>').join('');
   $('res').scrollIntoView({behavior:'smooth',block:'start'});
 }
