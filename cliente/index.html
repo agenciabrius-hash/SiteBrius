@@ -162,6 +162,7 @@ input:focus{border-color:var(--gold)}
     <div class="barra" id="dlBarra" hidden><i id="dlI"></i></div>
     <p id="dlSt" style="font-size:13px"></p>
     <div class="btns"><button class="btn" id="dlOk">Começar</button><button class="btn sec" id="dlX">Cancelar</button></div>
+    <button class="link" id="dlZip" hidden>Prefiro baixar tudo num arquivo .zip</button>
   </div>
 </div>
 
@@ -252,14 +253,30 @@ function verItem(k){
   meio.querySelectorAll('img,iframe').forEach(x=>x.remove());
   let el;if(a.t==='video'){el=document.createElement('iframe');el.src='https://drive.google.com/file/d/'+a.id+'/preview';el.allow='autoplay; fullscreen';el.allowFullscreen=true}
   else{el=new Image();el.alt=a.n;el.src=thumb(a.id);const g=new Image();g.onload=()=>{if(lista[pos]===a)el.src=g.src};g.src=grande(a.id)}
-  meio.prepend(el);$('lbNome').textContent=a.n;$('lbBaixar').textContent='Baixar';$('lbBaixar').disabled=false;
+  meio.prepend(el);$('lbNome').textContent=a.n;rotuloBaixar(a);
   $('lbRod').textContent=(pos+1)+' de '+lista.length;$('lb').hidden=false;document.body.style.overflow='hidden';
   if(a.t!=='video'){const p=new Image();p.src=grande(lista[(pos+1)%lista.length].id)}
 }
 function fechar(){$('lb').hidden=true;$('lbMeio').querySelectorAll('img,iframe').forEach(x=>x.remove());document.body.style.overflow=''}
 $('lbFechar').onclick=fechar;
-$('lbBaixar').onclick=async()=>{const a=lista[pos],b=$('lbBaixar');b.disabled=true;b.textContent='Baixando...';
-  try{salvar(await blobArquivo(a,n=>{if(a.s)b.textContent='Baixando '+Math.min(99,Math.round(n/a.s*100))+'%'}),a.n);b.textContent='Baixado ✓'}
+// No iPhone o arquivo é preparado antes e salvo pelo menu "Compartilhar" (Salvar imagem / Salvar vídeo -> app Fotos).
+// No Android o arquivo é baixado solto (não em .zip) e aparece na Galeria / Google Fotos.
+const prontos=new Map();
+function guardarPronto(a,f){prontos.set(a.id,f);while(prontos.size>4)prontos.delete(prontos.keys().next().value)}
+async function prepararArquivo(a,prog){if(prontos.has(a.id))return prontos.get(a.id);const b=await blobArquivo(a,prog);const f=new File([b],a.n,{type:tipoArquivo(a,b)});guardarPronto(a,f);return f}
+function rotuloBaixar(a){const b=$('lbBaixar');b.disabled=false;
+  if(!IOS){b.textContent=ANDROID?'Salvar na galeria':'Baixar';return}
+  if(prontos.has(a.id)){b.textContent='Salvar no Fotos';return}
+  if(a.t==='foto'){b.textContent='Preparando...';b.disabled=true;prepararArquivo(a).then(()=>{if(lista[pos]===a)rotuloBaixar(a)}).catch(()=>{if(lista[pos]===a){b.disabled=false;b.textContent='Tentar de novo'}})}
+  else b.textContent='Preparar vídeo';
+}
+$('lbBaixar').onclick=async()=>{const a=lista[pos],b=$('lbBaixar');
+  const prog=n=>{if(a.s&&lista[pos]===a)b.textContent=(IOS?'Preparando ':'Baixando ')+Math.min(99,Math.round(n/a.s*100))+'%'};
+  if(IOS&&prontos.has(a.id)){try{await navigator.share({files:[prontos.get(a.id)]})}catch(e){if(e.name!=='AbortError')alert('Não foi possível abrir o menu para salvar. Tente de novo.')}return}
+  b.disabled=true;b.textContent=IOS?'Preparando...':'Baixando...';
+  try{const f=await prepararArquivo(a,prog);
+    if(IOS){if(lista[pos]===a){b.disabled=false;b.textContent='Salvar no Fotos'}return}
+    salvar(f,a.n);b.textContent=ANDROID?'Salvo na galeria ✓':'Baixado ✓'}
   catch(e){b.textContent='Tentar de novo';alert(e.message||'Não foi possível baixar agora.')}b.disabled=false};$('lbAnt').onclick=()=>verItem(pos-1);$('lbProx').onclick=()=>verItem(pos+1);
 document.addEventListener('keydown',e=>{if($('lb').hidden)return;if(e.key==='Escape')fechar();if(e.key==='ArrowLeft')verItem(pos-1);if(e.key==='ArrowRight')verItem(pos+1)});
 let x0=null;$('lbMeio').addEventListener('touchstart',e=>x0=e.touches[0].clientX,{passive:true});
@@ -267,6 +284,9 @@ $('lbMeio').addEventListener('touchend',e=>{if(x0===null)return;const dx=e.chang
 
 // ---- downloads direto pelo site
 const PEDACO=10*1024*1024;
+const UA=navigator.userAgent,IOS=/iPad|iPhone|iPod/.test(UA)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1),ANDROID=/Android/i.test(UA);
+const MIME={jpg:'image/jpeg',jpeg:'image/jpeg',png:'image/png',heic:'image/heic',heif:'image/heif',webp:'image/webp',mov:'video/quicktime',mp4:'video/mp4',m4v:'video/mp4'};
+function tipoArquivo(a,b){const e=(a.n.split('.').pop()||'').toLowerCase();return MIME[e]||(b&&b.type&&b.type!=='application/octet-stream'?b.type:(a.t==='video'?'video/mp4':'image/jpeg'))}
 function salvar(blob,nome){const u=URL.createObjectURL(blob),l=document.createElement('a');l.href=u;l.download=nome;document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),60000)}
 async function pedaco(a,ini){
   for(let t=0;t<3;t++){try{const j=await api({acao:'parte',sessao:guardar.get(),id:a.id,ini:ini,tam:PEDACO});
@@ -290,9 +310,12 @@ function abrirBaixarTudo(g){
   const streaming=!!window.showSaveFilePicker,LIM=400*1048576;
   const partes=[];let cur=[],tam=0;arqs.forEach(a=>{if(cur.length&&tam+(a.s||0)>LIM){partes.push(cur);cur=[];tam=0}cur.push(a);tam+=a.s||0});if(cur.length)partes.push(cur);
   $('dlTxt').textContent=arqs.length+' arquivos · '+MB(total)+'. '+(streaming?'Você escolhe onde salvar e recebe um único arquivo .zip.':partes.length>1?'Vão ser baixados '+partes.length+' arquivos .zip, um depois do outro.':'Vai ser baixado um arquivo .zip.')+' Deixe esta página aberta até terminar.';
-  $('dlBarra').hidden=true;$('dlSt').textContent='';$('dlOk').hidden=false;$('dlOk').disabled=false;$('dlX').textContent='Cancelar';dl.hidden=false;
+  $('dlBarra').hidden=true;$('dlSt').textContent='';$('dlOk').hidden=false;$('dlOk').disabled=false;$('dlOk').textContent='Começar';$('dlX').textContent='Cancelar';dl.hidden=false;$('dlI').style.width='0';
   $('dlX').onclick=()=>{cancelado=true;dl.hidden=true};
-  $('dlOk').onclick=async()=>{
+  $('dlZip').hidden=!(IOS||ANDROID);$('dlZip').onclick=()=>{$('dlZip').hidden=true;$('dlTxt').textContent=arqs.length+' arquivos · '+MB(total)+'. '+(partes.length>1?'Vão ser baixados '+partes.length+' arquivos .zip.':'Vai ser baixado um arquivo .zip.')+' Deixe esta página aberta até terminar.';$('dlOk').onclick=zip;$('dlOk').textContent='Começar'};
+  if(IOS||ANDROID){celular(g,arqs,total);return}
+  $('dlOk').onclick=zip;
+  async function zip(){
     $('dlOk').disabled=true;$('dlBarra').hidden=false;let feito=0,base=0;
     const nomeZip=(g.evento||'fotos').replace(/[\\/:*?"<>|]+/g,'').trim()||'fotos';
     const pasta=a=>(a.g?a.g.replace(/[\\/:*?"<>|]+/g,'')+'/':'')+a.n;
@@ -305,7 +328,48 @@ function abrirBaixarTudo(g){
       else{let off=0;for(let k=0;k<partes.length;k++){const b=await zipLib.downloadZip(itens(partes[k],off)).blob();off+=partes[k].length;salvar(b,nomeZip+(partes.length>1?' - parte '+(k+1)+' de '+partes.length:'')+'.zip')}}
       $('dlI').style.width='100%';$('dlSt').textContent='Pronto! Seus arquivos foram baixados.';$('dlOk').hidden=true;$('dlX').textContent='Fechar';
     }catch(e){if(!cancelado){$('dlSt').textContent=(e.message||'Não foi possível baixar agora.')+' Tente de novo.';$('dlOk').disabled=false;$('dlOk').textContent='Tentar de novo'}}
+  }
+}
+
+// Celular: iPhone salva no app Fotos em lotes (menu Compartilhar > Salvar); Android baixa cada arquivo solto (vai para a Galeria / Google Fotos)
+function celular(g,arqs,total){
+  const lotes=[];let cur=[],tam=0;
+  arqs.forEach(a=>{const lim=IOS&&(cur.length>=10||(cur.length&&(tam+(a.s||0)>60*1048576||a.t==='video')));if(cur.length&&(lim||!IOS)){lotes.push(cur);cur=[];tam=0}cur.push(a);tam+=a.s||0;if(IOS&&a.t==='video'){lotes.push(cur);cur=[];tam=0}});
+  if(cur.length)lotes.push(cur);
+  $('dlTxt').textContent=arqs.length+' arquivos · '+MB(total)+'. '+(IOS?
+    'Eles vão direto para o app Fotos do seu iPhone, em '+lotes.length+(lotes.length>1?' etapas':' etapa')+': a cada etapa, toque em "Salvar" e depois em "Salvar '+(lotes[0].length>1?lotes[0].length+' imagens':'imagem')+'".':
+    'Eles vão para a Galeria e o Google Fotos do seu celular. Se o navegador perguntar, permita baixar vários arquivos.')+' Deixe esta página aberta até terminar.';
+  let feito=0,i=0,base=0;
+  const barra=()=>{$('dlI').style.width=Math.min(100,base/Math.max(total,1)*100)+'%'};
+  const fim=()=>{base=total;barra();$('dlSt').textContent=IOS?'Pronto! Tudo salvo no app Fotos.':'Pronto! Tudo salvo na galeria do celular.';$('dlOk').hidden=true;$('dlZip').hidden=true;$('dlX').textContent='Fechar'};
+  const erro=e=>{if(cancelado)return;$('dlSt').textContent=(e.message||'Não foi possível baixar agora.')+' Tente de novo.';$('dlOk').disabled=false;$('dlOk').textContent='Tentar de novo'};
+  if(ANDROID&&!IOS){
+    $('dlOk').onclick=async()=>{$('dlOk').disabled=true;$('dlZip').hidden=true;$('dlBarra').hidden=false;
+      try{for(;i<arqs.length;i++){if(cancelado)return;const a=arqs[i];
+        const b=await blobArquivo(a,n=>{$('dlSt').textContent='Salvando '+(i+1)+' de '+arqs.length;$('dlI').style.width=Math.min(100,(base+n)/Math.max(total,1)*100)+'%'});
+        salvar(new File([b],a.n,{type:tipoArquivo(a,b)}),a.n);base+=a.s||0;barra();await new Promise(r=>setTimeout(r,500))}
+        fim()}catch(e){erro(e)}};
+    return;
+  }
+  let preparado=null;
+  async function preparar(){
+    $('dlOk').disabled=true;$('dlBarra').hidden=false;const lote=lotes[i];const files=[];let soma=0;
+    for(const a of lote){if(cancelado)return;$('dlSt').textContent='Preparando '+(feito+files.length+1)+' de '+arqs.length+'...';
+      const b=await blobArquivo(a,n=>{$('dlI').style.width=Math.min(100,(base+soma+n)/Math.max(total,1)*100)+'%'});soma+=a.s||0;files.push(new File([b],a.n,{type:tipoArquivo(a,b)}))}
+    preparado={files,soma};
+    $('dlSt').textContent='Etapa '+(i+1)+' de '+lotes.length+' pronta.';
+    $('dlOk').textContent='Salvar '+(files.length>1?files.length+' arquivos':(lote[0].t==='video'?'o vídeo':'a foto'))+' no Fotos';$('dlOk').disabled=false;
+  }
+  $('dlOk').onclick=async()=>{
+    if(!preparado){$('dlZip').hidden=true;try{await preparar()}catch(e){erro(e)}return}
+    try{await navigator.share({files:preparado.files})}
+    catch(e){if(e.name==='AbortError'){$('dlSt').textContent='Você fechou o menu. Toque no botão para salvar esta etapa.';return}
+      $('dlSt').textContent='Seu navegador não deixou salvar direto no Fotos. Use a opção .zip abaixo.';$('dlZip').hidden=false;return}
+    feito+=preparado.files.length;base+=preparado.soma;barra();preparado=null;i++;
+    if(i>=lotes.length){fim();return}
+    try{await preparar()}catch(e){erro(e)}
   };
+  $('dlOk').textContent='Começar';
 }
 
 // ---- início
