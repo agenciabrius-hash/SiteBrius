@@ -739,10 +739,12 @@ function formEventoFotos(){
   async(f,st)=>{const d=Object.fromEntries(new FormData(f));const j=await chamar({acao:'adm_eventofotos',data:d.data,nome:d.nome,codigo:d.codigo});
     if(f.fotos.files.length)await subir(j.pasta,f.fotos.files,null,st);admSec='eventos';await admRecarregar('✓ Evento criado. Agora é só preparar as fotos.')},'Criar evento');
 }
-async function admStatus(g,status,b){b.disabled=true;try{await chamar({acao:'adm_status',id:g.id,status:status});await admRecarregar(status==='Enviar acesso'?'✓ Acesso enviado para '+g.email:status==='Avisar novos posts'?'✓ Cliente avisado dos novos posts':'✓ Feito')}catch(e){toast(e.message);b.disabled=false}}
+async function admStatus(g,status,b){b.disabled=true;try{await chamar({acao:'adm_status',id:g.id,status:status});await admRecarregar(status==='Redefinir senha'?'✓ Link de nova senha enviado para '+g.email:status==='Enviar acesso'?'✓ Acesso enviado para '+g.email:status==='Avisar novos posts'?'✓ Cliente avisado dos novos posts':'✓ Feito')}catch(e){toast(e.message);b.disabled=false}}
 function barraAdmin(g){
   // ações da agência dentro de um cliente aberto
   const ac=$('gAcoes');if(g.tipo==='gestao')ac.innerHTML='';ac.querySelectorAll('.adm-b').forEach(x=>x.remove());const bt=(t,fn,sec)=>{const b=document.createElement('button');b.className='btn adm-b'+(sec?' sec':'');b.textContent=t;b.onclick=()=>fn(b);ac.appendChild(b)};
+  const senha=()=>{if(g.id&&/Ativo|Acesso enviado/.test(g.statusPlanilha))bt('🔑 Redefinir senha',b=>{if(!b.dataset.c){b.dataset.c=1;b.textContent='Toque de novo: enviar para '+g.email;return}admStatus(g,'Redefinir senha',b)},1)};
+  setTimeout(senha,0);
   if(g.tipo==='gestao'){bt('+ Adicionar post',()=>formPost(g));
     if(g.id&&/Ativo|Acesso enviado/.test(g.statusPlanilha))bt('🔔 Avisar cliente dos novos posts',b=>admStatus(g,'Avisar novos posts',b),1);
     if(!/Ativo|Acesso enviado/.test(g.statusPlanilha))bt('✉️ Enviar acesso ao cliente',b=>{if(!g.id){chamarSemId(g,b);return}admStatus(g,'Enviar acesso',b)},1);}
