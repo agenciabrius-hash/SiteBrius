@@ -92,6 +92,27 @@ input:focus{border-color:var(--gold)}
 .barra{height:8px;background:#2c2925;border-radius:99px;overflow:hidden;margin:6px 0 10px}
 .barra i{display:block;height:100%;width:0;background:var(--gold-soft);transition:width .3s}
 .dl-c .btns{display:flex;gap:10px;flex-wrap:wrap}.dl-c .btns .btn{width:auto;flex:1}
+/* Acesso da agência */
+.adm .fav,.adm #lbFav{display:none!important}
+.abas.adm-abas{display:block}
+.adm-links{display:flex;flex-wrap:wrap;gap:10px;margin:-6px 0 22px}.adm-links .btn{width:auto;padding:11px 18px;font-size:14px}
+.adm-seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:6px;border-radius:18px;background:var(--graphite);border:1px solid #2f2b26;margin-bottom:14px}
+.adm-seg button{background:none;border:0;border-radius:13px;padding:12px 10px;color:var(--muted-d);cursor:pointer;display:grid;gap:3px;text-align:center;transition:background .25s,color .25s}
+.adm-seg button b{font:700 15px var(--body)}.adm-seg button small{font:600 12px var(--body);opacity:.8}
+.adm-seg button[aria-selected="true"]{background:var(--gold-soft);color:var(--ink)}
+.adm-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:12px;margin-bottom:12px}
+.adm-abas .marca{display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:16px;text-align:left;position:relative;background:var(--graphite);border:1px solid #3a352f;color:var(--muted-d);cursor:pointer;transition:transform .2s,border-color .2s,background .2s;animation:gsEntra .5s both}
+.adm-abas .marca:hover{transform:translateY(-2px);border-color:var(--gold)}
+.adm-abas .marca[aria-pressed="true"]{background:linear-gradient(135deg,rgba(230,211,174,.16),rgba(230,211,174,.04));border-color:var(--gold-soft)}
+.marca .ml.foto{border-radius:12px;background:#2f2b26;font-size:22px}
+.marca .mt small.st{color:var(--gold);font-weight:700}
+.marca .mb.rf{background:#f0a28f}
+.pc-adm{font-size:13px;color:var(--muted-d);background:#201d1a;border:1px dashed #3a352f;border-radius:10px;padding:10px 12px;margin-top:auto}
+.adm-ev{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:12px}
+.adm-e{display:grid;grid-template-columns:92px 1fr;gap:14px;align-items:center;padding:12px;border-radius:14px;background:var(--graphite);border:1px solid #2f2b26}
+.adm-e img,.adm-e .ph{width:92px;height:92px;border-radius:10px;object-fit:cover;background:#2f2b26;display:grid;place-items:center;font-size:30px}
+.adm-e b{display:block;font:500 18px var(--serif);color:var(--bone);margin-bottom:4px}.adm-e small{display:block;color:var(--muted-d);font-size:13px;line-height:1.5}.adm-e a{font:700 13px var(--body);display:inline-block;margin-top:6px}
+@media (max-width:560px){.adm-seg button b{font-size:13px}}
 /* Gestão de redes: calendário de aprovação */
 .abas.marcas{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:12px;margin-bottom:8px}
 .marcas-t{grid-column:1/-1;margin:0;color:var(--muted-d);font-size:14px}
@@ -327,6 +348,7 @@ async function carregarGaleria(){
   try{const j=await api({acao:'galeria',sessao:guardar.get()});
     if(!j.ok){guardar.set('');mostrar('telaLogin');msg($('mLogin'),j.erro,true);return}
     galerias=j.galerias;$('gOla').textContent='Olá, '+(j.nome||'')+'!';
+    if(j.admin){mostrar('telaGal');montarAdmin(j);return}
     const abas=$('gAbas');abas.innerHTML='';
     const marcas=galerias.filter(g=>g.tipo==='gestao').length;
     abas.classList.toggle('marcas',marcas>1);
@@ -335,20 +357,20 @@ async function carregarGaleria(){
       if(g.tipo==='gestao'&&marcas>1){const m=g.marca||{},pd=(g.posts||[]).filter(p=>p.status==='Aguardando'||p.status==='Nova versão').length;
         b.className='marca';b.innerHTML='<span class="ml">'+(m.logo?'<img src="'+escH(m.logo)+'" alt="">':escH((m.nome||'?').charAt(0)))+'</span><span class="mt"><b>'+escH(m.nome||g.evento)+'</b><small>'+(pd?pd+' para aprovar':'Tudo em dia ✓')+'</small></span>'+(pd?'<i class="mb">'+pd+'</i>':'')}
       else b.textContent=g.evento;
-      b.onclick=()=>{gsMes=null;gsF='todos';abrir(i)};abas.appendChild(b)});
+      b.dataset.i=i;b.onclick=()=>{gsMes=null;gsF='todos';abrir(i)};abas.appendChild(b)});
     abrir(Math.max(0,galerias.findIndex(g=>g.aberto)));mostrar('telaGal');
   }catch(err){mostrar('telaLogin');msg($('mLogin'),'Não foi possível carregar agora. Tente de novo.',true)}
 }
 let filtro='todas';
 function abrir(i,manterFiltro){
-  atual=i;const g=galerias[i];[...$('gAbas').querySelectorAll('button')].forEach((b,k)=>b.setAttribute('aria-pressed',k===i));
+  atual=i;const g=galerias[i];$('gAbas').querySelectorAll('button[data-i]').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.i===i));
   if(!manterFiltro)filtro='todas';
   $('lbFav').hidden=g.tipo==='gestao';
   if(g.tipo==='gestao'){abrirGestao(g);return}
   $('gTitulo').textContent=g.evento;const cont=$('gConteudo');cont.innerHTML='';$('gAcoes').innerHTML='';
   if(!g.aberto){$('gPrazo').textContent='';
     cont.innerHTML='<div class="exp"><h2 class="grupo">Esta galeria não está mais disponível</h2><p class="lead">O prazo para baixar terminou'+(g.expira?' em '+g.expira:'')+'. Se precisar de mais tempo, fale com a gente.</p><a class="btn" style="width:auto" href="https://wa.me/5511940809443?text='+encodeURIComponent('Oi! Preciso de mais tempo para baixar as fotos de: '+g.evento)+'" target="_blank" rel="noopener">Falar no WhatsApp</a></div>';return}
-  $('gPrazo').innerHTML=g.expira?'Disponível para baixar até <b>'+g.expira+'</b>':'';
+  $('gPrazo').innerHTML=g.admin?'<b>'+escH(g.cliente)+'</b> · '+escH(g.email)+' · '+escH(g.statusPlanilha||'')+(g.expira?' · até '+escH(g.expira):'')+' · <a href="'+escH(g.pasta)+'" target="_blank" rel="noopener">abrir no Drive</a>':(g.expira?'Disponível para baixar até <b>'+g.expira+'</b>':'');
   g.fav=new Set(g.fav||[]);
   const favs=g.arquivos.filter(a=>g.fav.has(a.id));
   const tudo=document.createElement('button');tudo.className='btn';tudo.textContent='Baixar tudo';tudo.onclick=()=>abrirBaixarTudo(g);
@@ -395,7 +417,7 @@ const pend=p=>p.status==='Aguardando'||p.status==='Nova versão';
 let gsF='todos',gsMes=null,gsIdx={};
 function toast(t){let e=document.querySelector('.gs-ok');if(!e){e=document.createElement('div');e.className='gs-ok';document.body.appendChild(e)}e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),2600)}
 function abrirGestao(g){
-  const cont=$('gConteudo');$('gPrazo').textContent='';$('gAcoes').innerHTML='';$('gTitulo').textContent='Calendário de conteúdo';
+  const cont=$('gConteudo');$('gPrazo').innerHTML=g.admin?escH(g.email)+' · '+escH(g.statusPlanilha||'')+' · <a href="'+escH(g.pasta)+'" target="_blank" rel="noopener">pasta no Drive</a>':'';$('gAcoes').innerHTML='';$('gTitulo').textContent='Calendário de conteúdo';
   g.fav=g.fav instanceof Set?g.fav:new Set();
   const m=g.marca||{};const ig=m.insta?'<a class="mk-ig" href="https://www.instagram.com/'+encodeURIComponent(m.insta)+'/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>@'+escH(m.insta)+'</a>':'';
   const tel=m.tel?'<a href="https://wa.me/55'+escH(String(m.tel).replace(/\D/g,'').replace(/^55/,''))+'" target="_blank" rel="noopener">📞 '+escH(m.tel)+'</a>':'';
@@ -427,7 +449,7 @@ function pintarGestao(g){
   const mesP=doMes(g);const cont={todos:mesP.length,pend:mesP.filter(pend).length,ap:mesP.filter(p=>p.status==='Aprovado').length,rf:mesP.filter(p=>p.status==='Refazer').length};
   const f=$('gsF');f.innerHTML=[['todos','Todos',''],['pend','Aguardando','c-ag'],['ap','Aprovados','c-ap'],['rf','Ajustes','c-rf']].map(([k,t,c])=>'<button data-f="'+k+'" aria-pressed="'+(gsF===k)+'">'+(c?'<i class="'+c+'"></i>':'')+t+' ('+cont[k]+')</button>').join('');
   f.querySelectorAll('button').forEach(b=>b.onclick=()=>{gsF=b.dataset.f;pintarGestao(g)});
-  $('gsTodos').hidden=!cont.pend;
+  $('gsTodos').hidden=!cont.pend||!!g.admin;
   // calendário
   const [a,mm]=(gsMes||'').split('-').map(Number);const meses=[...new Set(g.posts.filter(p=>p.data).map(p=>p.data.slice(0,7)))].sort();
   $('gsMesT').textContent=a?MESES[mm-1]+' '+a:'Posts';$('gsAnt').disabled=meses.indexOf(gsMes)<=0;$('gsProx').disabled=meses.indexOf(gsMes)>=meses.length-1;
@@ -461,7 +483,7 @@ function cartao(g,p,n){
     (p.status==='Refazer'&&p.obs?'<div class="pc-obs"><b>Seu pedido de ajuste:</b><br>'+escH(p.obs)+'</div>':'')+
     (p.status==='Nova versão'?'<div class="pc-obs nv"><b>Nova versão!</b> A Brius atualizou este post'+(p.antes==='Refazer'&&p.obs?' depois do seu pedido: “'+escH(p.obs)+'”':'')+'. Dá uma olhada e responda de novo.</div>':'')+
     (p.status==='Aprovado'?'<div class="pc-obs ok">✓ Você aprovou'+(p.quando?' em '+escH(p.quando):'')+'.</div>':'')+
-    '<div class="pc-ac"><button class="ap'+(p.status==='Aprovado'?' feito':'')+'">'+(p.status==='Aprovado'?'✓ Aprovado':'✓ Aprovar')+'</button><button class="rf'+(p.status==='Refazer'?' feito':'')+'">'+(p.status==='Refazer'?'✎ Editar pedido':'✎ Pedir ajuste')+'</button></div>'+
+    (g.admin?'<div class="pc-adm">👁️ Visualização da agência · quem aprova é o cliente</div>':'')+'<div class="pc-ac"'+(g.admin?' hidden':'')+'><button class="ap'+(p.status==='Aprovado'?' feito':'')+'">'+(p.status==='Aprovado'?'✓ Aprovado':'✓ Aprovar')+'</button><button class="rf'+(p.status==='Refazer'?' feito':'')+'">'+(p.status==='Refazer'?'✎ Editar pedido':'✎ Pedir ajuste')+'</button></div>'+
     '<div class="pc-aj" hidden><textarea maxlength="1500" placeholder="O que precisa mudar? Ex.: trocar a foto da capa, corrigir o preço na arte, mudar a música do vídeo…"></textarea><div class="bts"><button class="cc">Cancelar</button><button class="env">Enviar pedido</button></div></div>'+
     (p.quando&&p.status!=='Aprovado'?'<span class="pc-q">Respondido em '+escH(p.quando)+'</span>':'')+'</div>';
   // carrossel
@@ -492,6 +514,44 @@ async function responder(g,ks,status,obs){
     toast(status==='Aprovado'?(ks.length>1?'✓ '+ks.length+' posts aprovados!':'✓ Post aprovado!'):'✎ Pedido de ajuste enviado para a Brius');
   }catch(e){toast(e.message||'Não foi possível enviar agora. Tente de novo.')}
   document.querySelectorAll('.pc-ac button,.pc-aj button,#gsTodos').forEach(b=>b.disabled=false);
+}
+
+// ---- Acesso da agência: vê todos os clientes, fotos e eventos
+let admSec='gestao',admDados=null;
+function montarAdmin(j){
+  admDados=j;document.body.classList.add('adm');
+  $('gOla').textContent='Acesso da agência';
+  const L=j.links||{};const ac=$('gAcoes');
+  const bt=(t,u,sec)=>u?'<a class="btn'+(sec?' sec':'')+'" href="'+escH(u)+'" target="_blank" rel="noopener">'+t+'</a>':'';
+  const cab=document.querySelector('.cab');let lk=document.getElementById('admLinks');
+  if(!lk){lk=document.createElement('div');lk.id='admLinks';lk.className='adm-links';cab.after(lk)}
+  lk.innerHTML=bt('📊 Painel de resultados',L.painel)+bt('🧑‍💻 Preparar fotos dos eventos',L.indexar,1)+bt('📄 Planilha',L.planilha,1)+bt('🌐 Ver o site','../',1);
+  const nG=galerias.filter(g=>g.tipo==='gestao').length,nF=galerias.filter(g=>g.tipo!=='gestao').length,nE=(j.eventos||[]).length+(j.proximos||[]).length;
+  const pend=galerias.filter(g=>g.tipo==='gestao').reduce((s,g)=>s+(g.posts||[]).filter(p=>p.status==='Aguardando'||p.status==='Nova versão').length,0);
+  const abas=$('gAbas');abas.className='abas adm-abas';
+  abas.innerHTML='<div class="adm-seg" role="tablist">'+[['gestao','📅 Gestão de redes',nG,pend?pend+' aguardando cliente':''],['fotos','📸 Fotos',nF,''],['eventos','🎟️ Eventos',nE,'']].map(([k,t,n,x])=>
+    '<button type="button" role="tab" data-sec="'+k+'" aria-selected="'+(admSec===k)+'"><b>'+t+'</b><small>'+n+(x?' · '+x:'')+'</small></button>').join('')+'</div><div class="adm-cards" id="admCards"></div>';
+  abas.querySelectorAll('[data-sec]').forEach(b=>b.onclick=()=>{admSec=b.dataset.sec;montarAdmin(admDados)});
+  const cards=$('admCards');
+  if(admSec==='eventos'){cards.hidden=true;$('gTitulo').textContent='Eventos';ac.innerHTML='';$('gPrazo').textContent='';pintarEventosAdmin(j);return}
+  cards.hidden=false;
+  const idx=galerias.map((g,i)=>[g,i]).filter(([g])=>admSec==='gestao'?g.tipo==='gestao':g.tipo!=='gestao');
+  if(!idx.length){cards.innerHTML='<p class="vazio">'+(admSec==='gestao'?'Nenhum cliente de gestão de redes na aba Entregas.':'Nenhuma galeria de fotos na aba Entregas.')+'</p>';$('gConteudo').innerHTML='';$('gTitulo').textContent='Painel da Brius';ac.innerHTML='';$('gPrazo').textContent='';return}
+  cards.innerHTML='';
+  idx.forEach(([g,i])=>{const b=document.createElement('button');b.type='button';b.dataset.i=i;b.className='marca';
+    if(g.tipo==='gestao'){const m=g.marca||{},pd=(g.posts||[]).filter(p=>p.status==='Aguardando'||p.status==='Nova versão').length,rf=(g.posts||[]).filter(p=>p.status==='Refazer').length;
+      b.innerHTML='<span class="ml">'+(m.logo?'<img src="'+escH(m.logo)+'" alt="">':escH((m.nome||'?').charAt(0)))+'</span><span class="mt"><b>'+escH(m.nome||g.evento)+'</b><small>'+(g.posts||[]).length+' posts · '+(pd?pd+' aguardando':'nada pendente')+(rf?' · '+rf+' ajuste'+(rf>1?'s':''):'')+'</small><small class="st">'+escH(g.statusPlanilha||'')+'</small></span>'+(rf?'<i class="mb rf">'+rf+'</i>':pd?'<i class="mb">'+pd+'</i>':'')}
+    else{const a=(g.arquivos||[]).find(x=>x.t==='foto');
+      b.innerHTML='<span class="ml foto">'+(a?'<img src="'+thumb(a.id).replace('w600','w160')+'" alt="" loading="lazy">':'📁')+'</span><span class="mt"><b>'+escH(g.cliente)+'</b><small>'+escH(g.evento)+' · '+(g.arquivos||[]).length+' arquivos</small><small class="st">'+escH(g.statusPlanilha||'')+(g.expira?' · até '+escH(g.expira):'')+'</small></span>'}
+    b.onclick=()=>{gsMes=null;gsF='todos';abrir(i);document.getElementById('gConteudo').scrollIntoView({behavior:'smooth',block:'start'})};cards.appendChild(b)});
+  const cur=idx.find(([g,i])=>i===atual)||idx[0];abrir(cur[1]);
+}
+function pintarEventosAdmin(j){
+  const c=$('gConteudo');const br=d=>d?d.split('-').reverse().join('/'):'';
+  const px=(j.proximos||[]);const ev=(j.eventos||[]);const L=j.links||{};
+  c.innerHTML='<div class="gs"><h2 class="grupo">Próximos eventos</h2>'+(px.length?'<div class="adm-ev">'+px.map(p=>'<div class="adm-e">'+(p.img?'<img src="'+escH(/^img\//.test(p.img)?'../'+p.img:p.img)+'" alt="">':'<span class="ph">🎟️</span>')+'<div><b>'+escH(p.nome)+'</b><small>'+escH(br(p.data))+(p.hora?' · '+escH(p.hora):'')+(p.local?' · '+escH(p.local):'')+'</small>'+(p.link?'<a href="'+escH(p.link)+'" target="_blank" rel="noopener">Instagram / site</a>':'')+'</div></div>').join('')+'</div>':'<p class="vazio">Nenhum próximo evento. Cadastre na aba "Próximos eventos" da planilha.</p>')+
+    '<h2 class="grupo">Fotos de eventos (reconhecimento facial)</h2>'+(ev.length?'<div class="adm-ev">'+ev.map(e=>'<div class="adm-e"><img src="'+escH(e.capa)+'" alt="" loading="lazy"><div><b>'+escH(e.nome)+'</b><small>'+escH(br(e.data))+' · '+e.fotos+' fotos · '+e.indexadas+' lidas'+(e.codigo?' · código '+escH(e.codigo):' · sem código')+'</small><small>'+(e.noAr?'No ar até '+escH(br(e.ate)):'Fora do ar')+(e.retirados?' · '+e.retirados+' pediram para sair':'')+'</small><a href="../eventos/?e='+encodeURIComponent(e.e)+(e.codigo?'&c='+encodeURIComponent(e.codigo):'')+'" target="_blank" rel="noopener">Ver página do evento</a></div></div>').join('')+'</div>':'<p class="vazio">Nenhum evento com fotos ainda.</p>')+
+    '<div class="adm-links" style="margin-top:22px">'+(L.indexar?'<a class="btn" href="'+escH(L.indexar)+'" target="_blank" rel="noopener">Preparar fotos dos eventos</a>':'')+(L.pastaEventos?'<a class="btn sec" href="'+escH(L.pastaEventos)+'" target="_blank" rel="noopener">Pasta dos eventos no Drive</a>':'')+'</div></div>';
 }
 
 // ---- visualizador
