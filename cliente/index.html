@@ -113,6 +113,41 @@ input:focus{border-color:var(--gold)}
 .adm-e img,.adm-e .ph{width:92px;height:92px;border-radius:10px;object-fit:cover;background:#2f2b26;display:grid;place-items:center;font-size:30px}
 .adm-e b{display:block;font:500 18px var(--serif);color:var(--bone);margin-bottom:4px}.adm-e small{display:block;color:var(--muted-d);font-size:13px;line-height:1.5}.adm-e a{font:700 13px var(--body);display:inline-block;margin-top:6px}
 @media (max-width:560px){.adm-seg button b{font-size:13px}}
+/* Modal da agência */
+.am{position:fixed;inset:0;z-index:80;background:rgba(10,9,8,.82);display:grid;place-items:center;padding:16px;overflow:auto;animation:gsEntra .25s both}
+.am-c{width:100%;max-width:560px;background:var(--graphite);border:1px solid #3a352f;border-radius:20px;padding:22px;max-height:calc(100dvh - 32px);overflow:auto}
+.am-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}.am-h h2{font:400 26px var(--serif);margin:0}
+.am-x{background:none;border:1px solid #3a352f;color:var(--muted-d);width:38px;height:38px;border-radius:50%;cursor:pointer}
+.am-b label{margin-bottom:12px;min-width:0}.am-b input:not([type=checkbox]),.am-b select,.am-b textarea{width:100%;min-width:0;box-sizing:border-box}.am-b select,.am-b textarea{font:500 16px var(--body);color:var(--bone);background:var(--ink);border:1px solid #3a352f;border-radius:10px;padding:13px 14px;outline:none}
+.am-b select:focus,.am-b textarea:focus{border-color:var(--gold)}
+.am-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media (max-width:520px){.am-2{grid-template-columns:1fr}}
+.am-arq{position:relative}.am-arq input{position:absolute;opacity:0;width:1px;height:1px}
+.am-drop{display:block;padding:18px;border:1.5px dashed #4a443c;border-radius:12px;text-align:center;color:var(--muted-d);font-weight:600;cursor:pointer;transition:border-color .2s,color .2s}
+.am-arq:hover .am-drop,.am-arq:focus-within .am-drop{border-color:var(--gold-soft);color:var(--gold-soft)}
+.am-chk{display:flex!important;align-items:center;gap:10px;color:var(--bone)!important}.am-chk input{width:20px;height:20px;accent-color:var(--gold)}
+.am-dica{font-size:13px;color:var(--muted-d);margin:-4px 0 12px;line-height:1.5}
+.am-f{display:flex;gap:10px;justify-content:flex-end;margin-top:8px}.am-f .btn{width:auto}
+.marca.novo{border-style:dashed!important}.marca.novo .ml{background:var(--gold-soft);color:var(--ink);font:500 30px/1 var(--body)}
+.lk{all:unset;cursor:pointer;color:var(--gold-soft);font:700 13px var(--body);text-decoration:underline}
+/* Mensalidade */
+.mens{display:grid;grid-template-columns:auto auto 1fr;gap:clamp(14px,3vw,30px);align-items:center;padding:16px 20px;border-radius:18px;border:1px solid #2f2b26;background:var(--graphite);margin:-8px 0 22px;position:relative;overflow:hidden;animation:gsEntra .6s .1s both}
+.mens::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--mc,#e6d3ae)}
+.mens.ok{--mc:#7fc49a}.mens.ab{--mc:#e6d3ae}.mens.at{--mc:#f0a28f;background:linear-gradient(90deg,rgba(240,162,143,.08),var(--graphite) 60%)}
+.mens-info small,.mens-cd small,.mens-pix small{display:block;font:700 10.5px var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted-d);margin-bottom:4px}
+.mens-info b{font:500 30px/1 var(--serif);color:var(--bone)}.mens-info b em{font:500 14px var(--body);color:var(--muted-d);font-style:normal;margin-left:3px}
+.mens-info span{display:block;font-size:12.5px;color:var(--muted-d);margin-top:5px}
+.mens-st p{margin:6px 0 0;font-size:13.5px;color:#d9cfbf}
+.mens-pill{display:inline-block;font:800 12px var(--body);letter-spacing:.04em;padding:6px 12px;border-radius:999px;background:var(--mc);color:#141210}
+.mens.at .mens-pill{animation:gsPulso 2s ease-in-out infinite}
+.mens-cd{justify-self:end;text-align:right}
+.mens-cd div{display:flex;gap:6px;justify-content:flex-end}
+.mens-cd span{display:grid;place-items:center;min-width:50px;padding:7px 6px 6px;border-radius:10px;background:#201d1a;border:1px solid #2f2b26;font:700 9.5px var(--body);text-transform:uppercase;letter-spacing:.06em;color:var(--muted-d)}
+.mens-cd b{font:600 21px/1.1 var(--serif);color:var(--mc);letter-spacing:0}
+.mens-adm,.mens-pix{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding-top:12px;border-top:1px dashed #2f2b26}
+.mens-adm .btn,.mens-pix .btn{width:auto;padding:10px 16px;font-size:13.5px}.mens-adm small{color:var(--muted-d);font-size:12.5px}
+.mens-pix b{font:600 15px var(--body);color:var(--bone);margin-right:6px}
+.marca .ms{font-weight:700;color:var(--gold-soft)}
+@media (max-width:720px){.mens{grid-template-columns:1fr 1fr}.mens-cd{grid-column:1/-1;justify-self:stretch;text-align:left}.mens-cd div{justify-content:flex-start}}
 /* Gestão de redes: calendário de aprovação */
 .abas.marcas{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:12px;margin-bottom:8px}
 .marcas-t{grid-column:1/-1;margin:0;color:var(--muted-d);font-size:14px}
@@ -363,6 +398,7 @@ async function carregarGaleria(){
 }
 let filtro='todas';
 function abrir(i,manterFiltro){
+  setTimeout(()=>{const g0=galerias[i];if(g0&&g0.admin)barraAdmin(g0)},0);
   atual=i;const g=galerias[i];$('gAbas').querySelectorAll('button[data-i]').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.i===i));
   if(!manterFiltro)filtro='todas';
   $('lbFav').hidden=g.tipo==='gestao';
@@ -426,6 +462,7 @@ function abrirGestao(g){
   cont.innerHTML='<div class="gs"><div class="mk"><div class="mk-logo"><span>'+(m.logo?'<img src="'+escH(m.logo)+'" alt="Logo '+escH(m.nome)+'">':escH(ini))+'</span></div>'+
     '<div>'+ig+'<h2>'+escH(m.nome||g.evento)+'</h2>'+(m.resp?'<p class="resp">'+escH(m.resp)+'</p>':'')+((tel||mail)?'<div class="mk-ct">'+tel+mail+'</div>':'')+'</div>'+
     '<div class="mk-prog"><div class="mk-anel" id="gsAnel"><span id="gsPct">0<small>aprovados</small></span></div><p id="gsResumo"></p></div></div>'+
+    '<div class="mens" id="gsMens" hidden></div>'+
     '<div class="gs-bar"><div class="gs-f" id="gsF"></div><button class="btn gs-todos" id="gsTodos" hidden>✓ Aprovar todos os pendentes</button></div>'+
     '<div class="gs-cal"><div class="gs-cal-h"><button type="button" id="gsAnt" aria-label="Mês anterior">‹</button><b id="gsMesT"></b><button type="button" id="gsProx" aria-label="Próximo mês">›</button></div><div class="gs-gr" id="gsGr"></div></div>'+
     '<div class="gs-lista" id="gsLista"></div></div>';
@@ -439,7 +476,7 @@ function abrirGestao(g){
   $('gsTodos').onclick=()=>{const b=$('gsTodos');const ks=doMes(g).filter(pend).map(p=>p.k);if(!ks.length)return;
     if(!b.dataset.c){b.dataset.c=1;b.textContent='Toque de novo para aprovar '+ks.length+' post'+(ks.length>1?'s':'');setTimeout(()=>{delete b.dataset.c;b.textContent='✓ Aprovar todos os pendentes'},4000);return}
     responder(g,ks,'Aprovado','')};
-  pintarGestao(g);
+  pintarMens(g);pintarGestao(g);
 }
 function doMes(g){return g.posts.filter(p=>(p.data||'').slice(0,7)===gsMes||(!p.data&&gsMes===null))}
 function pintarGestao(g){
@@ -536,23 +573,164 @@ function montarAdmin(j){
   if(admSec==='eventos'){cards.hidden=true;$('gTitulo').textContent='Eventos';ac.innerHTML='';$('gPrazo').textContent='';pintarEventosAdmin(j);return}
   cards.hidden=false;
   const idx=galerias.map((g,i)=>[g,i]).filter(([g])=>admSec==='gestao'?g.tipo==='gestao':g.tipo!=='gestao');
-  if(!idx.length){cards.innerHTML='<p class="vazio">'+(admSec==='gestao'?'Nenhum cliente de gestão de redes na aba Entregas.':'Nenhuma galeria de fotos na aba Entregas.')+'</p>';$('gConteudo').innerHTML='';$('gTitulo').textContent='Painel da Brius';ac.innerHTML='';$('gPrazo').textContent='';return}
+  if(!idx.length){cards.innerHTML='';const nv=document.createElement('button');nv.type='button';nv.className='marca novo';nv.innerHTML='<span class="ml">+</span><span class="mt"><b>'+(admSec==='gestao'?'Novo cliente':'Nova galeria de fotos')+'</b><small>Comece por aqui</small></span>';nv.onclick=()=>admSec==='gestao'?formCliente():formGaleria();cards.appendChild(nv);$('gConteudo').innerHTML='';$('gTitulo').textContent='Painel da Brius';ac.innerHTML='';$('gPrazo').textContent='';return}
   cards.innerHTML='';
+  const novo=document.createElement('button');novo.type='button';novo.className='marca novo';novo.innerHTML='<span class="ml">+</span><span class="mt"><b>'+(admSec==='gestao'?'Novo cliente':'Nova galeria de fotos')+'</b><small>'+(admSec==='gestao'?'Gestão de redes, com aprovação de posts':'Fotos e vídeos para o cliente baixar')+'</small></span>';
+  novo.onclick=()=>admSec==='gestao'?formCliente():formGaleria();cards.appendChild(novo);
   idx.forEach(([g,i])=>{const b=document.createElement('button');b.type='button';b.dataset.i=i;b.className='marca';
     if(g.tipo==='gestao'){const m=g.marca||{},pd=(g.posts||[]).filter(p=>p.status==='Aguardando'||p.status==='Nova versão').length,rf=(g.posts||[]).filter(p=>p.status==='Refazer').length;
-      b.innerHTML='<span class="ml">'+(m.logo?'<img src="'+escH(m.logo)+'" alt="">':escH((m.nome||'?').charAt(0)))+'</span><span class="mt"><b>'+escH(m.nome||g.evento)+'</b><small>'+(g.posts||[]).length+' posts · '+(pd?pd+' aguardando':'nada pendente')+(rf?' · '+rf+' ajuste'+(rf>1?'s':''):'')+'</small><small class="st">'+escH(g.statusPlanilha||'')+'</small></span>'+(rf?'<i class="mb rf">'+rf+'</i>':pd?'<i class="mb">'+pd+'</i>':'')}
+      b.innerHTML='<span class="ml">'+(m.logo?'<img src="'+escH(m.logo)+'" alt="">':escH((m.nome||'?').charAt(0)))+'</span><span class="mt"><b>'+escH(m.nome||g.evento)+'</b><small>'+(g.posts||[]).length+' posts · '+(pd?pd+' aguardando':'nada pendente')+(rf?' · '+rf+' ajuste'+(rf>1?'s':''):'')+'</small><small class="st">'+escH(g.statusPlanilha||'')+' <span class="ms">'+resumoMens(g.mensalidade)+'</span></small></span>'+(rf?'<i class="mb rf">'+rf+'</i>':pd?'<i class="mb">'+pd+'</i>':'')}
     else{const a=(g.arquivos||[]).find(x=>x.t==='foto');
       b.innerHTML='<span class="ml foto">'+(a?'<img src="'+thumb(a.id).replace('w600','w160')+'" alt="" loading="lazy">':'📁')+'</span><span class="mt"><b>'+escH(g.cliente)+'</b><small>'+escH(g.evento)+' · '+(g.arquivos||[]).length+' arquivos</small><small class="st">'+escH(g.statusPlanilha||'')+(g.expira?' · até '+escH(g.expira):'')+'</small></span>'}
     b.onclick=()=>{gsMes=null;gsF='todos';abrir(i);document.getElementById('gConteudo').scrollIntoView({behavior:'smooth',block:'start'})};cards.appendChild(b)});
   const cur=idx.find(([g,i])=>i===atual)||idx[0];abrir(cur[1]);
 }
+function ligarEventosAdmin(){
+  const a=$('admNovoProx');if(a)a.onclick=formProximo;const b=$('admNovoEvF');if(b)b.onclick=formEventoFotos;
+  document.querySelectorAll('[data-evf]').forEach(x=>x.onclick=async()=>{try{const j=await chamar({acao:'adm_pastaevento',e:x.dataset.evf});formArquivos('Adicionar fotos ao evento',j.pasta)}catch(e){toast(e.message)}});
+  document.querySelectorAll('[data-tirar]').forEach(x=>x.onclick=async()=>{if(!x.dataset.c){x.dataset.c=1;x.textContent='toque de novo para tirar';return}
+    const [d,...n]=x.dataset.tirar.split('|');try{await chamar({acao:'adm_tirarproximo',data:d,nome:n.join('|')});await admRecarregar('Evento tirado do site')}catch(e){toast(e.message)}});
+}
 function pintarEventosAdmin(j){
+  setTimeout(ligarEventosAdmin,0);
   const c=$('gConteudo');const br=d=>d?d.split('-').reverse().join('/'):'';
   const px=(j.proximos||[]);const ev=(j.eventos||[]);const L=j.links||{};
-  c.innerHTML='<div class="gs"><h2 class="grupo">Próximos eventos</h2>'+(px.length?'<div class="adm-ev">'+px.map(p=>'<div class="adm-e">'+(p.img?'<img src="'+escH(/^img\//.test(p.img)?'../'+p.img:p.img)+'" alt="">':'<span class="ph">🎟️</span>')+'<div><b>'+escH(p.nome)+'</b><small>'+escH(br(p.data))+(p.hora?' · '+escH(p.hora):'')+(p.local?' · '+escH(p.local):'')+'</small>'+(p.link?'<a href="'+escH(p.link)+'" target="_blank" rel="noopener">Instagram / site</a>':'')+'</div></div>').join('')+'</div>':'<p class="vazio">Nenhum próximo evento. Cadastre na aba "Próximos eventos" da planilha.</p>')+
-    '<h2 class="grupo">Fotos de eventos (reconhecimento facial)</h2>'+(ev.length?'<div class="adm-ev">'+ev.map(e=>'<div class="adm-e"><img src="'+escH(e.capa)+'" alt="" loading="lazy"><div><b>'+escH(e.nome)+'</b><small>'+escH(br(e.data))+' · '+e.fotos+' fotos · '+e.indexadas+' lidas'+(e.codigo?' · código '+escH(e.codigo):' · sem código')+'</small><small>'+(e.noAr?'No ar até '+escH(br(e.ate)):'Fora do ar')+(e.retirados?' · '+e.retirados+' pediram para sair':'')+'</small><a href="../eventos/?e='+encodeURIComponent(e.e)+(e.codigo?'&c='+encodeURIComponent(e.codigo):'')+'" target="_blank" rel="noopener">Ver página do evento</a></div></div>').join('')+'</div>':'<p class="vazio">Nenhum evento com fotos ainda.</p>')+
+  c.innerHTML='<div class="gs"><div class="adm-links" style="margin:0 0 6px"><button class="btn" id="admNovoProx">+ Próximo evento</button><button class="btn sec" id="admNovoEvF">+ Evento com fotos (selfie)</button></div><h2 class="grupo">Próximos eventos</h2>'+(px.length?'<div class="adm-ev">'+px.map(p=>'<div class="adm-e">'+(p.img?'<img src="'+escH(/^img\//.test(p.img)?'../'+p.img:p.img)+'" alt="">':'<span class="ph">🎟️</span>')+'<div><b>'+escH(p.nome)+'</b><small>'+escH(br(p.data))+(p.hora?' · '+escH(p.hora):'')+(p.local?' · '+escH(p.local):'')+'</small>'+(p.link?'<a href="'+escH(p.link)+'" target="_blank" rel="noopener">Instagram / site</a> · ':'')+'<button type="button" class="lk" data-tirar="'+escH(p.data)+'|'+escH(p.nome)+'">tirar do site</button>'+'</div></div>').join('')+'</div>':'<p class="vazio">Nenhum próximo evento. Cadastre na aba "Próximos eventos" da planilha.</p>')+
+    '<h2 class="grupo">Fotos de eventos (reconhecimento facial)</h2>'+(ev.length?'<div class="adm-ev">'+ev.map(e=>'<div class="adm-e"><img src="'+escH(e.capa)+'" alt="" loading="lazy"><div><b>'+escH(e.nome)+'</b><small>'+escH(br(e.data))+' · '+e.fotos+' fotos · '+e.indexadas+' lidas'+(e.codigo?' · código '+escH(e.codigo):' · sem código')+'</small><small>'+(e.noAr?'No ar até '+escH(br(e.ate)):'Fora do ar')+(e.retirados?' · '+e.retirados+' pediram para sair':'')+'</small><a href="../eventos/?e='+encodeURIComponent(e.e)+(e.codigo?'&c='+encodeURIComponent(e.codigo):'')+'" target="_blank" rel="noopener">Ver página do evento</a> · <button type="button" class="lk" data-evf="'+escH(e.e)+'">+ fotos</button></div></div>').join('')+'</div>':'<p class="vazio">Nenhum evento com fotos ainda.</p>')+
     '<div class="adm-links" style="margin-top:22px">'+(L.indexar?'<a class="btn" href="'+escH(L.indexar)+'" target="_blank" rel="noopener">Preparar fotos dos eventos</a>':'')+(L.pastaEventos?'<a class="btn sec" href="'+escH(L.pastaEventos)+'" target="_blank" rel="noopener">Pasta dos eventos no Drive</a>':'')+'</div></div>';
 }
+
+// ---- mensalidade (gestão de redes)
+const reais=v=>'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+let mensTimer=null;
+function pintarMens(g){
+  const box=$('gsMens');if(!box)return;const m=g.mensalidade;
+  if(!m){box.hidden=!g.admin;if(g.admin)box.innerHTML='<div class="mens-info"><small>Mensalidade</small><b>Não cadastrada</b><span>Cadastre na aba "Mensalidades" da planilha (e-mail '+escH(g.email)+').</span></div>';return}
+  box.hidden=false;
+  const [a,mm,d]=m.vencimento.split('-').map(Number);const mesNome=MESES[mm-1];
+  const pagoNome=m.pagoAte?MESES[+m.pagoAte.slice(5,7)-1]:'';
+  const varios=/[,+e]\s/.test(m.clientes)&&m.clientes.split(/,|\+| e /).length>1;
+  const sit={pago:['ok','✓ Pago','Mensalidade de '+pagoNome+' recebida. Obrigado! 💛'],aberto:['ab','A pagar','Vence dia '+d+' de '+mesNome],atrasado:['at','Em atraso','Venceu dia '+d+' de '+mesNome]}[m.situacao];
+  box.className='mens '+sit[0];
+  box.innerHTML='<div class="mens-info"><small>Mensalidade · todo dia '+m.dia+'</small><b>'+reais(m.valor)+'<em>/mês</em></b>'+(varios?'<span>Inclui: '+escH(m.clientes)+'</span>':'')+'</div>'+
+    '<div class="mens-st"><span class="mens-pill">'+sit[1]+'</span><p>'+escH(sit[2])+(m.situacao==='pago'?' · próxima: '+String(d).padStart(2,'0')+'/'+String(mm).padStart(2,'0'):'')+'</p></div>'+
+    '<div class="mens-cd" aria-label="Tempo até o vencimento"></div>'+
+    (g.admin?'<div class="mens-adm">'+(m.situacao!=='pago'?'<button class="btn" data-pg="1">✓ Marcar '+mesNome+' como pago</button>':'')+(m.pagoAte?'<button class="btn sec" data-pg="0">Desfazer último pagamento</button>':'')+(m.ultimo?'<small>Último pagamento: '+escH(m.ultimo)+'</small>':'')+'</div>'
+      :(m.situacao!=='pago'&&m.pix?'<div class="mens-pix"><small>Pix</small><b>'+escH(m.pix)+'</b><button type="button" class="btn sec" id="mensCopiar">Copiar chave</button></div>':''));
+  const alvo=new Date(m.vencimento+'T23:59:59-03:00');const cd=box.querySelector('.mens-cd');
+  const tique=()=>{let t=alvo-Date.now();const atras=t<0;t=Math.abs(t);
+    const v=[Math.floor(t/864e5),Math.floor(t/36e5)%24,Math.floor(t/6e4)%60,Math.floor(t/1e3)%60];
+    cd.innerHTML='<small>'+(atras?'Atrasado há':m.situacao==='pago'?'Próximo vencimento em':'Faltam')+'</small><div>'+['dias','h','min','s'].map((n,i)=>'<span><b>'+(i?String(v[i]).padStart(2,'0'):v[i])+'</b>'+n+'</span>').join('')+'</div>'};
+  tique();clearInterval(mensTimer);mensTimer=setInterval(()=>{if(!document.body.contains(cd))return clearInterval(mensTimer);tique()},1000);
+  const cp=$('mensCopiar');if(cp)cp.onclick=()=>{navigator.clipboard.writeText(m.pix).then(()=>{cp.textContent='Copiada ✓';toast('Chave Pix copiada')}).catch(()=>{})};
+  box.querySelectorAll('[data-pg]').forEach(b=>b.onclick=async()=>{const pagar=b.dataset.pg==='1';
+    if(!b.dataset.c){b.dataset.c=1;const t0=b.textContent;b.textContent='Toque de novo para confirmar';setTimeout(()=>{delete b.dataset.c;b.textContent=t0},4000);return}
+    box.querySelectorAll('button').forEach(x=>x.disabled=true);
+    try{const j=await api({acao:'pagamento',sessao:guardar.get(),email:g.email,desfazer:!pagar});if(!j.ok)throw new Error(j.erro);
+      galerias.forEach(x=>{if(x.tipo==='gestao'&&x.email===g.email)x.mensalidade=j.mensalidade});pintarMens(g);if(admDados)atualizarCartoesAdmin();
+      toast(pagar?'✓ Pagamento registrado':'Pagamento desfeito');
+    }catch(e){toast(e.message||'Não foi possível agora.');box.querySelectorAll('button').forEach(x=>x.disabled=false)}});
+}
+function resumoMens(m){if(!m)return'';const d=Math.floor((new Date(m.vencimento+'T23:59:59-03:00')-Date.now())/864e5);
+  return m.situacao==='pago'?'💳 pago':m.situacao==='atrasado'?'💳 atrasado '+Math.abs(d)+'d':'💳 vence em '+d+'d'}
+function atualizarCartoesAdmin(){document.querySelectorAll('#admCards .marca').forEach(b=>{const g=galerias[+b.dataset.i];if(!g||g.tipo!=='gestao')return;const s=b.querySelector('.ms');if(s)s.textContent=resumoMens(g.mensalidade)})}
+
+// ---- Agência: adicionar clientes, galerias, posts e eventos
+function modal(titulo,html,enviar,rotulo){
+  let m=$('admModal');if(!m){m=document.createElement('div');m.id='admModal';m.className='am';m.setAttribute('role','dialog');m.setAttribute('aria-modal','true');document.body.appendChild(m)}
+  m.innerHTML='<form class="am-c"><div class="am-h"><h2>'+titulo+'</h2><button type="button" class="am-x" aria-label="Fechar">✕</button></div><div class="am-b">'+html+'</div><p class="msg" id="amMsg" role="status"></p><div class="am-f"><button type="button" class="btn sec am-cc">Cancelar</button><button class="btn am-ok">'+(rotulo||'Salvar')+'</button></div></form>';
+  m.hidden=false;document.body.style.overflow='hidden';
+  const fechar=()=>{m.hidden=true;document.body.style.overflow=''};
+  m.querySelector('.am-x').onclick=fechar;m.querySelector('.am-cc').onclick=fechar;
+  m.onclick=e=>{if(e.target===m)fechar()};
+  const f=m.querySelector('form');const ok=m.querySelector('.am-ok');
+  f.onsubmit=async e=>{e.preventDefault();ok.disabled=true;const t0=ok.textContent;ok.innerHTML='<span class="sp"></span>';msg($('amMsg'),'');
+    try{await enviar(f,txt=>msg($('amMsg'),txt));fechar()}catch(err){msg($('amMsg'),err.message||'Não foi possível agora.',true)}
+    ok.disabled=false;ok.textContent=t0};
+  f.querySelectorAll('.am-arq input').forEach(i=>i.onchange=()=>{const n=i.files.length;i.nextElementSibling.textContent=n?(n===1?i.files[0].name:n+' arquivos escolhidos'):'Toque para escolher'});
+  setTimeout(()=>{const i=f.querySelector('input:not([type=file]),textarea');if(i)i.focus()},50);
+  return f;
+}
+const campo=(n,rot,tipo,extra)=>'<label>'+rot+'<input name="'+n+'" type="'+(tipo||'text')+'"'+(extra||'')+'></label>';
+const arqCampo=(n,rot,multi,aceita)=>'<label class="am-arq">'+rot+'<input name="'+n+'" type="file"'+(multi?' multiple':'')+' accept="'+(aceita||'image/*,video/*')+'"><span class="am-drop">Toque para escolher'+(multi?' (pode escolher vários)':'')+'</span></label>';
+function lerB64(file){return new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(',')[1]);r.onerror=no;r.readAsDataURL(file)})}
+async function subir(pasta,files,nomeDe,progresso,publico){
+  const lista=[...files];let n=0;const ids=[];
+  for(const f of lista){
+    if(f.size>45*1024*1024)throw new Error('"'+f.name+'" tem mais de 45 MB. Arquivos grandes (vídeos longos) coloque direto na pasta do Drive.');
+    progresso&&progresso('Enviando '+(n+1)+' de '+lista.length+'… ('+f.name+')');
+    const j=await api({acao:'adm_arquivo',sessao:guardar.get(),pasta:pasta,nome:nomeDe?nomeDe(f,n,lista.length):f.name,tipo:f.type||'application/octet-stream',b64:await lerB64(f),publico:!!publico});
+    if(!j.ok)throw new Error(j.erro||'Falha ao enviar '+f.name);ids.push(j.id);n++}
+  return ids;
+}
+const ext=f=>{const m=f.name.match(/\.[^.]+$/);return m?m[0].toLowerCase():''};
+async function admRecarregar(msgTxt){if(msgTxt)toast(msgTxt);const sec=admSec;const at=galerias[atual]&&(galerias[atual].id||galerias[atual].pastaId);await carregarGaleria();admSec=sec;
+  const i=galerias.findIndex(g=>(g.id||g.pastaId)===at);if(i>=0){atual=i}if(admDados)montarAdmin(admDados)}
+async function chamar(d){const j=await api(Object.assign({sessao:guardar.get()},d));if(!j.ok)throw new Error(j.erro||'Não foi possível agora.');return j}
+
+function formCliente(){
+  modal('Novo cliente de gestão de redes',campo('nome','Nome da marca')+campo('resp','Nome do responsável')+campo('email','E-mail de login (o cliente entra com ele)','email')+
+    '<div class="am-2">'+campo('insta','Instagram (@)')+campo('tel','Telefone / WhatsApp','tel')+'</div>'+campo('contato','E-mail de contato (se for outro)','email')+
+    '<div class="am-2">'+campo('valor','Mensalidade (R$)','text',' inputmode="decimal" placeholder="Ex.: 200"')+campo('dia','Dia do vencimento','number',' min="1" max="28" value="15"')+'</div>'+
+    '<p class="am-dica">Se o e-mail já for de outro perfil (como a Vivi), coloque aqui o valor <b>total</b> que ela paga pelos perfis.</p>'+
+    arqCampo('logo','Logo (opcional)',false,'image/*')+'<label class="am-chk"><input type="checkbox" name="enviar"> Já enviar o e-mail de acesso para o cliente</label>',
+  async(f,st)=>{const d=Object.fromEntries(new FormData(f));
+    const j=await chamar({acao:'adm_cliente',nome:d.nome,resp:d.resp,email:d.email,insta:d.insta,tel:d.tel,contato:d.contato,valor:d.valor,dia:d.dia,enviar:!!f.enviar.checked});
+    if(f.logo.files.length)await subir(j.pasta,f.logo.files,fl=>'logo'+ext(fl),st,true);
+    admSec='gestao';await admRecarregar('✓ Cliente criado'+(f.enviar.checked?' e acesso enviado':''))},'Criar cliente');
+}
+function formGaleria(){
+  modal('Nova galeria de fotos',campo('nome','Nome do cliente')+campo('email','E-mail do cliente','email')+campo('evento','Evento (ex.: Casamento, Aniversário 15 anos)')+
+    '<div class="am-2">'+campo('dias','Dias para baixar','number',' min="1" max="365" value="15"')+'<label>Contar a partir de<select name="contar"><option>Envio do acesso</option><option>Primeiro acesso</option></select></label></div>'+
+    arqCampo('fotos','Fotos e vídeos (pode adicionar mais depois)',true)+'<label class="am-chk"><input type="checkbox" name="enviar"> Enviar o acesso para o cliente quando terminar de subir</label>',
+  async(f,st)=>{const d=Object.fromEntries(new FormData(f));
+    const j=await chamar({acao:'adm_galeria',nome:d.nome,email:d.email,evento:d.evento,dias:d.dias,contar:d.contar});
+    if(f.fotos.files.length)await subir(j.pasta,f.fotos.files,null,st);
+    if(f.enviar.checked){st('Enviando o acesso…');await chamar({acao:'adm_status',id:j.id,status:'Enviar acesso'})}
+    admSec='fotos';await admRecarregar('✓ Galeria criada')},'Criar galeria');
+}
+function formArquivos(titulo,pasta,depois){
+  modal(titulo,arqCampo('arqs','Escolha os arquivos',true)+'<p class="am-dica">Fotos e vídeos de até 45 MB cada. Para muitos arquivos ou vídeos grandes, é mais rápido colocar direto na pasta do Drive.</p>',
+  async(f,st)=>{if(!f.arqs.files.length)throw new Error('Escolha pelo menos um arquivo.');await subir(pasta,f.arqs.files,null,st);if(depois)await depois();await admRecarregar('✓ '+f.arqs.files.length+' arquivo(s) enviados')},'Enviar');
+}
+function formPost(g){
+  const hj=new Date();const iso=new Date(hj.getTime()-hj.getTimezoneOffset()*6e4).toISOString().slice(0,10);
+  modal('Novo post · '+escH(g.marca&&g.marca.nome||g.evento),'<div class="am-2">'+campo('data','Data da publicação','date',' required value="'+iso+'"')+'<label>Tipo<select name="tipo"><option value="">Automático</option><option>Reels</option><option>Carrossel</option><option>Post</option><option>Stories</option></select></label></div>'+
+    campo('titulo','Título (ex.: Promo Black Friday)','text',' required')+'<label>Legenda (opcional)<textarea name="legenda" rows="5"></textarea></label>'+arqCampo('arqs','Imagem, vídeo ou fotos do carrossel (na ordem)',true),
+  async(f,st)=>{const d=Object.fromEntries(new FormData(f));if(!f.arqs.files.length)throw new Error('Escolha a arte ou o vídeo do post.');
+    const [a,m,dd]=d.data.split('-');let tit=d.titulo.trim().replace(/[\\/:*?"<>|#]/g,'-');
+    if(d.tipo==='Stories'&&!/stor/i.test(tit))tit='Stories '+tit;if(d.tipo==='Reels'&&!/reel/i.test(tit))tit='Reels '+tit;
+    const base=dd+'-'+m+'-'+a+' '+tit;const pasta=g.pastaId;
+    await subir(pasta,f.arqs.files,(fl,i,n)=>base+(n>1?' '+(i+1):'')+ext(fl),st);
+    if(d.legenda.trim())await chamar({acao:'adm_texto',pasta:pasta,nome:base,texto:d.legenda.trim()});
+    gsMes=a+'-'+m;await admRecarregar('✓ Post adicionado')},'Adicionar post');
+}
+function formProximo(){
+  modal('Próximo evento','<div class="am-2">'+campo('data','Data','date',' required')+campo('hora','Horário','time')+'</div>'+campo('nome','Nome do evento','text',' required')+campo('local','Local (ex.: Neo Química Arena)')+
+    campo('endereco','Endereço para o mapa (opcional)')+campo('link','Instagram ou site do evento (opcional)','url',' placeholder="https://"')+arqCampo('img','Arte do evento (opcional)',false,'image/*'),
+  async(f,st)=>{const d=Object.fromEntries(new FormData(f));let img='';
+    if(f.img.files.length){const p=await chamar({acao:'adm_pastaproximo'});const ids=await subir(p.pasta,f.img.files,fl=>d.data+' '+d.nome+ext(fl),st,true);img='https://drive.google.com/file/d/'+ids[0]+'/view'}
+    await chamar({acao:'adm_proximo',data:d.data,hora:d.hora,nome:d.nome,local:d.local,endereco:d.endereco,link:d.link,img:img});
+    admSec='eventos';await admRecarregar('✓ Evento adicionado ao calendário do site')},'Adicionar evento');
+}
+function formEventoFotos(){
+  modal('Evento com fotos (busca por selfie)','<div class="am-2">'+campo('data','Data do evento','date',' required')+campo('codigo','Código de acesso','text',' placeholder="Ex.: ANA25" maxlength="20"')+'</div>'+campo('nome','Nome do evento','text',' required')+
+    arqCampo('fotos','Fotos do evento (pode adicionar mais depois)',true,'image/*')+'<p class="am-dica">Depois de subir, clique em <b>Preparar fotos dos eventos</b> para ler os rostos. O evento só aparece no site depois disso.</p>',
+  async(f,st)=>{const d=Object.fromEntries(new FormData(f));const j=await chamar({acao:'adm_eventofotos',data:d.data,nome:d.nome,codigo:d.codigo});
+    if(f.fotos.files.length)await subir(j.pasta,f.fotos.files,null,st);admSec='eventos';await admRecarregar('✓ Evento criado. Agora é só preparar as fotos.')},'Criar evento');
+}
+async function admStatus(g,status,b){b.disabled=true;try{await chamar({acao:'adm_status',id:g.id,status:status});await admRecarregar(status==='Enviar acesso'?'✓ Acesso enviado para '+g.email:status==='Avisar novos posts'?'✓ Cliente avisado dos novos posts':'✓ Feito')}catch(e){toast(e.message);b.disabled=false}}
+function barraAdmin(g){
+  // ações da agência dentro de um cliente aberto
+  const ac=$('gAcoes');if(g.tipo==='gestao')ac.innerHTML='';ac.querySelectorAll('.adm-b').forEach(x=>x.remove());const bt=(t,fn,sec)=>{const b=document.createElement('button');b.className='btn adm-b'+(sec?' sec':'');b.textContent=t;b.onclick=()=>fn(b);ac.appendChild(b)};
+  if(g.tipo==='gestao'){bt('+ Adicionar post',()=>formPost(g));
+    if(g.id&&/Ativo|Acesso enviado/.test(g.statusPlanilha))bt('🔔 Avisar cliente dos novos posts',b=>admStatus(g,'Avisar novos posts',b),1);
+    if(!/Ativo|Acesso enviado/.test(g.statusPlanilha))bt('✉️ Enviar acesso ao cliente',b=>{if(!g.id){chamarSemId(g,b);return}admStatus(g,'Enviar acesso',b)},1);}
+  else{bt('+ Adicionar fotos',()=>formArquivos('Adicionar fotos · '+escH(g.cliente),g.pastaId));
+    if(!/Ativo|Acesso enviado/.test(g.statusPlanilha))bt('✉️ Enviar acesso ao cliente',b=>admStatus(g,'Enviar acesso',b),1);
+    else bt('🔒 Encerrar galeria',b=>{if(!b.dataset.c){b.dataset.c=1;b.textContent='Toque de novo para encerrar';return}admStatus(g,'Encerrar agora',b)},1)}
+}
+async function chamarSemId(g,b){toast('Use a planilha (Status = Enviar acesso) para este cliente.')}
 
 // ---- visualizador
 let pos=0;
