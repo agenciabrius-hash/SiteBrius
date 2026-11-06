@@ -132,7 +132,7 @@ input:focus{border-color:var(--gold)}
 /* Mensalidade */
 .mens{display:grid;grid-template-columns:auto auto 1fr;gap:clamp(14px,3vw,30px);align-items:center;padding:16px 20px;border-radius:18px;border:1px solid #2f2b26;background:var(--graphite);margin:-8px 0 22px;position:relative;overflow:hidden;animation:gsEntra .6s .1s both}
 .mens::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--mc,#e6d3ae)}
-.mens.ok{--mc:#7fc49a}.mens.ab{--mc:#e6d3ae}.mens.at{--mc:#f0a28f;background:linear-gradient(90deg,rgba(240,162,143,.08),var(--graphite) 60%)}
+.mens.ok{--mc:#7fc49a}.mens.cf{--mc:#8ab4f8}.mens.cf .mens-pill{animation:gsPulso 2s ease-in-out infinite}.mens.ab{--mc:#e6d3ae}.mens.at{--mc:#f0a28f;background:linear-gradient(90deg,rgba(240,162,143,.08),var(--graphite) 60%)}
 .mens-info small,.mens-cd small,.mens-pix small{display:block;font:700 10.5px var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted-d);margin-bottom:4px}
 .mens-info b{font:500 30px/1 var(--serif);color:var(--bone)}.mens-info b em{font:500 14px var(--body);color:var(--muted-d);font-style:normal;margin-left:3px}
 .mens-info span{display:block;font-size:12.5px;color:var(--muted-d);margin-top:5px}
@@ -610,18 +610,22 @@ function pintarMens(g){
   const [a,mm,d]=m.vencimento.split('-').map(Number);const mesNome=MESES[mm-1];
   const pagoNome=m.pagoAte?MESES[+m.pagoAte.slice(5,7)-1]:'';
   const varios=/[,+e]\s/.test(m.clientes)&&m.clientes.split(/,|\+| e /).length>1;
-  const sit={pago:['ok','✓ Pago','Mensalidade de '+pagoNome+' recebida. Obrigado! 💛'],aberto:['ab','A pagar','Vence dia '+d+' de '+mesNome],atrasado:['at','Em atraso','Venceu dia '+d+' de '+mesNome]}[m.situacao];
+  const quando=(m.aviso||'').split(' · ')[0];
+  const sit={pago:['ok','✓ Pago','Mensalidade de '+pagoNome+' recebida. Obrigado! 💛'],aberto:['ab','A pagar','Vence dia '+d+' de '+mesNome],atrasado:['at','Em atraso','Venceu dia '+d+' de '+mesNome],
+    confirmando:['cf',g.admin?'Cliente avisou que pagou':'Aguardando confirmação',g.admin?'Aviso em '+quando+' · confira o Pix e confirme':'Você avisou em '+quando+'. Assim que a Brius conferir, aparece "Pago".']}[m.situacao];
   box.className='mens '+sit[0];
   box.innerHTML='<div class="mens-info"><small>Mensalidade · todo dia '+m.dia+'</small><b>'+reais(m.valor)+'<em>/mês</em></b>'+(varios?'<span>Inclui: '+escH(m.clientes)+'</span>':'')+'</div>'+
     '<div class="mens-st"><span class="mens-pill">'+sit[1]+'</span><p>'+escH(sit[2])+(m.situacao==='pago'?' · próxima: '+String(d).padStart(2,'0')+'/'+String(mm).padStart(2,'0'):'')+'</p></div>'+
     '<div class="mens-cd" aria-label="Tempo até o vencimento"></div>'+
-    (g.admin?'<div class="mens-adm">'+(m.situacao!=='pago'?'<button class="btn" data-pg="1">✓ Marcar '+mesNome+' como pago</button>':'')+(m.pagoAte?'<button class="btn sec" data-pg="0">Desfazer último pagamento</button>':'')+(m.ultimo?'<small>Último pagamento: '+escH(m.ultimo)+'</small>':'')+'</div>'
-      :(m.situacao!=='pago'&&m.pix?'<div class="mens-pix"><small>Pix</small><b>'+escH(m.pix)+'</b><button type="button" class="btn sec" id="mensCopiar">Copiar chave</button></div>':''));
+    (g.admin?'<div class="mens-adm">'+(m.situacao!=='pago'?'<button class="btn" data-pg="1">✓ '+(m.situacao==='confirmando'?'Confirmar pagamento de '+mesNome:'Marcar '+mesNome+' como pago')+'</button>':'')+(m.pagoAte?'<button class="btn sec" data-pg="0">Desfazer último pagamento</button>':'')+(m.ultimo?'<small>Último pagamento: '+escH(m.ultimo)+'</small>':'')+'</div>'
+      :((m.situacao==='aberto'||m.situacao==='atrasado')?'<div class="mens-pix">'+(m.pix?'<small>Pix</small><b>'+escH(m.pix)+'</b><button type="button" class="btn sec" id="mensCopiar">Copiar chave</button>':'')+'<button type="button" class="btn" id="mensJa">Já fiz o pagamento</button></div>':''));
   const alvo=new Date(m.vencimento+'T23:59:59-03:00');const cd=box.querySelector('.mens-cd');
   const tique=()=>{let t=alvo-Date.now();const atras=t<0;t=Math.abs(t);
     const v=[Math.floor(t/864e5),Math.floor(t/36e5)%24,Math.floor(t/6e4)%60,Math.floor(t/1e3)%60];
     cd.innerHTML='<small>'+(atras?'Atrasado há':m.situacao==='pago'?'Próximo vencimento em':'Faltam')+'</small><div>'+['dias','h','min','s'].map((n,i)=>'<span><b>'+(i?String(v[i]).padStart(2,'0'):v[i])+'</b>'+n+'</span>').join('')+'</div>'};
   tique();clearInterval(mensTimer);mensTimer=setInterval(()=>{if(!document.body.contains(cd))return clearInterval(mensTimer);tique()},1000);
+  const ja=$('mensJa');if(ja)ja.onclick=async()=>{if(!ja.dataset.c){ja.dataset.c=1;ja.textContent='Toque de novo para avisar a Brius';setTimeout(()=>{delete ja.dataset.c;ja.textContent='Já fiz o pagamento'},4000);return}
+    ja.disabled=true;try{const j=await api({acao:'avisopago',sessao:guardar.get()});if(!j.ok)throw new Error(j.erro);galerias.forEach(x=>{if(x.tipo==='gestao')x.mensalidade=j.mensalidade});pintarMens(g);toast('✓ Avisamos a Brius. Assim que conferir, aparece "Pago".')}catch(e){toast(e.message||'Não foi possível agora.');ja.disabled=false}};
   const cp=$('mensCopiar');if(cp)cp.onclick=()=>{navigator.clipboard.writeText(m.pix).then(()=>{cp.textContent='Copiada ✓';toast('Chave Pix copiada')}).catch(()=>{})};
   box.querySelectorAll('[data-pg]').forEach(b=>b.onclick=async()=>{const pagar=b.dataset.pg==='1';
     if(!b.dataset.c){b.dataset.c=1;const t0=b.textContent;b.textContent='Toque de novo para confirmar';setTimeout(()=>{delete b.dataset.c;b.textContent=t0},4000);return}
@@ -632,7 +636,7 @@ function pintarMens(g){
     }catch(e){toast(e.message||'Não foi possível agora.');box.querySelectorAll('button').forEach(x=>x.disabled=false)}});
 }
 function resumoMens(m){if(!m)return'';const d=Math.floor((new Date(m.vencimento+'T23:59:59-03:00')-Date.now())/864e5);
-  return m.situacao==='pago'?'💳 pago':m.situacao==='atrasado'?'💳 atrasado '+Math.abs(d)+'d':'💳 vence em '+d+'d'}
+  return m.situacao==='pago'?'💳 pago':m.situacao==='confirmando'?'💳 confirmar pagamento!':m.situacao==='atrasado'?'💳 atrasado '+Math.abs(d)+'d':'💳 vence em '+d+'d'}
 function atualizarCartoesAdmin(){document.querySelectorAll('#admCards .marca').forEach(b=>{const g=galerias[+b.dataset.i];if(!g||g.tipo!=='gestao')return;const s=b.querySelector('.ms');if(s)s.textContent=resumoMens(g.mensalidade)})}
 
 // ---- Agência: adicionar clientes, galerias, posts e eventos
