@@ -177,6 +177,36 @@ input:focus{border-color:var(--gold)}
 @media print{body.imprimindo-adm .cab,body.imprimindo-adm #admLinks,body.imprimindo-adm .adm-abas,body.imprimindo-adm .top,body.imprimindo-adm .ra-ac,body.imprimindo-adm .ra-top .btn{display:none!important}
  body.imprimindo-adm{background:#fff;color:#111}body.imprimindo-adm .ra-c,body.imprimindo-adm .rel-n div,body.imprimindo-adm .ra-n span{background:#fff;border-color:#ddd;color:#111}}
 @media (max-width:640px){.adm-seg{grid-template-columns:1fr 1fr}}
+/* Pix copia e cola */
+.mens-pix{display:grid!important;grid-template-columns:1fr auto;gap:14px 20px;align-items:start}
+.pix-cc{display:grid;grid-template-columns:1fr auto;gap:8px 18px;align-items:center;grid-column:1/-1}
+.pix-cc .btn.pix-btn{width:auto;justify-self:start;padding:14px 22px!important;font-size:15.5px!important;background:#7fc49a;color:#10241a}
+.pix-cc .btn.pix-btn.ok{background:var(--bone)}
+.pix-cc p{grid-column:1;margin:0;font-size:13.5px;color:var(--muted-d)}
+.pix-cc p b{margin:0;font:inherit;font-weight:700;color:var(--bone)}
+.pix-qr{grid-column:2;grid-row:1/span 2;display:grid;justify-items:center;gap:6px}
+.pix-qr canvas,.pix-qr img{background:#fff;padding:8px;border-radius:10px;width:150px!important;height:150px!important}
+.pix-qr small{font-size:11.5px;color:var(--muted-d)}
+.pix-ch{display:flex;flex-wrap:wrap;align-items:center;gap:10px}.pix-ch small{display:block;width:100%;font:700 10.5px var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted-d)}
+.mens-pix #mensJa{align-self:end}
+@media (max-width:700px){.mens-pix{grid-template-columns:1fr}.pix-cc{grid-template-columns:1fr}.pix-qr{display:none}.pix-cc .btn.pix-btn{width:100%!important;justify-self:stretch}}
+/* Insights do Instagram */
+.ins{margin-top:18px;padding-top:16px;border-top:1px dashed #2f2b26;display:grid;gap:12px}
+.ins-h{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center}.ins-h b{font:700 15px var(--body)}.ins-h a{color:var(--gold-soft)}
+.ins-h .btn,.ins .ins-con{width:auto;padding:9px 14px;font-size:13px}
+.ins-n{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.ins-n div{background:#201d1a;border:1px solid #2f2b26;border-radius:12px;padding:10px 12px}
+.ins-n b{display:block;font:500 24px/1.1 var(--serif);color:var(--bone)}.ins-n small{font-size:11.5px;color:var(--muted-d)}
+.ins-n em{display:block;font:700 12px var(--body);font-style:normal;margin-top:3px}.ins-n em.up{color:#7fc49a}.ins-n em.dn{color:#f0a28f}
+.ins-sp{width:100%;height:60px}
+.ins-t{margin:4px 0 0;font:700 12px var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--muted-d)}
+.ins-top{display:grid;gap:8px}
+.ins-top a{display:grid;grid-template-columns:64px 1fr;gap:12px;align-items:center;text-decoration:none;color:var(--bone);background:#201d1a;border:1px solid #2f2b26;border-radius:12px;padding:8px;transition:border-color .2s}
+.ins-top a:hover{border-color:var(--gold)}
+.ins-i{position:relative;width:64px;height:64px;border-radius:8px;overflow:hidden;background:#2f2b26}.ins-i img{width:100%;height:100%;object-fit:cover}
+.ins-i i{position:absolute;left:4px;top:4px;background:var(--gold-soft);color:var(--ink);font:800 11px var(--body);font-style:normal;padding:2px 6px;border-radius:999px}
+.ins-top b{display:block;font-size:13.5px}.ins-top small{display:block;font-size:12px;color:var(--muted-d)}.ins-top .leg{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.ins-obs{margin:0;font-size:11.5px;color:#8d8478}
 /* Mensalidade */
 .mens{display:grid;grid-template-columns:auto auto 1fr;gap:clamp(14px,3vw,30px);align-items:center;padding:16px 20px;border-radius:18px;border:1px solid #2f2b26;background:var(--graphite);margin:-8px 0 22px;position:relative;overflow:hidden;animation:gsEntra .6s .1s both}
 .mens::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--mc,#e6d3ae)}
@@ -206,7 +236,7 @@ input:focus{border-color:var(--gold)}
 .mens-adm .btn,.mens-pix .btn{width:auto;padding:10px 16px;font-size:13.5px}.mens-adm small{color:var(--muted-d);font-size:12.5px}
 .mens-pix b{font:600 15px var(--body);color:var(--bone);margin-right:6px}
 .marca .ms{font-weight:700;color:var(--gold-soft)}
-@media (max-width:720px){.mens{grid-template-columns:1fr 1fr}.mens-cd{grid-column:1/-1;justify-self:stretch;text-align:left}.mens-cd div{justify-content:flex-start}}
+@media (max-width:720px){.mens{grid-template-columns:1fr}.mens-cd{grid-column:1/-1;justify-self:stretch;text-align:left}.mens-cd div{justify-content:flex-start}}
 /* Gestão de redes: calendário de aprovação */
 .abas.marcas{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:12px;margin-bottom:8px}
 .marcas-t{grid-column:1/-1;margin:0;color:var(--muted-d);font-size:14px}
@@ -596,7 +626,7 @@ function pintarGestao(g){
 function pintarRelatorio(g,mesP){
   const box=$('gsRelC');if(!box)return;const [a,mm]=(gsMes||'').split('-').map(Number);
   $('gsRelT').textContent=a?MESES[mm-1]+' '+a:'';
-  if(!mesP.length){box.innerHTML='<p class="vazio" style="margin:6px 0 0">Nenhum conteúdo neste mês.</p>';return}
+  if(!mesP.length){box.innerHTML='<p class="vazio" style="margin:6px 0 0">Nenhum conteúdo neste mês.</p>';const bi=blocoInsights(g);if(bi)box.appendChild(bi);return}
   const ap=mesP.filter(p=>p.status==='Aprovado').length,rf=mesP.filter(p=>p.status==='Refazer').length,pd=mesP.filter(pend).length;
   const tipos={};mesP.forEach(p=>tipos[p.tipo]=(tipos[p.tipo]||0)+1);const max=Math.max(...Object.values(tipos));
   const sem=[0,0,0,0,0];mesP.forEach(p=>{if(p.data)sem[Math.min(4,Math.floor((+p.data.slice(8)-1)/7))]++});const ms=Math.max(1,...sem);
@@ -606,6 +636,7 @@ function pintarRelatorio(g,mesP){
     '<div><h4>Por semana</h4><div class="rel-s">'+sem.map((n,i)=>'<div><i style="--h:'+(n/ms*100)+'%"></i><b>'+n+'</b><small>'+(i*7+1)+'–'+Math.min(i*7+7,new Date(a,mm,0).getDate())+'</small></div>').join('')+'</div></div></div>'+
     '<p class="rel-taxa">'+(mesP.length?Math.round(ap/mesP.length*100):0)+'% aprovado · '+(ap+rf?Math.round(mesP.filter(p=>p.status==='Aprovado').length/(ap+rf)*100):0)+'% de aprovação entre os respondidos</p>'+
     '<button type="button" class="btn sec rel-imp">🖨️ Imprimir / salvar em PDF</button>';
+  const bi=blocoInsights(g);if(bi)box.insertBefore(bi,box.querySelector('.rel-taxa'));
   box.querySelector('.rel-imp').onclick=()=>{$('gsRel').open=true;document.body.classList.add('imprimindo-rel');window.print();setTimeout(()=>document.body.classList.remove('imprimindo-rel'),500)};
 }
 function cartao(g,p,n){
@@ -729,7 +760,8 @@ function pintarMens(g){
     '<div class="mens-st"><span class="mens-pill">'+sit[1]+'</span><p>'+escH(sit[2])+(m.situacao==='pago'?' · próxima: '+String(d).padStart(2,'0')+'/'+String(mm).padStart(2,'0'):'')+'</p></div>'+
     '<div class="mens-cd" aria-label="Tempo até o vencimento"></div>'+
     (g.admin?'<div class="mens-adm">'+(m.situacao!=='pago'?'<button class="btn" data-pg="1">✓ '+(m.situacao==='confirmando'?'Confirmar pagamento de '+mesNome:'Marcar '+mesNome+' como pago')+'</button>':'')+(m.pagoAte?'<button class="btn sec" data-pg="0">Desfazer último pagamento</button>':'')+(m.ultimo?'<small>Último pagamento: '+escH(m.ultimo)+'</small>':'')+'</div>'
-      :((m.situacao==='aberto'||m.situacao==='atrasado')?'<div class="mens-pix">'+(m.pix?'<small>Pix</small><b>'+escH(m.pix)+'</b><button type="button" class="btn sec" id="mensCopiar">Copiar chave</button>':'')+'<button type="button" class="btn" id="mensJa">Já fiz o pagamento</button></div>':''));
+      :((m.situacao==='aberto'||m.situacao==='atrasado')?'<div class="mens-pix">'+(m.pix?'<div class="pix-cc"><button type="button" class="btn pix-btn" id="mensCodigo">📋 Copiar código Pix ('+reais(m.valor)+')</button><p>Depois abra o app do seu banco › <b>Pix</b> › <b>Pix Copia e Cola</b> e cole. O valor já vem preenchido.</p><div class="pix-qr" id="mensQR" aria-label="QR Code do Pix"></div></div>'+
+  '<div class="pix-ch"><small>Ou pela chave</small><b>'+escH(m.pix)+'</b><button type="button" class="btn sec" id="mensCopiar">Copiar chave</button></div>':'')+'<button type="button" class="btn sec" id="mensJa">Já fiz o pagamento</button></div>':''));
   const alvo=new Date(m.vencimento+'T23:59:59-03:00');const cd=box.querySelector('.mens-cd');
   const tique=()=>{let t=alvo-Date.now();const atras=t<0;t=Math.abs(t);
     const v=[Math.floor(t/864e5),Math.floor(t/36e5)%24,Math.floor(t/6e4)%60,Math.floor(t/1e3)%60];
@@ -737,6 +769,11 @@ function pintarMens(g){
   tique();clearInterval(mensTimer);mensTimer=setInterval(()=>{if(!document.body.contains(cd))return clearInterval(mensTimer);tique()},1000);
   const ja=$('mensJa');if(ja)ja.onclick=async()=>{if(!ja.dataset.c){ja.dataset.c=1;ja.textContent='Toque de novo para avisar a Brius';setTimeout(()=>{delete ja.dataset.c;ja.textContent='Já fiz o pagamento'},4000);return}
     ja.disabled=true;try{const j=await api({acao:'avisopago',sessao:guardar.get()});if(!j.ok)throw new Error(j.erro);galerias.forEach(x=>{if(x.tipo==='gestao')x.mensalidade=j.mensalidade});pintarMens(g);toast('✓ Avisamos a Brius. Assim que conferir, aparece "Pago".')}catch(e){toast(e.message||'Não foi possível agora.');ja.disabled=false}};
+  const cod=$('mensCodigo');if(cod){const payload=pixPayload(m.pix,m.pixNome,m.pixCidade,m.valor,'BRIUS'+(m.ref||'').replace('-',''));
+    cod.onclick=async()=>{let ok=false;try{await navigator.clipboard.writeText(payload);ok=true}catch(e){const t=document.createElement('textarea');t.value=payload;document.body.appendChild(t);t.select();try{ok=document.execCommand('copy')}catch(x){}t.remove()}
+      if(ok){cod.textContent='✓ Código copiado! Agora cole no app do banco';cod.classList.add('ok');toast('Código Pix copiado. Abra o app do banco › Pix Copia e Cola');setTimeout(()=>{cod.textContent='📋 Copiar código Pix ('+reais(m.valor)+')';cod.classList.remove('ok')},6000)}
+      else prompt('Copie o código Pix:',payload)};
+    if(matchMedia('(min-width:700px)').matches)carregarQR().then(()=>{const q=$('mensQR');if(q&&!q.firstChild){new QRCode(q,{text:payload,width:150,height:150,correctLevel:QRCode.CorrectLevel.M});q.insertAdjacentHTML('beforeend','<small>Ou leia o QR Code com o celular</small>')}}).catch(()=>{})}
   const cp=$('mensCopiar');if(cp)cp.onclick=()=>{navigator.clipboard.writeText(m.pix).then(()=>{cp.textContent='Copiada ✓';toast('Chave Pix copiada')}).catch(()=>{})};
   box.querySelectorAll('[data-pg]').forEach(b=>b.onclick=async()=>{const pagar=b.dataset.pg==='1';
     if(!b.dataset.c){b.dataset.c=1;const t0=b.textContent;b.textContent='Toque de novo para confirmar';setTimeout(()=>{delete b.dataset.c;b.textContent=t0},4000);return}
@@ -850,6 +887,7 @@ function barraAdmin(g){
   const ac=$('gAcoes');if(g.tipo==='gestao')ac.innerHTML='';ac.querySelectorAll('.adm-b').forEach(x=>x.remove());const bt=(t,fn,sec)=>{const b=document.createElement('button');b.className='btn adm-b'+(sec?' sec':'');b.textContent=t;b.onclick=()=>fn(b);ac.appendChild(b)};
   const senha=()=>{if(g.id&&/Ativo|Acesso enviado/.test(g.statusPlanilha))bt('🔑 Redefinir senha',b=>{if(!b.dataset.c){b.dataset.c=1;b.textContent='Toque de novo: enviar para '+g.email;return}admStatus(g,'Redefinir senha',b)},1)};
   if(!g.propria)setTimeout(senha,0);
+  if(g.tipo==='gestao'&&g.id){const ins=g.insights;bt(ins&&ins.conectado?'📸 @'+ins.usuario+' conectado':'📸 Conectar Instagram',()=>{if(ins&&ins.conectado){const r=$('gsRel');if(r){r.open=true;r.scrollIntoView({behavior:'smooth',block:'center'})}}else conectarIG(g)},1)}
   if(g.propria){bt('+ Adicionar post',()=>formPost(g));return}
   if(g.tipo==='gestao'){bt('+ Adicionar post',()=>formPost(g));
     if(g.id&&/Ativo|Acesso enviado/.test(g.statusPlanilha))bt('🔔 Avisar cliente dos novos posts',b=>admStatus(g,'Avisar novos posts',b),1);
@@ -882,7 +920,7 @@ function pintarRelatoriosAdmin(){
       return '<article class="ra-c'+(l.ps.length?'':' vz')+'"><header><span class="ml">'+(m.logo?'<img src="'+escH(m.logo)+'" alt="">':escH((m.nome||'?').charAt(0)))+'</span><div><b>'+escH(m.nome||l.g.evento)+'</b><small>'+escH(l.g.email)+'</small></div>'+
         (l.g.propria?'':'<span class="ra-pg '+(/pago/.test(l.pago)&&!/avisou/.test(l.pago)?'ok':/aberto/.test(l.pago)?'at':'')+'">💳 '+escH(l.pago)+'</span>')+'</header>'+
         (l.ps.length?'<div class="ra-n"><span><b>'+l.ps.length+'</b> conteúdos</span><span><b>'+l.ap+'</b> aprovados</span><span><b>'+l.rf+'</b> ajustes</span><span><b>'+l.pd+'</b> aguardando</span></div>'+
-          '<div class="ra-bar" title="'+tx+'% aprovado"><i style="--w:'+tx+'%"></i></div><p class="ra-t">'+Object.keys(l.tipos).map(t=>l.tipos[t]+' '+escH(t)).join(' · ')+' · '+tx+'% aprovado</p>'+
+          (l.g.insights&&l.g.insights.meses&&l.g.insights.meses[relMes]&&l.g.insights.meses[relMes].seguidores?(()=>{const x=l.g.insights.meses[relMes];const c=x.seguidores-(x.inicio||x.seguidores);return '<p class="ra-t">📸 '+fmt(x.seguidores)+' seguidores ('+(c>=0?'+':'')+fmt(c)+') · alcance '+fmt(x.alcance)+' · '+fmt(x.interacoes)+' interações</p>'})():'')+'<div class="ra-bar" title="'+tx+'% aprovado"><i style="--w:'+tx+'%"></i></div><p class="ra-t">'+Object.keys(l.tipos).map(t=>l.tipos[t]+' '+escH(t)).join(' · ')+' · '+tx+'% aprovado</p>'+
           '<div class="ra-ac"><button class="btn sec" data-ver="'+l.i+'">Ver calendário</button>'+(l.g.propria?'':'<button class="btn sec" data-env="'+escH(l.g.id)+'">✉️ Enviar ao cliente</button>')+'</div>'
           :'<p class="ra-t">Nenhum conteúdo em '+nomeM(relMes)+'.</p>')+'</article>'}).join('')+'</div></div>';
   $('relSel').onchange=e=>{relMes=e.target.value;pintarRelatoriosAdmin()};
@@ -891,6 +929,44 @@ function pintarRelatoriosAdmin(){
   c.querySelectorAll('[data-env]').forEach(b=>b.onclick=async()=>{if(!b.dataset.c){b.dataset.c=1;b.textContent='Toque de novo para enviar';return}
     b.disabled=true;try{await chamar({acao:'adm_relatorio',id:b.dataset.env,mes:relMes});b.textContent='✓ Enviado';toast('Relatório de '+nomeM(relMes)+' enviado ao cliente')}catch(e){toast(e.message);b.disabled=false;b.textContent='✉️ Enviar ao cliente';delete b.dataset.c}});
 }
+
+// ---- Pix copia e cola (BR Code do Banco Central)
+function pixPayload(chave,nome,cidade,valor,txid){
+  const sem=t=>String(t||'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^A-Za-z0-9 .@+_-]/g,'').trim();
+  const f=(id,v)=>id+String(v.length).padStart(2,'0')+v;
+  const conta=f('00','br.gov.bcb.pix')+f('01',String(chave).trim());
+  let p=f('00','01')+f('26',conta)+f('52','0000')+f('53','986')+(valor>0?f('54',Number(valor).toFixed(2)):'')+f('58','BR')+f('59',sem(nome).slice(0,25)||'BRIUS')+f('60',sem(cidade).slice(0,15)||'SAO PAULO')+f('62',f('05',(sem(txid).replace(/[^A-Za-z0-9]/g,'')||'***').slice(0,25)))+'6304';
+  let crc=0xFFFF;for(let i=0;i<p.length;i++){crc^=p.charCodeAt(i)<<8;for(let j=0;j<8;j++)crc=(crc&0x8000)?((crc<<1)^0x1021)&0xFFFF:(crc<<1)&0xFFFF}
+  return p+crc.toString(16).toUpperCase().padStart(4,'0');
+}
+function carregarQR(){return window.QRCode?Promise.resolve():new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
+// ---- Insights do Instagram no relatório
+const fmt=n=>Number(n||0).toLocaleString('pt-BR');
+function blocoInsights(g){
+  const ins=g.insights;const box=document.createElement('div');box.className='ins';
+  if(!ins||!ins.conectado){if(!g.admin)return null;
+    box.innerHTML='<div class="ins-h"><b>📸 Instagram</b></div><p class="ra-t">Conecte o Instagram deste cliente para mostrar alcance, seguidores e os posts que mais performaram.</p><button class="btn sec ins-con">Conectar Instagram</button>';
+    box.querySelector('.ins-con').onclick=()=>conectarIG(g);return box}
+  const m=ins.meses&&ins.meses[gsMes];
+  const [a,mm]=(gsMes||'').split('-').map(Number);
+  if(!m||(!m.dias&&!m.posts)){box.innerHTML='<div class="ins-h"><b>📸 Instagram @'+escH(ins.usuario)+'</b></div><p class="ra-t">Ainda não temos números do Instagram em '+(a?MESES[mm-1]:'')+'. Eles começam a ser coletados todo dia depois que a conta é conectada.</p>'+(g.admin?'<button class="btn sec ins-at">Atualizar agora</button>':'');
+    const at=box.querySelector('.ins-at');if(at)at.onclick=()=>atualizarIG(g,at);return box}
+  const cres=m.inicio!=null&&m.seguidores?m.seguidores-m.inicio:0;
+  const pts=(ins.seg||[]).filter(x=>x[0].slice(0,7)===gsMes);let spark='';
+  if(pts.length>1){const vs=pts.map(x=>x[1]),mn=Math.min(...vs),mx=Math.max(...vs),W=300,H=60;const xy=vs.map((v,i)=>[i/(vs.length-1)*W,H-6-(mx===mn?.5:(v-mn)/(mx-mn))*(H-12)]);
+    spark='<h4 class="ins-t">Seguidores no mês</h4><svg class="ins-sp" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" aria-label="Seguidores no mês"><path d="M'+xy.map(p=>p.map(n=>n.toFixed(1)).join(' ')).join(' L')+'" fill="none" stroke="#e6d3ae" stroke-width="2.5" stroke-linejoin="round"/></svg>'}
+  const n=[[fmt(m.seguidores),'seguidores',(cres>=0?'+':'')+fmt(cres)+' no mês'],[fmt(m.alcance),'alcance (soma diária)'],[fmt(m.views),'visualizações'],[fmt(m.interacoes),'interações'],[fmt(m.salvos),'salvamentos'],[fmt(m.compart),'compartilhamentos'],[fmt(m.visitas),'visitas ao perfil'],[fmt(m.cliques),'cliques no link']];
+  box.innerHTML='<div class="ins-h"><b>📸 Instagram <a href="https://www.instagram.com/'+encodeURIComponent(ins.usuario)+'/" target="_blank" rel="noopener">@'+escH(ins.usuario)+'</a></b>'+(g.admin?'<button class="btn sec ins-at">Atualizar números</button>':'')+'</div>'+
+    '<div class="ins-n">'+n.map(([v,t,x])=>'<div><b>'+v+'</b><small>'+t+'</small>'+(x?'<em class="'+(cres>=0?'up':'dn')+'">'+x+'</em>':'')+'</div>').join('')+'</div>'+spark+
+    (m.top&&m.top.length?'<h4 class="ins-t">Posts que mais performaram</h4><div class="ins-top">'+m.top.map((p,i)=>'<a href="'+escH(p.url)+'" target="_blank" rel="noopener"><span class="ins-i">'+(p.img?'<img src="'+escH(p.img)+'" alt="" loading="lazy" referrerpolicy="no-referrer">':'')+'<i>'+(i+1)+'º</i></span><span><b>'+escH(p.t)+' · '+escH(p.d.split('-').reverse().slice(0,2).join('/'))+'</b><small>👁 '+fmt(p.alc||p.vis)+' · ❤ '+fmt(p.cur)+' · 💬 '+fmt(p.com)+' · 🔖 '+fmt(p.sal)+'</small><small class="leg">'+escH(p.leg)+'</small></span></a>').join('')+'</div>':'')+
+    '<p class="ins-obs">Dados do Instagram, atualizados todo dia.</p>';
+  const at=box.querySelector('.ins-at');if(at)at.onclick=()=>atualizarIG(g,at);
+  return box;
+}
+async function conectarIG(g){try{const j=await chamar({acao:'adm_iglink',id:g.id});
+  modal('Conectar Instagram · '+escH(g.marca&&g.marca.nome||g.evento),'<p class="am-dica" style="font-size:15px;color:var(--bone)">Vai abrir a tela oficial do Instagram. <b>Entre com a conta do cliente</b> (se estiver logado com a da Brius, troque de conta) e toque em <b>Permitir</b>. Depois volte para cá e atualize a página.</p>',
+    async()=>{window.open(j.url,'_blank','noopener')},'Abrir o Instagram')}catch(e){toast(e.message)}}
+async function atualizarIG(g,b){b.disabled=true;b.textContent='Buscando números…';try{const j=await chamar({acao:'adm_iginsights',id:g.id});await admRecarregar('✓ Números do Instagram atualizados (@'+j.usuario+')')}catch(e){toast(e.message);b.disabled=false;b.textContent='Atualizar números'}}
 
 // ---- visualizador
 let pos=0;
