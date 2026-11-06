@@ -758,15 +758,11 @@ function pintarMens(g){
   box.className='mens '+sit[0];
   box.innerHTML='<div class="mens-info"><small>Mensalidade · todo dia '+m.dia+'</small><b>'+reais(m.valor)+'<em>/mês</em></b>'+(varios?'<span>Inclui: '+escH(m.clientes)+'</span>':'')+'</div>'+
     '<div class="mens-st"><span class="mens-pill">'+sit[1]+'</span><p>'+escH(sit[2])+(m.situacao==='pago'?' · próxima: '+String(d).padStart(2,'0')+'/'+String(mm).padStart(2,'0'):'')+'</p></div>'+
-    '<div class="mens-cd" aria-label="Tempo até o vencimento"></div>'+
+
     (g.admin?'<div class="mens-adm">'+(m.situacao!=='pago'?'<button class="btn" data-pg="1">✓ '+(m.situacao==='confirmando'?'Confirmar pagamento de '+mesNome:'Marcar '+mesNome+' como pago')+'</button>':'')+(m.pagoAte?'<button class="btn sec" data-pg="0">Desfazer último pagamento</button>':'')+(m.ultimo?'<small>Último pagamento: '+escH(m.ultimo)+'</small>':'')+'</div>'
       :((m.situacao==='aberto'||m.situacao==='atrasado')?'<div class="mens-pix">'+(m.pix?'<div class="pix-cc"><button type="button" class="btn pix-btn" id="mensCodigo">📋 Copiar código Pix ('+reais(m.valor)+')</button><p>Depois abra o app do seu banco › <b>Pix</b> › <b>Pix Copia e Cola</b> e cole. O valor já vem preenchido.</p><div class="pix-qr" id="mensQR" aria-label="QR Code do Pix"></div></div>'+
   '<div class="pix-ch"><small>Ou pela chave</small><b>'+escH(m.pix)+'</b><button type="button" class="btn sec" id="mensCopiar">Copiar chave</button></div>':'')+'<button type="button" class="btn sec" id="mensJa">Já fiz o pagamento</button></div>':''));
-  const alvo=new Date(m.vencimento+'T23:59:59-03:00');const cd=box.querySelector('.mens-cd');
-  const tique=()=>{let t=alvo-Date.now();const atras=t<0;t=Math.abs(t);
-    const v=[Math.floor(t/864e5),Math.floor(t/36e5)%24,Math.floor(t/6e4)%60,Math.floor(t/1e3)%60];
-    cd.innerHTML='<small>'+(atras?'Atrasado há':m.situacao==='pago'?'Próximo vencimento em':'Faltam')+'</small><div>'+['dias','h','min','s'].map((n,i)=>'<span><b>'+(i?String(v[i]).padStart(2,'0'):v[i])+'</b>'+n+'</span>').join('')+'</div>'};
-  tique();clearInterval(mensTimer);mensTimer=setInterval(()=>{if(!document.body.contains(cd))return clearInterval(mensTimer);tique()},1000);
+  clearInterval(mensTimer);
   const ja=$('mensJa');if(ja)ja.onclick=async()=>{if(!ja.dataset.c){ja.dataset.c=1;ja.textContent='Toque de novo para avisar a Brius';setTimeout(()=>{delete ja.dataset.c;ja.textContent='Já fiz o pagamento'},4000);return}
     ja.disabled=true;try{const j=await api({acao:'avisopago',sessao:guardar.get()});if(!j.ok)throw new Error(j.erro);galerias.forEach(x=>{if(x.tipo==='gestao')x.mensalidade=j.mensalidade});pintarMens(g);toast('✓ Avisamos a Brius. Assim que conferir, aparece "Pago".')}catch(e){toast(e.message||'Não foi possível agora.');ja.disabled=false}};
   const cod=$('mensCodigo');if(cod){const payload=pixPayload(m.pix,m.pixNome,m.pixCidade,m.valor,'BRIUS'+(m.ref||'').replace('-',''));
