@@ -96,7 +96,7 @@ input:focus{border-color:var(--gold)}
 .adm .fav,.adm #lbFav{display:none!important}
 .abas.adm-abas{display:block}
 .adm-links{display:flex;flex-wrap:wrap;gap:10px;margin:-6px 0 22px}.adm-links .btn{width:auto;padding:11px 18px;font-size:14px}
-.adm-seg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:6px;border-radius:18px;background:var(--graphite);border:1px solid #2f2b26;margin-bottom:14px}
+.adm-seg{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:6px;border-radius:18px;background:var(--graphite);border:1px solid #2f2b26;margin-bottom:14px}
 .adm-seg button{background:none;border:0;border-radius:13px;padding:12px 10px;color:var(--muted-d);cursor:pointer;display:grid;gap:3px;text-align:center;transition:background .25s,color .25s}
 .adm-seg button b{font:700 15px var(--body)}.adm-seg button small{font:600 12px var(--body);opacity:.8}
 .adm-seg button[aria-selected="true"]{background:var(--gold-soft);color:var(--ink)}
@@ -207,6 +207,31 @@ input:focus{border-color:var(--gold)}
 .ins-i i{position:absolute;left:4px;top:4px;background:var(--gold-soft);color:var(--ink);font:800 11px var(--body);font-style:normal;padding:2px 6px;border-radius:999px}
 .ins-top b{display:block;font-size:13.5px}.ins-top small{display:block;font-size:12px;color:var(--muted-d)}.ins-top .leg{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .ins-obs{margin:0;font-size:11.5px;color:#8d8478}
+/* Financeiro */
+.fin-saldo{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center;padding:22px;border-radius:20px;border:1px solid rgba(230,211,174,.35);background:radial-gradient(120% 160% at 0% 0%,rgba(230,211,174,.14),transparent 55%),var(--graphite);margin-bottom:18px}
+.fin-saldo small{display:block;font:700 11px var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted-d)}
+.fin-saldo b{display:block;font:500 clamp(34px,5vw,48px)/1.1 var(--serif);color:var(--bone);margin:6px 0 4px}.fin-saldo b.neg{color:#f0a28f}
+.fin-saldo span{font-size:13px;color:var(--muted-d)}
+.fin-bts{display:flex;flex-wrap:wrap;gap:8px}.fin-bts .btn{width:auto;padding:11px 18px;font-size:14px}
+#finCsv{width:auto;padding:10px 16px;font-size:13.5px}
+.fin-n b{font-size:24px!important}.fin-n b.pos{color:#7fc49a!important}.fin-n b.neg{color:#f0a28f!important}
+.fin-b{grid-template-columns:150px 1fr 100px}.fin-b b{text-align:right;font-size:13px}.fin-b i::after{background:var(--c)!important}
+.fin-h{margin:22px 0 10px;font:700 12px var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--muted-d)}
+.fin-6{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;height:140px;align-items:end}
+.fin-6>div{display:grid;grid-template-rows:1fr auto;height:100%;text-align:center;gap:4px}
+.fin-6 span{display:flex;gap:4px;align-items:end;justify-content:center;height:100%}
+.fin-6 i{width:16px;height:var(--h);min-height:2px;border-radius:5px 5px 2px 2px;animation:relSobe 1s both}
+.fin-6 i.e,.fin-leg i.e{background:#7fc49a}.fin-6 i.s,.fin-leg i.s{background:#f0a28f}
+.fin-6 small{font-size:11px;color:var(--muted-d);text-transform:capitalize}
+.fin-leg{font-size:12px;color:var(--muted-d);display:flex;gap:6px;align-items:center;margin:8px 0 0}.fin-leg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-left:8px}
+.fin-lista{display:grid;gap:6px}
+.fin-l{display:grid;grid-template-columns:52px 1fr auto 34px;gap:12px;align-items:center;padding:10px 12px;border-radius:12px;background:var(--graphite);border:1px solid #2f2b26;border-left:3px solid var(--fc,#3a352f);animation:gsEntra .4s both}
+.fin-l.e{--fc:#7fc49a}.fin-l.s{--fc:#f0a28f}.fin-l.r{--fc:#e6d3ae;grid-template-columns:52px 1fr auto}.fin-l.at{--fc:#e2553f}
+.fin-l .d{font:700 13px var(--body);color:var(--muted-d)}.fin-l .t b{display:block;font-size:14.5px}.fin-l .t small{font-size:12px;color:var(--muted-d)}.fin-l .t em{color:var(--gold-soft);font-style:normal}
+.fin-l .v{font:600 16px var(--serif);white-space:nowrap}.fin-l.e .v{color:#7fc49a}.fin-l.s .v{color:#f0a28f}
+.del2{background:none;border:1px solid #3a352f;border-radius:50%;width:32px;height:32px;cursor:pointer;color:var(--muted-d);font-size:13px}.del2:hover{border-color:#e2553f}
+.fin-obs{margin-top:18px;font-size:12.5px;color:#8d8478}
+@media (max-width:640px){.fin-b{grid-template-columns:100px 1fr 80px}.fin-l{grid-template-columns:44px 1fr auto 30px;gap:8px}.adm-seg{grid-template-columns:1fr 1fr}}
 /* Mensalidade */
 .mens{display:grid;grid-template-columns:auto auto 1fr;gap:clamp(14px,3vw,30px);align-items:center;padding:16px 20px;border-radius:18px;border:1px solid #2f2b26;background:var(--graphite);margin:-8px 0 22px;position:relative;overflow:hidden;animation:gsEntra .6s .1s both}
 .mens::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--mc,#e6d3ae)}
@@ -702,12 +727,13 @@ function montarAdmin(j){
   const alertaHtml=alertas.length?'<div class="adm-alerta" role="alert"><span class="sino">🔔</span>'+alertas.map(g=>{const m=g.mensalidade;const i=galerias.indexOf(g);
     return '<span>'+(m.situacao==='atrasado'?'<b>'+escH(m.clientes)+'</b> está com a mensalidade atrasada há '+(m.atraso||1)+' dia'+((m.atraso||1)>1?'s':'')+' ('+reais(m.valor)+')':'<b>'+escH(m.clientes)+'</b> avisou que pagou: confirme')+' · <button type="button" data-ir="'+i+'">ver</button></span>'}).join('')+'</div>':'';
   try{document.title=(alertas.length?'('+alertas.length+') ':'')+'Área do Cliente · Brius Agência'}catch(e){}
-  abas.innerHTML=alertaHtml+'<div class="adm-seg" role="tablist">'+[['gestao','📅 Gestão de redes',nG,pend?pend+' aguardando cliente':''],['relatorios','📊 Relatórios','por mês',''],['fotos','📸 Fotos',nF,''],['eventos','🎟️ Eventos',nE,'']].map(([k,t,n,x])=>
+  abas.innerHTML=alertaHtml+'<div class="adm-seg" role="tablist">'+[['gestao','📅 Gestão de redes',nG,pend?pend+' aguardando cliente':''],['relatorios','📊 Relatórios','por mês',''],['financeiro','💰 Financeiro','entradas e saídas',''],['fotos','📸 Fotos',nF,''],['eventos','🎟️ Eventos',nE,'']].map(([k,t,n,x])=>
     '<button type="button" role="tab" data-sec="'+k+'" aria-selected="'+(admSec===k)+'"><b>'+t+'</b><small>'+n+(x?' · '+x:'')+'</small></button>').join('')+'</div><div class="adm-cards" id="admCards"></div>';
   abas.querySelectorAll('[data-sec]').forEach(b=>b.onclick=()=>{admSec=b.dataset.sec;montarAdmin(admDados)});
   abas.querySelectorAll('[data-ir]').forEach(b=>b.onclick=()=>{admSec='gestao';atual=+b.dataset.ir;montarAdmin(admDados);setTimeout(()=>{const x=$('gsMens');if(x)x.scrollIntoView({behavior:'smooth',block:'center'})},200)});
   const cards=$('admCards');
   if(admSec==='relatorios'){cards.hidden=true;pintarRelatoriosAdmin();return}
+  if(admSec==='financeiro'){cards.hidden=true;pintarFinanceiro(true);return}
   if(admSec==='eventos'){cards.hidden=true;$('gTitulo').textContent='Eventos';ac.innerHTML='';$('gPrazo').textContent='';pintarEventosAdmin(j);return}
   cards.hidden=false;
   const idx=galerias.map((g,i)=>[g,i]).filter(([g])=>admSec==='gestao'?g.tipo==='gestao':g.tipo!=='gestao');
@@ -966,6 +992,53 @@ function conectarIG(g){
     await admRecarregar('✓ @'+j.usuario+' conectado ('+fmt(j.seguidores)+' seguidores)')},'Conectar');
 }
 async function atualizarIG(g,b){b.disabled=true;b.textContent='Buscando números…';try{const j=await chamar({acao:'adm_iginsights',id:g.id});await admRecarregar('✓ Números do Instagram atualizados (@'+j.usuario+')')}catch(e){toast(e.message);b.disabled=false;b.textContent='Atualizar números'}}
+
+// ---- Agência: financeiro da Brius
+let finDados=null,finMes=null;
+const CAT_SAI=['Equipamento','Software e assinaturas','Combustível e transporte','Alimentação','Anúncios e marketing','Equipe / freelancer','Impostos e taxas','Aluguel e contas','Retirada (sócios)','Outros'];
+const CAT_ENT=['Mensalidade','Evento (sinal)','Evento (restante)','Ensaio / fotos','Vídeo / produção','Outros'];
+async function pintarFinanceiro(recarregar){
+  const c=$('gConteudo');$('gTitulo').textContent='Financeiro';$('gAcoes').innerHTML='';$('gPrazo').textContent='';
+  if(!finDados||recarregar){c.innerHTML='<p class="vazio">Carregando o financeiro…</p>';try{finDados=await chamar({acao:'adm_fin'})}catch(e){c.innerHTML='<p class="vazio">'+escH(e.message)+'</p>';return}}
+  const it=finDados.itens||[];const hj=new Date();const atualM=hj.getFullYear()+'-'+String(hj.getMonth()+1).padStart(2,'0');
+  const meses=[...new Set(it.filter(i=>i.tipo!=='Saldo inicial').map(i=>i.data.slice(0,7)).concat([atualM]))].sort().reverse();
+  if(!finMes||meses.indexOf(finMes)<0)finMes=atualM;
+  const nomeM=ym=>{const [a,m]=ym.split('-');return MESES[+m-1]+' '+a};
+  const doMes=it.filter(i=>i.data.slice(0,7)===finMes&&i.tipo!=='Saldo inicial');
+  const ent=doMes.filter(i=>i.tipo==='Entrada').reduce((s,i)=>s+i.valor,0),sai=doMes.filter(i=>i.tipo==='Saída').reduce((s,i)=>s+i.valor,0),res=ent-sai;
+  const rec=(finDados.receber||[]);const totRec=rec.reduce((s,r)=>s+r.valor,0);
+  const porCat=t=>{const o={};doMes.filter(i=>i.tipo===t).forEach(i=>o[i.cat||'Outros']=(o[i.cat||'Outros']||0)+i.valor);return Object.entries(o).sort((a,b)=>b[1]-a[1])};
+  const barras=(lista,cor)=>{if(!lista.length)return '<p class="ra-t">Nada lançado neste mês.</p>';const mx=lista[0][1];return lista.map(([k,v])=>'<div class="rel-b fin-b"><span>'+escH(k)+'</span><i style="--w:'+(v/mx*100)+'%;--c:'+cor+'"></i><b>'+reais(v)+'</b></div>').join('')};
+  const ult6=[];for(let k=5;k>=0;k--){const d=new Date(hj.getFullYear(),hj.getMonth()-k,1);const ym=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');const l=it.filter(i=>i.data.slice(0,7)===ym);ult6.push([ym,l.filter(i=>i.tipo==='Entrada').reduce((s,i)=>s+i.valor,0),l.filter(i=>i.tipo==='Saída').reduce((s,i)=>s+i.valor,0)])}
+  const mx6=Math.max(1,...ult6.flatMap(x=>[x[1],x[2]]));
+  c.innerHTML='<div class="gs fin">'+
+    '<div class="fin-saldo"><div><small>Saldo na conta da Brius</small><b class="'+(finDados.saldo<0?'neg':'')+'">'+reais(finDados.saldo)+'</b><span>'+(finDados.saldoDesde?'Calculado a partir do saldo de '+finDados.saldoDesde.split('-').reverse().join('/'):'Informe o saldo atual do banco para começar')+'</span></div>'+
+      '<div class="fin-bts"><button class="btn" id="finEnt">+ Entrada</button><button class="btn sec" id="finSai">− Saída</button><button class="btn sec" id="finAj">Ajustar saldo</button></div></div>'+
+    '<div class="ra-top"><label>Mês <select id="finSel">'+meses.map(x=>'<option value="'+x+'"'+(x===finMes?' selected':'')+'>'+nomeM(x)+'</option>').join('')+'</select></label><button class="btn sec" id="finCsv">⬇ Baixar planilha (CSV)</button></div>'+
+    '<div class="rel-n fin-n"><div><b class="pos">'+reais(ent)+'</b><small>entradas</small></div><div><b class="neg">'+reais(sai)+'</b><small>saídas</small></div><div><b class="'+(res<0?'neg':'pos')+'">'+reais(res)+'</b><small>resultado do mês</small></div><div><b>'+reais(totRec)+'</b><small>a receber ('+rec.length+')</small></div></div>'+
+    '<div class="rel-g fin-g"><div><h4>Saídas por categoria</h4>'+barras(porCat('Saída'),'#f0a28f')+'</div><div><h4>Entradas por categoria</h4>'+barras(porCat('Entrada'),'#7fc49a')+'</div></div>'+
+    '<h4 class="fin-h">Últimos 6 meses</h4><div class="fin-6">'+ult6.map(([ym,e,s])=>'<div><span><i class="e" style="--h:'+(e/mx6*100)+'%" title="Entradas '+reais(e)+'"></i><i class="s" style="--h:'+(s/mx6*100)+'%" title="Saídas '+reais(s)+'"></i></span><small>'+MESES[+ym.slice(5)-1].slice(0,3)+'</small></div>').join('')+'</div><p class="fin-leg"><i class="e"></i>Entradas <i class="s"></i>Saídas</p>'+
+    '<h4 class="fin-h">Lançamentos de '+nomeM(finMes)+'</h4>'+(doMes.length?'<div class="fin-lista">'+doMes.map(i=>'<div class="fin-l '+(i.tipo==='Entrada'?'e':'s')+'"><span class="d">'+i.data.split('-').reverse().slice(0,2).join('/')+'</span><span class="t"><b>'+escH(i.desc||i.cat)+'</b><small>'+escH(i.cat)+(i.cliente?' · '+escH(i.cliente):'')+(i.forma?' · '+escH(i.forma):'')+(i.origem&&i.origem!=='Manual'?' · <em>automático</em>':'')+'</small></span><span class="v">'+(i.tipo==='Entrada'?'+ ':'− ')+reais(i.valor)+'</span><button type="button" class="del2" data-del="'+escH(i.id)+'" aria-label="Apagar lançamento">🗑</button></div>').join('')+'</div>':'<p class="ra-t">Nenhum lançamento neste mês.</p>')+
+    '<h4 class="fin-h">A receber</h4>'+(rec.length?'<div class="fin-lista">'+rec.map(r=>'<div class="fin-l r'+(r.sit==='atrasado'?' at':'')+'"><span class="d">'+r.data.split('-').reverse().slice(0,2).join('/')+'</span><span class="t"><b>'+escH(r.desc)+'</b><small>'+(r.sit==='atrasado'?'⚠ atrasado':r.sit==='confirmando'?'cliente avisou que pagou':r.sit==='evento'?'restante do evento':'a vencer')+'</small></span><span class="v">'+reais(r.valor)+'</span></div>').join('')+'</div>':'<p class="ra-t">Nada a receber agora.</p>')+
+    '<p class="fin-obs">Mensalidades, sinais e restantes entram sozinhos como entrada quando você marca como pago. Tudo fica na aba "Financeiro" da planilha.</p></div>';
+  $('finSel').onchange=e=>{finMes=e.target.value;pintarFinanceiro()};
+  $('finEnt').onclick=()=>formFin('Entrada');$('finSai').onclick=()=>formFin('Saída');$('finAj').onclick=()=>formFin('Saldo inicial');
+  $('finCsv').onclick=()=>{const l=[['Data','Tipo','Categoria','Descrição','Valor','Cliente','Forma','Origem']].concat(it.map(i=>[i.data.split('-').reverse().join('/'),i.tipo,i.cat,i.desc,String(i.valor).replace('.',','),i.cliente,i.forma,i.origem]));
+    const csv='﻿'+l.map(r=>r.map(x=>'"'+String(x||'').replace(/"/g,'""')+'"').join(';')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='financeiro-brius.csv';a.click()};
+  c.querySelectorAll('[data-del]').forEach(b=>b.onclick=async()=>{if(!b.dataset.c){b.dataset.c=1;b.textContent='Apagar?';setTimeout(()=>{delete b.dataset.c;b.textContent='🗑'},3500);return}
+    try{finDados=await chamar({acao:'adm_fin_del',id:b.dataset.del});pintarFinanceiro();toast('Lançamento apagado')}catch(e){toast(e.message)}});
+}
+function formFin(tipo){
+  const hj=new Date();const iso=new Date(hj.getTime()-hj.getTimezoneOffset()*6e4).toISOString().slice(0,10);
+  const cats=tipo==='Entrada'?CAT_ENT:CAT_SAI;
+  const corpo=tipo==='Saldo inicial'?'<p class="am-dica" style="font-size:15px;color:var(--bone)">Coloque quanto tem <b>hoje</b> na conta da Brius (olhe no app do banco). Daqui para frente o saldo é calculado com as entradas e saídas lançadas.</p><div class="am-2">'+campo('valor','Saldo hoje (R$)','text',' inputmode="decimal" required placeholder="Ex.: 3.250,00"')+campo('data','Data','date',' required value="'+iso+'"')+'</div>'
+    :'<div class="am-2">'+campo('valor','Valor (R$)','text',' inputmode="decimal" required placeholder="Ex.: 150,00"')+campo('data','Data','date',' required value="'+iso+'"')+'</div>'+
+     '<label>Categoria<select name="categoria">'+cats.map(c=>'<option>'+c+'</option>').join('')+'</select></label>'+campo('descricao',tipo==='Entrada'?'Descrição (ex.: Ensaio Ana)':'Descrição (ex.: Lente 50mm, Adobe, gasolina)','text')+
+     '<div class="am-2">'+campo('cliente',tipo==='Entrada'?'Cliente (opcional)':'Fornecedor (opcional)')+'<label>Forma<select name="forma"><option>Pix</option><option>Cartão de crédito</option><option>Cartão de débito</option><option>Dinheiro</option><option>Boleto</option><option>Transferência</option></select></label></div>'+
+     (tipo==='Saída'?'<label>Repetir todo mês (assinaturas)<select name="repetir"><option value="1">Não repetir</option><option value="3">Por 3 meses</option><option value="6">Por 6 meses</option><option value="12">Por 12 meses</option></select></label>':'');
+  modal(tipo==='Saldo inicial'?'Ajustar saldo da conta':tipo==='Entrada'?'Nova entrada':'Nova saída',corpo,async f=>{const d=Object.fromEntries(new FormData(f));
+    finDados=await chamar(Object.assign({acao:'adm_fin_add',tipo:tipo},d));finMes=d.data.slice(0,7);pintarFinanceiro();toast(tipo==='Saldo inicial'?'✓ Saldo ajustado':'✓ '+tipo+' lançada')},tipo==='Saldo inicial'?'Salvar saldo':'Lançar');
+}
 
 // ---- visualizador
 let pos=0;
