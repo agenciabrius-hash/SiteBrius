@@ -102,6 +102,53 @@ footer{border-top:1px solid #2c2925;padding:26px 16px;text-align:center;color:#8
 /* entrada */
 .rv{opacity:0;transform:translateY(28px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
 .rv.on{opacity:1;transform:none}
+
+/* ===== interações ao passar o mouse ===== */
+.btn{position:relative;overflow:hidden;isolation:isolate}
+.btn::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.55) 50%,transparent 70%);transform:translateX(-120%);transition:transform .7s ease}
+.btn:hover::after{transform:translateX(120%)}
+.btn.sec:hover{border-color:var(--gold-soft);color:var(--gold-soft)}
+.hero-n div{transition:transform .3s}.hero-n div:hover{transform:translateY(-4px)}.hero-n div:hover b{text-shadow:0 0 22px rgba(230,211,174,.55)}
+.cel-w{perspective:1100px;justify-self:center}
+.cel{transition:transform .25s ease-out}
+.cel-w:hover .cel{animation-play-state:paused}
+.cel-cal span{transition:transform .2s,background .2s}
+.cel-cal span:hover{transform:scale(1.35);background:#3a342c;z-index:2}
+.cel-post .im{transition:transform .6s ease}.cel-w:hover .cel-post .im{transform:scale(1.06)}
+.luz{position:relative;overflow:hidden;--mx:50%;--my:50%}
+.luz::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .35s;background:radial-gradient(260px circle at var(--mx) var(--my),rgba(230,211,174,.16),transparent 60%)}
+.luz:hover::before{opacity:1}
+.plano.luz{overflow:visible}.luz::before{border-radius:inherit}
+.passo{transition:transform .35s cubic-bezier(.2,.7,.2,1),border-color .3s,box-shadow .3s;transform-style:preserve-3d}
+.passo:hover{border-color:rgba(230,211,174,.45);box-shadow:0 22px 50px rgba(0,0,0,.35)}
+.passo::before{transition:color .3s,transform .4s}.passo:hover::before{color:var(--gold-soft);transform:translateY(-3px) scale(1.08)}
+.inc div{transition:transform .3s,border-color .3s,background .3s}
+.inc div:hover{transform:translateY(-4px);border-color:rgba(230,211,174,.4);background:#211e1a}
+.inc span{display:inline-block;transition:transform .5s cubic-bezier(.3,1.6,.5,1)}
+.inc div:hover span{transform:scale(1.35) rotate(-12deg)}
+.plano li{transition:transform .3s,color .3s}
+.plano:hover li{color:var(--bone)}
+.plano:hover li:nth-child(1){transform:translateX(6px);transition-delay:0s}.plano:hover li:nth-child(2){transform:translateX(6px);transition-delay:.05s}.plano:hover li:nth-child(3){transform:translateX(6px);transition-delay:.1s}.plano:hover li:nth-child(4){transform:translateX(6px);transition-delay:.15s}.plano:hover li:nth-child(5){transform:translateX(6px);transition-delay:.2s}
+.plano:hover{box-shadow:0 26px 60px rgba(0,0,0,.4)}
+.plano.dest::after{content:"";position:absolute;inset:-1px;border-radius:22px;padding:1px;pointer-events:none;background:linear-gradient(110deg,transparent 20%,#e6d3ae 40%,transparent 60%);background-size:250% 100%;-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:borda 4s linear infinite}
+@keyframes borda{from{background-position:120% 0}to{background-position:-120% 0}}
+.plano .tag{transition:transform .3s}.plano.dest:hover .tag{transform:translateY(-3px) rotate(-3deg)}
+.cli a{position:relative;overflow:hidden}
+.cli img{transition:transform .6s cubic-bezier(.3,1.4,.5,1)}
+.cli a:hover img{transform:rotate(360deg) scale(1.08)}
+.cli a .vai{max-width:0;opacity:0;white-space:nowrap;overflow:hidden;font:700 13px var(--body);color:var(--gold-soft);transition:max-width .4s,opacity .3s,margin .4s}
+.cli a:hover .vai{max-width:120px;opacity:1;margin-left:6px}
+.faq summary{position:relative;transition:color .25s}
+.faq summary:hover{color:var(--gold-soft)}
+.faq summary::before{content:"";position:absolute;left:0;bottom:-6px;height:1px;width:0;background:var(--gold-soft);transition:width .4s}
+.faq summary:hover::before{width:100%}
+.faq summary::after{transition:transform .3s}.faq summary:hover::after{transform:rotate(90deg)}
+h2 em,h1 em{background:linear-gradient(90deg,var(--gold-soft),#fff3da,var(--gold-soft));background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;transition:background-position .8s}
+h2:hover em,h1:hover em{background-position:100% 0}
+.brilho{position:fixed;left:0;top:0;width:420px;height:420px;margin:-210px 0 0 -210px;border-radius:50%;pointer-events:none;z-index:0;background:radial-gradient(circle,rgba(230,211,174,.07),transparent 65%);transition:opacity .4s;opacity:0}
+body.mouse .brilho{opacity:1}
+main,header,footer{position:relative;z-index:1}
+@media (hover:none){.brilho{display:none}}
 @media (max-width:900px){.hero{grid-template-columns:1fr}.passos{grid-template-columns:1fr 1fr}.inc,.planos{grid-template-columns:1fr}.top nav a:not(.btn){display:none}}
 @media (max-width:520px){.passos{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}}
@@ -122,13 +169,13 @@ footer{border-top:1px solid #2c2925;padding:26px 16px;text-align:center;color:#8
       <div class="bts"><a class="btn" href="../?orcamento=gestao">Agendar uma conversa</a><a class="btn sec" href="#como">Como funciona</a></div>
       <div class="hero-n"><div><b>3 a 5</b><small>posts por semana</small></div><div><b>1 toque</b><small>para aprovar cada post</small></div><div><b>Todo mês</b><small>relatório de resultados</small></div></div>
     </div>
-    <div class="cel rv" aria-hidden="true">
+    <div class="cel-w rv" id="celW"><div class="cel" aria-hidden="true">
       <div class="cel-t">
         <div class="cel-h"><i>S</i><div><b>Sua marca</b><small>Calendário de conteúdo</small></div></div>
         <div class="cel-cal" id="celCal"></div>
         <div class="cel-post"><div class="im"></div><div class="bx"><small>Qui, 12 · Reels</small><b>Bastidores do lançamento</b><div class="cel-ac"><span class="ok">✓ Aprovar</span><span>✎ Pedir ajuste</span></div></div></div>
       </div>
-    </div>
+    </div></div>
   </section>
 
   <section id="como">
@@ -177,9 +224,9 @@ footer{border-top:1px solid #2c2925;padding:26px 16px;text-align:center;color:#8
       <div class="kick rv">Quem confia na Brius</div>
       <h2 class="rv">Marcas que a gente <em>cuida</em></h2>
       <div class="cli">
-        <a class="rv" href="https://www.instagram.com/greicefonsecanails/" target="_blank" rel="noopener"><img src="../img/clientes/greice.webp" alt=""><span><b>Greice Fonseca</b><small>Nail designer · @greicefonsecanails</small></span></a>
-        <a class="rv" href="https://www.instagram.com/olimpio.consultoria/" target="_blank" rel="noopener"><img src="../img/clientes/olimpio.webp" alt=""><span><b>Olimpio Consultoria</b><small>Consultoria · @olimpio.consultoria</small></span></a>
-        <a class="rv" href="https://www.instagram.com/espacoguerir/" target="_blank" rel="noopener"><img src="../img/clientes/guerir.webp" alt=""><span><b>Espaço Guérir</b><small>Bem-estar · @espacoguerir</small></span></a>
+        <a class="rv" href="https://www.instagram.com/greicefonsecanails/" target="_blank" rel="noopener"><img src="../img/clientes/greice.webp" alt=""><span><b>Greice Fonseca</b><small>Nail designer · @greicefonsecanails</small></span><span class="vai">Ver Instagram →</span></a>
+        <a class="rv" href="https://www.instagram.com/olimpio.consultoria/" target="_blank" rel="noopener"><img src="../img/clientes/olimpio.webp" alt=""><span><b>Olimpio Consultoria</b><small>Consultoria · @olimpio.consultoria</small></span><span class="vai">Ver Instagram →</span></a>
+        <a class="rv" href="https://www.instagram.com/espacoguerir/" target="_blank" rel="noopener"><img src="../img/clientes/guerir.webp" alt=""><span><b>Espaço Guérir</b><small>Bem-estar · @espacoguerir</small></span><span class="vai">Ver Instagram →</span></a>
       </div>
     </div>
   </section>
@@ -205,11 +252,30 @@ footer{border-top:1px solid #2c2925;padding:26px 16px;text-align:center;color:#8
     </div>
   </section>
 </main>
+<div class="brilho" id="brilho" aria-hidden="true"></div>
 <footer>Brius Agência · Matheus e Sabrina · <a href="../">agenciabrius.com.br</a> · <a href="../privacidade/">Privacidade</a></footer>
 <script>
 // calendário do celular (decorativo)
 (function(){const c=document.getElementById('celCal');if(!c)return;const cores=['#7fc49a','#e6d3ae','#7fc49a','#f0a28f','#e6d3ae'];let h='';const p=[2,5,9,12,16,19,23,26];
   for(let d=1;d<=28;d++){const i=p.indexOf(d);h+='<span'+(i>=0?' class="p" style="--c:'+cores[i%cores.length]+'"':'')+'>'+d+'</span>'}c.innerHTML=h})();
+// interações com o mouse (só em computador)
+(function(){
+  if(!matchMedia('(hover:hover) and (pointer:fine)').matches||matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+  const br=document.getElementById('brilho');let raf=0,mx=0,my=0;
+  addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;document.body.classList.add('mouse');if(!raf)raf=requestAnimationFrame(()=>{br.style.transform='translate('+mx+'px,'+my+'px)';raf=0})});
+  document.addEventListener('mouseleave',()=>document.body.classList.remove('mouse'));
+  // luz que segue o mouse dentro dos cartões
+  document.querySelectorAll('.passo,.inc>div,.plano,.cli a').forEach(el=>{el.classList.add('luz');
+    el.addEventListener('mousemove',e=>{const r=el.getBoundingClientRect();el.style.setProperty('--mx',(e.clientX-r.left)+'px');el.style.setProperty('--my',(e.clientY-r.top)+'px')})});
+  // inclinação 3D
+  const inclina=(el,forca,alvo)=>{alvo=alvo||el;el.addEventListener('mousemove',e=>{const r=el.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+      alvo.style.transform='rotateY('+(x*forca)+'deg) rotateX('+(-y*forca)+'deg) translateY(-6px)'});
+    el.addEventListener('mouseleave',()=>{alvo.style.transform=''})};
+  document.querySelectorAll('.passo,.plano').forEach(el=>{el.parentElement.style.perspective='1000px';inclina(el,8)});
+  const w=document.getElementById('celW');if(w)inclina(w,16,w.querySelector('.cel'));
+  // botões que "puxam" o mouse
+  document.querySelectorAll('.btn').forEach(b=>{b.addEventListener('mousemove',e=>{const r=b.getBoundingClientRect();b.style.transform='translate('+((e.clientX-r.left)/r.width-.5)*8+'px,'+(((e.clientY-r.top)/r.height-.5)*6-2)+'px)'});b.addEventListener('mouseleave',()=>{b.style.transform=''})});
+})();
 // entrada ao rolar
 (function(){const els=document.querySelectorAll('.rv');if(!('IntersectionObserver' in window)){els.forEach(e=>e.classList.add('on'));return}
   const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target)}}),{rootMargin:'0px 0px -8% 0px'});
