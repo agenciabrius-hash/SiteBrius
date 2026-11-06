@@ -96,7 +96,7 @@ input:focus{border-color:var(--gold)}
 .adm .fav,.adm #lbFav{display:none!important}
 .abas.adm-abas{display:block}
 .adm-links{display:flex;flex-wrap:wrap;gap:10px;margin:-6px 0 22px}.adm-links .btn{width:auto;padding:11px 18px;font-size:14px}
-.adm-seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:6px;border-radius:18px;background:var(--graphite);border:1px solid #2f2b26;margin-bottom:14px}
+.adm-seg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:6px;border-radius:18px;background:var(--graphite);border:1px solid #2f2b26;margin-bottom:14px}
 .adm-seg button{background:none;border:0;border-radius:13px;padding:12px 10px;color:var(--muted-d);cursor:pointer;display:grid;gap:3px;text-align:center;transition:background .25s,color .25s}
 .adm-seg button b{font:700 15px var(--body)}.adm-seg button small{font:600 12px var(--body);opacity:.8}
 .adm-seg button[aria-selected="true"]{background:var(--gold-soft);color:var(--ink)}
@@ -155,6 +155,28 @@ input:focus{border-color:var(--gold)}
 .rel-taxa{margin:14px 0 12px;font-size:13.5px;color:#d9cfbf}.rel-imp{width:auto!important;padding:10px 16px!important;font-size:13.5px!important}
 @media print{body.imprimindo-rel *{visibility:hidden}body.imprimindo-rel .mk,body.imprimindo-rel .mk *,body.imprimindo-rel #gsRel,body.imprimindo-rel #gsRel *{visibility:visible}
  body.imprimindo-rel{background:#fff}body.imprimindo-rel .mk{position:absolute;top:0;left:0;right:0}body.imprimindo-rel #gsRel{position:absolute;top:200px;left:0;right:0}body.imprimindo-rel .rel-imp{display:none}}
+/* Relatórios da agência */
+.ra-top{display:flex;flex-wrap:wrap;gap:12px;align-items:end;justify-content:space-between;margin-bottom:16px}
+.ra-top label{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--muted-d)}
+.ra-top select{font:600 16px var(--body);color:var(--bone);background:var(--graphite);border:1px solid #3a352f;border-radius:10px;padding:10px 14px;text-transform:capitalize}
+.ra-top .btn{width:auto;padding:10px 16px;font-size:13.5px}
+.ra-lista{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,360px),1fr));gap:14px;margin-top:18px}
+.ra-c{background:var(--graphite);border:1px solid #2f2b26;border-radius:18px;padding:16px;display:grid;gap:12px;animation:gsEntra .5s both}
+.ra-c.vz{opacity:.6}
+.ra-c header{display:flex;align-items:center;gap:12px}
+.ra-c .ml{flex:none;width:46px;height:46px;border-radius:50%;background:#fff;overflow:hidden;display:grid;place-items:center;color:var(--ink);font:600 18px var(--serif)}
+.ra-c .ml img{width:100%;height:100%;object-fit:cover}
+.ra-c header b{display:block;font:500 18px var(--serif)}.ra-c header small{font-size:12px;color:var(--muted-d)}
+.ra-pg{margin-left:auto;font:700 11.5px var(--body);padding:5px 10px;border-radius:999px;background:#2b2721;color:var(--muted-d);white-space:nowrap}
+.ra-pg.ok{background:rgba(127,196,154,.18);color:#9ed7b3}.ra-pg.at{background:rgba(226,85,63,.18);color:#f0a28f}
+.ra-n{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center}
+.ra-n span{background:#201d1a;border-radius:10px;padding:8px 4px;font-size:11px;color:var(--muted-d)}.ra-n b{display:block;font:500 22px var(--serif);color:var(--gold-soft)}
+.ra-bar{height:8px;border-radius:6px;background:#2f2b26;overflow:hidden}.ra-bar i{display:block;height:100%;width:var(--w);background:linear-gradient(90deg,#b8955a,#7fc49a);animation:relCresce 1s both}
+.ra-t{margin:0;font-size:13px;color:#d9cfbf}
+.ra-ac{display:flex;gap:8px;flex-wrap:wrap}.ra-ac .btn{width:auto;padding:9px 14px;font-size:13px}
+@media print{body.imprimindo-adm .cab,body.imprimindo-adm #admLinks,body.imprimindo-adm .adm-abas,body.imprimindo-adm .top,body.imprimindo-adm .ra-ac,body.imprimindo-adm .ra-top .btn{display:none!important}
+ body.imprimindo-adm{background:#fff;color:#111}body.imprimindo-adm .ra-c,body.imprimindo-adm .rel-n div,body.imprimindo-adm .ra-n span{background:#fff;border-color:#ddd;color:#111}}
+@media (max-width:640px){.adm-seg{grid-template-columns:1fr 1fr}}
 /* Mensalidade */
 .mens{display:grid;grid-template-columns:auto auto 1fr;gap:clamp(14px,3vw,30px);align-items:center;padding:16px 20px;border-radius:18px;border:1px solid #2f2b26;background:var(--graphite);margin:-8px 0 22px;position:relative;overflow:hidden;animation:gsEntra .6s .1s both}
 .mens::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--mc,#e6d3ae)}
@@ -649,11 +671,12 @@ function montarAdmin(j){
   const alertaHtml=alertas.length?'<div class="adm-alerta" role="alert"><span class="sino">🔔</span>'+alertas.map(g=>{const m=g.mensalidade;const i=galerias.indexOf(g);
     return '<span>'+(m.situacao==='atrasado'?'<b>'+escH(m.clientes)+'</b> está com a mensalidade atrasada há '+(m.atraso||1)+' dia'+((m.atraso||1)>1?'s':'')+' ('+reais(m.valor)+')':'<b>'+escH(m.clientes)+'</b> avisou que pagou: confirme')+' · <button type="button" data-ir="'+i+'">ver</button></span>'}).join('')+'</div>':'';
   try{document.title=(alertas.length?'('+alertas.length+') ':'')+'Área do Cliente · Brius Agência'}catch(e){}
-  abas.innerHTML=alertaHtml+'<div class="adm-seg" role="tablist">'+[['gestao','📅 Gestão de redes',nG,pend?pend+' aguardando cliente':''],['fotos','📸 Fotos',nF,''],['eventos','🎟️ Eventos',nE,'']].map(([k,t,n,x])=>
+  abas.innerHTML=alertaHtml+'<div class="adm-seg" role="tablist">'+[['gestao','📅 Gestão de redes',nG,pend?pend+' aguardando cliente':''],['relatorios','📊 Relatórios','por mês',''],['fotos','📸 Fotos',nF,''],['eventos','🎟️ Eventos',nE,'']].map(([k,t,n,x])=>
     '<button type="button" role="tab" data-sec="'+k+'" aria-selected="'+(admSec===k)+'"><b>'+t+'</b><small>'+n+(x?' · '+x:'')+'</small></button>').join('')+'</div><div class="adm-cards" id="admCards"></div>';
   abas.querySelectorAll('[data-sec]').forEach(b=>b.onclick=()=>{admSec=b.dataset.sec;montarAdmin(admDados)});
   abas.querySelectorAll('[data-ir]').forEach(b=>b.onclick=()=>{admSec='gestao';atual=+b.dataset.ir;montarAdmin(admDados);setTimeout(()=>{const x=$('gsMens');if(x)x.scrollIntoView({behavior:'smooth',block:'center'})},200)});
   const cards=$('admCards');
+  if(admSec==='relatorios'){cards.hidden=true;pintarRelatoriosAdmin();return}
   if(admSec==='eventos'){cards.hidden=true;$('gTitulo').textContent='Eventos';ac.innerHTML='';$('gPrazo').textContent='';pintarEventosAdmin(j);return}
   cards.hidden=false;
   const idx=galerias.map((g,i)=>[g,i]).filter(([g])=>admSec==='gestao'?g.tipo==='gestao':g.tipo!=='gestao');
@@ -836,6 +859,38 @@ function barraAdmin(g){
     else bt('🔒 Encerrar galeria',b=>{if(!b.dataset.c){b.dataset.c=1;b.textContent='Toque de novo para encerrar';return}admStatus(g,'Encerrar agora',b)},1)}
 }
 async function chamarSemId(g,b){toast('Use a planilha (Status = Enviar acesso) para este cliente.')}
+
+// ---- Agência: relatórios de cada mês de cada cliente
+let relMes=null;
+function pintarRelatoriosAdmin(){
+  const c=$('gConteudo');$('gTitulo').textContent='Relatórios';$('gAcoes').innerHTML='';$('gPrazo').textContent='';
+  const gs=galerias.filter(g=>g.tipo==='gestao');
+  const meses=[...new Set(gs.flatMap(g=>(g.posts||[]).filter(p=>p.data).map(p=>p.data.slice(0,7))))].sort().reverse();
+  const hj=new Date();const atualM=hj.getFullYear()+'-'+String(hj.getMonth()+1).padStart(2,'0');
+  if(!relMes||meses.indexOf(relMes)<0)relMes=meses.indexOf(atualM)>=0?atualM:(meses[0]||atualM);
+  const nomeM=ym=>{const [a,m]=ym.split('-');return MESES[+m-1]+' '+a};
+  const linhas=gs.map((g,k)=>{const ps=(g.posts||[]).filter(p=>(p.data||'').slice(0,7)===relMes);
+    const ap=ps.filter(p=>p.status==='Aprovado').length,rf=ps.filter(p=>p.status==='Refazer').length,pd=ps.filter(pend).length;
+    const tipos={};ps.forEach(p=>tipos[p.tipo]=(tipos[p.tipo]||0)+1);
+    const m=g.mensalidade;const pago=m?(m.pagoAte&&m.pagoAte>=relMes?'✓ pago':(relMes<(m.ref||'')?'—':m.situacao==='confirmando'&&m.ref===relMes?'avisou que pagou':relMes<atualM||m.situacao==='atrasado'?'em aberto':'a vencer')):(g.propria?'—':'sem mensalidade');
+    return {g,ps,ap,rf,pd,tipos,pago,i:galerias.indexOf(g)}});
+  const tot=linhas.reduce((s,l)=>({n:s.n+l.ps.length,ap:s.ap+l.ap,rf:s.rf+l.rf,pd:s.pd+l.pd}),{n:0,ap:0,rf:0,pd:0});
+  c.innerHTML='<div class="gs rel-adm"><div class="ra-top"><label>Mês <select id="relSel">'+(meses.length?meses:[atualM]).map(x=>'<option value="'+x+'"'+(x===relMes?' selected':'')+'>'+nomeM(x)+'</option>').join('')+'</select></label>'+
+    '<button class="btn sec" id="relPrint">🖨️ Imprimir / PDF</button></div>'+
+    '<div class="rel-n">'+[[tot.n,'conteúdos'],[tot.ap,'aprovados'],[tot.rf,'ajustes'],[tot.pd,'aguardando'],[linhas.filter(l=>l.ps.length).length,'clientes com posts']].map(([n,t])=>'<div><b>'+n+'</b><small>'+t+'</small></div>').join('')+'</div>'+
+    '<div class="ra-lista">'+linhas.map(l=>{const m=l.g.marca||{};const tx=l.ps.length?Math.round(l.ap/l.ps.length*100):0;
+      return '<article class="ra-c'+(l.ps.length?'':' vz')+'"><header><span class="ml">'+(m.logo?'<img src="'+escH(m.logo)+'" alt="">':escH((m.nome||'?').charAt(0)))+'</span><div><b>'+escH(m.nome||l.g.evento)+'</b><small>'+escH(l.g.email)+'</small></div>'+
+        (l.g.propria?'':'<span class="ra-pg '+(/pago/.test(l.pago)&&!/avisou/.test(l.pago)?'ok':/aberto/.test(l.pago)?'at':'')+'">💳 '+escH(l.pago)+'</span>')+'</header>'+
+        (l.ps.length?'<div class="ra-n"><span><b>'+l.ps.length+'</b> conteúdos</span><span><b>'+l.ap+'</b> aprovados</span><span><b>'+l.rf+'</b> ajustes</span><span><b>'+l.pd+'</b> aguardando</span></div>'+
+          '<div class="ra-bar" title="'+tx+'% aprovado"><i style="--w:'+tx+'%"></i></div><p class="ra-t">'+Object.keys(l.tipos).map(t=>l.tipos[t]+' '+escH(t)).join(' · ')+' · '+tx+'% aprovado</p>'+
+          '<div class="ra-ac"><button class="btn sec" data-ver="'+l.i+'">Ver calendário</button>'+(l.g.propria?'':'<button class="btn sec" data-env="'+escH(l.g.id)+'">✉️ Enviar ao cliente</button>')+'</div>'
+          :'<p class="ra-t">Nenhum conteúdo em '+nomeM(relMes)+'.</p>')+'</article>'}).join('')+'</div></div>';
+  $('relSel').onchange=e=>{relMes=e.target.value;pintarRelatoriosAdmin()};
+  $('relPrint').onclick=()=>{document.body.classList.add('imprimindo-adm');window.print();setTimeout(()=>document.body.classList.remove('imprimindo-adm'),500)};
+  c.querySelectorAll('[data-ver]').forEach(b=>b.onclick=()=>{admSec='gestao';atual=+b.dataset.ver;gsMes=relMes;gsF='todos';montarAdmin(admDados);setTimeout(()=>{const r=$('gsRel');if(r){r.open=true;r.scrollIntoView({behavior:'smooth',block:'center'})}},300)});
+  c.querySelectorAll('[data-env]').forEach(b=>b.onclick=async()=>{if(!b.dataset.c){b.dataset.c=1;b.textContent='Toque de novo para enviar';return}
+    b.disabled=true;try{await chamar({acao:'adm_relatorio',id:b.dataset.env,mes:relMes});b.textContent='✓ Enviado';toast('Relatório de '+nomeM(relMes)+' enviado ao cliente')}catch(e){toast(e.message);b.disabled=false;b.textContent='✉️ Enviar ao cliente';delete b.dataset.c}});
+}
 
 // ---- visualizador
 let pos=0;
