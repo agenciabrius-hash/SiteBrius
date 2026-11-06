@@ -963,9 +963,12 @@ function blocoInsights(g){
   const at=box.querySelector('.ins-at');if(at)at.onclick=()=>atualizarIG(g,at);
   return box;
 }
-async function conectarIG(g){try{const j=await chamar({acao:'adm_iglink',id:g.id});
-  modal('Conectar Instagram · '+escH(g.marca&&g.marca.nome||g.evento),'<p class="am-dica" style="font-size:15px;color:var(--bone)">Vai abrir a tela oficial do Instagram. <b>Entre com a conta do cliente</b> (se estiver logado com a da Brius, troque de conta) e toque em <b>Permitir</b>. Depois volte para cá e atualize a página.</p>',
-    async()=>{window.open(j.url,'_blank','noopener')},'Abrir o Instagram')}catch(e){toast(e.message)}}
+function conectarIG(g){
+  const f=modal('Conectar Instagram · '+escH(g.marca&&g.marca.nome||g.evento),campo('usuario','@ do Instagram do cliente','text',' required value="'+escH((g.marca&&g.marca.insta)||'')+'"')+
+    '<p class="am-dica">Antes, o Instagram do cliente precisa estar no portfólio <b>Agência Brius</b> (Meta Business Suite) e liberado para o usuário do sistema da Brius. Se faltar algo, eu aviso aqui o que é.</p>',
+  async(f,st)=>{st('Procurando a conta e testando o acesso…');const j=await chamar({acao:'adm_igportfolio',id:g.id,usuario:f.usuario.value});
+    await admRecarregar('✓ @'+j.usuario+' conectado ('+fmt(j.seguidores)+' seguidores)')},'Conectar');
+}
 async function atualizarIG(g,b){b.disabled=true;b.textContent='Buscando números…';try{const j=await chamar({acao:'adm_iginsights',id:g.id});await admRecarregar('✓ Números do Instagram atualizados (@'+j.usuario+')')}catch(e){toast(e.message);b.disabled=false;b.textContent='Atualizar números'}}
 
 // ---- visualizador
