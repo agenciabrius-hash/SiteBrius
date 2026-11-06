@@ -138,7 +138,18 @@ input:focus{border-color:var(--gold)}
 .mens-info span{display:block;font-size:12.5px;color:var(--muted-d);margin-top:5px}
 .mens-st p{margin:6px 0 0;font-size:13.5px;color:#d9cfbf}
 .mens-pill{display:inline-block;font:800 12px var(--body);letter-spacing:.04em;padding:6px 12px;border-radius:999px;background:var(--mc);color:#141210}
-.mens.at .mens-pill{animation:gsPulso 2s ease-in-out infinite}
+.mens.at .mens-pill{animation:gsPulsoV 1.4s ease-in-out infinite;background:#e2553f;color:#fff}
+.mens.at{border-color:rgba(226,85,63,.55);animation:gsEntra .6s .1s both,menAlerta 2.4s ease-in-out infinite,menTreme 6s ease-in-out infinite 1s}
+.mens.at::before{width:6px;background:#e2553f}
+.mens.at .mens-cd b{color:#f0a28f}
+@keyframes gsPulsoV{0%,100%{box-shadow:0 0 0 0 rgba(226,85,63,.7)}60%{box-shadow:0 0 0 10px rgba(226,85,63,0)}}
+@keyframes menAlerta{0%,100%{box-shadow:0 0 0 0 rgba(226,85,63,0)}50%{box-shadow:0 0 28px 2px rgba(226,85,63,.28)}}
+@keyframes menTreme{0%,92%,100%{transform:none}93%{transform:translateX(-4px)}95%{transform:translateX(4px)}97%{transform:translateX(-3px)}99%{transform:translateX(2px)}}
+.adm-alerta{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:12px 16px;margin:0 0 14px;border-radius:14px;background:rgba(226,85,63,.12);border:1px solid rgba(226,85,63,.5);color:#f6cfc6;font-size:14px;animation:menAlerta 2.4s ease-in-out infinite}
+.adm-alerta b{color:#fff}.adm-alerta .sino{display:inline-block;font-size:20px;animation:sino 1.6s ease-in-out infinite;transform-origin:50% 0}
+.adm-alerta button{all:unset;cursor:pointer;font-weight:700;text-decoration:underline;color:#fff}
+@keyframes sino{0%,60%,100%{transform:rotate(0)}10%{transform:rotate(16deg)}20%{transform:rotate(-14deg)}30%{transform:rotate(10deg)}40%{transform:rotate(-6deg)}}
+.marca .mb.at{background:#e2553f;color:#fff;animation:gsPulsoV 1.4s ease-in-out infinite}
 .mens-cd{justify-self:end;text-align:right}
 .mens-cd div{display:flex;gap:6px;justify-content:flex-end}
 .mens-cd span{display:grid;place-items:center;min-width:50px;padding:7px 6px 6px;border-radius:10px;background:#201d1a;border:1px solid #2f2b26;font:700 9.5px var(--body);text-transform:uppercase;letter-spacing:.06em;color:var(--muted-d)}
@@ -566,9 +577,14 @@ function montarAdmin(j){
   const nG=galerias.filter(g=>g.tipo==='gestao').length,nF=galerias.filter(g=>g.tipo!=='gestao').length,nE=(j.eventos||[]).length+(j.proximos||[]).length;
   const pend=galerias.filter(g=>g.tipo==='gestao').reduce((s,g)=>s+(g.posts||[]).filter(p=>p.status==='Aguardando'||p.status==='Nova versão').length,0);
   const abas=$('gAbas');abas.className='abas adm-abas';
-  abas.innerHTML='<div class="adm-seg" role="tablist">'+[['gestao','📅 Gestão de redes',nG,pend?pend+' aguardando cliente':''],['fotos','📸 Fotos',nF,''],['eventos','🎟️ Eventos',nE,'']].map(([k,t,n,x])=>
+  const vistos=new Set();const alertas=galerias.filter(g=>g.tipo==='gestao'&&g.mensalidade&&(g.mensalidade.situacao==='atrasado'||g.mensalidade.situacao==='confirmando')&&!vistos.has(g.email)&&vistos.add(g.email));
+  const alertaHtml=alertas.length?'<div class="adm-alerta" role="alert"><span class="sino">🔔</span>'+alertas.map(g=>{const m=g.mensalidade;const i=galerias.indexOf(g);
+    return '<span>'+(m.situacao==='atrasado'?'<b>'+escH(m.clientes)+'</b> está com a mensalidade atrasada há '+(m.atraso||1)+' dia'+((m.atraso||1)>1?'s':'')+' ('+reais(m.valor)+')':'<b>'+escH(m.clientes)+'</b> avisou que pagou: confirme')+' · <button type="button" data-ir="'+i+'">ver</button></span>'}).join('')+'</div>':'';
+  try{document.title=(alertas.length?'('+alertas.length+') ':'')+'Área do Cliente · Brius Agência'}catch(e){}
+  abas.innerHTML=alertaHtml+'<div class="adm-seg" role="tablist">'+[['gestao','📅 Gestão de redes',nG,pend?pend+' aguardando cliente':''],['fotos','📸 Fotos',nF,''],['eventos','🎟️ Eventos',nE,'']].map(([k,t,n,x])=>
     '<button type="button" role="tab" data-sec="'+k+'" aria-selected="'+(admSec===k)+'"><b>'+t+'</b><small>'+n+(x?' · '+x:'')+'</small></button>').join('')+'</div><div class="adm-cards" id="admCards"></div>';
   abas.querySelectorAll('[data-sec]').forEach(b=>b.onclick=()=>{admSec=b.dataset.sec;montarAdmin(admDados)});
+  abas.querySelectorAll('[data-ir]').forEach(b=>b.onclick=()=>{admSec='gestao';atual=+b.dataset.ir;montarAdmin(admDados);setTimeout(()=>{const x=$('gsMens');if(x)x.scrollIntoView({behavior:'smooth',block:'center'})},200)});
   const cards=$('admCards');
   if(admSec==='eventos'){cards.hidden=true;$('gTitulo').textContent='Eventos';ac.innerHTML='';$('gPrazo').textContent='';pintarEventosAdmin(j);return}
   cards.hidden=false;
@@ -579,7 +595,7 @@ function montarAdmin(j){
   novo.onclick=()=>admSec==='gestao'?formCliente():formGaleria();cards.appendChild(novo);
   idx.forEach(([g,i])=>{const b=document.createElement('button');b.type='button';b.dataset.i=i;b.className='marca';
     if(g.tipo==='gestao'){const m=g.marca||{},pd=(g.posts||[]).filter(p=>p.status==='Aguardando'||p.status==='Nova versão').length,rf=(g.posts||[]).filter(p=>p.status==='Refazer').length;
-      b.innerHTML='<span class="ml">'+(m.logo?'<img src="'+escH(m.logo)+'" alt="">':escH((m.nome||'?').charAt(0)))+'</span><span class="mt"><b>'+escH(m.nome||g.evento)+'</b><small>'+(g.posts||[]).length+' posts · '+(pd?pd+' aguardando':'nada pendente')+(rf?' · '+rf+' ajuste'+(rf>1?'s':''):'')+'</small><small class="st">'+escH(g.statusPlanilha||'')+' <span class="ms">'+resumoMens(g.mensalidade)+'</span></small></span>'+(rf?'<i class="mb rf">'+rf+'</i>':pd?'<i class="mb">'+pd+'</i>':'')}
+      b.innerHTML='<span class="ml">'+(m.logo?'<img src="'+escH(m.logo)+'" alt="">':escH((m.nome||'?').charAt(0)))+'</span><span class="mt"><b>'+escH(m.nome||g.evento)+'</b><small>'+(g.posts||[]).length+' posts · '+(pd?pd+' aguardando':'nada pendente')+(rf?' · '+rf+' ajuste'+(rf>1?'s':''):'')+'</small><small class="st">'+escH(g.statusPlanilha||'')+' <span class="ms">'+resumoMens(g.mensalidade)+'</span></small></span>'+(g.mensalidade&&g.mensalidade.situacao==='atrasado'?'<i class="mb at">!</i>':rf?'<i class="mb rf">'+rf+'</i>':pd?'<i class="mb">'+pd+'</i>':'')}
     else{const a=(g.arquivos||[]).find(x=>x.t==='foto');
       b.innerHTML='<span class="ml foto">'+(a?'<img src="'+thumb(a.id).replace('w600','w160')+'" alt="" loading="lazy">':'📁')+'</span><span class="mt"><b>'+escH(g.cliente)+'</b><small>'+escH(g.evento)+' · '+(g.arquivos||[]).length+' arquivos</small><small class="st">'+escH(g.statusPlanilha||'')+(g.expira?' · até '+escH(g.expira):'')+'</small></span>'}
     b.onclick=()=>{gsMes=null;gsF='todos';abrir(i);document.getElementById('gConteudo').scrollIntoView({behavior:'smooth',block:'start'})};cards.appendChild(b)});
@@ -611,7 +627,7 @@ function pintarMens(g){
   const pagoNome=m.pagoAte?MESES[+m.pagoAte.slice(5,7)-1]:'';
   const varios=/[,+e]\s/.test(m.clientes)&&m.clientes.split(/,|\+| e /).length>1;
   const quando=(m.aviso||'').split(' · ')[0];
-  const sit={pago:['ok','✓ Pago','Mensalidade de '+pagoNome+' recebida. Obrigado! 💛'],aberto:['ab','A pagar','Vence dia '+d+' de '+mesNome],atrasado:['at','Em atraso','Venceu dia '+d+' de '+mesNome],
+  const sit={pago:['ok','✓ Pago','Mensalidade de '+pagoNome+' recebida. Obrigado! 💛'],aberto:['ab','A pagar','Vence dia '+d+' de '+mesNome],atrasado:['at','⚠ Em atraso · '+(m.atraso||1)+' dia'+((m.atraso||1)>1?'s':''),'Venceu dia '+d+' de '+mesNome+(g.admin?'. O cliente recebe lembrete por e-mail.':'. Se já pagou, toque em "Já fiz o pagamento".')],
     confirmando:['cf',g.admin?'Cliente avisou que pagou':'Aguardando confirmação',g.admin?'Aviso em '+quando+' · confira o Pix e confirme':'Você avisou em '+quando+'. Assim que a Brius conferir, aparece "Pago".']}[m.situacao];
   box.className='mens '+sit[0];
   box.innerHTML='<div class="mens-info"><small>Mensalidade · todo dia '+m.dia+'</small><b>'+reais(m.valor)+'<em>/mês</em></b>'+(varios?'<span>Inclui: '+escH(m.clientes)+'</span>':'')+'</div>'+
