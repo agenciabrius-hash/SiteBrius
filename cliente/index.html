@@ -127,7 +127,7 @@ input:focus{border-color:var(--gold)}
 .am-chk{display:flex!important;align-items:center;gap:10px;color:var(--bone)!important}.am-chk input{width:20px;height:20px;accent-color:var(--gold)}
 .am-dica{font-size:13px;color:var(--muted-d);margin:-4px 0 12px;line-height:1.5}
 .am-f{display:flex;gap:10px;justify-content:flex-end;margin-top:8px}.am-f .btn{width:auto}
-.marca.novo{border-style:dashed!important}.marca.novo .ml{background:var(--gold-soft);color:var(--ink);font:500 30px/1 var(--body)}
+.marca.novo{border-style:dashed!important}.adm-abas .marca.propria{border-color:rgba(230,211,174,.55)}.marca .tag{font:700 10px var(--body);letter-spacing:.08em;text-transform:uppercase;font-style:normal;background:var(--gold-soft);color:var(--ink);padding:3px 7px;border-radius:999px;vertical-align:middle;margin-left:4px}.marca.novo .ml{background:var(--gold-soft);color:var(--ink);font:500 30px/1 var(--body)}
 .lk{all:unset;cursor:pointer;color:var(--gold-soft);font:700 13px var(--body);text-decoration:underline}
 /* Mensalidade */
 .mens{display:grid;grid-template-columns:auto auto 1fr;gap:clamp(14px,3vw,30px);align-items:center;padding:16px 20px;border-radius:18px;border:1px solid #2f2b26;background:var(--graphite);margin:-8px 0 22px;position:relative;overflow:hidden;animation:gsEntra .6s .1s both}
@@ -497,7 +497,7 @@ function pintarGestao(g){
   const mesP=doMes(g);const cont={todos:mesP.length,pend:mesP.filter(pend).length,ap:mesP.filter(p=>p.status==='Aprovado').length,rf:mesP.filter(p=>p.status==='Refazer').length};
   const f=$('gsF');f.innerHTML=[['todos','Todos',''],['pend','Aguardando','c-ag'],['ap','Aprovados','c-ap'],['rf','Ajustes','c-rf']].map(([k,t,c])=>'<button data-f="'+k+'" aria-pressed="'+(gsF===k)+'">'+(c?'<i class="'+c+'"></i>':'')+t+' ('+cont[k]+')</button>').join('');
   f.querySelectorAll('button').forEach(b=>b.onclick=()=>{gsF=b.dataset.f;pintarGestao(g)});
-  $('gsTodos').hidden=!cont.pend||!!g.admin;
+  $('gsTodos').hidden=!cont.pend||(!!g.admin&&!g.propria);
   // calendário
   const [a,mm]=(gsMes||'').split('-').map(Number);const meses=[...new Set(g.posts.filter(p=>p.data).map(p=>p.data.slice(0,7)))].sort();
   $('gsMesT').textContent=a?MESES[mm-1]+' '+a:'Posts';$('gsAnt').disabled=meses.indexOf(gsMes)<=0;$('gsProx').disabled=meses.indexOf(gsMes)>=meses.length-1;
@@ -531,7 +531,7 @@ function cartao(g,p,n){
     (p.status==='Refazer'&&p.obs?'<div class="pc-obs"><b>Seu pedido de ajuste:</b><br>'+escH(p.obs)+'</div>':'')+
     (p.status==='Nova versão'?'<div class="pc-obs nv"><b>Nova versão!</b> A Brius atualizou este post'+(p.antes==='Refazer'&&p.obs?' depois do seu pedido: “'+escH(p.obs)+'”':'')+'. Dá uma olhada e responda de novo.</div>':'')+
     (p.status==='Aprovado'?'<div class="pc-obs ok">✓ Você aprovou'+(p.quando?' em '+escH(p.quando):'')+'.</div>':'')+
-    (g.admin?'<div class="pc-adm">👁️ Visualização da agência · quem aprova é o cliente</div>':'')+'<div class="pc-ac"'+(g.admin?' hidden':'')+'><button class="ap'+(p.status==='Aprovado'?' feito':'')+'">'+(p.status==='Aprovado'?'✓ Aprovado':'✓ Aprovar')+'</button><button class="rf'+(p.status==='Refazer'?' feito':'')+'">'+(p.status==='Refazer'?'✎ Editar pedido':'✎ Pedir ajuste')+'</button></div>'+
+    (g.admin&&!g.propria?'<div class="pc-adm">👁️ Visualização da agência · quem aprova é o cliente</div>':'')+'<div class="pc-ac"'+(g.admin&&!g.propria?' hidden':'')+'><button class="ap'+(p.status==='Aprovado'?' feito':'')+'">'+(p.status==='Aprovado'?'✓ Aprovado':'✓ Aprovar')+'</button><button class="rf'+(p.status==='Refazer'?' feito':'')+'">'+(p.status==='Refazer'?'✎ Editar pedido':'✎ Pedir ajuste')+'</button></div>'+
     '<div class="pc-aj" hidden><textarea maxlength="1500" placeholder="O que precisa mudar? Ex.: trocar a foto da capa, corrigir o preço na arte, mudar a música do vídeo…"></textarea><div class="bts"><button class="cc">Cancelar</button><button class="env">Enviar pedido</button></div></div>'+
     (p.quando&&p.status!=='Aprovado'?'<span class="pc-q">Respondido em '+escH(p.quando)+'</span>':'')+'</div>';
   // carrossel
@@ -595,7 +595,8 @@ function montarAdmin(j){
   novo.onclick=()=>admSec==='gestao'?formCliente():formGaleria();cards.appendChild(novo);
   idx.forEach(([g,i])=>{const b=document.createElement('button');b.type='button';b.dataset.i=i;b.className='marca';
     if(g.tipo==='gestao'){const m=g.marca||{},pd=(g.posts||[]).filter(p=>p.status==='Aguardando'||p.status==='Nova versão').length,rf=(g.posts||[]).filter(p=>p.status==='Refazer').length;
-      b.innerHTML='<span class="ml">'+(m.logo?'<img src="'+escH(m.logo)+'" alt="">':escH((m.nome||'?').charAt(0)))+'</span><span class="mt"><b>'+escH(m.nome||g.evento)+'</b><small>'+(g.posts||[]).length+' posts · '+(pd?pd+' aguardando':'nada pendente')+(rf?' · '+rf+' ajuste'+(rf>1?'s':''):'')+'</small><small class="st">'+escH(g.statusPlanilha||'')+' <span class="ms">'+resumoMens(g.mensalidade)+'</span></small></span>'+(g.mensalidade&&g.mensalidade.situacao==='atrasado'?'<i class="mb at">!</i>':rf?'<i class="mb rf">'+rf+'</i>':pd?'<i class="mb">'+pd+'</i>':'')}
+      if(g.propria)b.classList.add('propria');
+      b.innerHTML='<span class="ml">'+(m.logo?'<img src="'+escH(m.logo)+'" alt="">':escH((m.nome||'?').charAt(0)))+'</span><span class="mt"><b>'+escH(m.nome||g.evento)+(g.propria?' <em class="tag">vocês aprovam</em>':'')+'</b><small>'+(g.posts||[]).length+' posts · '+(pd?pd+' aguardando':'nada pendente')+(rf?' · '+rf+' ajuste'+(rf>1?'s':''):'')+'</small><small class="st">'+escH(g.statusPlanilha||'')+' <span class="ms">'+resumoMens(g.mensalidade)+'</span></small></span>'+(g.mensalidade&&g.mensalidade.situacao==='atrasado'?'<i class="mb at">!</i>':rf?'<i class="mb rf">'+rf+'</i>':pd?'<i class="mb">'+pd+'</i>':'')}
     else{const a=(g.arquivos||[]).find(x=>x.t==='foto');
       b.innerHTML='<span class="ml foto">'+(a?'<img src="'+thumb(a.id).replace('w600','w160')+'" alt="" loading="lazy">':'📁')+'</span><span class="mt"><b>'+escH(g.cliente)+'</b><small>'+escH(g.evento)+' · '+(g.arquivos||[]).length+' arquivos</small><small class="st">'+escH(g.statusPlanilha||'')+(g.expira?' · até '+escH(g.expira):'')+'</small></span>'}
     b.onclick=()=>{gsMes=null;gsF='todos';abrir(i);document.getElementById('gConteudo').scrollIntoView({behavior:'smooth',block:'start'})};cards.appendChild(b)});
@@ -620,7 +621,7 @@ function pintarEventosAdmin(j){
 const reais=v=>'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 let mensTimer=null;
 function pintarMens(g){
-  const box=$('gsMens');if(!box)return;const m=g.mensalidade;
+  const box=$('gsMens');if(!box)return;const m=g.mensalidade;if(g.propria){box.hidden=true;return}
   if(!m){box.hidden=!g.admin;if(g.admin)box.innerHTML='<div class="mens-info"><small>Mensalidade</small><b>Não cadastrada</b><span>Cadastre na aba "Mensalidades" da planilha (e-mail '+escH(g.email)+').</span></div>';return}
   box.hidden=false;
   const [a,mm,d]=m.vencimento.split('-').map(Number);const mesNome=MESES[mm-1];
@@ -744,7 +745,8 @@ function barraAdmin(g){
   // ações da agência dentro de um cliente aberto
   const ac=$('gAcoes');if(g.tipo==='gestao')ac.innerHTML='';ac.querySelectorAll('.adm-b').forEach(x=>x.remove());const bt=(t,fn,sec)=>{const b=document.createElement('button');b.className='btn adm-b'+(sec?' sec':'');b.textContent=t;b.onclick=()=>fn(b);ac.appendChild(b)};
   const senha=()=>{if(g.id&&/Ativo|Acesso enviado/.test(g.statusPlanilha))bt('🔑 Redefinir senha',b=>{if(!b.dataset.c){b.dataset.c=1;b.textContent='Toque de novo: enviar para '+g.email;return}admStatus(g,'Redefinir senha',b)},1)};
-  setTimeout(senha,0);
+  if(!g.propria)setTimeout(senha,0);
+  if(g.propria){bt('+ Adicionar post',()=>formPost(g));return}
   if(g.tipo==='gestao'){bt('+ Adicionar post',()=>formPost(g));
     if(g.id&&/Ativo|Acesso enviado/.test(g.statusPlanilha))bt('🔔 Avisar cliente dos novos posts',b=>admStatus(g,'Avisar novos posts',b),1);
     if(!/Ativo|Acesso enviado/.test(g.statusPlanilha))bt('✉️ Enviar acesso ao cliente',b=>{if(!g.id){chamarSemId(g,b);return}admStatus(g,'Enviar acesso',b)},1);}
