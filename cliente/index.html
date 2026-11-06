@@ -127,7 +127,11 @@ input:focus{border-color:var(--gold)}
 .am-chk{display:flex!important;align-items:center;gap:10px;color:var(--bone)!important}.am-chk input{width:20px;height:20px;accent-color:var(--gold)}
 .am-dica{font-size:13px;color:var(--muted-d);margin:-4px 0 12px;line-height:1.5}
 .am-f{display:flex;gap:10px;justify-content:flex-end;margin-top:8px}.am-f .btn{width:auto}
-.marca.novo{border-style:dashed!important}.adm-abas .marca.propria{border-color:rgba(230,211,174,.55)}.marca .tag{font:700 10px var(--body);letter-spacing:.08em;text-transform:uppercase;font-style:normal;background:var(--gold-soft);color:var(--ink);padding:3px 7px;border-radius:999px;vertical-align:middle;margin-left:4px}.marca.novo .ml{background:var(--gold-soft);color:var(--ink);font:500 30px/1 var(--body)}
+.marca.novo{border-style:dashed!important}
+.adm-abas .marca .del{position:absolute;right:10px;bottom:10px;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:15px;background:#201d1a;border:1px solid #3a352f;opacity:0;transition:opacity .2s,background .2s,border-color .2s;cursor:pointer}
+.adm-abas .marca:hover .del,.adm-abas .marca .del:focus-visible{opacity:1}.adm-abas .marca .del:hover{background:rgba(226,85,63,.18);border-color:#e2553f}
+@media (hover:none){.adm-abas .marca .del{opacity:.85}}
+.btn.perigo{background:#e2553f;color:#fff}.btn.perigo:hover{background:#ef6a55}.adm-abas .marca.propria{border-color:rgba(230,211,174,.55)}.marca .tag{font:700 10px var(--body);letter-spacing:.08em;text-transform:uppercase;font-style:normal;background:var(--gold-soft);color:var(--ink);padding:3px 7px;border-radius:999px;vertical-align:middle;margin-left:4px}.marca.novo .ml{background:var(--gold-soft);color:var(--ink);font:500 30px/1 var(--body)}
 .lk{all:unset;cursor:pointer;color:var(--gold-soft);font:700 13px var(--body);text-decoration:underline}
 /* Mensalidade */
 .mens{display:grid;grid-template-columns:auto auto 1fr;gap:clamp(14px,3vw,30px);align-items:center;padding:16px 20px;border-radius:18px;border:1px solid #2f2b26;background:var(--graphite);margin:-8px 0 22px;position:relative;overflow:hidden;animation:gsEntra .6s .1s both}
@@ -599,7 +603,10 @@ function montarAdmin(j){
       b.innerHTML='<span class="ml">'+(m.logo?'<img src="'+escH(m.logo)+'" alt="">':escH((m.nome||'?').charAt(0)))+'</span><span class="mt"><b>'+escH(m.nome||g.evento)+(g.propria?' <em class="tag">vocês aprovam</em>':'')+'</b><small>'+(g.posts||[]).length+' posts · '+(pd?pd+' aguardando':'nada pendente')+(rf?' · '+rf+' ajuste'+(rf>1?'s':''):'')+'</small><small class="st">'+escH(g.statusPlanilha||'')+' <span class="ms">'+resumoMens(g.mensalidade)+'</span></small></span>'+(g.mensalidade&&g.mensalidade.situacao==='atrasado'?'<i class="mb at">!</i>':rf?'<i class="mb rf">'+rf+'</i>':pd?'<i class="mb">'+pd+'</i>':'')}
     else{const a=(g.arquivos||[]).find(x=>x.t==='foto');
       b.innerHTML='<span class="ml foto">'+(a?'<img src="'+thumb(a.id).replace('w600','w160')+'" alt="" loading="lazy">':'📁')+'</span><span class="mt"><b>'+escH(g.cliente)+'</b><small>'+escH(g.evento)+' · '+(g.arquivos||[]).length+' arquivos</small><small class="st">'+escH(g.statusPlanilha||'')+(g.expira?' · até '+escH(g.expira):'')+'</small></span>'}
-    b.onclick=()=>{gsMes=null;gsF='todos';abrir(i);document.getElementById('gConteudo').scrollIntoView({behavior:'smooth',block:'start'})};cards.appendChild(b)});
+    b.onclick=e=>{if(e.target.closest('.del'))return;gsMes=null;gsF='todos';abrir(i);document.getElementById('gConteudo').scrollIntoView({behavior:'smooth',block:'start'})};
+    if(g.id&&!g.propria){const x=document.createElement('span');x.className='del';x.setAttribute('role','button');x.tabIndex=0;x.title='Apagar';x.setAttribute('aria-label','Apagar '+(g.cliente||g.evento));x.textContent='🗑';
+      x.onclick=e=>{e.stopPropagation();formApagar(g)};x.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();formApagar(g)}};b.appendChild(x)}
+    cards.appendChild(b)});
   const cur=idx.find(([g,i])=>i===atual)||idx[0];abrir(cur[1]);
 }
 function ligarEventosAdmin(){
@@ -709,6 +716,16 @@ function formGaleria(){
     if(f.fotos.files.length)await subir(j.pasta,f.fotos.files,null,st);
     if(f.enviar.checked){st('Enviando o acesso…');await chamar({acao:'adm_status',id:j.id,status:'Enviar acesso'})}
     admSec='fotos';await admRecarregar('✓ Galeria criada')},'Criar galeria');
+}
+function formApagar(g){
+  const nome=g.tipo==='gestao'?(g.marca&&g.marca.nome||g.evento):g.cliente+' · '+g.evento;
+  modal('Apagar '+(g.tipo==='gestao'?'cliente':'galeria'),'<p class="am-dica" style="margin:0 0 14px;font-size:15px;color:var(--bone)">Você vai apagar <b>'+escH(nome)+'</b> ('+escH(g.email)+'). O cliente perde o acesso na hora.</p>'+
+    '<label class="am-chk"><input type="checkbox" name="pasta" checked> Mandar a pasta do Drive para a lixeira também'+(g.tipo==='gestao'?' (posts)':' ('+(g.arquivos||[]).length+' arquivos)')+'</label>'+
+    '<p class="am-dica">Arquivos na lixeira do Drive podem ser recuperados por 30 dias. Desmarcando, a pasta continua no Drive (só fecha o link).</p>'+
+    campo('conf','Para confirmar, digite APAGAR','text',' autocomplete="off" required'),
+  async f=>{if(f.conf.value.trim().toUpperCase()!=='APAGAR')throw new Error('Digite APAGAR para confirmar.');
+    const j=await chamar({acao:'adm_apagar',id:g.id,pasta:f.pasta.checked});atual=0;await admRecarregar(j.lixeira?'🗑 Apagado (pasta na lixeira do Drive)':'🗑 Apagado da Área do Cliente')},'Apagar');
+  const ok=document.querySelector('#admModal .am-ok');if(ok)ok.classList.add('perigo');
 }
 function formArquivos(titulo,pasta,depois){
   modal(titulo,arqCampo('arqs','Escolha os arquivos',true)+'<p class="am-dica">Fotos e vídeos de até 45 MB cada. Para muitos arquivos ou vídeos grandes, é mais rápido colocar direto na pasta do Drive.</p>',
