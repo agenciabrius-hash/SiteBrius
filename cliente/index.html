@@ -93,6 +93,16 @@ input:focus{border-color:var(--gold)}
 .barra i{display:block;height:100%;width:0;background:var(--gold-soft);transition:width .3s}
 .dl-c .btns{display:flex;gap:10px;flex-wrap:wrap}.dl-c .btns .btn{width:auto;flex:1}
 /* Gestão de redes: calendário de aprovação */
+.abas.marcas{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:12px;margin-bottom:8px}
+.marcas-t{grid-column:1/-1;margin:0;color:var(--muted-d);font-size:14px}
+.abas .marca{display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:16px;text-align:left;position:relative;transition:transform .2s,border-color .2s,background .2s}
+.abas .marca:hover{transform:translateY(-2px);border-color:var(--gold)}
+.abas .marca[aria-pressed="true"]{background:linear-gradient(135deg,rgba(230,211,174,.16),rgba(230,211,174,.04));color:var(--bone);border-color:var(--gold-soft)}
+.marca .ml{flex:none;width:52px;height:52px;border-radius:50%;background:#fff;overflow:hidden;display:grid;place-items:center;font:600 20px var(--serif);color:var(--ink);box-shadow:0 0 0 2px rgba(230,211,174,.5)}
+.marca .ml img{width:100%;height:100%;object-fit:cover}
+.marca .mt{display:grid;gap:3px}.marca .mt b{font:500 17px var(--serif);color:var(--bone)}.marca .mt small{font:600 12px var(--body);color:var(--muted-d)}
+.marca .mb{position:absolute;top:-6px;right:-6px;min-width:24px;height:24px;border-radius:12px;background:#e6d3ae;color:var(--ink);font:800 12px/24px var(--body);text-align:center;font-style:normal;padding:0 6px;animation:gsPulso 2.4s ease-in-out infinite}
+@keyframes gsPulso{0%,100%{box-shadow:0 0 0 0 rgba(230,211,174,.6)}60%{box-shadow:0 0 0 8px rgba(230,211,174,0)}}
 .gs{animation:gsEntra .6s cubic-bezier(.2,.7,.2,1) both}
 @keyframes gsEntra{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 .mk{display:grid;grid-template-columns:auto 1fr auto;gap:clamp(16px,3vw,32px);align-items:center;padding:clamp(18px,3vw,28px);border:1px solid #2f2b26;border-radius:22px;background:radial-gradient(120% 140% at 0% 0%,rgba(230,211,174,.10),transparent 55%),var(--graphite);margin:6px 0 22px}
@@ -318,13 +328,20 @@ async function carregarGaleria(){
     if(!j.ok){guardar.set('');mostrar('telaLogin');msg($('mLogin'),j.erro,true);return}
     galerias=j.galerias;$('gOla').textContent='Olá, '+(j.nome||'')+'!';
     const abas=$('gAbas');abas.innerHTML='';
-    if(galerias.length>1)galerias.forEach((g,i)=>{const b=document.createElement('button');b.textContent=g.evento;b.onclick=()=>abrir(i);abas.appendChild(b)});
+    const marcas=galerias.filter(g=>g.tipo==='gestao').length;
+    abas.classList.toggle('marcas',marcas>1);
+    if(marcas>1){const t=document.createElement('p');t.className='marcas-t';t.textContent='Escolha a marca para ver e aprovar os posts:';abas.appendChild(t)}
+    if(galerias.length>1)galerias.forEach((g,i)=>{const b=document.createElement('button');
+      if(g.tipo==='gestao'&&marcas>1){const m=g.marca||{},pd=(g.posts||[]).filter(p=>p.status==='Aguardando'||p.status==='Nova versão').length;
+        b.className='marca';b.innerHTML='<span class="ml">'+(m.logo?'<img src="'+escH(m.logo)+'" alt="">':escH((m.nome||'?').charAt(0)))+'</span><span class="mt"><b>'+escH(m.nome||g.evento)+'</b><small>'+(pd?pd+' para aprovar':'Tudo em dia ✓')+'</small></span>'+(pd?'<i class="mb">'+pd+'</i>':'')}
+      else b.textContent=g.evento;
+      b.onclick=()=>{gsMes=null;gsF='todos';abrir(i)};abas.appendChild(b)});
     abrir(Math.max(0,galerias.findIndex(g=>g.aberto)));mostrar('telaGal');
   }catch(err){mostrar('telaLogin');msg($('mLogin'),'Não foi possível carregar agora. Tente de novo.',true)}
 }
 let filtro='todas';
 function abrir(i,manterFiltro){
-  atual=i;const g=galerias[i];[...$('gAbas').children].forEach((b,k)=>b.setAttribute('aria-pressed',k===i));
+  atual=i;const g=galerias[i];[...$('gAbas').querySelectorAll('button')].forEach((b,k)=>b.setAttribute('aria-pressed',k===i));
   if(!manterFiltro)filtro='todas';
   $('lbFav').hidden=g.tipo==='gestao';
   if(g.tipo==='gestao'){abrirGestao(g);return}
@@ -470,6 +487,7 @@ async function responder(g,ks,status,obs){
     if(!j.ok){if(j.sair){guardar.set('');location.reload();return}throw new Error(j.erro)}
     g.posts.forEach(p=>{if(ks.indexOf(p.k)>=0){p.status=status;p.obs=obs;p.quando=j.quando;p.antes=''}});
     const y=scrollY;pintarGestao(g);window.scrollTo(0,y);
+    const mb=$('gAbas').querySelector('.marca[aria-pressed="true"]');if(mb){const pd=g.posts.filter(pend).length;mb.querySelector('small').textContent=pd?pd+' para aprovar':'Tudo em dia ✓';const bd=mb.querySelector('.mb');if(bd){if(pd)bd.textContent=pd;else bd.remove()}}
     ks.forEach(k=>{const el=document.querySelector('.pc[data-k="'+CSS.escape(k)+'"]');if(el)el.classList.add('pop')});
     toast(status==='Aprovado'?(ks.length>1?'✓ '+ks.length+' posts aprovados!':'✓ Post aprovado!'):'✎ Pedido de ajuste enviado para a Brius');
   }catch(e){toast(e.message||'Não foi possível enviar agora. Tente de novo.')}
