@@ -133,6 +133,28 @@ input:focus{border-color:var(--gold)}
 @media (hover:none){.adm-abas .marca .del{opacity:.85}}
 .btn.perigo{background:#e2553f;color:#fff}.btn.perigo:hover{background:#ef6a55}.adm-abas .marca.propria{border-color:rgba(230,211,174,.55)}.marca .tag{font:700 10px var(--body);letter-spacing:.08em;text-transform:uppercase;font-style:normal;background:var(--gold-soft);color:var(--ink);padding:3px 7px;border-radius:999px;vertical-align:middle;margin-left:4px}.marca.novo .ml{background:var(--gold-soft);color:var(--ink);font:500 30px/1 var(--body)}
 .lk{all:unset;cursor:pointer;color:var(--gold-soft);font:700 13px var(--body);text-decoration:underline}
+/* Relatório do mês */
+.rel{border:1px solid #2f2b26;border-radius:18px;background:var(--graphite);margin:-12px 0 26px;overflow:hidden}
+.rel summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:16px 18px;font:700 15px var(--body);color:var(--bone)}
+.rel summary::-webkit-details-marker{display:none}.rel summary b{font:500 18px var(--serif);color:var(--gold-soft);text-transform:capitalize}
+.rel summary::after{content:"▾";color:var(--muted-d);transition:transform .25s}.rel[open] summary::after{transform:rotate(180deg)}
+.rel>div{padding:0 18px 18px;animation:gsEntra .45s both}
+.rel-n{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px}
+.rel-n div{background:#201d1a;border:1px solid #2f2b26;border-radius:12px;padding:12px;text-align:center}
+.rel-n b{display:block;font:500 30px/1.1 var(--serif);color:var(--gold-soft)}.rel-n small{font-size:12px;color:var(--muted-d)}
+.rel-g{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:16px}@media (max-width:640px){.rel-g{grid-template-columns:1fr}}
+.rel-g h4{margin:0 0 10px;font:700 12px var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--muted-d)}
+.rel-b{display:grid;grid-template-columns:80px 1fr 28px;gap:10px;align-items:center;margin-bottom:8px;font-size:13.5px}
+.rel-b i{height:10px;border-radius:6px;background:#2f2b26;position:relative;overflow:hidden}.rel-b i::after{content:"";position:absolute;inset:0;width:var(--w);background:var(--gold-soft);border-radius:6px;animation:relCresce 1s cubic-bezier(.2,.7,.2,1) both}
+@keyframes relCresce{from{width:0}}
+.rel-s{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;align-items:end;height:130px}
+.rel-s div{display:grid;grid-template-rows:1fr auto auto;height:100%;text-align:center;gap:3px}
+.rel-s i{align-self:end;height:var(--h);min-height:3px;background:linear-gradient(var(--gold-soft),#b8955a);border-radius:6px 6px 2px 2px;animation:relSobe 1s cubic-bezier(.2,.7,.2,1) both}
+@keyframes relSobe{from{height:0}}
+.rel-s b{font-size:13px}.rel-s small{font-size:10.5px;color:var(--muted-d)}
+.rel-taxa{margin:14px 0 12px;font-size:13.5px;color:#d9cfbf}.rel-imp{width:auto!important;padding:10px 16px!important;font-size:13.5px!important}
+@media print{body.imprimindo-rel *{visibility:hidden}body.imprimindo-rel .mk,body.imprimindo-rel .mk *,body.imprimindo-rel #gsRel,body.imprimindo-rel #gsRel *{visibility:visible}
+ body.imprimindo-rel{background:#fff}body.imprimindo-rel .mk{position:absolute;top:0;left:0;right:0}body.imprimindo-rel #gsRel{position:absolute;top:200px;left:0;right:0}body.imprimindo-rel .rel-imp{display:none}}
 /* Mensalidade */
 .mens{display:grid;grid-template-columns:auto auto 1fr;gap:clamp(14px,3vw,30px);align-items:center;padding:16px 20px;border-radius:18px;border:1px solid #2f2b26;background:var(--graphite);margin:-8px 0 22px;position:relative;overflow:hidden;animation:gsEntra .6s .1s both}
 .mens::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--mc,#e6d3ae)}
@@ -284,6 +306,19 @@ input:focus{border-color:var(--gold)}
     </form>
   </section>
 
+  <!-- Código da agência (2ª etapa) -->
+  <section class="acesso" id="telaCodigo" hidden>
+    <form class="card" id="fCodigo">
+      <div class="kick">Acesso da agência</div>
+      <h1>Confirme que <em>é você</em></h1>
+      <p class="lead">Mandamos um código de 6 números para o e-mail da agência. Ele vale por 10 minutos.</p>
+      <label>Código<input name="codigo" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required style="font-size:26px;letter-spacing:10px;text-align:center"></label>
+      <button class="btn" type="submit">Entrar</button>
+      <p class="msg" id="mCodigo" role="status"></p>
+      <button class="link" type="button" id="voltarLogin">Voltar</button>
+    </form>
+  </section>
+
   <!-- Criar senha -->
   <section class="acesso" id="telaSenha" hidden>
     <form class="card" id="fSenha">
@@ -347,7 +382,7 @@ input:focus{border-color:var(--gold)}
 <script>
 const API_URL='https://script.google.com/macros/s/AKfycbxv6WLxKRDICMjAqAGWB8Uu5oZnL-zMWQWgFxdwFTwFRyiFFvH6YV5cxWbDOoV7hOQm/exec';
 const $=id=>document.getElementById(id);
-const telas=['telaLogin','telaSenha','telaEsqueci','telaGal','telaCarregando'];
+const telas=['telaCodigo','telaLogin','telaSenha','telaEsqueci','telaGal','telaCarregando'];
 function mostrar(t){telas.forEach(x=>$(x).hidden=x!==t);$('sair').hidden=t!=='telaGal';$('voltar').hidden=t==='telaGal';window.scrollTo(0,0)}
 const guardar={get(){try{return localStorage.getItem('brius_sessao')||''}catch(e){return memo}},set(v){memo=v;try{v?localStorage.setItem('brius_sessao',v):localStorage.removeItem('brius_sessao')}catch(e){}}};
 let memo='';
@@ -362,10 +397,22 @@ function msg(el,t,erro){el.textContent=t||'';el.classList.toggle('erro',!!erro)}
 $('fLogin').addEventListener('submit',async e=>{
   e.preventDefault();const f=e.target;msg($('mLogin'),'');ocupado(f,true);
   try{const j=await api({acao:'login',email:f.email.value,senha:f.senha.value});
-    if(!j.ok)throw new Error(j.erro);guardar.set(j.sessao);f.reset();carregarGaleria();
+    if(!j.ok)throw new Error(j.erro);
+    if(j.codigo){desafio=j.desafio;f.reset();mostrar('telaCodigo');setTimeout(()=>$('fCodigo').codigo.focus(),50);ocupado(f,false);return}
+    guardar.set(j.sessao);f.reset();carregarGaleria();
   }catch(err){msg($('mLogin'),err.message||'Não foi possível entrar agora.',true)}
   ocupado(f,false);
 });
+let desafio='';
+$('fCodigo').addEventListener('submit',async e=>{
+  e.preventDefault();const f=e.target;msg($('mCodigo'),'');ocupado(f,true);
+  try{const j=await api({acao:'login2',desafio:desafio,codigo:f.codigo.value});
+    if(!j.ok){if(j.expirou){setTimeout(()=>mostrar('telaLogin'),1800)}throw new Error(j.erro)}
+    guardar.set(j.sessao);f.reset();carregarGaleria();
+  }catch(err){msg($('mCodigo'),err.message||'Não foi possível entrar agora.',true)}
+  ocupado(f,false);
+});
+$('voltarLogin').onclick=()=>mostrar('telaLogin');
 // ---- criar senha
 let convite='';
 $('fSenha').addEventListener('submit',async e=>{
@@ -480,6 +527,7 @@ function abrirGestao(g){
     '<div class="mens" id="gsMens" hidden></div>'+
     '<div class="gs-bar"><div class="gs-f" id="gsF"></div><button class="btn gs-todos" id="gsTodos" hidden>✓ Aprovar todos os pendentes</button></div>'+
     '<div class="gs-cal"><div class="gs-cal-h"><button type="button" id="gsAnt" aria-label="Mês anterior">‹</button><b id="gsMesT"></b><button type="button" id="gsProx" aria-label="Próximo mês">›</button></div><div class="gs-gr" id="gsGr"></div></div>'+
+    '<details class="rel" id="gsRel"><summary><span>📊 Relatório do mês</span><b id="gsRelT"></b></summary><div id="gsRelC"></div></details>'+
     '<div class="gs-lista" id="gsLista"></div></div>';
   if(m.logo){const im=cont.querySelector('.mk-logo img');im.onerror=()=>{im.parentNode.textContent=ini}}
   if(!g.posts.length){$('gsLista').innerHTML='<p class="vazio">Ainda não tem posts no seu calendário. Assim que a Brius colocar, eles aparecem aqui para você aprovar.</p>'}
@@ -515,12 +563,28 @@ function pintarGestao(g){
   const gr=$('gsGr');gr.innerHTML=h;
   gr.querySelectorAll('.gs-d.tem').forEach(c=>{const ir=()=>{gsF='todos';pintarGestao(g);const card=document.querySelector('.pc[data-k="'+CSS.escape(c.dataset.k)+'"]');if(card){card.scrollIntoView({behavior:'smooth',block:'center'});card.classList.add('foco');setTimeout(()=>card.classList.remove('foco'),2200)}};
     c.onclick=ir;c.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();ir()}}});
+  pintarRelatorio(g,mesP);
   // lista
   const filtroF={todos:()=>true,pend:pend,ap:p=>p.status==='Aprovado',rf:p=>p.status==='Refazer'}[gsF];
   const lista2=mesP.filter(filtroF).concat(gsF==='todos'||gsF==='pend'?g.posts.filter(p=>!p.data&&filtroF(p)):[]);
   const L=$('gsLista');if(!g.posts.length)return;
   L.innerHTML=lista2.length?'':'<p class="vazio">Nenhum post '+({pend:'aguardando',ap:'aprovado',rf:'com ajuste pedido'}[gsF]||'')+' neste mês.</p>';
   lista2.forEach((p,n)=>L.appendChild(cartao(g,p,n)));
+}
+function pintarRelatorio(g,mesP){
+  const box=$('gsRelC');if(!box)return;const [a,mm]=(gsMes||'').split('-').map(Number);
+  $('gsRelT').textContent=a?MESES[mm-1]+' '+a:'';
+  if(!mesP.length){box.innerHTML='<p class="vazio" style="margin:6px 0 0">Nenhum conteúdo neste mês.</p>';return}
+  const ap=mesP.filter(p=>p.status==='Aprovado').length,rf=mesP.filter(p=>p.status==='Refazer').length,pd=mesP.filter(pend).length;
+  const tipos={};mesP.forEach(p=>tipos[p.tipo]=(tipos[p.tipo]||0)+1);const max=Math.max(...Object.values(tipos));
+  const sem=[0,0,0,0,0];mesP.forEach(p=>{if(p.data)sem[Math.min(4,Math.floor((+p.data.slice(8)-1)/7))]++});const ms=Math.max(1,...sem);
+  const hj=new Date().toISOString().slice(0,10);const publicados=mesP.filter(p=>p.data&&p.data<=hj).length;
+  box.innerHTML='<div class="rel-n">'+[[mesP.length,'conteúdos no mês'],[publicados,'já no ar (pela data)'],[ap,'aprovados'],[rf,'ajustes pedidos'],[pd,'aguardando']].map(([n,t])=>'<div><b>'+n+'</b><small>'+t+'</small></div>').join('')+'</div>'+
+    '<div class="rel-g"><div><h4>Por tipo</h4>'+Object.keys(tipos).sort((x,y)=>tipos[y]-tipos[x]).map(t=>'<div class="rel-b"><span>'+escH(t)+'</span><i style="--w:'+(tipos[t]/max*100)+'%"></i><b>'+tipos[t]+'</b></div>').join('')+'</div>'+
+    '<div><h4>Por semana</h4><div class="rel-s">'+sem.map((n,i)=>'<div><i style="--h:'+(n/ms*100)+'%"></i><b>'+n+'</b><small>'+(i*7+1)+'–'+Math.min(i*7+7,new Date(a,mm,0).getDate())+'</small></div>').join('')+'</div></div></div>'+
+    '<p class="rel-taxa">'+(mesP.length?Math.round(ap/mesP.length*100):0)+'% aprovado · '+(ap+rf?Math.round(mesP.filter(p=>p.status==='Aprovado').length/(ap+rf)*100):0)+'% de aprovação entre os respondidos</p>'+
+    '<button type="button" class="btn sec rel-imp">🖨️ Imprimir / salvar em PDF</button>';
+  box.querySelector('.rel-imp').onclick=()=>{$('gsRel').open=true;document.body.classList.add('imprimindo-rel');window.print();setTimeout(()=>document.body.classList.remove('imprimindo-rel'),500)};
 }
 function cartao(g,p,n){
   const c=document.createElement('article');c.className='pc';c.dataset.k=p.k;c.style.animationDelay=Math.min(n*60,400)+'ms';

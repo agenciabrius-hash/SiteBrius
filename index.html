@@ -717,6 +717,7 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
     <ul id="navList">
       <li><a href="#casamentos">Eventos</a></li>
       <li><a href="#servicos">Serviços</a></li>
+      <li><a href="gestao/">Gestão de redes</a></li>
       <li><a href="#producoes">Produções</a></li>
       <li><a href="#corporativos">Corporativo</a></li>
       <li><a href="#clientes">Clientes</a></li>
@@ -806,7 +807,7 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
       <div class="svc">
         <span class="num">05</span>
         <h3>Gestão de redes sociais</h3>
-        <p><b>O que é:</b> cuidamos do seu perfil por você. Planejamos o conteúdo, criamos posts, vídeos e stories, publicamos, interagimos com o público e mandamos um relatório mensal de resultados.</p>
+        <p><b>O que é:</b> cuidamos do seu perfil por você. Planejamos o conteúdo, criamos posts, vídeos e stories, publicamos, interagimos com o público e mandamos um relatório mensal de resultados. <a href="gestao/" style="color:inherit;font-weight:700">Ver planos e como funciona →</a></p>
         <svg viewBox="0 0 40 40" aria-hidden="true"><rect x="5" y="5" width="30" height="30" rx="8"/><path d="M12 25l6-6 4 4 7-8"/></svg>
       </div>
     </div>
@@ -1426,9 +1427,10 @@ const ALBUNS=[{"t": "Ensaio de bodas Sirlene & Valdinei", "c": "casamentos", "p"
 // ===== ENDEREÇO LIMPO: o site sempre abre no início =====
 (function(){
   try{history.scrollRestoration='manual'}catch(e){}
-  const irOrc=/[?&]orcamento\b/.test(location.search);
+  const irOrc=/[?&]orcamento\b/.test(location.search);const orcGestao=/[?&]orcamento=gestao\b/.test(location.search);
   if(location.hash||irOrc){try{history.replaceState(null,'',location.pathname)}catch(e){}}
-  window.scrollTo(0,0);addEventListener('load',()=>{window.scrollTo(0,0);if(irOrc){const o=document.getElementById('orcamento');if(o){window.__openCurtain&&window.__openCurtain(o);o.scrollIntoView({block:'start'})}}});
+  window.scrollTo(0,0);addEventListener('load',()=>{window.scrollTo(0,0);if(irOrc){const o=document.getElementById('orcamento');if(o){window.__openCurtain&&window.__openCurtain(o);o.scrollIntoView({block:'start'})}
+    if(orcGestao){const r=document.querySelector('input[name="tipo"][value="gestao"]');if(r){r.checked=true;r.dispatchEvent(new Event('change',{bubbles:true}))}}}});
   addEventListener('pageshow',e=>{if(e.persisted)window.scrollTo(0,0)});
   // links do menu rolam até a seção sem colocar #secao no endereço
   document.addEventListener('DOMContentLoaded',()=>document.addEventListener('click',e=>{
