@@ -390,7 +390,7 @@ input:focus{border-color:var(--gold)}
       <div class="kick">Acesso da agência</div>
       <h1>Confirme que <em>é você</em></h1>
       <p class="lead">Mandamos um código de 6 números para o e-mail da agência. Ele vale por 10 minutos.</p>
-      <label>Código<input name="codigo" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required style="font-size:26px;letter-spacing:10px;text-align:center"></label>
+      <label>Código<span style="position:relative;display:block"><input type="password" name="codigo" id="inCodigo" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required style="font-size:26px;letter-spacing:10px;text-align:center;padding-right:48px;width:100%;box-sizing:border-box"><button type="button" id="verCodigo" aria-label="Mostrar código" aria-pressed="false" title="Mostrar código" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:0;cursor:pointer;font-size:20px;padding:6px;opacity:.7">👁</button></span></label>
       <button class="btn" type="submit">Entrar</button>
       <p class="msg" id="mCodigo" role="status"></p>
       <button class="link" type="button" id="voltarLogin">Voltar</button>
@@ -476,12 +476,14 @@ $('fLogin').addEventListener('submit',async e=>{
   e.preventDefault();const f=e.target;msg($('mLogin'),'');ocupado(f,true);
   try{const j=await api({acao:'login',email:f.email.value,senha:f.senha.value});
     if(!j.ok)throw new Error(j.erro);
-    if(j.codigo){desafio=j.desafio;f.reset();mostrar('telaCodigo');setTimeout(()=>$('fCodigo').codigo.focus(),50);ocupado(f,false);return}
+    if(j.codigo){desafio=j.desafio;f.reset();$('fCodigo').reset();$('inCodigo').type='password';mostrar('telaCodigo');setTimeout(()=>$('fCodigo').codigo.focus(),50);ocupado(f,false);return}
     guardar.set(j.sessao);f.reset();carregarGaleria();
   }catch(err){msg($('mLogin'),err.message||'Não foi possível entrar agora.',true)}
   ocupado(f,false);
 });
 let desafio='';
+$('verCodigo').addEventListener('click',()=>{const i=$('inCodigo'),b=$('verCodigo'),v=i.type==='password';i.type=v?'text':'password';b.setAttribute('aria-pressed',v);b.setAttribute('aria-label',v?'Esconder código':'Mostrar código');b.title=v?'Esconder código':'Mostrar código';b.style.opacity=v?'1':'.7';i.focus()});
+$('fCodigo').addEventListener('reset',()=>{$('inCodigo').type='password'});
 $('fCodigo').addEventListener('submit',async e=>{
   e.preventDefault();const f=e.target;msg($('mCodigo'),'');ocupado(f,true);
   try{const j=await api({acao:'login2',desafio:desafio,codigo:f.codigo.value});
