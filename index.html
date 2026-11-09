@@ -409,6 +409,27 @@ html{scroll-padding-top:66px}
 .qf small{font-size:12.5px;min-height:1em}
 .qf small.bad{color:#b3261e}.qf small.good{color:#2e6b3a}
 .hp{position:absolute!important;left:-9999px}
+.svt{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:28px}
+@media (max-width:900px){.svt{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:520px){.svt{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}}
+.svt-i{all:unset;box-sizing:border-box;cursor:pointer;position:relative;aspect-ratio:1/1;border:1px solid var(--ink);border-radius:18px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;background:var(--bone);color:var(--ink);transition:background .3s,color .3s,transform .3s,box-shadow .3s}
+.svt-i:hover,.svt-i[aria-expanded="true"]{background:var(--ink);color:var(--bone);transform:translateY(-4px);box-shadow:0 14px 30px rgba(20,18,16,.18)}
+.svt-i:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.svt-i svg{width:clamp(30px,4vw,42px);height:auto;stroke:currentColor;fill:none;stroke-width:1.4;transition:transform .4s}
+.svt-i:hover svg,.svt-i[aria-expanded="true"] svg{stroke:var(--gold-soft);transform:rotate(-8deg) scale(1.1)}
+.svt-i b{font:500 clamp(17px,1.9vw,22px)/1.1 var(--display)}
+.svt-n{position:absolute;top:14px;right:16px;font:italic 500 14px var(--display);color:var(--gold)}
+.svt-mais{position:absolute;bottom:14px;right:14px;width:24px;height:24px;border-radius:50%;border:1px solid currentColor;display:grid;place-items:center;font:400 15px/1 var(--body);opacity:.6;transition:transform .3s}
+.svt-i[aria-expanded="true"] .svt-mais{transform:rotate(45deg);opacity:1}
+.svt-i b{padding-right:26px}
+.svt-d{margin-top:12px;background:var(--ink);color:var(--bone);border-radius:18px;padding:20px 22px;animation:svtIn .35s ease both}
+.svt-d h3{margin:0 0 6px;font:500 24px var(--display);color:var(--gold-soft)}.svt-d p{margin:0;font-size:15.5px;line-height:1.6;color:#d8d1c5;max-width:70ch}.svt-d p b{color:var(--bone)}.svt-d a{color:var(--gold-soft)!important}
+@keyframes svtIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.album .vid{position:absolute;top:10px;left:10px;z-index:3;background:rgba(20,18,16,.75);color:var(--bone);font:700 11.5px var(--body);padding:5px 10px;border-radius:999px;letter-spacing:.02em}
+.lb video{display:block;max-width:100%;max-height:calc(100dvh - 110px);border-radius:8px;background:#000}
+.sobre-pop{position:fixed;inset:0;z-index:95;overflow:auto;overscroll-behavior:contain;padding-top:20px!important;animation:svtIn .35s ease both}
+.sobre-pop[hidden]{display:none}
+.sobre-x{position:sticky;top:10px;margin-left:auto;display:block;z-index:2;font:600 14px var(--body);background:var(--ink);color:var(--bone);border:0;border-radius:999px;padding:10px 18px;cursor:pointer;margin-right:max(16px,var(--gutter-r))}
 .svc-pick{border:0;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .svc-pick legend{font:500 13px var(--body);margin:0 0 8px;padding:0}
 .qf .pick{display:block;cursor:pointer;margin:0}
@@ -715,15 +736,9 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
     <a class="cta" href="#orcamento">Fazer orçamento</a>
     <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navList">Menu</button>
     <ul id="navList">
-      <li><a href="#casamentos">Eventos</a></li>
-      <li><a href="#servicos">Serviços</a></li>
-      <li><a href="gestao/">Gestão de redes</a></li>
-      <li><a href="#producoes">Produções</a></li>
-      <li><a href="#corporativos">Corporativo</a></li>
-      <li><a href="#clientes">Clientes</a></li>
-      <li><a href="#historia">Sobre</a></li>
-      <li><a href="#avaliacoes">Avaliações</a></li>
-      <li><a href="#duvidas">Dúvidas</a></li>
+      <li><a href="#casamentos">📸 Encontre sua foto</a></li>
+      <li><a href="#producoes">Vídeos</a></li>
+      <li><a href="#historia" id="navSobre">Sobre</a></li>
       <li><a href="#contato">Contato</a></li>
     </ul>
   </div>
@@ -760,238 +775,6 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
   <a class="igv-link" id="igvLink" target="_blank" rel="noopener">Ver no Instagram</a></div>
 </div>
 
-
-<section class="band dark2" id="casamentos">
-  <div class="wrap">
-    <div class="evfotos">
-      <p class="eyebrow">Agenda &amp; fotos</p>
-      <h3>Próximos eventos</h3>
-      <p class="lede">Veja onde a Brius vai estar. Depois do evento, volte aqui, tire uma selfie e encontre só as fotos em que você aparece.</p>
-      <div id="evCal"></div>
-    </div>
-
-  </div>
-</section>
-
-<section class="band light" id="servicos">
-  <div class="wrap">
-    <div class="head">
-      <h2 class="mega ltr" aria-label="Serviços"><span aria-hidden="true"><span class="w"><span class="lt">S</span><span class="lt">e</span><span class="lt">r</span><span class="lt">v</span><span class="lt">i</span><span class="lt">ç</span><span class="lt">o</span><span class="lt">s</span></span></span></h2>
-      <p class="lede">Tudo é feito sob medida para o seu evento ou negócio. Veja o que cada serviço significa:</p>
-    </div>
-    <div class="services">
-      <div class="svc">
-        <span class="num">01</span>
-        <h3>Fotografia</h3>
-        <p><b>O que é:</b> o registro profissional em fotos do seu evento, produto ou marca. Cuidamos de luz, enquadramento e tratamento de cor, e entregamos as imagens em alta qualidade.</p>
-        <svg viewBox="0 0 40 40" aria-hidden="true"><rect x="4" y="11" width="32" height="22" rx="3"/><path d="M14 11l3-5h6l3 5"/><circle cx="20" cy="22" r="6.5"/></svg>
-      </div>
-      <div class="svc">
-        <span class="num">02</span>
-        <h3>Videomaker</h3>
-        <p><b>O que é:</b> o profissional que grava o vídeo no dia. Planeja os enquadramentos, a luz e o som para captar cada momento importante, com câmera e estabilizador.</p>
-        <svg viewBox="0 0 40 40" aria-hidden="true"><rect x="4" y="12" width="22" height="17" rx="2"/><path d="M26 18l9-5v15l-9-5"/><circle cx="12" cy="20" r="2.5"/></svg>
-      </div>
-      <div class="svc">
-        <span class="num">03</span>
-        <h3>Editor de vídeo</h3>
-        <p><b>O que é:</b> quem transforma o material gravado num filme pronto. Escolhe as melhores cenas e acerta cortes, música, cor e legendas, no formato certo para cada rede.</p>
-        <svg viewBox="0 0 40 40" aria-hidden="true"><rect x="4" y="8" width="32" height="20" rx="2"/><path d="M4 33h32M12 30v6M24 30v6"/><path d="M17 14l7 4-7 4z"/></svg>
-      </div>
-      <div class="svc">
-        <span class="num">04</span>
-        <h3>Storymaker</h3>
-        <p><b>O que é:</b> a cobertura do evento em tempo real para os stories. Gravamos, editamos e publicamos pelo celular durante o próprio evento, para quem não está lá acompanhar e para você receber conteúdo no mesmo dia.</p>
-        <svg viewBox="0 0 40 40" aria-hidden="true"><rect x="11" y="3" width="18" height="34" rx="4"/><circle cx="20" cy="18" r="5"/><path d="M17 31h6"/></svg>
-      </div>
-      <div class="svc">
-        <span class="num">05</span>
-        <h3>Gestão de redes sociais</h3>
-        <p><b>O que é:</b> cuidamos do seu perfil por você. Planejamos o conteúdo, criamos posts, vídeos e stories, publicamos, interagimos com o público e mandamos um relatório mensal de resultados. <a href="gestao/" style="color:inherit;font-weight:700">Ver planos e como funciona →</a></p>
-        <svg viewBox="0 0 40 40" aria-hidden="true"><rect x="5" y="5" width="30" height="30" rx="8"/><path d="M12 25l6-6 4 4 7-8"/></svg>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="band dark2" id="producoes">
-  <div class="wrap">
-    <div class="chapter">
-      <div class="head">
-        <h2 class="mega ltr" aria-label="Produções"><span aria-hidden="true"><span class="w"><span class="lt">P</span><span class="lt">r</span><span class="lt">o</span><span class="lt">d</span><span class="lt">u</span><span class="lt">ç</span><span class="lt">õ</span><span class="lt">e</span><span class="lt">s</span></span></span></h2>
-        <div class="text">
-          <p class="eyebrow">Reels &amp; vídeos verticais</p>
-          <p class="lede">Vídeos pensados para o feed e para os stories: roteiro, captação e edição feitos para prender a atenção nos primeiros segundos. Toque em um vídeo para assistir.</p>
-        </div>
-      </div>
-      <div class="reels" id="reels"></div>
-    </div>
-  </div>
-</section>
-
-<section class="band light" id="corporativos">
-  <div class="wrap">
-    <div class="chapter">
-      <div class="head">
-        <h2 class="big ltr" aria-label="Entrega de chaves"><span aria-hidden="true"><span class="w"><span class="lt">E</span><span class="lt">n</span><span class="lt">t</span><span class="lt">r</span><span class="lt">e</span><span class="lt">g</span><span class="lt">a</span></span><span class="sp"> </span><span class="w"><span class="lt">d</span><span class="lt">e</span></span><span class="sp"> </span><span class="w"><span class="lt">c</span><span class="lt">h</span><span class="lt">a</span><span class="lt">v</span><span class="lt">e</span><span class="lt">s</span></span></span></h2>
-        <div class="text">
-          <p class="eyebrow">Eventos corporativos</p>
-          <div class="client"><b>Kazzas Incorporadora</b><span>@kazzas_incorporadora</span></div>
-        </div>
-      </div>
-      <div class="split">
-        <div class="phone" data-video="v/00.mp4" data-poster="v/00.webp"></div>
-        <div class="side">
-          <p class="lede">Registro de um momento que simboliza conquista e novos começos. A cobertura foi pensada para capturar emoção, detalhes e a atmosfera do evento, transmitindo credibilidade, celebração e a importância dessa realização para cada cliente.</p>
-          <div class="grid g-three" data-gallery>
-            <button><img src="img/17.webp" alt="Casal feliz com a entrega das chaves" loading="lazy"></button>
-            <button><img src="img/16.webp" alt="Família sentada entre os prédios" loading="lazy"></button>
-            <button><img src="img/18.webp" alt="Família comemorando no apartamento novo" loading="lazy"></button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="chapter">
-      <div class="head">
-        <h2 class="big ltr" aria-label="Fotografia publicitária"><span aria-hidden="true"><span class="w"><span class="lt">F</span><span class="lt">o</span><span class="lt">t</span><span class="lt">o</span><span class="lt">g</span><span class="lt">r</span><span class="lt">a</span><span class="lt">f</span><span class="lt">i</span><span class="lt">a</span></span><span class="sp"> </span><span class="w"><span class="lt">p</span><span class="lt">u</span><span class="lt">b</span><span class="lt">l</span><span class="lt">i</span><span class="lt">c</span><span class="lt">i</span><span class="lt">t</span><span class="lt">á</span><span class="lt">r</span><span class="lt">i</span><span class="lt">a</span></span></span></h2>
-        <div class="text">
-          <p class="lede">Imagens criadas para destacar textura, caimento e personalidade das peças. A fotografia valoriza cores, detalhes e a essência da marca, transmitindo sensação de qualidade e desejo. Cada clique reforça estilo, leveza e o lifestyle que o público busca.</p>
-          <div class="client"><b>Moda Praia &amp; Moda Íntima</b><span><a href="https://www.instagram.com/doce.menina_25/" target="_blank" rel="noopener" style="color:inherit">@doce.menina_25</a></span></div>
-        </div>
-      </div>
-      <div class="grid g-three" data-gallery>
-        <button><img src="img/19.webp" alt="Camisola preta com renda dourada" loading="lazy"></button>
-        <button><img src="img/20.webp" alt="Conjunto de lingerie lilás" loading="lazy"></button>
-        <button><img src="img/21.webp" alt="Biquíni verde água sobre pelúcia" loading="lazy"></button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="band dark2" id="clientes">
-  <div class="wrap">
-    <div class="chapter">
-      <div class="head">
-        <h2 class="mega ltr" aria-label="Clientes"><span aria-hidden="true"><span class="w"><span class="lt">C</span><span class="lt">l</span><span class="lt">i</span><span class="lt">e</span><span class="lt">n</span><span class="lt">t</span><span class="lt">e</span><span class="lt">s</span></span></span></h2>
-        <div class="text">
-          <p class="eyebrow">Portfólio completo</p>
-          <p class="lede">Cada cliente tem o seu álbum. As fotos passam sozinhas; toque num álbum para ver todas em tela cheia.</p>
-        </div>
-      </div>
-      <div class="filters" role="group" aria-label="Filtrar fotos dos clientes">
-        <button type="button" class="on" data-f="todos" aria-pressed="true">Todos</button>
-        <button type="button" data-f="casamentos" aria-pressed="false">Casamentos &amp; bodas</button>
-        <button type="button" data-f="quinze" aria-pressed="false">15 anos</button>
-        <button type="button" data-f="batizados" aria-pressed="false">Batizados</button>
-        <button type="button" data-f="chas" aria-pressed="false">Chás</button>
-        <button type="button" data-f="eventos" aria-pressed="false">Eventos</button>
-        <button type="button" data-f="shows" aria-pressed="false">Shows</button>
-        <button type="button" data-f="gastro" aria-pressed="false">Gastronomia</button>
-        <button type="button" data-f="marcas" aria-pressed="false">Marcas</button>
-      </div>
-      <div class="albums" id="albums" aria-live="polite"></div>
-      <div class="more"><button type="button" class="btn-ghost" id="cMore">Ver mais álbuns</button></div>
-    </div>
-  </div>
-</section>
-
-<section class="band light" id="historia">
-  <div class="wrap">
-    <div class="chapter">
-      <div class="head">
-        <h2 class="mega ltr" aria-label="Sobre a Brius"><span aria-hidden="true"><span class="w"><span class="lt">S</span><span class="lt">o</span><span class="lt">b</span><span class="lt">r</span><span class="lt">e</span></span><span class="sp"> </span><span class="w"><span class="lt">a</span></span><span class="sp"> </span><span class="w"><span class="lt">B</span><span class="lt">r</span><span class="lt">i</span><span class="lt">u</span><span class="lt">s</span></span></span></h2>
-        <div class="text">
-          <p class="eyebrow">Nossa história</p>
-        </div>
-      </div>
-      <div class="story">
-        <div class="name">
-          <div class="name-word" role="group" aria-label="O nome Brius: toque em BRI ou US">
-            <button type="button" id="bBri" aria-pressed="false" aria-controls="pSab">BRI</button><button type="button" id="bUs" aria-pressed="false" aria-controls="pMat">US</button>
-          </div>
-          <p class="name-hint" id="nameHint">Passe o mouse ou toque em BRI e em US.</p>
-          <div class="people" id="people">
-            <div class="person" id="pSab"><span class="pn">Sa<b>BRI</b>na</span><p>Cria as artes e desenvolve as estratégias de marketing e redes sociais.</p></div>
-            <div class="person" id="pMat"><span class="pn">Mathe<b>US</b></span><p>Apaixonado por criação e edição de vídeo, especialista em tráfego pago.</p></div>
-          </div>
-        </div>
-        <div class="about-text">
-          <p class="since">A Brius nasceu há <i>2 anos</i>, criada por Matheus e Sabrina.</p>
-          <p class="lede">Começamos com gestão de redes sociais e hoje fazemos produção de vídeo para casamentos e todo tipo de evento, fotografia e estratégia digital. O nome é a nossa assinatura: <b>BRI</b> de Sabrina e <b>US</b> de Matheus.</p>
-          <ol class="timeline" aria-label="Como trabalhamos">
-            <li><b>Diagnóstico</b><span>Analisamos o seu perfil para entender o público e a melhor estratégia.</span></li>
-            <li><b>Análise</b><span>Juntamos tudo o que foi levantado e alinhamos com o seu objetivo.</span></li>
-            <li><b>Gestão</b><span>Definimos o visual: estética das postagens, biografia, foto de perfil e paleta de cores.</span></li>
-            <li><b>Relatório</b><span>Com a estratégia aprovada, colocamos em prática e avaliamos melhorias todo mês.</span></li>
-          </ol>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="band dark" id="avaliacoes">
-  <div class="wrap">
-    <div class="chapter">
-      <div class="head">
-        <h2 class="mega ltr" aria-label="Avaliações"><span aria-hidden="true"><span class="w"><span class="lt">A</span><span class="lt">v</span><span class="lt">a</span><span class="lt">l</span><span class="lt">i</span><span class="lt">a</span><span class="lt">ç</span><span class="lt">õ</span><span class="lt">e</span><span class="lt">s</span></span></span></h2>
-        <div class="text">
-          <p class="eyebrow">O que os clientes dizem</p>
-          <p class="lede">Mensagens e áudios reais que recebemos depois das entregas.</p>
-          <a class="gbtn" href="https://g.page/r/Ca6OHRikMJo8EBM/review" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#4285F4" d="M22.5 12.3c0-.8-.1-1.5-.2-2.3H12v4.3h5.9a5 5 0 0 1-2.2 3.3v2.7h3.5c2.1-1.9 3.3-4.7 3.3-8z"/><path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7l-3.5-2.7c-1 .7-2.3 1.1-3.8 1.1-2.9 0-5.4-2-6.3-4.6H2.1v2.8A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.7 14.1a6.6 6.6 0 0 1 0-4.2V7.1H2.1a11 11 0 0 0 0 9.8z"/><path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.1-3.1A11 11 0 0 0 2.1 7.1l3.6 2.8C6.6 7.3 9.1 5.4 12 5.4z"/></svg>Ver e deixar avaliação no Google</a>
-        </div>
-      </div>
-      <div class="marquee" aria-label="Mensagens de clientes">
-        <div class="track">
-          <figure class="q"><blockquote>Eu tô me desintegrando agora 🥹😭 Ficou perfeito.</blockquote><figcaption><b>Cliente</b><span>Vídeo da entrega de chaves</span></figcaption></figure>
-          <figure class="q"><blockquote>Caramba, ficou muito bom!! A qualidade está boa demais, baita upgrade, hein.</blockquote><figcaption><b>Cliente</b><span>Vídeo</span></figcaption></figure>
-          <figure class="q"><blockquote>Gente, fiquei emocionada.</blockquote><figcaption><b>Viviane Olimpio</b><span>Olimpio Consultoria</span></figcaption></figure>
-          <figure class="q"><blockquote>Ficou lindo demais. Muito obrigada por tanta sensibilidade.</blockquote><figcaption><b>Cliente</b><span>Vídeo da entrega de chaves</span></figcaption></figure>
-          <figure class="q"><blockquote>Owww. O vídeo no meu status tá fazendo sucesso! Parabéns.</blockquote><figcaption><b>Cliente</b><span>Vídeo</span></figcaption></figure>
-          <figure class="q"><blockquote>Matheus e sua noiva, vocês são maravilhosos. Deus abençoe infinitamente a vida de vocês, que o sucesso seja sempre consagrado ao Senhor!!! Gratidão 😍</blockquote><figcaption><b>Cliente</b><span>Mensagem</span></figcaption></figure>
-        </div>
-      </div>
-      <div class="auds">
-        <div class="aud" data-src="aud/a1.mp3">
-          <button type="button" class="aud-play" aria-label="Ouvir áudio de Viviane Olimpio"><span></span></button>
-          <div class="aud-body"><b>Viviane Olimpio</b><span>Olimpio Consultoria</span><div class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
-          <span class="aud-time">0:00</span>
-        </div>
-        <div class="aud" data-src="aud/a2.mp3">
-          <button type="button" class="aud-play" aria-label="Ouvir áudio de Ale Botini"><span></span></button>
-          <div class="aud-body"><b>Ale Botini</b><span>Botini</span><div class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><p>“Nossa, Matheus, ficou muito bom esse, hein! Conseguimos imprimir autoridade…”</p></div>
-          <span class="aud-time">0:00</span>
-        </div>
-        <div class="aud" data-src="aud/a3.mp3">
-          <button type="button" class="aud-play" aria-label="Ouvir áudio de Cliente"><span></span></button>
-          <div class="aud-body"><b>Cliente</b><span>Áudio de cliente</span><div class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
-          <span class="aud-time">0:00</span>
-        </div>
-        <div class="aud" data-src="aud/a4.mp3">
-          <button type="button" class="aud-play" aria-label="Ouvir áudio de Cliente"><span></span></button>
-          <div class="aud-body"><b>Cliente</b><span>Áudio de cliente</span><div class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
-          <span class="aud-time">0:00</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="band light" id="duvidas">
-  <div class="wrap">
-    <div class="chapter">
-      <div class="head">
-        <h2 class="mega ltr" aria-label="Dúvidas frequentes"><span aria-hidden="true"><span class="w"><span class="lt">D</span><span class="lt">ú</span><span class="lt">v</span><span class="lt">i</span><span class="lt">d</span><span class="lt">a</span><span class="lt">s</span></span></span></h2>
-        <div class="text">
-          <p class="eyebrow">Perguntas frequentes</p>
-          <p class="lede">O que mais perguntam pra gente antes de fechar. Ficou alguma dúvida? Chama no WhatsApp.</p>
-        </div>
-      </div>
-      <div class="faq"><details class="fq"><summary>Em quanto tempo recebo as fotos?</summary><p>De 3 dias a uma semana depois do evento. Você recebe um e-mail com o acesso à sua Área do Cliente, onde ficam todas as fotos e vídeos.</p></details><details class="fq"><summary>Quantas fotos eu recebo?</summary><p>Todas as fotos do evento. Não tem limite de quantidade nem pacote de "x fotos": o que a gente registra, você recebe.</p></details><details class="fq"><summary>Como faço para reservar a data?</summary><p>Peça o orçamento aqui no site. Com a proposta aprovada, a data fica reservada com o sinal de 30% via Pix. O restante (70%) é pago até a semana do evento.</p></details><details class="fq"><summary>E se eu precisar mudar a data?</summary><p>O sinal não é devolvido, mas vale para a nova data, desde que ela esteja livre na nossa agenda.</p></details><details class="fq"><summary>Vocês atendem fora de São Paulo?</summary><p>Sim! Atendemos todo o Brasil e também fora do país. Para eventos fora de São Paulo, o valor aumenta e os custos de transporte, hospedagem e alimentação da equipe ficam por conta do contratante.</p></details><details class="fq"><summary>Como funciona a Área do Cliente?</summary><p>É a sua galeria particular no nosso site. No primeiro acesso você cria uma senha e vê só as suas fotos e vídeos. Dá para ver em tela cheia, marcar as favoritas e baixar tudo de uma vez. No celular, as fotos vão direto para a galeria (no iPhone, para o app Fotos). A galeria fica disponível pelo prazo combinado, e a gente avisa antes de encerrar.</p></details><details class="fq"><summary>Como funciona a gestão de redes sociais?</summary><p>Escolha "Gestão de redes sociais" no orçamento e marque uma conversa online pelo Google Meet. Na reunião a gente entende a sua marca e monta a proposta.</p></details></div>
-    </div>
-  </div>
-</section>
 
 <section class="band quote" id="orcamento">
   <div class="wrap">
@@ -1133,6 +916,167 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
   </div>
 </section>
 
+<section class="band light" id="servicos">
+  <div class="wrap">
+    <div class="head">
+      <h2 class="mega ltr" aria-label="Serviços"><span aria-hidden="true"><span class="w"><span class="lt">S</span><span class="lt">e</span><span class="lt">r</span><span class="lt">v</span><span class="lt">i</span><span class="lt">ç</span><span class="lt">o</span><span class="lt">s</span></span></span></h2>
+      <p class="lede">Tudo é feito sob medida para o seu evento ou negócio. Toque num serviço para ver o que ele inclui.</p>
+    </div>
+    <div class="svt" role="list"><button type="button" class="svt-i" role="listitem" aria-expanded="false" aria-controls="svtD" data-i="0"><span class="svt-n">01</span><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="4" y="11" width="32" height="22" rx="3"/><path d="M14 11l3-5h6l3 5"/><circle cx="20" cy="22" r="6.5"/></svg><b>Fotografia</b><span class="svt-mais" aria-hidden="true">+</span></button><button type="button" class="svt-i" role="listitem" aria-expanded="false" aria-controls="svtD" data-i="1"><span class="svt-n">02</span><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="4" y="12" width="22" height="17" rx="2"/><path d="M26 18l9-5v15l-9-5"/><circle cx="12" cy="20" r="2.5"/></svg><b>Videomaker</b><span class="svt-mais" aria-hidden="true">+</span></button><button type="button" class="svt-i" role="listitem" aria-expanded="false" aria-controls="svtD" data-i="2"><span class="svt-n">03</span><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="4" y="8" width="32" height="20" rx="2"/><path d="M4 33h32M12 30v6M24 30v6"/><path d="M17 14l7 4-7 4z"/></svg><b>Editor de vídeo</b><span class="svt-mais" aria-hidden="true">+</span></button><button type="button" class="svt-i" role="listitem" aria-expanded="false" aria-controls="svtD" data-i="3"><span class="svt-n">04</span><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="11" y="3" width="18" height="34" rx="4"/><circle cx="20" cy="18" r="5"/><path d="M17 31h6"/></svg><b>Storymaker</b><span class="svt-mais" aria-hidden="true">+</span></button><button type="button" class="svt-i" role="listitem" aria-expanded="false" aria-controls="svtD" data-i="4"><span class="svt-n">05</span><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="5" y="5" width="30" height="30" rx="8"/><path d="M12 25l6-6 4 4 7-8"/></svg><b>Gestão de redes sociais</b><span class="svt-mais" aria-hidden="true">+</span></button></div><div class="svt-d" id="svtD" hidden aria-live="polite"></div><script>window.SVT=[["Fotografia", "<b>O que é:</b> o registro profissional em fotos do seu evento, produto ou marca. Cuidamos de luz, enquadramento e tratamento de cor, e entregamos as imagens em alta qualidade."], ["Videomaker", "<b>O que é:</b> o profissional que grava o vídeo no dia. Planeja os enquadramentos, a luz e o som para captar cada momento importante, com câmera e estabilizador."], ["Editor de vídeo", "<b>O que é:</b> quem transforma o material gravado num filme pronto. Escolhe as melhores cenas e acerta cortes, música, cor e legendas, no formato certo para cada rede."], ["Storymaker", "<b>O que é:</b> a cobertura do evento em tempo real para os stories. Gravamos, editamos e publicamos pelo celular durante o próprio evento, para quem não está lá acompanhar e para você receber conteúdo no mesmo dia."], ["Gestão de redes sociais", "<b>O que é:</b> cuidamos do seu perfil por você. Planejamos o conteúdo, criamos posts, vídeos e stories, publicamos, interagimos com o público e mandamos um relatório mensal de resultados. <a href=\"gestao/\" style=\"color:inherit;font-weight:700\">Ver planos e como funciona →</a>"]]</script>
+  </div>
+</section>
+
+<section class="band dark" id="producoes">
+  <div class="wrap">
+    <div class="chapter">
+      <div class="head">
+        <h2 class="mega ltr" aria-label="Vídeos"><span aria-hidden="true"><span class="w"><span class="lt">V</span><span class="lt">í</span><span class="lt">d</span><span class="lt">e</span><span class="lt">o</span><span class="lt">s</span></span></span></h2>
+        <div class="text">
+          <p class="eyebrow">Portfólio · vídeos que produzimos</p>
+          <p class="lede">Eventos, marcas e bastidores: roteiro, captação e edição pensados para prender a atenção nos primeiros segundos. Toque em um vídeo para assistir.</p>
+        </div>
+      </div>
+      <div class="reels" id="reels"></div>
+    </div>
+  </div>
+</section>
+
+<section class="band dark2" id="clientes">
+  <div class="wrap">
+    <div class="chapter">
+      <div class="head">
+        <h2 class="mega ltr" aria-label="Clientes"><span aria-hidden="true"><span class="w"><span class="lt">C</span><span class="lt">l</span><span class="lt">i</span><span class="lt">e</span><span class="lt">n</span><span class="lt">t</span><span class="lt">e</span><span class="lt">s</span></span></span></h2>
+        <div class="text">
+          <p class="eyebrow">Portfólio completo</p>
+          <p class="lede">Cada cliente tem o seu álbum. As fotos passam sozinhas; toque num álbum para ver todas em tela cheia.</p>
+        </div>
+      </div>
+      <div class="filters" role="group" aria-label="Filtrar fotos dos clientes">
+        <button type="button" class="on" data-f="todos" aria-pressed="true">Todos</button>
+        <button type="button" data-f="casamentos" aria-pressed="false">Casamentos &amp; bodas</button>
+        <button type="button" data-f="quinze" aria-pressed="false">15 anos</button>
+        <button type="button" data-f="batizados" aria-pressed="false">Batizados</button>
+        <button type="button" data-f="chas" aria-pressed="false">Chás</button>
+        <button type="button" data-f="eventos" aria-pressed="false">Eventos</button>
+        <button type="button" data-f="shows" aria-pressed="false">Shows</button>
+        <button type="button" data-f="gastro" aria-pressed="false">Gastronomia</button>
+        <button type="button" data-f="marcas" aria-pressed="false">Marcas</button>
+      </div>
+      <div class="albums" id="albums" aria-live="polite"></div>
+      <div class="more"><button type="button" class="btn-ghost" id="cMore">Ver mais álbuns</button></div>
+    </div>
+  </div>
+</section>
+
+<section class="band light" id="avaliacoes">
+  <div class="wrap">
+    <div class="chapter">
+      <div class="head">
+        <h2 class="mega ltr" aria-label="Avaliações"><span aria-hidden="true"><span class="w"><span class="lt">A</span><span class="lt">v</span><span class="lt">a</span><span class="lt">l</span><span class="lt">i</span><span class="lt">a</span><span class="lt">ç</span><span class="lt">õ</span><span class="lt">e</span><span class="lt">s</span></span></span></h2>
+        <div class="text">
+          <p class="eyebrow">O que os clientes dizem</p>
+          <p class="lede">Mensagens e áudios reais que recebemos depois das entregas.</p>
+          <a class="gbtn" href="https://g.page/r/Ca6OHRikMJo8EBM/review" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#4285F4" d="M22.5 12.3c0-.8-.1-1.5-.2-2.3H12v4.3h5.9a5 5 0 0 1-2.2 3.3v2.7h3.5c2.1-1.9 3.3-4.7 3.3-8z"/><path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7l-3.5-2.7c-1 .7-2.3 1.1-3.8 1.1-2.9 0-5.4-2-6.3-4.6H2.1v2.8A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.7 14.1a6.6 6.6 0 0 1 0-4.2V7.1H2.1a11 11 0 0 0 0 9.8z"/><path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.1-3.1A11 11 0 0 0 2.1 7.1l3.6 2.8C6.6 7.3 9.1 5.4 12 5.4z"/></svg>Ver e deixar avaliação no Google</a>
+        </div>
+      </div>
+      <div class="marquee" aria-label="Mensagens de clientes">
+        <div class="track">
+          <figure class="q"><blockquote>Eu tô me desintegrando agora 🥹😭 Ficou perfeito.</blockquote><figcaption><b>Cliente</b><span>Vídeo da entrega de chaves</span></figcaption></figure>
+          <figure class="q"><blockquote>Caramba, ficou muito bom!! A qualidade está boa demais, baita upgrade, hein.</blockquote><figcaption><b>Cliente</b><span>Vídeo</span></figcaption></figure>
+          <figure class="q"><blockquote>Gente, fiquei emocionada.</blockquote><figcaption><b>Viviane Olimpio</b><span>Olimpio Consultoria</span></figcaption></figure>
+          <figure class="q"><blockquote>Ficou lindo demais. Muito obrigada por tanta sensibilidade.</blockquote><figcaption><b>Cliente</b><span>Vídeo da entrega de chaves</span></figcaption></figure>
+          <figure class="q"><blockquote>Owww. O vídeo no meu status tá fazendo sucesso! Parabéns.</blockquote><figcaption><b>Cliente</b><span>Vídeo</span></figcaption></figure>
+          <figure class="q"><blockquote>Matheus e sua noiva, vocês são maravilhosos. Deus abençoe infinitamente a vida de vocês, que o sucesso seja sempre consagrado ao Senhor!!! Gratidão 😍</blockquote><figcaption><b>Cliente</b><span>Mensagem</span></figcaption></figure>
+        </div>
+      </div>
+      <div class="auds">
+        <div class="aud" data-src="aud/a1.mp3">
+          <button type="button" class="aud-play" aria-label="Ouvir áudio de Viviane Olimpio"><span></span></button>
+          <div class="aud-body"><b>Viviane Olimpio</b><span>Olimpio Consultoria</span><div class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+          <span class="aud-time">0:00</span>
+        </div>
+        <div class="aud" data-src="aud/a2.mp3">
+          <button type="button" class="aud-play" aria-label="Ouvir áudio de Ale Botini"><span></span></button>
+          <div class="aud-body"><b>Ale Botini</b><span>Botini</span><div class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><p>“Nossa, Matheus, ficou muito bom esse, hein! Conseguimos imprimir autoridade…”</p></div>
+          <span class="aud-time">0:00</span>
+        </div>
+        <div class="aud" data-src="aud/a3.mp3">
+          <button type="button" class="aud-play" aria-label="Ouvir áudio de Cliente"><span></span></button>
+          <div class="aud-body"><b>Cliente</b><span>Áudio de cliente</span><div class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+          <span class="aud-time">0:00</span>
+        </div>
+        <div class="aud" data-src="aud/a4.mp3">
+          <button type="button" class="aud-play" aria-label="Ouvir áudio de Cliente"><span></span></button>
+          <div class="aud-body"><b>Cliente</b><span>Áudio de cliente</span><div class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+          <span class="aud-time">0:00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band quote" id="duvidas">
+  <div class="wrap">
+    <div class="chapter">
+      <div class="head">
+        <h2 class="mega ltr" aria-label="Dúvidas frequentes"><span aria-hidden="true"><span class="w"><span class="lt">D</span><span class="lt">ú</span><span class="lt">v</span><span class="lt">i</span><span class="lt">d</span><span class="lt">a</span><span class="lt">s</span></span></span></h2>
+        <div class="text">
+          <p class="eyebrow">Perguntas frequentes</p>
+          <p class="lede">O que mais perguntam pra gente antes de fechar. Ficou alguma dúvida? Chama no WhatsApp.</p>
+        </div>
+      </div>
+      <div class="faq"><details class="fq"><summary>Em quanto tempo recebo as fotos?</summary><p>De 3 dias a uma semana depois do evento. Você recebe um e-mail com o acesso à sua Área do Cliente, onde ficam todas as fotos e vídeos.</p></details><details class="fq"><summary>Quantas fotos eu recebo?</summary><p>Todas as fotos do evento. Não tem limite de quantidade nem pacote de "x fotos": o que a gente registra, você recebe.</p></details><details class="fq"><summary>Como faço para reservar a data?</summary><p>Peça o orçamento aqui no site. Com a proposta aprovada, a data fica reservada com o sinal de 30% via Pix. O restante (70%) é pago até a semana do evento.</p></details><details class="fq"><summary>E se eu precisar mudar a data?</summary><p>O sinal não é devolvido, mas vale para a nova data, desde que ela esteja livre na nossa agenda.</p></details><details class="fq"><summary>Vocês atendem fora de São Paulo?</summary><p>Sim! Atendemos todo o Brasil e também fora do país. Para eventos fora de São Paulo, o valor aumenta e os custos de transporte, hospedagem e alimentação da equipe ficam por conta do contratante.</p></details><details class="fq"><summary>Como funciona a Área do Cliente?</summary><p>É a sua galeria particular no nosso site. No primeiro acesso você cria uma senha e vê só as suas fotos e vídeos. Dá para ver em tela cheia, marcar as favoritas e baixar tudo de uma vez. No celular, as fotos vão direto para a galeria (no iPhone, para o app Fotos). A galeria fica disponível pelo prazo combinado, e a gente avisa antes de encerrar.</p></details><details class="fq"><summary>Como funciona a gestão de redes sociais?</summary><p>Escolha "Gestão de redes sociais" no orçamento e marque uma conversa online pelo Google Meet. Na reunião a gente entende a sua marca e monta a proposta.</p></details></div>
+    </div>
+  </div>
+</section>
+
+<section class="band dark2" id="casamentos">
+  <div class="wrap">
+    <div class="evfotos">
+      <p class="eyebrow">Encontre sua foto</p>
+      <h3>Esteve num evento com a Brius?</h3>
+      <p class="lede">Escolha o evento, tire uma selfie e veja só as fotos em que você aparece. Aqui também ficam os próximos eventos em que vamos estar.</p>
+      <div id="evCal"></div>
+    </div>
+
+  </div>
+</section>
+
+<section class="band light sobre-pop" id="historia" hidden>
+  <div class="wrap">
+    <div class="chapter">
+      <div class="head">
+        <h2 class="mega ltr" aria-label="Sobre a Brius"><span aria-hidden="true"><span class="w"><span class="lt">S</span><span class="lt">o</span><span class="lt">b</span><span class="lt">r</span><span class="lt">e</span></span><span class="sp"> </span><span class="w"><span class="lt">a</span></span><span class="sp"> </span><span class="w"><span class="lt">B</span><span class="lt">r</span><span class="lt">i</span><span class="lt">u</span><span class="lt">s</span></span></span></h2>
+        <div class="text">
+          <p class="eyebrow">Nossa história</p>
+        </div>
+      </div>
+      <div class="story">
+        <div class="name">
+          <div class="name-word" role="group" aria-label="O nome Brius: toque em BRI ou US">
+            <button type="button" id="bBri" aria-pressed="false" aria-controls="pSab">BRI</button><button type="button" id="bUs" aria-pressed="false" aria-controls="pMat">US</button>
+          </div>
+          <p class="name-hint" id="nameHint">Passe o mouse ou toque em BRI e em US.</p>
+          <div class="people" id="people">
+            <div class="person" id="pSab"><span class="pn">Sa<b>BRI</b>na</span><p>Cria as artes e desenvolve as estratégias de marketing e redes sociais.</p></div>
+            <div class="person" id="pMat"><span class="pn">Mathe<b>US</b></span><p>Apaixonado por criação e edição de vídeo, especialista em tráfego pago.</p></div>
+          </div>
+        </div>
+        <div class="about-text">
+          <p class="since">A Brius nasceu há <i>2 anos</i>, criada por Matheus e Sabrina.</p>
+          <p class="lede">Começamos com gestão de redes sociais e hoje fazemos produção de vídeo para casamentos e todo tipo de evento, fotografia e estratégia digital. O nome é a nossa assinatura: <b>BRI</b> de Sabrina e <b>US</b> de Matheus.</p>
+          <ol class="timeline" aria-label="Como trabalhamos">
+            <li><b>Diagnóstico</b><span>Analisamos o seu perfil para entender o público e a melhor estratégia.</span></li>
+            <li><b>Análise</b><span>Juntamos tudo o que foi levantado e alinhamos com o seu objetivo.</span></li>
+            <li><b>Gestão</b><span>Definimos o visual: estética das postagens, biografia, foto de perfil e paleta de cores.</span></li>
+            <li><b>Relatório</b><span>Com a estratégia aprovada, colocamos em prática e avaliamos melhorias todo mês.</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="contact" id="contato">
   <div class="wrap">
     <p class="eyebrow" style="color:var(--muted-d)">Contato</p>
@@ -1159,6 +1103,7 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
 
 <div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Foto ampliada">
   <img id="lbImg" alt="">
+  <video id="lbVid" controls playsinline preload="none" hidden></video>
   <button class="x" id="lbX">Fechar ✕</button>
   <button class="p" id="lbP" aria-label="Foto anterior">‹</button>
   <button class="n" id="lbN" aria-label="Próxima foto">›</button>
@@ -1168,25 +1113,21 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
 // Reels
 const reels=document.getElementById('reels');
 const CAP=[
- ['Chá revelação',''],
- ['Missa da quarta-feira dos olhos','Basílica Nossa Senhora da Penha'],
- ['Chegada do ônibus do Corinthians','Neo Química Arena'],
- ['Copa Omint','Nubank Parque'],
- ['Missa','Paróquia de Jesus Nazaré'],
- ['Evento PHN','Canção Nova'],
- ['Abertura do restaurante do Vini','@rangotapronto · 1,1 milhão de seguidores'],
- ['Brasatto Restaurante','Pizzaria'],
- ['Brasatto Restaurante','Pizzaria'],
- ['Chá revelação Mascarenhas',''],
- ['Abertura de loja Doce Menina','@doce.menina_25'],
- ['Teleton 2025',''],
- ['Extensão de cílios','@anaceliacilios_'],
- ['Copa Omint','Nubank Parque'],
- ['Tour no SBT',''],
- ['Tour no SBT','']];
-for(let i=1;i<=CAP.length;i++){const n=String(i).padStart(2,'0');const f=document.createElement('figure');f.className='reel';
+ ["01", "Chá revelação", ""],
+ ["03", "Chegada do ônibus do Corinthians", "Neo Química Arena"],
+ ["04", "Copa Omint", "Nubank Parque"],
+ ["06", "Evento PHN", "Canção Nova"],
+ ["07", "Abertura do restaurante do Vini", "@rangotapronto · 1,1 milhão de seguidores"],
+ ["08", "Brasatto Restaurante", "Pizzaria"],
+ ["10", "Chá revelação Mascarenhas", ""],
+ ["11", "Abertura de loja Doce Menina", "@doce.menina_25"],
+ ["12", "Teleton 2025", ""],
+ ["13", "Extensão de cílios", "@anaceliacilios_"],
+ ["14", "Copa Omint", "Nubank Parque"],
+ ["15", "Tour no SBT", ""]];
+for(let i=1;i<=CAP.length;i++){const n=CAP[i-1][0];const f=document.createElement('figure');f.className='reel';
   const d=document.createElement('div');d.className='phone';d.dataset.video='v/'+n+'.mp4';d.dataset.poster='v/'+n+'.webp';
-  const c=document.createElement('figcaption');const t=CAP[i-1];c.innerHTML='<b></b>'+(t[1]?'<span></span>':'');c.querySelector('b').textContent=t[0];if(t[1]){const sp=c.querySelector('span'),m=t[1].match(/^@([\w.]+)(.*)$/);if(m){const a=document.createElement('a');a.href='https://www.instagram.com/'+m[1]+'/';a.target='_blank';a.rel='noopener';a.style.color='inherit';a.textContent='@'+m[1];sp.append(a,m[2])}else sp.textContent=t[1]}
+  const c=document.createElement('figcaption');const t=CAP[i-1].slice(1);c.innerHTML='<b></b>'+(t[1]?'<span></span>':'');c.querySelector('b').textContent=t[0];if(t[1]){const sp=c.querySelector('span'),m=t[1].match(/^@([\w.]+)(.*)$/);if(m){const a=document.createElement('a');a.href='https://www.instagram.com/'+m[1]+'/';a.target='_blank';a.rel='noopener';a.style.color='inherit';a.textContent='@'+m[1];sp.append(a,m[2])}else sp.textContent=t[1]}
   f.append(d,c);reels.appendChild(f);}
 document.querySelectorAll('.phone').forEach(p=>{
   p.innerHTML='<div class="screen"><video playsinline loop preload="none" poster="'+p.dataset.poster+'" src="'+p.dataset.video+'"></video></div><button aria-label="Reproduzir vídeo"><span></span></button>';
@@ -1196,6 +1137,20 @@ document.querySelectorAll('.phone').forEach(p=>{
     else{v.pause();p.classList.remove('playing');b.setAttribute('aria-label','Reproduzir vídeo')}
   });
 });
+
+// Serviços em quadrados: toque para ver a descrição
+(function(){const box=document.querySelector('.svt'),d=document.getElementById('svtD');if(!box||!window.SVT)return;
+  const bts=[...box.querySelectorAll('.svt-i')];
+  bts.forEach(b=>b.addEventListener('click',()=>{const aberto=b.getAttribute('aria-expanded')==='true';bts.forEach(x=>x.setAttribute('aria-expanded','false'));
+    if(aberto){d.hidden=true;return}const [t,txt]=SVT[+b.dataset.i];b.setAttribute('aria-expanded','true');d.innerHTML='<h3></h3><p>'+txt+'</p>';d.querySelector('h3').textContent=t;d.hidden=false;d.style.animation='none';d.offsetHeight;d.style.animation='';
+    if(d.getBoundingClientRect().bottom>innerHeight)d.scrollIntoView({behavior:'smooth',block:'nearest'})}))})();
+// "Sobre" só abre pelo menu
+(function(){const sec=document.getElementById('historia'),l=document.getElementById('navSobre');if(!sec||!l)return;
+  const x=document.createElement('button');x.type='button';x.className='sobre-x';x.textContent='Fechar ✕';sec.prepend(x);
+  const abrir=e=>{if(e)e.preventDefault();sec.hidden=false;document.body.style.overflow='hidden';sec.scrollTop=0;sec.querySelectorAll('.lt').forEach(t=>t.classList.add('up'));x.focus()};
+  const fechar=()=>{sec.hidden=true;document.body.style.overflow='';if(location.hash==='#historia')history.replaceState(null,'',location.pathname+location.search)};
+  l.addEventListener('click',abrir);x.addEventListener('click',fechar);document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!sec.hidden)fechar()});
+  if(location.hash==='#historia')abrir()})();
 // ============ ORÇAMENTO ============
 // Cole aqui o endereço do App da Web do Google Apps Script (termina em /exec)
 const API_URL = 'https://script.google.com/macros/s/AKfycbxv6WLxKRDICMjAqAGWB8Uu5oZnL-zMWQWgFxdwFTwFRyiFFvH6YV5cxWbDOoV7hOQm/exec';
@@ -1306,7 +1261,7 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbxv6WLxKRDICMjAqAGWB8Uu
   show(0);
 })();
 // ===== CLIENTES (álbuns) =====
-const ALBUNS=[{"t": "Ensaio de bodas Sirlene & Valdinei", "c": "casamentos", "p": ["cli/14iXRdkyGyDbYGFbe8BTxlTZuHTR6kw4U.webp", "cli/1apkXkkY6C3erZ-qjhI9CXUDhxO4-OKG9.webp", "cli/1iOrWkklZidzKfpf2uiYVqnluho98Ta3p.webp", "cli/1ua_YkILjf7JSQHmeP6Ew7EHk7gqzLY8c.webp", "cli/1-1VYDVGcfeyj7TPAHjdfNO8Kltll030n.webp", "cli/16PBcp6z9rSWVzVOFB_-bufjcdJ0PJ0pT.webp"]}, {"t": "Neymar Jr.", "c": "eventos", "p": ["cli/1feosy6RMxHUSHrJ4gxdcY3ojRfVFeIJV.webp", "cli/1pHBIe_wIXkYRdoGjRa8-W4krhCVhA1W_.webp"]}, {"t": "Ovos de Páscoa Mary Amory", "c": "gastro", "p": ["cli/1C6YGOnsxg7QEIYAuQVa52A94icNn9EHg.webp", "cli/1bb0244O5T62u_tosRh4n7sw4DQbRgfqg.webp", "cli/1u_ZyXYGScTQ57a_Hj4g2GIp_M0s3Ggvx.webp", "cli/1b2EdsRHS9E11UTraouq1X4Pi2U5ny61q.webp"]}, {"t": "15 anos Maria Isabel", "c": "quinze", "p": ["cli/133Lf3Wpuky_8cU3AoX1vcSHsZRxmRnUc.webp", "cli/1ABa8Gk7tzqf8F4EJoawgoN_1AyFo2C06.webp", "cli/1jij3wsV6LqN07wffUW1GVDIkmeZtNlxz.webp", "cli/1SxnJapaR4wLbrm9VV9O8yw7ESLvoH7Ni.webp", "cli/17tsugCF6yICXhng2mH3SblTsk3VzTaZF.webp", "cli/1XmulOCRi4X4IE30gfFYRxAdhMExbineL.webp", "cli/1pgQDsp3A8BELmoMibgZA_fghn0elFIpI.webp", "cli/1tjtnXLwrGdwmQ8UsBJ-WtrdNT6mQ4LsB.webp"]}, {"t": "Frei Gilson & Padre Marcelo Rossi", "c": "shows", "p": ["img/41.webp", "img/44.webp", "img/42.webp"]}, {"t": "Batizado de Sofia", "c": "batizados", "p": ["cli/1_4FiSEk11XQrG7cJF2D7wSw1fcgQ1WAP.webp", "cli/17XJUyc-8TDHvB7JrjjgFfpwi-TYx1EFd.webp", "cli/1YMjElsFKyMlCRCa4jOK8xvZyBtxLCvpQ.webp", "cli/18YA13UTmX1b5dTWfyXHApNhsy-toHTwn.webp"]}, {"t": "Chá de bebê Lavínia", "c": "chas", "p": ["cli/1OrwC7OQ9PSmPYDNEFBswHvnr51IFc_Ib.webp", "cli/1tqoU4p8-Eg9QarKdD2uoyJev5vM1675d.webp", "cli/1b0_cjigdCmuZH-OfFJjhHks0B2JsJYQN.webp", "cli/1kreA1rqR6aDo_cVFr2T_RsdhBVDjNxk0.webp"]}, {"t": "Entrega de chaves", "c": "marcas", "p": ["cli/1vfEGiyb-zp27YS5S8vCQKV1wZvoKG9rZ.webp", "cli/1l0d-ATYC_Db5wT3YlanA7diGPdvP0MoP.webp", "cli/1ACzpDDbczfCYt5Nw66f5mIjudE7LfJSk.webp", "cli/1-qLsNo-n2EDXAvAaTPe7eP_oxE1e1vJP.webp"]}, {"t": "Casamento Juliana & Daniel", "c": "casamentos", "p": ["cli/1LUByS55DrQB6KbRPsYZRJK59bz6y8fwm.webp", "cli/19YbdL2-V3UjuriVuw_zkWe_cppb2CBX9.webp", "cli/1jlXmT44dYOsvR7mHZxQGDhTMPFj-2ZRL.webp", "cli/1MnK-hF5AR8xhlw9eSMY-W976rCtTe7OM.webp", "cli/1rRJLHzoogvu7ZmOAB5GAXvzeiiCbqDLh.webp"]}, {"t": "Aviva Camp", "c": "eventos", "p": ["cli/182O_AMUc9oL7WoDPPp1KLtgU_78b6MBK.webp", "cli/1xiiE1zJ60_okIN097JJMlXFGg3D_cUyh.webp", "cli/1qrFtvJ-tESb-yRL3BwclKl99uyxfRy3A.webp", "cli/1Kk0iFjuEPO6LmCPj6adunTnRbUWsJwbW.webp", "cli/1s857Fc4S_vjy24734cdY_dcC1I4Gcm16.webp", "cli/1KjPuzV4-bZ_yJIgFaYsTjEjZDSc7RdbA.webp"]}, {"t": "Chocotones Trevo Doces Gourmet", "c": "gastro", "p": ["img/29.webp", "img/30.webp", "img/31.webp"]}, {"t": "Ensaio 15 anos", "c": "quinze", "p": ["cli/16saIYJWt92gRhIUp3FMLvAE_yMa1MjIR.webp", "cli/1WluXCsrCryHl5KYTDXJgrd3PPntrrsIL.webp", "cli/1PjVUwB-YWSbzY1Ud_aWMVP-ObHTkr9tp.webp", "cli/1JM-GUUy6KueNd4ELZ0nJdoPKmba2MzaT.webp", "cli/18EZOQZ5hrTJCza9OLh76m9a642GZD_ZZ.webp"]}, {"t": "Show do João Gomes", "c": "shows", "p": ["img/43.webp"]}, {"t": "Batizado Luis Gabriel", "c": "batizados", "p": ["cli/1eHFqC7WJIk282vTYr-Fzwuy7uVPlF5AE.webp", "cli/1ebTxyQ_T0pYnHmx8K9-KWFUFuzZHnZS9.webp", "cli/1GJBYEPsZArdlwBtI0bvbMDu2f8jsAN0G.webp", "cli/1DuxAyj5ql9sV1tvo-CJQPPhT387-9QoH.webp"]}, {"t": "Chá revelação Cecília", "c": "chas", "p": ["cli/1E8ce8nE5O4bnbPIP2Aed21OTO3HGK_zg.webp", "cli/1CD-g-8Z2My6BeifV31Zge3YDrdjmpHB1.webp", "cli/1wW7Vtql7O5L147zA8CRQsH6719WBMGvO.webp", "cli/13-pbQqTfmkedPvddlFH9V5JJcUHAz7_c.webp"]}, {"t": "Doce Menina", "c": "marcas", "p": ["cli/1Vy2JST1QpC95jP5E2EsxoID8RvjLslmY.webp", "cli/1qfvJ5kQ4VmUVcKcm1UU2pGcCAikVbLK6.webp"]}, {"t": "Casamento Bianca & Matheus", "c": "casamentos", "p": ["cli/1KXO9hLO6YJcaj4zYjUjplc0kJvM-bi5-.webp", "cli/1CeJiQkomYsTW8c3-IS2x2bI7iIvU4mcV.webp", "cli/1EKANYK9uZKSCy8DTNhvKst-8UoOKvHdN.webp", "cli/1PGY1F83hduhXTN0BzJqtG5SPwNffD1bw.webp", "cli/1Fb56tT9Y1qHqSKt1nL97pyhCeU4k3jvg.webp"]}, {"t": "Cob Expo", "c": "eventos", "p": ["cli/11Fwt2bsu4lpeJqSgCV2Gq_2-mOFKZsCh.webp", "cli/1-zaontiQswu-faD-5a8R5nSC9cAkhqhs.webp", "cli/1t2-9DUIPXh0qcojnbygDVzKhD1IOxl0w.webp", "cli/1EkYlhCEO3rAfgAS5fSsHeYMeFYEosnkR.webp", "cli/1YY_zYgP_X7NopMaorgyfewmJOUGBsX9t.webp"]}, {"t": "Brasatto Restaurante", "c": "gastro", "p": ["img/33.webp", "img/34.webp", "img/35.webp", "img/32.webp"]}, {"t": "Padre PH", "c": "shows", "p": ["cli/1kT9bN6-lvJ6NmHcrQQgugcXKCO4AmDGZ.webp", "cli/1QBG00VtkkaU8x5oltw5WFTwBbbdBYjHx.webp", "cli/1W8tmCqKRkRD2_56GOWedTHaOy998_X57.webp", "cli/1uSDb9oh75ST53YfwQeVGHxK0AqOJaifK.webp", "cli/1tW6GNw4i8Qdx6mTDfg8DagpsXzNvEP0r.webp", "cli/1dryLGqpuG3ktlvmeEic62rKDCcdak4nr.webp"]}, {"t": "Batizado Manoela", "c": "batizados", "p": ["cli/1-v04pCCo2dKXpuyDTx5FpwmW-9FtFY0B.webp", "cli/13Lad7lL_HFJ7e6Liydp28QgrKbOAuTse.webp", "cli/1n_GjEMcGheUC0Fnj9hvoRGnsG0PwnOnT.webp"]}, {"t": "Chá revelação Mascarenhas", "c": "chas", "p": ["img/47.webp", "img/48.webp", "cli/1-VluN-T9e5BlQ-RZrQ6um-J71rw_a31l.webp", "cli/18aQISGs9ROL8YrwPMq2YCgb4L9X2Wv5I.webp"]}, {"t": "Espaço Guerir", "c": "marcas", "p": ["cli/12Mb5nI5EzvvN2SpHLGR6aCc4vJq1N7ZA.webp"]}, {"t": "Bodas de Ouro Elza & Pedro", "c": "casamentos", "p": ["cli/1flrAmUUodRbsT_mGE9doQcVCEPIghGp2.webp", "cli/1Fb5-dKjqyDVgywvDB0u4eUawnc1GATaP.webp", "cli/1qW05VGyzaqjy-Gg2Cc5Y2MyhUQnIA_6K.webp"]}, {"t": "Teleton", "c": "eventos", "p": ["cli/1z2iTYD-5Kgh9p7AkQL63ZF3vcW-g7UKF.webp", "cli/1ovootHGhhh8KYq-Z150SWGSgSRzev80o.webp", "cli/1BYFWAn9CU5xlmCBdJF8dBPNM-N1hM-ON.webp"]}, {"t": "Assados do Rango", "c": "gastro", "p": ["img/38.webp", "cli/16-XpGm0AQbNqVBjdJCbRQo58hm2VWtP1.webp", "cli/148XFdB5gcmtSqMiCMN1wak0mdzYUaEdB.webp", "img/37.webp", "img/39.webp"]}, {"t": "Batizado", "c": "batizados", "p": ["cli/1WgfpU7RVugIRtA_LFLld9N-JmpikGObN.webp", "cli/1NXpO2WUHezv13uvygM0Z4wO8PiI5LsEl.webp", "cli/1D2NjNtIntzQNT9cm1Qmwj2UMWiV-2TGc.webp", "cli/1wa5-b6cdU-RPSb2aFwpQ9hTHF7H_nj5v.webp"]}, {"t": "Chá revelação", "c": "chas", "p": ["img/46.webp", "cli/1SAJQ2j1_gUNf7XOjvmgQxzo1Y65wD2YG.webp", "cli/1zPh7QcLvAJTjGfxREND5EEHRT89A_cGG.webp", "cli/1bhpKNTMymJXx09JGP5-j6nuR4aZcgNjF.webp"]}, {"t": "Bruna Nails", "c": "marcas", "p": ["cli/1avYqTo0H_wZMKheVSltQkiueo3SvJXIn.webp"]}, {"t": "Iluminar-te Mind", "c": "eventos", "p": ["cli/1s3L6js_bCuKy3t0ET2l2q57Lk7qs-312.webp", "cli/19hW6nzzVlFZ3_kv6vArgLZkko7t-XPxi.webp", "cli/1_TR1SASOEWj_ZxtQEl-lbmcma1T5BbqO.webp"]}, {"t": "Batismo Maria & Micaela", "c": "batizados", "p": ["cli/18sIA1fUEsIUCDNKe5HnSsGP3b_0SaPVq.webp", "cli/19rTXxHOiBdPwlKXpj7H7oGW5OT8JHb9K.webp", "cli/13sWLHPnZX2mX7Kj5sXZ7aS8ExI1cJQ4Q.webp"]}];
+const ALBUNS=[{"t": "Ensaio de bodas Sirlene & Valdinei", "c": "casamentos", "p": ["cli/14iXRdkyGyDbYGFbe8BTxlTZuHTR6kw4U.webp", "cli/1apkXkkY6C3erZ-qjhI9CXUDhxO4-OKG9.webp", "cli/1iOrWkklZidzKfpf2uiYVqnluho98Ta3p.webp", "cli/1ua_YkILjf7JSQHmeP6Ew7EHk7gqzLY8c.webp", "cli/1-1VYDVGcfeyj7TPAHjdfNO8Kltll030n.webp", "cli/16PBcp6z9rSWVzVOFB_-bufjcdJ0PJ0pT.webp"]}, {"t": "Neymar Jr.", "c": "eventos", "p": ["cli/1feosy6RMxHUSHrJ4gxdcY3ojRfVFeIJV.webp", "cli/1pHBIe_wIXkYRdoGjRa8-W4krhCVhA1W_.webp"]}, {"t": "Ovos de Páscoa Mary Amory", "c": "gastro", "p": ["cli/1C6YGOnsxg7QEIYAuQVa52A94icNn9EHg.webp", "cli/1bb0244O5T62u_tosRh4n7sw4DQbRgfqg.webp", "cli/1u_ZyXYGScTQ57a_Hj4g2GIp_M0s3Ggvx.webp", "cli/1b2EdsRHS9E11UTraouq1X4Pi2U5ny61q.webp"]}, {"t": "15 anos Maria Isabel", "c": "quinze", "p": ["cli/133Lf3Wpuky_8cU3AoX1vcSHsZRxmRnUc.webp", "cli/1ABa8Gk7tzqf8F4EJoawgoN_1AyFo2C06.webp", "cli/1jij3wsV6LqN07wffUW1GVDIkmeZtNlxz.webp", "cli/1SxnJapaR4wLbrm9VV9O8yw7ESLvoH7Ni.webp", "cli/17tsugCF6yICXhng2mH3SblTsk3VzTaZF.webp", "cli/1XmulOCRi4X4IE30gfFYRxAdhMExbineL.webp", "cli/1pgQDsp3A8BELmoMibgZA_fghn0elFIpI.webp", "cli/1tjtnXLwrGdwmQ8UsBJ-WtrdNT6mQ4LsB.webp"]}, {"t": "Frei Gilson & Padre Marcelo Rossi", "c": "shows", "p": ["img/41.webp", "img/44.webp", "img/42.webp"]}, {"t": "Batizado de Sofia", "c": "batizados", "p": ["cli/1_4FiSEk11XQrG7cJF2D7wSw1fcgQ1WAP.webp", "cli/17XJUyc-8TDHvB7JrjjgFfpwi-TYx1EFd.webp", "cli/1YMjElsFKyMlCRCa4jOK8xvZyBtxLCvpQ.webp", "cli/18YA13UTmX1b5dTWfyXHApNhsy-toHTwn.webp"]}, {"t": "Chá de bebê Lavínia", "c": "chas", "p": ["cli/1OrwC7OQ9PSmPYDNEFBswHvnr51IFc_Ib.webp", "cli/1tqoU4p8-Eg9QarKdD2uoyJev5vM1675d.webp", "cli/1b0_cjigdCmuZH-OfFJjhHks0B2JsJYQN.webp", "cli/1kreA1rqR6aDo_cVFr2T_RsdhBVDjNxk0.webp"]}, {"t": "Entrega de chaves · Kazzas Incorporadora", "c": "marcas", "p": ["img/17.webp", "img/16.webp", "img/18.webp", "cli/1vfEGiyb-zp27YS5S8vCQKV1wZvoKG9rZ.webp", "cli/1l0d-ATYC_Db5wT3YlanA7diGPdvP0MoP.webp", "cli/1ACzpDDbczfCYt5Nw66f5mIjudE7LfJSk.webp", "cli/1-qLsNo-n2EDXAvAaTPe7eP_oxE1e1vJP.webp"], "v": "v/00.mp4", "vp": "v/00.webp"}, {"t": "Casamento Juliana & Daniel", "c": "casamentos", "p": ["cli/1LUByS55DrQB6KbRPsYZRJK59bz6y8fwm.webp", "cli/19YbdL2-V3UjuriVuw_zkWe_cppb2CBX9.webp", "cli/1jlXmT44dYOsvR7mHZxQGDhTMPFj-2ZRL.webp", "cli/1MnK-hF5AR8xhlw9eSMY-W976rCtTe7OM.webp", "cli/1rRJLHzoogvu7ZmOAB5GAXvzeiiCbqDLh.webp"]}, {"t": "Aviva Camp", "c": "eventos", "p": ["cli/182O_AMUc9oL7WoDPPp1KLtgU_78b6MBK.webp", "cli/1xiiE1zJ60_okIN097JJMlXFGg3D_cUyh.webp", "cli/1qrFtvJ-tESb-yRL3BwclKl99uyxfRy3A.webp", "cli/1Kk0iFjuEPO6LmCPj6adunTnRbUWsJwbW.webp", "cli/1s857Fc4S_vjy24734cdY_dcC1I4Gcm16.webp", "cli/1KjPuzV4-bZ_yJIgFaYsTjEjZDSc7RdbA.webp"]}, {"t": "Chocotones Trevo Doces Gourmet", "c": "gastro", "p": ["img/29.webp", "img/30.webp", "img/31.webp"]}, {"t": "Ensaio 15 anos", "c": "quinze", "p": ["cli/16saIYJWt92gRhIUp3FMLvAE_yMa1MjIR.webp", "cli/1WluXCsrCryHl5KYTDXJgrd3PPntrrsIL.webp", "cli/1PjVUwB-YWSbzY1Ud_aWMVP-ObHTkr9tp.webp", "cli/1JM-GUUy6KueNd4ELZ0nJdoPKmba2MzaT.webp", "cli/18EZOQZ5hrTJCza9OLh76m9a642GZD_ZZ.webp"]}, {"t": "Show do João Gomes", "c": "shows", "p": ["img/43.webp"]}, {"t": "Batizado Luis Gabriel", "c": "batizados", "p": ["cli/1eHFqC7WJIk282vTYr-Fzwuy7uVPlF5AE.webp", "cli/1ebTxyQ_T0pYnHmx8K9-KWFUFuzZHnZS9.webp", "cli/1GJBYEPsZArdlwBtI0bvbMDu2f8jsAN0G.webp", "cli/1DuxAyj5ql9sV1tvo-CJQPPhT387-9QoH.webp"]}, {"t": "Chá revelação Cecília", "c": "chas", "p": ["cli/1E8ce8nE5O4bnbPIP2Aed21OTO3HGK_zg.webp", "cli/1CD-g-8Z2My6BeifV31Zge3YDrdjmpHB1.webp", "cli/1wW7Vtql7O5L147zA8CRQsH6719WBMGvO.webp", "cli/13-pbQqTfmkedPvddlFH9V5JJcUHAz7_c.webp"]}, {"t": "Doce Menina · Fotografia publicitária", "c": "marcas", "p": ["img/19.webp", "img/20.webp", "img/21.webp", "cli/1Vy2JST1QpC95jP5E2EsxoID8RvjLslmY.webp", "cli/1qfvJ5kQ4VmUVcKcm1UU2pGcCAikVbLK6.webp"]}, {"t": "Casamento Bianca & Matheus", "c": "casamentos", "p": ["cli/1KXO9hLO6YJcaj4zYjUjplc0kJvM-bi5-.webp", "cli/1CeJiQkomYsTW8c3-IS2x2bI7iIvU4mcV.webp", "cli/1EKANYK9uZKSCy8DTNhvKst-8UoOKvHdN.webp", "cli/1PGY1F83hduhXTN0BzJqtG5SPwNffD1bw.webp", "cli/1Fb56tT9Y1qHqSKt1nL97pyhCeU4k3jvg.webp"]}, {"t": "Cob Expo", "c": "eventos", "p": ["cli/11Fwt2bsu4lpeJqSgCV2Gq_2-mOFKZsCh.webp", "cli/1-zaontiQswu-faD-5a8R5nSC9cAkhqhs.webp", "cli/1t2-9DUIPXh0qcojnbygDVzKhD1IOxl0w.webp", "cli/1EkYlhCEO3rAfgAS5fSsHeYMeFYEosnkR.webp", "cli/1YY_zYgP_X7NopMaorgyfewmJOUGBsX9t.webp"]}, {"t": "Brasatto Restaurante", "c": "gastro", "p": ["img/33.webp", "img/34.webp", "img/35.webp", "img/32.webp"]}, {"t": "Padre PH", "c": "shows", "p": ["cli/1kT9bN6-lvJ6NmHcrQQgugcXKCO4AmDGZ.webp", "cli/1QBG00VtkkaU8x5oltw5WFTwBbbdBYjHx.webp", "cli/1W8tmCqKRkRD2_56GOWedTHaOy998_X57.webp", "cli/1uSDb9oh75ST53YfwQeVGHxK0AqOJaifK.webp", "cli/1tW6GNw4i8Qdx6mTDfg8DagpsXzNvEP0r.webp", "cli/1dryLGqpuG3ktlvmeEic62rKDCcdak4nr.webp"]}, {"t": "Batizado Manoela", "c": "batizados", "p": ["cli/1-v04pCCo2dKXpuyDTx5FpwmW-9FtFY0B.webp", "cli/13Lad7lL_HFJ7e6Liydp28QgrKbOAuTse.webp", "cli/1n_GjEMcGheUC0Fnj9hvoRGnsG0PwnOnT.webp"]}, {"t": "Chá revelação Mascarenhas", "c": "chas", "p": ["img/47.webp", "img/48.webp", "cli/1-VluN-T9e5BlQ-RZrQ6um-J71rw_a31l.webp", "cli/18aQISGs9ROL8YrwPMq2YCgb4L9X2Wv5I.webp"]}, {"t": "Espaço Guerir", "c": "marcas", "p": ["cli/12Mb5nI5EzvvN2SpHLGR6aCc4vJq1N7ZA.webp"]}, {"t": "Bodas de Ouro Elza & Pedro", "c": "casamentos", "p": ["cli/1flrAmUUodRbsT_mGE9doQcVCEPIghGp2.webp", "cli/1Fb5-dKjqyDVgywvDB0u4eUawnc1GATaP.webp", "cli/1qW05VGyzaqjy-Gg2Cc5Y2MyhUQnIA_6K.webp"]}, {"t": "Teleton", "c": "eventos", "p": ["cli/1z2iTYD-5Kgh9p7AkQL63ZF3vcW-g7UKF.webp", "cli/1ovootHGhhh8KYq-Z150SWGSgSRzev80o.webp", "cli/1BYFWAn9CU5xlmCBdJF8dBPNM-N1hM-ON.webp"]}, {"t": "Assados do Rango", "c": "gastro", "p": ["img/38.webp", "cli/16-XpGm0AQbNqVBjdJCbRQo58hm2VWtP1.webp", "cli/148XFdB5gcmtSqMiCMN1wak0mdzYUaEdB.webp", "img/37.webp", "img/39.webp"]}, {"t": "Batizado", "c": "batizados", "p": ["cli/1WgfpU7RVugIRtA_LFLld9N-JmpikGObN.webp", "cli/1NXpO2WUHezv13uvygM0Z4wO8PiI5LsEl.webp", "cli/1D2NjNtIntzQNT9cm1Qmwj2UMWiV-2TGc.webp", "cli/1wa5-b6cdU-RPSb2aFwpQ9hTHF7H_nj5v.webp"]}, {"t": "Chá revelação", "c": "chas", "p": ["img/46.webp", "cli/1SAJQ2j1_gUNf7XOjvmgQxzo1Y65wD2YG.webp", "cli/1zPh7QcLvAJTjGfxREND5EEHRT89A_cGG.webp", "cli/1bhpKNTMymJXx09JGP5-j6nuR4aZcgNjF.webp"]}, {"t": "Bruna Nails", "c": "marcas", "p": ["cli/1avYqTo0H_wZMKheVSltQkiueo3SvJXIn.webp"]}, {"t": "Iluminar-te Mind", "c": "eventos", "p": ["cli/1s3L6js_bCuKy3t0ET2l2q57Lk7qs-312.webp", "cli/19hW6nzzVlFZ3_kv6vArgLZkko7t-XPxi.webp", "cli/1_TR1SASOEWj_ZxtQEl-lbmcma1T5BbqO.webp"]}, {"t": "Batismo Maria & Micaela", "c": "batizados", "p": ["cli/18sIA1fUEsIUCDNKe5HnSsGP3b_0SaPVq.webp", "cli/19rTXxHOiBdPwlKXpj7H7oGW5OT8JHb9K.webp", "cli/13sWLHPnZX2mX7Kj5sXZ7aS8ExI1cJQ4Q.webp"]}];
 (function(){
   const box=document.getElementById('albums');if(!box)return;
   const more=document.getElementById('cMore'),fb=[...document.querySelectorAll('.filters button')];
@@ -1316,7 +1271,8 @@ const ALBUNS=[{"t": "Ensaio de bodas Sirlene & Valdinei", "c": "casamentos", "p"
     b.setAttribute('aria-label','Abrir álbum: '+al.t+' ('+al.p.length+' fotos)');
     const max=Math.min(al.p.length,8);
     b.innerHTML='<div class="dots">'+'<i></i>'.repeat(al.p.length>1?max:0)+'</div><div class="meta"><span></span><b></b></div>';
-    b.querySelector('b').textContent=al.t;b.querySelector('span').textContent=al.p.length+(al.p.length>1?' fotos':' foto');
+    b.querySelector('b').textContent=al.t;b.querySelector('span').textContent=(al.v?'1 vídeo · ':'')+al.p.length+(al.p.length>1?' fotos':' foto');
+    if(al.v){const t=document.createElement('span');t.className='vid';t.textContent='▶ Vídeo';b.appendChild(t)}
     const im=[0,1].map(()=>{const i=document.createElement('img');i.alt='';i.decoding='async';b.prepend(i);return i});
     let k=0,front=0,timer=null,vis=false,hov=false;
     const dots=[...b.querySelectorAll('.dots i')];
@@ -1330,7 +1286,7 @@ const ALBUNS=[{"t": "Ensaio de bodas Sirlene & Valdinei", "c": "casamentos", "p"
     b._stop=()=>{vis=false;stop()};
     b.addEventListener('pointerenter',()=>{hov=true;if(vis){step();play()}});
     b.addEventListener('pointerleave',()=>{hov=false;if(vis)play()});
-    b.addEventListener('click',()=>{set=al.p.map(src=>{const x=new Image();x.src=src;x.alt=al.t;return x});idx=k;last=b;show();lb.hidden=false;document.getElementById('lbX').focus()});
+    b.addEventListener('click',()=>{set=al.p.map(src=>{const x=new Image();x.src=src;x.alt=al.t;return x});if(al.v)set.unshift({video:al.v,poster:al.vp,alt:al.t});idx=al.v?0:k;last=b;show();lb.hidden=false;document.getElementById('lbX').focus()});
     box.appendChild(b);return b;};
   let cards=ALBUNS.map(mk);
   const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting?e.target._start():e.target._stop()),{rootMargin:'120px'});
@@ -1568,10 +1524,12 @@ tg.addEventListener('click',()=>{const o=nav.classList.toggle('open');tg.setAttr
 nav.querySelectorAll('ul a').forEach(a=>a.addEventListener('click',()=>{nav.classList.remove('open');tg.setAttribute('aria-expanded','false')}));
 // Lightbox
 const lb=document.getElementById('lb'),lbImg=document.getElementById('lbImg');let set=[],idx=0,last=null;
-function show(){lbImg.src=set[idx].src;lbImg.alt=set[idx].alt}
+const lbVid=document.getElementById('lbVid');
+function show(){const it=set[idx];if(it.video){lbImg.hidden=true;lbVid.hidden=false;if(lbVid.getAttribute('src')!==it.video){lbVid.poster=it.poster||'';lbVid.src=it.video}lbVid.play().catch(()=>{})}
+  else{lbVid.pause();lbVid.hidden=true;lbImg.hidden=false;lbImg.src=it.src;lbImg.alt=it.alt}}
 document.querySelectorAll('[data-gallery]').forEach(g=>{const imgs=[...g.querySelectorAll('img')];
   g.querySelectorAll('button').forEach((b,i)=>{b.setAttribute('aria-label','Ampliar: '+imgs[i].alt);b.addEventListener('click',()=>{set=imgs;idx=i;last=b;show();lb.hidden=false;document.getElementById('lbX').focus()})})});
-function close(){lb.hidden=true;last&&last.focus()}
+function close(){lb.hidden=true;lbVid.pause();last&&last.focus()}
 document.getElementById('lbX').onclick=close;
 document.getElementById('lbP').onclick=()=>{idx=(idx-1+set.length)%set.length;show()};
 document.getElementById('lbN').onclick=()=>{idx=(idx+1)%set.length;show()};
