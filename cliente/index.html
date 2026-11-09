@@ -357,6 +357,38 @@ input:focus{border-color:var(--gold)}
 .pc-hora{background:var(--ink);color:var(--bone);border:1px solid #5a4a6e;border-radius:8px;padding:4px 6px;font:700 13px var(--body);color-scheme:dark;margin-left:4px}
 .olho{background:none;border:0;color:var(--muted-d);cursor:pointer;padding:2px 4px;margin-left:6px;vertical-align:middle;border-radius:8px;transition:color .2s}.olho:hover{color:var(--gold-soft)}.olho svg{width:20px;height:20px;display:block}
 .vl{white-space:nowrap}
+#gContratos:empty{display:none}
+.ctr-bar{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 18px}
+.ctr{display:flex;align-items:center;gap:12px;flex:1 1 280px;text-align:left;background:var(--graphite);border:1px solid #3a352f;border-radius:16px;padding:12px 16px;color:var(--bone);font:600 14px var(--body);cursor:pointer;transition:border-color .2s,transform .15s}
+.ctr:hover{border-color:var(--gold);transform:translateY(-1px)}.ctr .ic{font-size:22px}.ctr small{display:block;color:var(--muted-d);font-weight:500;font-size:12.5px;margin-top:2px}
+.ctr.pend{border-color:var(--gold);background:linear-gradient(135deg,rgba(184,149,90,.18),var(--graphite));animation:ctrPulse 2.4s ease-in-out infinite}
+@keyframes ctrPulse{50%{box-shadow:0 0 0 6px rgba(184,149,90,.12)}}
+.ctr .tag{margin-left:auto;font-size:12px;border-radius:999px;padding:4px 10px;background:rgba(127,196,154,.15);color:#7fc49a;white-space:nowrap}.ctr.pend .tag{background:var(--gold);color:var(--ink)}
+.cm{position:fixed;inset:0;z-index:78;background:rgba(10,9,8,.9);display:flex;align-items:center;justify-content:center;padding:12px}
+.cm-c{width:100%;max-width:860px;height:calc(100dvh - 24px);background:var(--graphite);border:1px solid #3a352f;border-radius:20px;display:flex;flex-direction:column;overflow:hidden}
+.cm-h{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid #3a352f}.cm-h h2{font:500 18px var(--serif);margin:0;flex:1}
+.cm-doc{flex:1;border:0;background:#fff;width:100%}
+.cm-f{padding:14px 16px;border-top:1px solid #3a352f;display:grid;gap:10px;max-height:52vh;overflow:auto}
+.cm-f .am-2{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:8px}.cm-f .am-2 input{width:100%;box-sizing:border-box;min-width:0}.cm-f{overflow-x:hidden}.cm-f{gap:8px;padding:12px 14px}.cm-f label{margin:0}.cm-f input:not([type=checkbox]){margin-top:4px;padding:10px 12px}.cm-f .msg:empty{display:none}.cm-f .btn{padding:12px}
+.cm-f label{font-size:13px}.cm-li{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.4;cursor:pointer}.cm-li input{width:20px;height:20px;margin-top:1px;accent-color:var(--gold);flex:none}
+.cm-ok{background:rgba(127,196,154,.12);border:1px solid rgba(127,196,154,.4);color:#bfe6cc;border-radius:12px;padding:10px 12px;font-size:13.5px}
+.ag-top{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin:0 0 14px}
+.ag-f{display:flex;flex-wrap:wrap;gap:6px}.ag-f button{border:1px solid #3a352f;background:transparent;color:var(--bone);border-radius:999px;padding:7px 12px;font:600 13px var(--body);cursor:pointer;display:flex;align-items:center;gap:6px}
+.ag-f button[aria-pressed="false"]{opacity:.45}.ag-f i,.ag-d i{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
+.t-ev{background:#e6d3ae}.t-po{background:#c48af0}.t-pu{background:#f58fbf}.t-di{background:#7fc49a}.t-at{background:#f0a28f}
+.ag-cal{background:var(--graphite);border:1px solid #3a352f;border-radius:18px;padding:14px;margin-bottom:18px}
+.ag-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.ag-h b{font:500 20px var(--serif)}.ag-h button{width:36px;height:36px;border-radius:50%;border:1px solid #3a352f;background:none;color:var(--bone);font-size:18px;cursor:pointer}
+.ag-gr{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.ag-gr .ds{text-align:center;font-size:11px;color:var(--muted-d);font-weight:700;padding-bottom:2px}
+.ag-c{min-height:62px;border-radius:10px;background:var(--graphite-2);border:1px solid transparent;padding:5px;text-align:left;color:var(--bone);font:700 12px var(--body);cursor:pointer;display:flex;flex-direction:column;gap:4px}
+.ag-c.vz{background:none;cursor:default}.ag-c.hj{border-color:var(--gold)}.ag-c.sel{background:rgba(184,149,90,.2)}.ag-c.pas{opacity:.5}
+.ag-d{display:flex;flex-wrap:wrap;gap:3px}
+.ag-l h4{margin:18px 0 8px;font:700 12px var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}.ag-l h4.hj::after{content:" · hoje";color:var(--bone)}
+.ag-it{display:flex;gap:12px;align-items:flex-start;background:var(--graphite);border:1px solid #3a352f;border-radius:14px;padding:10px 14px;margin-bottom:6px}
+.ag-it .hr{font:700 13px var(--body);min-width:44px;color:var(--muted-d);padding-top:1px}.ag-it b{display:block;font-size:14.5px}.ag-it small{color:var(--muted-d);font-size:12.5px}.ag-it i{margin-top:6px}
+@media(max-width:560px){.ag-c{min-height:48px;padding:4px}.ag-d i{width:7px;height:7px}}
+.aval{display:flex;align-items:center;gap:14px;margin:6px 0 14px;padding:12px 16px;border-radius:16px;background:linear-gradient(135deg,rgba(184,149,90,.16),var(--graphite));border:1px solid rgba(184,149,90,.45);color:var(--bone);text-decoration:none;transition:transform .15s,border-color .2s}
+.aval:hover{transform:translateY(-1px);border-color:var(--gold)}.aval .st{color:#f5c451;font-size:16px;letter-spacing:1px;white-space:nowrap}.aval b{display:block;font-size:14.5px}.aval small{color:var(--muted-d);font-size:12.5px}.aval .go{margin-left:auto;font:700 13px var(--body);color:var(--gold-soft);white-space:nowrap}
+@media(max-width:520px){.aval{flex-wrap:wrap}.aval .go{margin-left:0}}
 .pc-sh:hover{color:var(--gold-soft);border-color:var(--gold)}.pc-sh svg{width:16px;height:16px}
 .pc-ac .ap{background:#7fc49a;border-color:#7fc49a;color:#10241a}
 .pc-ac .ap.feito{background:transparent;color:#7fc49a}
@@ -455,6 +487,7 @@ input:focus{border-color:var(--gold)}
       <div class="acoes" id="gAcoes"></div>
     </div>
     <div class="abas" id="gAbas"></div>
+    <div id="gContratos"></div>
     <div id="gConteudo"></div>
   </section>
 
@@ -546,6 +579,7 @@ async function carregarGaleria(){
   try{const j=await api({acao:'galeria',sessao:guardar.get()});
     if(!j.ok){guardar.set('');mostrar('telaLogin');msg($('mLogin'),j.erro,true);return}
     galerias=j.galerias;$('gOla').textContent='Olá, '+(j.nome||'')+'!';
+    pintarContratos(j.contratos||[],!!j.admin);
     if(j.admin){mostrar('telaGal');montarAdmin(j);return}
     const abas=$('gAbas');abas.innerHTML='';
     const marcas=galerias.filter(g=>g.tipo==='gestao').length;
@@ -586,6 +620,8 @@ function abrir(i,manterFiltro){
   resumo.textContent=filtro==='fav'?(favs.length?'Suas favoritas · a Brius também recebe esta lista':'Toque no ♡ das fotos para marcar suas favoritas.'):
     [fotos?fotos+(fotos>1?' fotos':' foto'):'',videos?videos+(videos>1?' vídeos':' vídeo'):''].filter(Boolean).join(' · ')+' · toque para ver e baixar · ♡ para favoritar';
   cont.appendChild(resumo);
+  if(g.avaliar&&!g.admin){const av=document.createElement('a');av.className='aval';av.href=g.avaliar;av.target='_blank';av.rel='noopener';
+    av.innerHTML='<span class="st">★★★★★</span><span><b>Gostou das fotos?</b><small>Deixe uma avaliação da Brius no Google. Leva menos de 1 minuto e ajuda muito 💛</small></span><span class="go">Avaliar ↗</span>';cont.appendChild(av)}
   lista=filtro==='fav'?favs:g.arquivos;let grupo=null,grade;
   lista.forEach((a,k)=>{
     if(a.g!==grupo||!grade){grupo=a.g;if(grupo){const h=document.createElement('h2');h.className='grupo';h.textContent=grupo;cont.appendChild(h)}grade=document.createElement('div');grade.className='grade';cont.appendChild(grade)}
@@ -715,8 +751,8 @@ function cartao(g,p,n){
     (p.status==='Refazer'&&p.obs?'<div class="pc-obs"><b>Seu pedido de ajuste:</b><br>'+escH(p.obs)+'</div>':'')+
     (p.status==='Nova versão'?'<div class="pc-obs nv"><b>Nova versão!</b> A Brius atualizou este post'+(p.antes==='Refazer'&&p.obs?' depois do seu pedido: “'+escH(p.obs)+'”':'')+'. Dá uma olhada e responda de novo.</div>':'')+
     (p.status==='Aprovado'?'<div class="pc-obs ok">✓ Você aprovou'+(p.quando?' em '+escH(p.quando):'')+'.</div>':'')+
-    (p.pub?'<a class="pc-pubok" href="'+escH(p.pub.link)+'" target="_blank" rel="noopener">📤 Publicado no Instagram em '+escH(p.pub.quando)+' · ver post ↗</a>':(g.admin&&g.igPub&&!p.pub&&p.data&&p.data>=hojeISO()&&!/stor/i.test(p.titulo)?'<label class="pc-ag">🕒 '+(g.autopub?(p.status==='Aprovado'?'Sai sozinho em ':'Se aprovado, sai em '):'Horário de publicação · ')+p.data.split('-').reverse().slice(0,2).join('/')+' às <input type="time" class="pc-hora" value="'+escH(p.hora||g.horaPadrao||'18:00')+'" aria-label="Horário de publicação"></label>':'')+
-    (g.admin&&g.igPub&&p.status==='Aprovado'&&!/stor/i.test(p.titulo)?'<button type="button" class="pc-pub">📤 Publicar no Instagram agora</button>':''))+
+    (p.pub?'<a class="pc-pubok" href="'+escH(p.pub.link)+'" target="_blank" rel="noopener">📤 Publicado no Instagram em '+escH(p.pub.quando)+' · ver post ↗</a>':(g.admin&&g.igPub&&!p.pub&&p.data&&p.data>=hojeISO()?'<label class="pc-ag">🕒 '+(g.autopub?(p.status==='Aprovado'?'Sai sozinho em ':'Se aprovado, sai em '):'Horário de publicação · ')+p.data.split('-').reverse().slice(0,2).join('/')+' às <input type="time" class="pc-hora" value="'+escH(p.hora||g.horaPadrao||'18:00')+'" aria-label="Horário de publicação"></label>':'')+
+    (g.admin&&g.igPub&&p.status==='Aprovado'?'<button type="button" class="pc-pub">📤 Publicar no Instagram agora</button>':''))+
     (g.admin&&!g.propria?'<div class="pc-adm">👁️ Visualização da agência · quem aprova é o cliente</div>':'')+'<button type="button" class="pc-sh" title="Gera um link que mostra só este post (sem aprovar nem ver os outros)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>Compartilhar só este post</button>'+'<div class="pc-ac"'+(g.admin&&!g.propria?' hidden':'')+'><button class="ap'+(p.status==='Aprovado'?' feito':'')+'">'+(p.status==='Aprovado'?(p.pub?'✓ Aprovado':'✓ Aprovado · desfazer'):'✓ Aprovar')+'</button><button class="rf'+(p.status==='Refazer'?' feito':'')+'">'+(p.status==='Refazer'?'✎ Editar pedido':'✎ Pedir ajuste')+'</button></div>'+
     '<div class="pc-aj" hidden><textarea maxlength="1500" placeholder="O que precisa mudar? Ex.: trocar a foto da capa, corrigir o preço na arte, mudar a música do vídeo…"></textarea><div class="bts"><button class="cc">Cancelar</button><button class="env">Enviar pedido</button></div></div>'+
     (p.quando&&p.status!=='Aprovado'?'<span class="pc-q">Respondido em '+escH(p.quando)+'</span>':'')+'</div>';
@@ -750,6 +786,84 @@ function cartao(g,p,n){
   return c;
 }
 const hojeISO=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+// ---- Agenda geral (admin): eventos, posts, publicações e dinheiro a receber
+let agMes=null,agTipos={ev:true,po:true,pu:true,di:true},agSel=null;
+function itensAgenda(j){const it=[];const vistos=new Set();
+  ((j.agenda||{}).reservas||[]).forEach(x=>it.push({d:x.data,h:'',t:'ev',tt:x.motivo,s:'Data reservada'}));
+  (j.proximos||[]).forEach(x=>it.push({d:x.data,h:x.hora||'',t:'ev',tt:x.nome,s:[x.local,x.endereco].filter(Boolean).join(' · ')||'Evento'}));
+  galerias.filter(g=>g.tipo==='gestao').forEach(g=>{const nm=(g.marca&&g.marca.nome)||g.evento;(g.posts||[]).forEach(p=>{if(!p.data)return;
+    const st=p.pub?'Publicado '+p.pub.quando:p.status==='Aprovado'?(g.autopub?'Aprovado · sai sozinho':'Aprovado'):p.status==='Refazer'?'Ajuste pedido':p.status==='Nova versão'?'Nova versão · aguardando cliente':'Aguardando cliente';
+    it.push({d:p.data,h:(g.autopub||p.pub)?(p.hora||g.horaPadrao||''):'',t:p.pub?'pu':'po',tt:nm+' · '+p.titulo,s:(p.tipo||'Post')+' · '+st,at:p.status==='Refazer'})})});
+  ((j.agenda||{}).receber||[]).forEach(x=>it.push({d:x.data,h:'',t:'di',tt:x.desc,s:x.sit==='atrasado'?'⚠ atrasado':x.sit==='confirmando'?'cliente avisou que pagou':x.sit==='evento'?'restante do evento':'vencimento',at:x.sit==='atrasado'}));
+  return it.filter(x=>x.d).sort((a,b)=>(a.d+(a.h||'99')).localeCompare(b.d+(b.h||'99')))}
+function pintarAgenda(j){
+  const c=$('gConteudo');$('gTitulo').textContent='Agenda';$('gAcoes').innerHTML='';$('gPrazo').textContent='Eventos, posts, publicações e pagamentos num lugar só';
+  const todos=itensAgenda(j);const hj=hojeISO();if(!agMes)agMes=hj.slice(0,7);
+  const vis=todos.filter(x=>agTipos[x.t==='pu'?'pu':x.t]);
+  const [A,M]=agMes.split('-').map(Number);const ini=new Date(A,M-1,1).getDay(),dias=new Date(A,M,0).getDate();
+  const doMes=vis.filter(x=>x.d.slice(0,7)===agMes);const por={};doMes.forEach(x=>(por[x.d]=por[x.d]||[]).push(x));
+  const nomes={ev:'Eventos',po:'Posts',pu:'Publicados',di:'A receber'};
+  let gr='<div class="ag-gr">'+['D','S','T','Q','Q','S','S'].map(d=>'<span class="ds">'+d+'</span>').join('');
+  for(let i=0;i<ini;i++)gr+='<span class="ag-c vz"></span>';
+  for(let d=1;d<=dias;d++){const iso=agMes+'-'+String(d).padStart(2,'0');const l=por[iso]||[];
+    gr+='<button type="button" class="ag-c'+(iso===hj?' hj':'')+(iso<hj?' pas':'')+(agSel===iso?' sel':'')+'" data-d="'+iso+'" aria-label="'+d+(l.length?', '+l.length+' itens':'')+'">'+d+'<span class="ag-d">'+l.slice(0,6).map(x=>'<i class="'+(x.at?'t-at':'t-'+x.t)+'"></i>').join('')+'</span></button>'}
+  gr+='</div>';
+  const dSem=d=>['domingo','segunda','terça','quarta','quinta','sexta','sábado'][new Date(d+'T12:00:00').getDay()];
+  const lst=Object.keys(por).sort().filter(d=>!agSel||d===agSel);
+  c.innerHTML='<div class="gs"><div class="ag-top"><div class="ag-f">'+Object.keys(nomes).map(k=>'<button type="button" data-t="'+k+'" aria-pressed="'+agTipos[k]+'"><i class="t-'+k+'"></i>'+nomes[k]+'</button>').join('')+'</div>'+(agSel?'<button type="button" class="btn sec" id="agTudo">Ver o mês todo</button>':'')+'</div>'+
+    '<div class="ag-cal"><div class="ag-h"><button type="button" id="agAnt" aria-label="Mês anterior">‹</button><b>'+MESES[M-1].replace(/^./,x=>x.toUpperCase())+' '+A+'</b><button type="button" id="agProx" aria-label="Próximo mês">›</button></div>'+gr+'</div>'+
+    '<div class="ag-l">'+(lst.length?lst.map(d=>'<h4 class="'+(d===hj?'hj':'')+'">'+dSem(d)+', '+d.split('-').reverse().slice(0,2).join('/')+'</h4>'+por[d].map(x=>'<div class="ag-it"><span class="hr">'+escH(x.h||'—')+'</span><i class="'+(x.at?'t-at':'t-'+x.t)+'"></i><span><b>'+escH(x.tt)+'</b><small>'+escH(x.s)+'</small></span></div>').join('')).join(''):'<p class="vazio">Nada '+(agSel?'neste dia':'neste mês')+'.</p>')+'</div></div>';
+  c.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{agTipos[b.dataset.t]=!agTipos[b.dataset.t];pintarAgenda(j)});
+  c.querySelectorAll('.ag-c[data-d]').forEach(b=>b.onclick=()=>{agSel=agSel===b.dataset.d?null:b.dataset.d;pintarAgenda(j)});
+  const mv=k=>{const d=new Date(A,M-1+k,1);agMes=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');agSel=null;pintarAgenda(j)};
+  $('agAnt').onclick=()=>mv(-1);$('agProx').onclick=()=>mv(1);if($('agTudo'))$('agTudo').onclick=()=>{agSel=null;pintarAgenda(j)};
+}
+// ---- Contratos
+let contratos=[];
+function pintarContratos(lista,admin){contratos=lista;const box=$('gContratos');box.innerHTML='';if(!lista.length)return;
+  const bar=document.createElement('div');bar.className='ctr-bar';
+  lista.forEach(c=>{const pend=c.status==='Aguardando aceite';const b=document.createElement('button');b.type='button';b.className='ctr'+(pend&&!admin?' pend':'');
+    b.innerHTML='<span class="ic">📄</span><span><b>'+escH(c.titulo)+'</b><small>'+(admin&&c.email?escH(c.email)+' · ':'')+(pend?(admin?'aguardando o cliente aceitar':'Leia e aceite pelo site'):(c.aceitoEm?'Aceito em '+escH(c.aceitoEm):'Assinado'+(c.data?' em '+escH(c.data):'')))+'</small></span><span class="tag">'+(pend?(admin?'Aguardando':'Aceitar'):'✓ '+escH(c.status))+'</span>';
+    b.onclick=()=>abrirContrato(c,admin);bar.appendChild(b)});
+  box.appendChild(bar);
+}
+async function baixarContrato(c,b){const t=b.textContent;b.disabled=true;b.textContent='Preparando PDF...';
+  try{const j=await api({acao:'contrato',sessao:guardar.get(),id:c.id,pdf:true});if(!j.ok){if(j.sair){guardar.set('');location.reload();return}throw new Error(j.erro)}
+    const bin=atob(j.pdf),u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);
+    const blob=new Blob([u],{type:'application/pdf'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=j.nome||'contrato.pdf';
+    if(IOS){window.open(url,'_blank')}else{document.body.appendChild(a);a.click();a.remove()}setTimeout(()=>URL.revokeObjectURL(url),60000)}
+  catch(e){toast(e.message||'Não foi possível baixar agora.')}b.disabled=false;b.textContent=t}
+async function abrirContrato(c,admin){
+  let m=$('ctrModal');if(!m){m=document.createElement('div');m.id='ctrModal';m.className='cm';m.setAttribute('role','dialog');m.setAttribute('aria-modal','true');document.body.appendChild(m)}
+  m.innerHTML='<div class="cm-c"><div class="cm-h"><h2>'+escH(c.titulo)+'</h2><button type="button" class="am-x" aria-label="Fechar">✕</button></div><div class="cm-f"><p class="vazio" style="margin:0">Carregando o contrato…</p></div></div>';
+  m.hidden=false;document.body.style.overflow='hidden';
+  const fechar=()=>{m.hidden=true;m.innerHTML='';document.body.style.overflow=''};m.querySelector('.am-x').onclick=fechar;
+  let j;try{j=await api({acao:'contrato',sessao:guardar.get(),id:c.id});if(!j.ok){if(j.sair){guardar.set('');location.reload();return}throw new Error(j.erro)}}
+  catch(e){m.querySelector('.cm-f').innerHTML='<p class="msg erro">'+escH(e.message||'Não foi possível abrir.')+'</p>';return}
+  const cc=m.querySelector('.cm-c'),f=m.querySelector('.cm-f');
+  if(j.html){const ifr=document.createElement('iframe');ifr.className='cm-doc';ifr.title='Texto do contrato';ifr.setAttribute('sandbox','');ifr.srcdoc=j.html;cc.insertBefore(ifr,f)}
+  else f.insertAdjacentHTML('beforebegin','<div style="flex:1;display:grid;place-items:center;padding:24px;text-align:center;color:var(--muted-d)"><div><div style="font-size:42px">📄</div><p>Este contrato foi assinado em PDF'+(j.data?' em '+escH(j.data):'')+'.<br>Toque abaixo para abrir ou baixar.</p></div></div>');
+  const pend=j.status==='Aguardando aceite';
+  if(pend&&!admin){
+    f.innerHTML='<label class="cm-li"><input type="checkbox" id="ctrLi"> <span>Li o contrato inteiro e concordo com todas as cláusulas.</span></label>'+
+      '<div class="am-2"><label>Nome completo<input id="ctrNome" autocomplete="name" maxlength="120" placeholder="Seu nome completo"></label><label>CPF<input id="ctrCpf" inputmode="numeric" autocomplete="off" maxlength="14" placeholder="000.000.000-00"></label></div>'+
+      '<p class="msg" id="ctrMsg" role="status"></p><button type="button" class="btn" id="ctrOk">✍️ Aceitar contrato</button><p style="margin:0;font-size:12px;color:var(--muted-d)">Ao aceitar, registramos seu nome, CPF, e-mail de acesso, data e hora. Você recebe a cópia em PDF por e-mail.</p>';
+    const cpf=$('ctrCpf');cpf.oninput=()=>{let v=cpf.value.replace(/\D/g,'').slice(0,11);cpf.value=v.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2')};
+    $('ctrOk').onclick=()=>{const nome=$('ctrNome').value.trim(),cp=cpf.value.replace(/\D/g,'');
+      if(!$('ctrLi').checked)return msg($('ctrMsg'),'Marque que você leu e concorda com o contrato.',true);
+      if(nome.split(/\s+/).length<2)return msg($('ctrMsg'),'Escreva seu nome completo.',true);
+      if(cp.length!==11)return msg($('ctrMsg'),'Confira o CPF (11 números).',true);
+      confirmar('Aceitar o contrato?','<p class="cf-dica">Você está aceitando <b>'+escH(c.titulo)+'</b> como <b>'+escH(nome)+'</b>, CPF '+escH(cpf.value)+'.</p><p class="cf-dica">Esse aceite tem o mesmo valor de uma assinatura.</p>','✍️ Sim, aceito',async()=>{
+        const r=await api({acao:'aceitarcontrato',sessao:guardar.get(),id:c.id,nome:nome,cpf:cp,li:true,nav:navigator.userAgent});
+        if(!r.ok){msg($('ctrMsg'),r.erro||'Não foi possível registrar.',true);throw new Error(r.erro||'Não foi possível registrar.')}
+        c.status='Aceito';c.aceitoEm=r.aceitoEm;pintarContratos(contratos,admin);
+        f.innerHTML='<div class="cm-ok">✓ Contrato aceito em '+escH(r.aceitoEm)+'. Mandamos a cópia em PDF para o seu e-mail.</div><button type="button" class="btn sec" id="ctrPdf">⬇ Baixar PDF</button>';
+        $('ctrPdf').onclick=e=>baixarContrato(c,e.currentTarget);toast('✍️ Contrato aceito!')})};
+  }else{
+    f.innerHTML=(pend?'<div class="cm-ok" style="background:rgba(184,149,90,.12);border-color:rgba(184,149,90,.4);color:var(--gold-soft)">Aguardando o cliente aceitar pelo login dele.</div>':(j.aceitoEm?'<div class="cm-ok">✓ Aceito por '+escH(j.aceitoPor)+' em '+escH(j.aceitoEm)+'.</div>':'<div class="cm-ok">✓ Contrato assinado'+(j.data?' em '+escH(j.data):'')+'.</div>'))+
+      '<button type="button" class="btn sec" id="ctrPdf">⬇ '+(pend?'Baixar prévia em PDF':'Baixar PDF')+'</button>';
+    $('ctrPdf').onclick=e=>baixarContrato(c,e.currentTarget)}
+}
 const linksPost={};
 async function compartilharPost(g,p,b){
   const t0=b.innerHTML;b.disabled=true;
@@ -795,11 +909,12 @@ function montarAdmin(j){
   const alertaHtml=alertas.length?'<div class="adm-alerta" role="alert"><span class="sino">🔔</span>'+alertas.map(g=>{const m=g.mensalidade;const i=galerias.indexOf(g);
     return '<span>'+(m.situacao==='atrasado'?'<b>'+escH(m.clientes)+'</b> está com a mensalidade atrasada há '+(m.atraso||1)+' dia'+((m.atraso||1)>1?'s':'')+' ('+reais(m.valor)+')':'<b>'+escH(m.clientes)+'</b> avisou que pagou: confirme')+' · <button type="button" data-ir="'+i+'">ver</button></span>'}).join('')+'</div>':'';
   try{document.title=(alertas.length?'('+alertas.length+') ':'')+'Área do Cliente · Brius Agência'}catch(e){}
-  abas.innerHTML=alertaHtml+'<div class="adm-seg" role="tablist">'+[['gestao','📅 Gestão de redes',nG,pend?pend+' aguardando cliente':''],['relatorios','📊 Relatórios','por mês',''],['financeiro','💰 Financeiro','entradas e saídas',''],['fotos','📸 Fotos',nF,''],['eventos','🎟️ Eventos',nE,'']].map(([k,t,n,x])=>
+  abas.innerHTML=alertaHtml+'<div class="adm-seg" role="tablist">'+[['agenda','🗓️ Agenda','tudo num lugar',''],['gestao','📅 Gestão de redes',nG,pend?pend+' aguardando cliente':''],['relatorios','📊 Relatórios','por mês',''],['financeiro','💰 Financeiro','entradas e saídas',''],['fotos','📸 Fotos',nF,''],['eventos','🎟️ Eventos',nE,'']].map(([k,t,n,x])=>
     '<button type="button" role="tab" data-sec="'+k+'" aria-selected="'+(admSec===k)+'"><b>'+t+'</b><small>'+n+(x?' · '+x:'')+'</small></button>').join('')+'</div><div class="adm-cards" id="admCards"></div>';
   abas.querySelectorAll('[data-sec]').forEach(b=>b.onclick=()=>{admSec=b.dataset.sec;montarAdmin(admDados)});
   abas.querySelectorAll('[data-ir]').forEach(b=>b.onclick=()=>{admSec='gestao';atual=+b.dataset.ir;montarAdmin(admDados);setTimeout(()=>{const x=$('gsMens');if(x)x.scrollIntoView({behavior:'smooth',block:'center'})},200)});
-  const cards=$('admCards');
+  const cards=$('admCards');$('gContratos').hidden=admSec!=='gestao';
+  if(admSec==='agenda'){cards.hidden=true;pintarAgenda(j);return}
   if(admSec==='relatorios'){cards.hidden=true;pintarRelatoriosAdmin();return}
   if(admSec==='financeiro'){cards.hidden=true;finVer=false;pintarFinanceiro(true);return}
   if(admSec==='eventos'){cards.hidden=true;$('gTitulo').textContent='Eventos';ac.innerHTML='';$('gPrazo').textContent='';pintarEventosAdmin(j);return}
