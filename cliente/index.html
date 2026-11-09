@@ -348,6 +348,12 @@ input:focus{border-color:var(--gold)}
 .pc-pub{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:8px;border:0;border-radius:999px;padding:12px;font:700 14px var(--body);cursor:pointer;color:#fff;background:linear-gradient(90deg,#f58529,#dd2a7b 50%,#8134af);transition:transform .15s,opacity .2s}
 .pc-pub:hover{transform:translateY(-1px)}.pc-pub:disabled{opacity:.6;cursor:wait}
 .pc-pubok{display:block;text-align:center;margin-top:8px;padding:10px;border-radius:12px;background:rgba(221,42,123,.12);border:1px solid rgba(221,42,123,.35);color:#f5b6d2;font:600 13px var(--body);text-decoration:none}
+.gs-auto{display:flex;flex-wrap:wrap;align-items:center;gap:12px;justify-content:space-between;background:var(--graphite);border:1px solid #3a352f;border-radius:16px;padding:12px 16px;margin:0 0 16px}
+.gs-auto p{margin:0;font-size:13.5px;color:var(--muted-d);line-height:1.45}.gs-auto b{color:var(--bone)}
+.sw{position:relative;width:52px;height:30px;border-radius:999px;border:0;background:#3a352f;cursor:pointer;flex:none;transition:background .25s}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:var(--bone);transition:transform .25s}
+.sw[aria-checked="true"]{background:linear-gradient(90deg,#dd2a7b,#8134af)}.sw[aria-checked="true"]::after{transform:translateX(22px)}.sw:disabled{opacity:.5}
+.pc-ag{display:block;text-align:center;margin-top:8px;padding:9px;border-radius:12px;background:rgba(129,52,175,.12);border:1px dashed rgba(170,110,230,.45);color:#d6b8f3;font:600 13px var(--body)}
 .pc-sh:hover{color:var(--gold-soft);border-color:var(--gold)}.pc-sh svg{width:16px;height:16px}
 .pc-ac .ap{background:#7fc49a;border-color:#7fc49a;color:#10241a}
 .pc-ac .ap.feito{background:transparent;color:#7fc49a}
@@ -626,6 +632,7 @@ function abrirGestao(g){
     '<div>'+ig+'<h2>'+escH(m.nome||g.evento)+'</h2>'+(m.resp?'<p class="resp">'+escH(m.resp)+'</p>':'')+((tel||mail)?'<div class="mk-ct">'+tel+mail+'</div>':'')+'</div>'+
     '<div class="mk-prog"><div class="mk-anel" id="gsAnel"><span id="gsPct">0<small>aprovados</small></span></div><p id="gsResumo"></p></div></div>'+
     '<div class="mens" id="gsMens" hidden></div>'+
+    (g.admin?'<div class="gs-auto"><p><b>🤖 Publicação automática</b><br><span id="gsAutoT"></span></p><button type="button" class="sw" id="gsAuto" role="switch" aria-checked="'+!!g.autopub+'" aria-label="Publicação automática"></button></div>':'')+
     '<div class="gs-bar"><div class="gs-f" id="gsF"></div><button class="btn gs-todos" id="gsTodos" hidden>✓ Aprovar todos os pendentes</button></div>'+
     '<div class="gs-cal"><div class="gs-cal-h"><button type="button" id="gsAnt" aria-label="Mês anterior">‹</button><b id="gsMesT"></b><button type="button" id="gsProx" aria-label="Próximo mês">›</button></div><div class="gs-gr" id="gsGr"></div></div>'+
     '<details class="rel" id="gsRel"><summary><span>📊 Relatório do mês</span><b id="gsRelT"></b></summary><div id="gsRelC"></div></details>'+
@@ -638,7 +645,12 @@ function abrirGestao(g){
   $('gsAnt').onclick=()=>{const i=meses.indexOf(gsMes);if(i>0){gsMes=meses[i-1];pintarGestao(g)}};
   $('gsProx').onclick=()=>{const i=meses.indexOf(gsMes);if(i<meses.length-1){gsMes=meses[i+1];pintarGestao(g)}};
   $('gsTodos').onclick=()=>{const ps=doMes(g).filter(pend);if(!ps.length)return;
-    confirmar('Aprovar '+ps.length+' post'+(ps.length>1?'s':'')+'?',itensConf(ps)+'<p class="cf-dica">Confira se são esses mesmo. Se aprovar algum sem querer, dá para desfazer depois.</p>','✓ Sim, aprovar '+(ps.length>1?'todos':''),()=>responder(g,ps.map(p=>p.k),'Aprovado',''))};
+    confirmar('Aprovar '+ps.length+' post'+(ps.length>1?'s':'')+'?',itensConf(ps)+'<p class="cf-dica">Confira se são esses mesmo.'+(g.autopub?' Depois de aprovados, eles são <b>publicados sozinhos no Instagram</b> no dia de cada um.':'')+' Se aprovar algum sem querer, dá para desfazer depois.</p>','✓ Sim, aprovar '+(ps.length>1?'todos':''),()=>responder(g,ps.map(p=>p.k),'Aprovado',''))};
+  if(g.admin){const sw=$('gsAuto'),tx=()=>{$('gsAutoT').textContent=g.autopub?'Ligada: os posts aprovados saem sozinhos no dia, no horário do nome do arquivo (ex.: "15-11 18h30 Título") ou às '+(g.horaPadrao||'18:00')+'.':(g.igPub?'Desligada: os aprovados só saem quando você tocar em Publicar.':'Conecte o Instagram deste cliente (Relatório do mês › Conectar) para poder publicar.')};tx();
+    sw.onclick=async()=>{const on=!g.autopub;
+      const go=async()=>{sw.disabled=true;try{const j=await api({acao:'adm_autopub',sessao:guardar.get(),ent:g.id,on:on});if(!j.ok){if(j.sair){guardar.set('');location.reload();return}throw new Error(j.erro)}
+        g.autopub=j.autopub;sw.setAttribute('aria-checked',g.autopub);tx();const y=scrollY;pintarGestao(g);window.scrollTo(0,y);toast(g.autopub?'🤖 Publicação automática ligada':'Publicação automática desligada')}catch(e){toast(e.message||'Não foi possível agora.',null,null,7000)}sw.disabled=false};
+      if(on)confirmar('Ligar a publicação automática?','<p class="cf-dica">Todo post <b>aprovado</b> de <b>'+escH((g.marca&&g.marca.nome)||g.evento)+'</b> vai ser publicado sozinho no Instagram no dia dele, no horário do nome do arquivo ou às <b>'+escH(g.horaPadrao||'18:00')+'</b>. Você recebe um e-mail a cada publicação.</p>','🤖 Ligar',go);else go()}}
   pintarMens(g);pintarGestao(g);
 }
 function doMes(g){return g.posts.filter(p=>(p.data||'').slice(0,7)===gsMes||(!p.data&&gsMes===null))}
@@ -700,7 +712,8 @@ function cartao(g,p,n){
     (p.status==='Refazer'&&p.obs?'<div class="pc-obs"><b>Seu pedido de ajuste:</b><br>'+escH(p.obs)+'</div>':'')+
     (p.status==='Nova versão'?'<div class="pc-obs nv"><b>Nova versão!</b> A Brius atualizou este post'+(p.antes==='Refazer'&&p.obs?' depois do seu pedido: “'+escH(p.obs)+'”':'')+'. Dá uma olhada e responda de novo.</div>':'')+
     (p.status==='Aprovado'?'<div class="pc-obs ok">✓ Você aprovou'+(p.quando?' em '+escH(p.quando):'')+'.</div>':'')+
-    (p.pub?'<a class="pc-pubok" href="'+escH(p.pub.link)+'" target="_blank" rel="noopener">📤 Publicado no Instagram em '+escH(p.pub.quando)+' · ver post ↗</a>':(g.admin&&g.propria&&p.status==='Aprovado'&&!/stor/i.test(p.titulo)?'<button type="button" class="pc-pub">📤 Publicar no Instagram agora</button>':''))+
+    (p.pub?'<a class="pc-pubok" href="'+escH(p.pub.link)+'" target="_blank" rel="noopener">📤 Publicado no Instagram em '+escH(p.pub.quando)+' · ver post ↗</a>':(g.autopub&&p.status==='Aprovado'&&p.data&&p.data>=hojeISO()&&!/stor/i.test(p.titulo)?'<span class="pc-ag">🕒 Publica sozinho em '+p.data.split('-').reverse().slice(0,2).join('/')+' às '+escH(p.hora||g.horaPadrao||'18:00')+'</span>':'')+
+    (g.admin&&g.igPub&&p.status==='Aprovado'&&!/stor/i.test(p.titulo)?'<button type="button" class="pc-pub">📤 Publicar no Instagram agora</button>':''))+
     (g.admin&&!g.propria?'<div class="pc-adm">👁️ Visualização da agência · quem aprova é o cliente</div>':'')+'<button type="button" class="pc-sh" title="Gera um link que mostra só este post (sem aprovar nem ver os outros)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>Compartilhar só este post</button>'+'<div class="pc-ac"'+(g.admin&&!g.propria?' hidden':'')+'><button class="ap'+(p.status==='Aprovado'?' feito':'')+'">'+(p.status==='Aprovado'?(p.pub?'✓ Aprovado':'✓ Aprovado · desfazer'):'✓ Aprovar')+'</button><button class="rf'+(p.status==='Refazer'?' feito':'')+'">'+(p.status==='Refazer'?'✎ Editar pedido':'✎ Pedir ajuste')+'</button></div>'+
     '<div class="pc-aj" hidden><textarea maxlength="1500" placeholder="O que precisa mudar? Ex.: trocar a foto da capa, corrigir o preço na arte, mudar a música do vídeo…"></textarea><div class="bts"><button class="cc">Cancelar</button><button class="env">Enviar pedido</button></div></div>'+
     (p.quando&&p.status!=='Aprovado'?'<span class="pc-q">Respondido em '+escH(p.quando)+'</span>':'')+'</div>';
@@ -718,11 +731,11 @@ function cartao(g,p,n){
   c.querySelector('.ap').onclick=()=>{
     if(p.status==='Aprovado'&&p.pub){toast('Este post já foi publicado no Instagram.');return}
     if(p.status==='Aprovado')confirmar('Desfazer a aprovação?',itensConf([p])+'<p class="cf-dica">O post volta para “aguardando” e você pode aprovar ou pedir ajuste de novo.</p>','↩ Sim, desfazer',()=>responder(g,[p.k],'Desfazer',''));
-    else confirmar('Aprovar este post?',itensConf([p])+'<p class="cf-dica">Viu todas as imagens e a legenda? Se aprovar sem querer, dá para desfazer depois.</p>','✓ Sim, aprovar',()=>responder(g,[p.k],'Aprovado',''))};
+    else confirmar('Aprovar este post?',itensConf([p])+'<p class="cf-dica">Viu todas as imagens e a legenda? '+(g.autopub&&p.data&&!/stor/i.test(p.titulo)?'Depois de aprovado, ele é <b>publicado sozinho no Instagram em '+p.data.split('-').reverse().slice(0,2).join('/')+' às '+escH(p.hora||g.horaPadrao||'18:00')+'</b>. Até lá dá para desfazer.':'Se aprovar sem querer, dá para desfazer depois.')+'</p>','✓ Sim, aprovar',()=>responder(g,[p.k],'Aprovado',''))};
   c.querySelector('.rf').onclick=()=>{aj.hidden=!aj.hidden;if(!aj.hidden){ta.value=p.status==='Refazer'?p.obs||'':'';ta.focus()}};
   aj.querySelector('.cc').onclick=()=>{aj.hidden=true};
   c.querySelector('.pc-sh').onclick=e=>compartilharPost(g,p,e.currentTarget);
-  const bp=c.querySelector('.pc-pub');if(bp)bp.onclick=()=>confirmar('Publicar no Instagram?',itensConf([p])+(p.legenda?'<p class="cf-dica"><b>Legenda:</b> '+escH(p.legenda.slice(0,220))+(p.legenda.length>220?'…':'')+'</p>':'<p class="cf-dica">⚠️ Este post está sem legenda (.txt).</p>')+'<p class="cf-dica">Vai direto para o <b>@agenciabrius</b>, do jeito que está no calendário ('+p.arquivos.length+' arquivo'+(p.arquivos.length>1?'s':'')+'). Depois de publicado, só dá para apagar pelo app do Instagram.</p>','📤 Sim, publicar',async()=>{
+  const bp=c.querySelector('.pc-pub');if(bp)bp.onclick=()=>confirmar('Publicar no Instagram?',itensConf([p])+(p.legenda?'<p class="cf-dica"><b>Legenda:</b> '+escH(p.legenda.slice(0,220))+(p.legenda.length>220?'…':'')+'</p>':'<p class="cf-dica">⚠️ Este post está sem legenda (.txt).</p>')+'<p class="cf-dica">Vai direto para o <b>'+(g.propria?'@agenciabrius':(g.marca&&g.marca.insta?'@'+escH(g.marca.insta):'Instagram do cliente'))+'</b>, do jeito que está no calendário ('+p.arquivos.length+' arquivo'+(p.arquivos.length>1?'s':'')+'). Depois de publicado, só dá para apagar pelo app do Instagram.</p>','📤 Sim, publicar',async()=>{
     bp.disabled=true;bp.textContent='Publicando... (pode levar até 1 minuto)';
     try{const j=await api({acao:'adm_publicar',sessao:guardar.get(),ent:g.id,k:p.k});if(!j.ok){if(j.sair){guardar.set('');location.reload();return}throw new Error(j.erro)}
       p.pub=j.pub;const y=scrollY;pintarGestao(g);window.scrollTo(0,y);toast('📤 Publicado no Instagram!','Ver post',()=>open(j.pub.link,'_blank'),9000)}
@@ -730,6 +743,7 @@ function cartao(g,p,n){
   aj.querySelector('.env').onclick=()=>{if(!ta.value.trim()){ta.focus();ta.placeholder='Escreva o que precisa mudar 🙂';return}responder(g,[p.k],'Refazer',ta.value.trim())};
   return c;
 }
+const hojeISO=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
 const linksPost={};
 async function compartilharPost(g,p,b){
   const t0=b.innerHTML;b.disabled=true;
