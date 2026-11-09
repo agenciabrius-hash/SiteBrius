@@ -355,6 +355,8 @@ input:focus{border-color:var(--gold)}
 .sw[aria-checked="true"]{background:linear-gradient(90deg,#dd2a7b,#8134af)}.sw[aria-checked="true"]::after{transform:translateX(22px)}.sw:disabled{opacity:.5}
 .pc-ag{display:block;text-align:center;margin-top:8px;padding:9px;border-radius:12px;background:rgba(129,52,175,.12);border:1px dashed rgba(170,110,230,.45);color:#d6b8f3;font:600 13px var(--body)}
 .pc-hora{background:var(--ink);color:var(--bone);border:1px solid #5a4a6e;border-radius:8px;padding:4px 6px;font:700 13px var(--body);color-scheme:dark;margin-left:4px}
+.olho{background:none;border:0;color:var(--muted-d);cursor:pointer;padding:2px 4px;margin-left:6px;vertical-align:middle;border-radius:8px;transition:color .2s}.olho:hover{color:var(--gold-soft)}.olho svg{width:20px;height:20px;display:block}
+.vl{white-space:nowrap}
 .pc-sh:hover{color:var(--gold-soft);border-color:var(--gold)}.pc-sh svg{width:16px;height:16px}
 .pc-ac .ap{background:#7fc49a;border-color:#7fc49a;color:#10241a}
 .pc-ac .ap.feito{background:transparent;color:#7fc49a}
@@ -799,7 +801,7 @@ function montarAdmin(j){
   abas.querySelectorAll('[data-ir]').forEach(b=>b.onclick=()=>{admSec='gestao';atual=+b.dataset.ir;montarAdmin(admDados);setTimeout(()=>{const x=$('gsMens');if(x)x.scrollIntoView({behavior:'smooth',block:'center'})},200)});
   const cards=$('admCards');
   if(admSec==='relatorios'){cards.hidden=true;pintarRelatoriosAdmin();return}
-  if(admSec==='financeiro'){cards.hidden=true;pintarFinanceiro(true);return}
+  if(admSec==='financeiro'){cards.hidden=true;finVer=false;pintarFinanceiro(true);return}
   if(admSec==='eventos'){cards.hidden=true;$('gTitulo').textContent='Eventos';ac.innerHTML='';$('gPrazo').textContent='';pintarEventosAdmin(j);return}
   cards.hidden=false;
   const idx=galerias.map((g,i)=>[g,i]).filter(([g])=>admSec==='gestao'?g.tipo==='gestao':g.tipo!=='gestao');
@@ -1073,6 +1075,11 @@ async function atualizarIG(g,b){b.disabled=true;b.textContent='Buscando números
 let finDados=null,finMes=null;
 const CAT_SAI=['Equipamento','Software e assinaturas','Combustível e transporte','Alimentação','Anúncios e marketing','Equipe / freelancer','Impostos e taxas','Aluguel e contas','Retirada (sócios)','Outros'];
 const CAT_ENT=['Mensalidade','Evento (sinal)','Evento (restante)','Ensaio / fotos','Vídeo / produção','Outros'];
+// valores do Financeiro ficam ocultos até tocar no olho (volta a ocultar ao sair da área)
+let finVer=false;
+const rv=v=>'<bdi class="vl">'+(finVer?reais(v):'R$ ••••••')+'</bdi>';
+const OLHO_A='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+const OLHO_F='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.9 17.9A10.4 10.4 0 0 1 12 19C5.6 19 2 12 2 12a18.6 18.6 0 0 1 5.1-5.9M9.9 5.2A9.7 9.7 0 0 1 12 5c6.4 0 10 7 10 7a18.7 18.7 0 0 1-2.2 3.2M14.1 14.1a3 3 0 1 1-4.2-4.2M2 2l20 20"/></svg>';
 async function pintarFinanceiro(recarregar){
   const c=$('gConteudo');$('gTitulo').textContent='Financeiro';$('gAcoes').innerHTML='';$('gPrazo').textContent='';
   if(!finDados||recarregar){c.innerHTML='<p class="vazio">Carregando o financeiro…</p>';try{finDados=await chamar({acao:'adm_fin'})}catch(e){c.innerHTML='<p class="vazio">'+escH(e.message)+'</p>';return}}
@@ -1084,19 +1091,20 @@ async function pintarFinanceiro(recarregar){
   const ent=doMes.filter(i=>i.tipo==='Entrada').reduce((s,i)=>s+i.valor,0),sai=doMes.filter(i=>i.tipo==='Saída').reduce((s,i)=>s+i.valor,0),res=ent-sai;
   const rec=(finDados.receber||[]);const totRec=rec.reduce((s,r)=>s+r.valor,0);
   const porCat=t=>{const o={};doMes.filter(i=>i.tipo===t).forEach(i=>o[i.cat||'Outros']=(o[i.cat||'Outros']||0)+i.valor);return Object.entries(o).sort((a,b)=>b[1]-a[1])};
-  const barras=(lista,cor)=>{if(!lista.length)return '<p class="ra-t">Nada lançado neste mês.</p>';const mx=lista[0][1];return lista.map(([k,v])=>'<div class="rel-b fin-b"><span>'+escH(k)+'</span><i style="--w:'+(v/mx*100)+'%;--c:'+cor+'"></i><b>'+reais(v)+'</b></div>').join('')};
+  const barras=(lista,cor)=>{if(!lista.length)return '<p class="ra-t">Nada lançado neste mês.</p>';const mx=lista[0][1];return lista.map(([k,v])=>'<div class="rel-b fin-b"><span>'+escH(k)+'</span><i style="--w:'+(v/mx*100)+'%;--c:'+cor+'"></i><b>'+rv(v)+'</b></div>').join('')};
   const ult6=[];for(let k=5;k>=0;k--){const d=new Date(hj.getFullYear(),hj.getMonth()-k,1);const ym=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');const l=it.filter(i=>i.data.slice(0,7)===ym);ult6.push([ym,l.filter(i=>i.tipo==='Entrada').reduce((s,i)=>s+i.valor,0),l.filter(i=>i.tipo==='Saída').reduce((s,i)=>s+i.valor,0)])}
   const mx6=Math.max(1,...ult6.flatMap(x=>[x[1],x[2]]));
   c.innerHTML='<div class="gs fin">'+
-    '<div class="fin-saldo"><div><small>Saldo na conta da Brius</small><b class="'+(finDados.saldo<0?'neg':'')+'">'+reais(finDados.saldo)+'</b><span>'+(finDados.saldoDesde?'Calculado a partir do saldo de '+finDados.saldoDesde.split('-').reverse().join('/'):'Informe o saldo atual do banco para começar')+'</span></div>'+
+    '<div class="fin-saldo"><div><small>Saldo na conta da Brius <button type="button" class="olho" id="finOlho" aria-pressed="'+finVer+'" aria-label="'+(finVer?'Esconder valores':'Mostrar valores')+'" title="'+(finVer?'Esconder valores':'Mostrar valores')+'">'+(finVer?OLHO_F:OLHO_A)+'</button></small><b class="'+(finDados.saldo<0?'neg':'')+'">'+rv(finDados.saldo)+'</b><span>'+(finDados.saldoDesde?'Calculado a partir do saldo de '+finDados.saldoDesde.split('-').reverse().join('/'):'Informe o saldo atual do banco para começar')+'</span></div>'+
       '<div class="fin-bts"><button class="btn" id="finEnt">+ Entrada</button><button class="btn sec" id="finSai">− Saída</button><button class="btn sec" id="finAj">Ajustar saldo</button></div></div>'+
     '<div class="ra-top"><label>Mês <select id="finSel">'+meses.map(x=>'<option value="'+x+'"'+(x===finMes?' selected':'')+'>'+nomeM(x)+'</option>').join('')+'</select></label><button class="btn sec" id="finCsv">⬇ Baixar planilha (CSV)</button></div>'+
-    '<div class="rel-n fin-n"><div><b class="pos">'+reais(ent)+'</b><small>entradas</small></div><div><b class="neg">'+reais(sai)+'</b><small>saídas</small></div><div><b class="'+(res<0?'neg':'pos')+'">'+reais(res)+'</b><small>resultado do mês</small></div><div><b>'+reais(totRec)+'</b><small>a receber ('+rec.length+')</small></div></div>'+
+    '<div class="rel-n fin-n"><div><b class="pos">'+rv(ent)+'</b><small>entradas</small></div><div><b class="neg">'+rv(sai)+'</b><small>saídas</small></div><div><b class="'+(res<0?'neg':'pos')+'">'+rv(res)+'</b><small>resultado do mês</small></div><div><b>'+rv(totRec)+'</b><small>a receber ('+rec.length+')</small></div></div>'+
     '<div class="rel-g fin-g"><div><h4>Saídas por categoria</h4>'+barras(porCat('Saída'),'#f0a28f')+'</div><div><h4>Entradas por categoria</h4>'+barras(porCat('Entrada'),'#7fc49a')+'</div></div>'+
-    '<h4 class="fin-h">Últimos 6 meses</h4><div class="fin-6">'+ult6.map(([ym,e,s])=>'<div><span><i class="e" style="--h:'+(e/mx6*100)+'%" title="Entradas '+reais(e)+'"></i><i class="s" style="--h:'+(s/mx6*100)+'%" title="Saídas '+reais(s)+'"></i></span><small>'+MESES[+ym.slice(5)-1].slice(0,3)+'</small></div>').join('')+'</div><p class="fin-leg"><i class="e"></i>Entradas <i class="s"></i>Saídas</p>'+
-    '<h4 class="fin-h">Lançamentos de '+nomeM(finMes)+'</h4>'+(doMes.length?'<div class="fin-lista">'+doMes.map(i=>'<div class="fin-l '+(i.tipo==='Entrada'?'e':'s')+'"><span class="d">'+i.data.split('-').reverse().slice(0,2).join('/')+'</span><span class="t"><b>'+escH(i.desc||i.cat)+'</b><small>'+escH(i.cat)+(i.cliente?' · '+escH(i.cliente):'')+(i.forma?' · '+escH(i.forma):'')+(i.origem&&i.origem!=='Manual'?' · <em>automático</em>':'')+'</small></span><span class="v">'+(i.tipo==='Entrada'?'+ ':'− ')+reais(i.valor)+'</span><button type="button" class="del2" data-del="'+escH(i.id)+'" aria-label="Apagar lançamento">🗑</button></div>').join('')+'</div>':'<p class="ra-t">Nenhum lançamento neste mês.</p>')+
-    '<h4 class="fin-h">A receber</h4>'+(rec.length?'<div class="fin-lista">'+rec.map(r=>'<div class="fin-l r'+(r.sit==='atrasado'?' at':'')+'"><span class="d">'+r.data.split('-').reverse().slice(0,2).join('/')+'</span><span class="t"><b>'+escH(r.desc)+'</b><small>'+(r.sit==='atrasado'?'⚠ atrasado':r.sit==='confirmando'?'cliente avisou que pagou':r.sit==='evento'?'restante do evento':'a vencer')+'</small></span><span class="v">'+reais(r.valor)+'</span></div>').join('')+'</div>':'<p class="ra-t">Nada a receber agora.</p>')+
+    '<h4 class="fin-h">Últimos 6 meses</h4><div class="fin-6">'+ult6.map(([ym,e,s])=>'<div><span><i class="e" style="--h:'+(e/mx6*100)+'%" title="Entradas '+(finVer?rv(e):'oculto')+'"></i><i class="s" style="--h:'+(s/mx6*100)+'%" title="Saídas '+(finVer?rv(s):'oculto')+'"></i></span><small>'+MESES[+ym.slice(5)-1].slice(0,3)+'</small></div>').join('')+'</div><p class="fin-leg"><i class="e"></i>Entradas <i class="s"></i>Saídas</p>'+
+    '<h4 class="fin-h">Lançamentos de '+nomeM(finMes)+'</h4>'+(doMes.length?'<div class="fin-lista">'+doMes.map(i=>'<div class="fin-l '+(i.tipo==='Entrada'?'e':'s')+'"><span class="d">'+i.data.split('-').reverse().slice(0,2).join('/')+'</span><span class="t"><b>'+escH(i.desc||i.cat)+'</b><small>'+escH(i.cat)+(i.cliente?' · '+escH(i.cliente):'')+(i.forma?' · '+escH(i.forma):'')+(i.origem&&i.origem!=='Manual'?' · <em>automático</em>':'')+'</small></span><span class="v">'+(i.tipo==='Entrada'?'+ ':'− ')+rv(i.valor)+'</span><button type="button" class="del2" data-del="'+escH(i.id)+'" aria-label="Apagar lançamento">🗑</button></div>').join('')+'</div>':'<p class="ra-t">Nenhum lançamento neste mês.</p>')+
+    '<h4 class="fin-h">A receber</h4>'+(rec.length?'<div class="fin-lista">'+rec.map(r=>'<div class="fin-l r'+(r.sit==='atrasado'?' at':'')+'"><span class="d">'+r.data.split('-').reverse().slice(0,2).join('/')+'</span><span class="t"><b>'+escH(r.desc)+'</b><small>'+(r.sit==='atrasado'?'⚠ atrasado':r.sit==='confirmando'?'cliente avisou que pagou':r.sit==='evento'?'restante do evento':'a vencer')+'</small></span><span class="v">'+rv(r.valor)+'</span></div>').join('')+'</div>':'<p class="ra-t">Nada a receber agora.</p>')+
     '<p class="fin-obs">Mensalidades, sinais e restantes entram sozinhos como entrada quando você marca como pago. Tudo fica na aba "Financeiro" da planilha.</p></div>';
+  $('finOlho').onclick=()=>{finVer=!finVer;const y=scrollY;pintarFinanceiro();window.scrollTo(0,y)};
   $('finSel').onchange=e=>{finMes=e.target.value;pintarFinanceiro()};
   $('finEnt').onclick=()=>formFin('Entrada');$('finSai').onclick=()=>formFin('Saída');$('finAj').onclick=()=>formFin('Saldo inicial');
   $('finCsv').onclick=()=>{const l=[['Data','Tipo','Categoria','Descrição','Valor','Cliente','Forma','Origem']].concat(it.map(i=>[i.data.split('-').reverse().join('/'),i.tipo,i.cat,i.desc,String(i.valor).replace('.',','),i.cliente,i.forma,i.origem]));
