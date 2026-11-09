@@ -313,6 +313,10 @@ input:focus{border-color:var(--gold)}
 .gs-d.tem{cursor:pointer;color:var(--bone);transition:transform .2s,border-color .2s}
 .gs-d.tem:hover{transform:translateY(-2px);border-color:var(--gold)}
 .gs-d .mini{display:flex;gap:3px;flex-wrap:wrap}
+.gs-mais{position:absolute;right:6px;bottom:6px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font:400 16px/1 var(--body);color:var(--gold-soft);border:1px dashed rgba(230,211,174,.45);opacity:0;transition:opacity .2s}
+.gs-d.adm:hover .gs-mais,.gs-d.adm:focus-visible .gs-mais{opacity:1}@media (hover:none){.gs-d.adm .gs-mais{opacity:.55;width:18px;height:18px;font-size:13px}}
+.dia-l{display:grid;gap:8px}.dia-p{all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:12px;padding:8px;border-radius:12px;background:var(--graphite-2);border:1px solid #3a352f;transition:border-color .2s}
+.dia-p:hover{border-color:var(--gold)}.dia-p img{width:52px;height:52px;border-radius:8px;object-fit:cover;background:#2f2b26}.dia-p b{display:block;font-size:14.5px}.dia-p small{color:var(--muted-d);font-size:12.5px;display:flex;align-items:center;gap:6px}.dia-p small i{width:8px;height:8px;border-radius:50%}.dia-p em{margin-left:auto;font-style:normal;color:var(--gold-soft);font-size:13px;font-weight:700}
 .gs-d .mini span{position:relative;width:30px;height:30px;border-radius:6px;overflow:hidden;background:#2f2b26}
 .gs-d .mini img{width:100%;height:100%;object-fit:cover}
 .gs-d .mini span::after{content:"";position:absolute;right:2px;bottom:2px;width:8px;height:8px;border-radius:50%;border:1.5px solid #201d1a;background:var(--st,#e6d3ae)}
@@ -681,8 +685,9 @@ function abrirGestao(g){
   const meses=[...new Set(g.posts.filter(p=>p.data).map(p=>p.data.slice(0,7)))].sort();
   if(!gsMes||meses.indexOf(gsMes)<0){const pp=g.posts.find(p=>p.data&&pend(p));const hj=new Date();const atualM=hj.getFullYear()+'-'+String(hj.getMonth()+1).padStart(2,'0');
     gsMes=pp?pp.data.slice(0,7):(meses.indexOf(atualM)>=0?atualM:(meses[meses.length-1]||atualM))}
-  $('gsAnt').onclick=()=>{const i=meses.indexOf(gsMes);if(i>0){gsMes=meses[i-1];pintarGestao(g)}};
-  $('gsProx').onclick=()=>{const i=meses.indexOf(gsMes);if(i<meses.length-1){gsMes=meses[i+1];pintarGestao(g)}};
+  const mudaMes=k=>{if(g.admin){const [y,m]=gsMes.split('-').map(Number);const d=new Date(y,m-1+k,1);gsMes=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');pintarGestao(g);return}
+    const i=meses.indexOf(gsMes)+k;if(i>=0&&i<meses.length){gsMes=meses[i];pintarGestao(g)}};
+  $('gsAnt').onclick=()=>mudaMes(-1);$('gsProx').onclick=()=>mudaMes(1);
   $('gsTodos').onclick=()=>{const ps=doMes(g).filter(pend);if(!ps.length)return;
     confirmar('Aprovar '+ps.length+' post'+(ps.length>1?'s':'')+'?',itensConf(ps)+'<p class="cf-dica">Confira se são esses mesmo. Se aprovar algum sem querer, dá para desfazer depois.</p>','✓ Sim, aprovar '+(ps.length>1?'todos':''),()=>responder(g,ps.map(p=>p.k),'Aprovado',''))};
   if(g.admin){const sw=$('gsAuto'),tx=()=>{$('gsAutoT').textContent=g.autopub?'Ligada: os posts aprovados saem sozinhos no dia deles, no horário que vocês colocarem em cada post (padrão '+(g.horaPadrao||'18:00')+'). O cliente não vê o horário.':(g.igPub?'Desligada: os aprovados só saem quando você tocar em Publicar.':'Conecte o Instagram deste cliente (Relatório do mês › Conectar) para poder publicar.')};tx();
@@ -703,16 +708,17 @@ function pintarGestao(g){
   $('gsTodos').hidden=!cont.pend||(!!g.admin&&!g.propria);
   // calendário
   const [a,mm]=(gsMes||'').split('-').map(Number);const meses=[...new Set(g.posts.filter(p=>p.data).map(p=>p.data.slice(0,7)))].sort();
-  $('gsMesT').textContent=a?MESES[mm-1]+' '+a:'Posts';$('gsAnt').disabled=meses.indexOf(gsMes)<=0;$('gsProx').disabled=meses.indexOf(gsMes)>=meses.length-1;
+  $('gsMesT').textContent=a?MESES[mm-1]+' '+a:'Posts';$('gsAnt').disabled=!g.admin&&meses.indexOf(gsMes)<=0;$('gsProx').disabled=!g.admin&&meses.indexOf(gsMes)>=meses.length-1;
   let h=['D','S','T','Q','Q','S','S'].map(x=>'<i>'+x+'</i>').join('');
   if(a){const ini=new Date(a,mm-1,1).getDay(),dias=new Date(a,mm,0).getDate(),hj=new Date();
     for(let i=0;i<ini;i++)h+='<div class="gs-d vz"></div>';
     for(let d=1;d<=dias;d++){const dk=gsMes+'-'+String(d).padStart(2,'0');const ps=g.posts.filter(p=>p.data===dk);
       const ehHj=hj.getFullYear()===a&&hj.getMonth()===mm-1&&hj.getDate()===d;
-      h+='<div class="gs-d'+(ps.length?' tem':'')+(ehHj?' hj':'')+'"'+(ps.length?' role="button" tabindex="0" data-k="'+escH(ps[0].k)+'" aria-label="'+d+' de '+MESES[mm-1]+': '+escH(ps.map(p=>p.titulo+' ('+(ST[p.status]||ST.Aguardando).r+')').join(', '))+'"':'')+'>'+d+
-        (ps.length?'<div class="mini">'+ps.slice(0,3).map(p=>'<span style="--st:'+(ST[p.status]||ST.Aguardando).cor+'"><img src="'+thumb(p.arquivos[0].id).replace('w600','w120')+'" alt="" loading="lazy"></span>').join('')+'</div>':'')+'</div>'}}
+      const adm=!!g.admin;
+      h+='<div class="gs-d'+(ps.length||adm?' tem':'')+(adm?' adm':'')+(ehHj?' hj':'')+'" data-d="'+dk+'"'+(ps.length||adm?' role="button" tabindex="0" data-k="'+escH(ps.length?ps[0].k:'')+'" aria-label="'+d+' de '+MESES[mm-1]+': '+escH(ps.map(p=>p.titulo+' ('+(ST[p.status]||ST.Aguardando).r+')').join(', '))+'"':'')+'>'+d+
+        (ps.length?'<div class="mini">'+ps.slice(0,3).map(p=>'<span style="--st:'+(ST[p.status]||ST.Aguardando).cor+'"><img src="'+thumb(p.arquivos[0].id).replace('w600','w120')+'" alt="" loading="lazy"></span>').join('')+'</div>':'')+(adm?'<span class="gs-mais" aria-hidden="true">+</span>':'')+'</div>'}}
   const gr=$('gsGr');gr.innerHTML=h;
-  gr.querySelectorAll('.gs-d.tem').forEach(c=>{const ir=()=>{gsF='todos';pintarGestao(g);const card=document.querySelector('.pc[data-k="'+CSS.escape(c.dataset.k)+'"]');if(card){card.scrollIntoView({behavior:'smooth',block:'center'});card.classList.add('foco');setTimeout(()=>card.classList.remove('foco'),2200)}};
+  gr.querySelectorAll('.gs-d.tem').forEach(c=>{const ir=g.admin?()=>diaAdmin(g,c.dataset.d):()=>{gsF='todos';pintarGestao(g);const card=document.querySelector('.pc[data-k="'+CSS.escape(c.dataset.k)+'"]');if(card){card.scrollIntoView({behavior:'smooth',block:'center'});card.classList.add('foco');setTimeout(()=>card.classList.remove('foco'),2200)}};
     c.onclick=ir;c.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();ir()}}});
   pintarRelatorio(g,mesP);
   // lista
@@ -1070,8 +1076,15 @@ function formArquivos(titulo,pasta,depois){
   modal(titulo,arqCampo('arqs','Escolha os arquivos',true)+'<p class="am-dica">Fotos e vídeos de até 45 MB cada. Para muitos arquivos ou vídeos grandes, é mais rápido colocar direto na pasta do Drive.</p>',
   async(f,st)=>{if(!f.arqs.files.length)throw new Error('Escolha pelo menos um arquivo.');await subir(pasta,f.arqs.files,null,st);if(depois)await depois();await admRecarregar('✓ '+f.arqs.files.length+' arquivo(s) enviados')},'Enviar');
 }
-function formPost(g){
-  const hj=new Date();const iso=new Date(hj.getTime()-hj.getTimezoneOffset()*6e4).toISOString().slice(0,10);
+// Admin: tocar num dia do calendário mostra os posts daquele dia e o botão + para adicionar
+function diaAdmin(g,dk){const ps=g.posts.filter(p=>p.data===dk);const [a,m,d]=dk.split('-');
+  const f=modal(+d+' de '+MESES[+m-1],(ps.length?'<div class="dia-l">'+ps.map(p=>'<button type="button" class="dia-p" data-k="'+escH(p.k)+'"><img src="'+thumb(p.arquivos[0].id).replace('w600','w160')+'" alt=""><span><b>'+escH(p.titulo)+'</b><small><i style="background:'+(ST[p.status]||ST.Aguardando).cor+'"></i>'+escH(p.tipo||'Post')+' · '+(p.pub?'Publicado':({Aguardando:'Aguardando cliente','Nova versão':'Nova versão · aguardando cliente'}[p.status]||(ST[p.status]||ST.Aguardando).r))+(p.hora?' · '+escH(p.hora):'')+'</small></span><em>Ver ›</em></button>').join('')+'</div>':'<p class="am-dica" style="font-size:15px">Nenhum post neste dia ainda.</p>'),
+    async()=>{},'＋ Adicionar post neste dia');
+  f.querySelectorAll('.dia-p').forEach(b=>b.onclick=()=>{$('admModal').hidden=true;document.body.style.overflow='';gsF='todos';pintarGestao(g);const card=document.querySelector('.pc[data-k="'+CSS.escape(b.dataset.k)+'"]');if(card){card.scrollIntoView({behavior:'smooth',block:'center'});card.classList.add('foco');setTimeout(()=>card.classList.remove('foco'),2200)}});
+  f.onsubmit=e=>{e.preventDefault();formPost(g,dk)};
+}
+function formPost(g,dataPre){
+  const hj=new Date();const iso=dataPre||new Date(hj.getTime()-hj.getTimezoneOffset()*6e4).toISOString().slice(0,10);
   modal('Novo post · '+escH(g.marca&&g.marca.nome||g.evento),'<div class="am-2">'+campo('data','Data da publicação','date',' required value="'+iso+'"')+'<label>Tipo<select name="tipo"><option value="">Automático</option><option>Reels</option><option>Carrossel</option><option>Post</option><option>Stories</option></select></label></div>'+
     campo('titulo','Título (ex.: Promo Black Friday)','text',' required')+'<label>Legenda (opcional)<textarea name="legenda" rows="5"></textarea></label>'+arqCampo('arqs','Imagem, vídeo ou fotos do carrossel (na ordem)',true),
   async(f,st)=>{const d=Object.fromEntries(new FormData(f));if(!f.arqs.files.length)throw new Error('Escolha a arte ou o vídeo do post.');
