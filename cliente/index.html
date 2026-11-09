@@ -344,6 +344,8 @@ input:focus{border-color:var(--gold)}
 .pc-ac{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:auto}
 .pc-ac button{border-radius:999px;padding:12px 10px;font:700 14px var(--body);cursor:pointer;border:1px solid #3a352f;background:transparent;color:var(--bone);transition:transform .15s,background .2s,border-color .2s}
 .pc-ac button:hover{transform:translateY(-1px)}
+.pc-sh{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:8px;background:none;border:1px dashed #3a352f;border-radius:999px;padding:10px;color:var(--muted-d);font:600 13px var(--body);cursor:pointer;transition:color .2s,border-color .2s}
+.pc-sh:hover{color:var(--gold-soft);border-color:var(--gold)}.pc-sh svg{width:16px;height:16px}
 .pc-ac .ap{background:#7fc49a;border-color:#7fc49a;color:#10241a}
 .pc-ac .ap.feito{background:transparent;color:#7fc49a}
 .pc-ac .rf.feito{border-color:#f0a28f;color:#f0a28f}
@@ -695,7 +697,7 @@ function cartao(g,p,n){
     (p.status==='Refazer'&&p.obs?'<div class="pc-obs"><b>Seu pedido de ajuste:</b><br>'+escH(p.obs)+'</div>':'')+
     (p.status==='Nova versão'?'<div class="pc-obs nv"><b>Nova versão!</b> A Brius atualizou este post'+(p.antes==='Refazer'&&p.obs?' depois do seu pedido: “'+escH(p.obs)+'”':'')+'. Dá uma olhada e responda de novo.</div>':'')+
     (p.status==='Aprovado'?'<div class="pc-obs ok">✓ Você aprovou'+(p.quando?' em '+escH(p.quando):'')+'.</div>':'')+
-    (g.admin&&!g.propria?'<div class="pc-adm">👁️ Visualização da agência · quem aprova é o cliente</div>':'')+'<div class="pc-ac"'+(g.admin&&!g.propria?' hidden':'')+'><button class="ap'+(p.status==='Aprovado'?' feito':'')+'">'+(p.status==='Aprovado'?'✓ Aprovado · desfazer':'✓ Aprovar')+'</button><button class="rf'+(p.status==='Refazer'?' feito':'')+'">'+(p.status==='Refazer'?'✎ Editar pedido':'✎ Pedir ajuste')+'</button></div>'+
+    (g.admin&&!g.propria?'<div class="pc-adm">👁️ Visualização da agência · quem aprova é o cliente</div>':'')+'<button type="button" class="pc-sh" title="Gera um link que mostra só este post (sem aprovar nem ver os outros)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>Compartilhar só este post</button>'+'<div class="pc-ac"'+(g.admin&&!g.propria?' hidden':'')+'><button class="ap'+(p.status==='Aprovado'?' feito':'')+'">'+(p.status==='Aprovado'?'✓ Aprovado · desfazer':'✓ Aprovar')+'</button><button class="rf'+(p.status==='Refazer'?' feito':'')+'">'+(p.status==='Refazer'?'✎ Editar pedido':'✎ Pedir ajuste')+'</button></div>'+
     '<div class="pc-aj" hidden><textarea maxlength="1500" placeholder="O que precisa mudar? Ex.: trocar a foto da capa, corrigir o preço na arte, mudar a música do vídeo…"></textarea><div class="bts"><button class="cc">Cancelar</button><button class="env">Enviar pedido</button></div></div>'+
     (p.quando&&p.status!=='Aprovado'?'<span class="pc-q">Respondido em '+escH(p.quando)+'</span>':'')+'</div>';
   // carrossel
@@ -714,8 +716,23 @@ function cartao(g,p,n){
     else confirmar('Aprovar este post?',itensConf([p])+'<p class="cf-dica">Viu todas as imagens e a legenda? Se aprovar sem querer, dá para desfazer depois.</p>','✓ Sim, aprovar',()=>responder(g,[p.k],'Aprovado',''))};
   c.querySelector('.rf').onclick=()=>{aj.hidden=!aj.hidden;if(!aj.hidden){ta.value=p.status==='Refazer'?p.obs||'':'';ta.focus()}};
   aj.querySelector('.cc').onclick=()=>{aj.hidden=true};
+  c.querySelector('.pc-sh').onclick=e=>compartilharPost(g,p,e.currentTarget);
   aj.querySelector('.env').onclick=()=>{if(!ta.value.trim()){ta.focus();ta.placeholder='Escreva o que precisa mudar 🙂';return}responder(g,[p.k],'Refazer',ta.value.trim())};
   return c;
+}
+const linksPost={};
+async function compartilharPost(g,p,b){
+  const t0=b.innerHTML;b.disabled=true;
+  try{let url=linksPost[g.id+'|'+p.k];
+    if(!url){b.lastChild.textContent='Gerando link...';const j=await api({acao:'compartilhar',sessao:guardar.get(),ent:g.id,k:p.k});
+      if(!j.ok){if(j.sair){guardar.set('');location.reload();return}throw new Error(j.erro)}
+      url='https://agenciabrius.com.br/post/?t='+j.t;linksPost[g.id+'|'+p.k]=url}
+    const nome=(g.marca&&g.marca.nome)||'Brius';
+    if(navigator.share&&matchMedia('(pointer:coarse)').matches){try{await navigator.share({title:p.titulo+' · '+nome,text:'Olha este post: '+p.titulo,url:url})}catch(e){if(e.name!=='AbortError')throw e}}
+    else{let ok=false;try{await navigator.clipboard.writeText(url);ok=true}catch(e){}
+      if(ok)toast('🔗 Link copiado! Ele mostra só este post e vale 30 dias.',null,null,4000);else prompt('Copie o link deste post:',url)}
+  }catch(e){toast(e.message||'Não foi possível gerar o link agora.')}
+  b.disabled=false;b.innerHTML=t0;
 }
 async function responder(g,ks,status,obs){
   document.querySelectorAll('.pc-ac button,.pc-aj button,#gsTodos').forEach(b=>b.disabled=true);
