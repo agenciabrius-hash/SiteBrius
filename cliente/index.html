@@ -313,6 +313,15 @@ input:focus{border-color:var(--gold)}
 .gs-d.tem{cursor:pointer;color:var(--bone);transition:transform .2s,border-color .2s}
 .gs-d.tem:hover{transform:translateY(-2px);border-color:var(--gold)}
 .gs-d .mini{display:flex;gap:3px;flex-wrap:wrap}
+.gs-d .mini .igm{outline:2px solid var(--st);outline-offset:-2px}
+.igl{margin-top:22px;grid-column:1/-1}.igl h4{margin:0 0 4px;font:700 12px var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}.igl-s{margin:0 0 10px;color:var(--muted-d);font-size:13px}
+.igc{display:flex;align-items:center;gap:12px;padding:10px;border-radius:14px;background:var(--graphite);border:1px solid #3a352f;color:var(--bone);text-decoration:none;margin-bottom:8px;transition:border-color .2s,transform .2s}
+.igc:hover{border-color:#c48af0;transform:translateY(-1px)}.igc.cli:hover{border-color:#f58fbf}.igc.foco{border-color:var(--gold);box-shadow:0 0 0 4px rgba(184,149,90,.25)}
+.igc-i{width:64px;height:64px;border-radius:10px;overflow:hidden;background:#2f2b26;flex:none;display:grid;place-items:center}.igc-i img{width:100%;height:100%;object-fit:cover}.igc-i:empty::after{content:"📷";opacity:.5}
+.igc-t{min-width:0;display:grid;gap:2px}.igc-t b{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.igc-t small{color:var(--muted-d);font-size:12.5px}
+.igc-q{font-size:12px;font-weight:700;color:#d6b8f3}.igc.cli .igc-q{color:#f5b6d2}.igc em{margin-left:auto;font-style:normal;color:var(--gold-soft);font-size:13px;font-weight:700;white-space:nowrap}
+.ig-corte{display:block;margin-top:8px;font-size:13px;color:var(--muted-d)}.ig-corte input{background:var(--ink);color:var(--bone);border:1px solid #3a352f;border-radius:8px;padding:4px 8px;color-scheme:dark;font:600 13px var(--body)}
+.ins-q{color:#f5b6d2!important;font-weight:700}
 .gs-mais{position:absolute;right:6px;bottom:6px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font:400 16px/1 var(--body);color:var(--gold-soft);border:1px dashed rgba(230,211,174,.45);opacity:0;transition:opacity .2s}
 .gs-d.adm:hover .gs-mais,.gs-d.adm:focus-visible .gs-mais{opacity:1}@media (hover:none){.gs-d.adm .gs-mais{opacity:.55;width:18px;height:18px;font-size:13px}}
 .dia-l{display:grid;gap:8px}.dia-p{all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:12px;padding:8px;border-radius:12px;background:var(--graphite-2);border:1px solid #3a352f;transition:border-color .2s}
@@ -675,7 +684,7 @@ function abrirGestao(g){
     '<div>'+ig+'<h2>'+escH(m.nome||g.evento)+'</h2>'+(m.resp?'<p class="resp">'+escH(m.resp)+'</p>':'')+((tel||mail)?'<div class="mk-ct">'+tel+mail+'</div>':'')+'</div>'+
     '<div class="mk-prog"><div class="mk-anel" id="gsAnel"><span id="gsPct">0<small>aprovados</small></span></div><p id="gsResumo"></p></div></div>'+
     '<div class="mens" id="gsMens" hidden></div>'+
-    (g.admin?'<div class="gs-auto"><p><b>🤖 Publicação automática</b><br><span id="gsAutoT"></span></p><button type="button" class="sw" id="gsAuto" role="switch" aria-checked="'+!!g.autopub+'" aria-label="Publicação automática"></button></div>':'')+
+    (g.admin?'<div class="gs-auto"><p><b>🤖 Publicação automática</b><br><span id="gsAutoT"></span>'+(g.igPub&&!g.propria?'<span class="ig-corte">Posts que não saírem pelo site, a partir de <input type="date" id="gsCorte" value="'+escH(g.igCorte||'2026-12-01')+'">, aparecem como publicados pela cliente.</span>':'')+'</p><button type="button" class="sw" id="gsAuto" role="switch" aria-checked="'+!!g.autopub+'" aria-label="Publicação automática"></button></div>':'')+
     '<div class="gs-bar"><div class="gs-f" id="gsF"></div><button class="btn gs-todos" id="gsTodos" hidden>✓ Aprovar todos os pendentes</button></div>'+
     '<div class="gs-cal"><div class="gs-cal-h"><button type="button" id="gsAnt" aria-label="Mês anterior">‹</button><b id="gsMesT"></b><button type="button" id="gsProx" aria-label="Próximo mês">›</button></div><div class="gs-gr" id="gsGr"></div></div>'+
     '<details class="rel" id="gsRel"><summary><span>📊 Relatório do mês</span><b id="gsRelT"></b></summary><div id="gsRelC"></div></details>'+
@@ -690,6 +699,7 @@ function abrirGestao(g){
   $('gsAnt').onclick=()=>mudaMes(-1);$('gsProx').onclick=()=>mudaMes(1);
   $('gsTodos').onclick=()=>{const ps=doMes(g).filter(pend);if(!ps.length)return;
     confirmar('Aprovar '+ps.length+' post'+(ps.length>1?'s':'')+'?',itensConf(ps)+'<p class="cf-dica">Confira se são esses mesmo. Se aprovar algum sem querer, dá para desfazer depois.</p>','✓ Sim, aprovar '+(ps.length>1?'todos':''),()=>responder(g,ps.map(p=>p.k),'Aprovado',''))};
+  if(g.admin&&$('gsCorte'))$('gsCorte').onchange=async e=>{const i=e.target;i.disabled=true;try{const j=await api({acao:'adm_igcorte',sessao:guardar.get(),ent:g.id,data:i.value});if(!j.ok)throw new Error(j.erro);g.igPosts=j.igPosts;g.igCorte=j.igCorte;const y=scrollY;pintarGestao(g);window.scrollTo(0,y);toast('✓ Data salva')}catch(x){toast(x.message||'Não foi possível salvar.')}i.disabled=false};
   if(g.admin){const sw=$('gsAuto'),tx=()=>{$('gsAutoT').textContent=g.autopub?'Ligada: os posts aprovados saem sozinhos no dia deles, no horário que vocês colocarem em cada post (padrão '+(g.horaPadrao||'18:00')+'). O cliente não vê o horário.':(g.igPub?'Desligada: os aprovados só saem quando você tocar em Publicar.':'Conecte o Instagram deste cliente (Relatório do mês › Conectar) para poder publicar.')};tx();
     sw.onclick=async()=>{const on=!g.autopub;
       const go=async()=>{sw.disabled=true;try{const j=await api({acao:'adm_autopub',sessao:guardar.get(),ent:g.id,on:on});if(!j.ok){if(j.sair){guardar.set('');location.reload();return}throw new Error(j.erro)}
@@ -712,21 +722,25 @@ function pintarGestao(g){
   let h=['D','S','T','Q','Q','S','S'].map(x=>'<i>'+x+'</i>').join('');
   if(a){const ini=new Date(a,mm-1,1).getDay(),dias=new Date(a,mm,0).getDate(),hj=new Date();
     for(let i=0;i<ini;i++)h+='<div class="gs-d vz"></div>';
-    for(let d=1;d<=dias;d++){const dk=gsMes+'-'+String(d).padStart(2,'0');const ps=g.posts.filter(p=>p.data===dk);
+    for(let d=1;d<=dias;d++){const dk=gsMes+'-'+String(d).padStart(2,'0');const ps=g.posts.filter(p=>p.data===dk);const igs=(g.igPosts||[]).filter(x=>x.d===dk);
       const ehHj=hj.getFullYear()===a&&hj.getMonth()===mm-1&&hj.getDate()===d;
       const adm=!!g.admin;
-      h+='<div class="gs-d'+(ps.length||adm?' tem':'')+(adm?' adm':'')+(ehHj?' hj':'')+'" data-d="'+dk+'"'+(ps.length||adm?' role="button" tabindex="0" data-k="'+escH(ps.length?ps[0].k:'')+'" aria-label="'+d+' de '+MESES[mm-1]+': '+escH(ps.map(p=>p.titulo+' ('+(ST[p.status]||ST.Aguardando).r+')').join(', '))+'"':'')+'>'+d+
-        (ps.length?'<div class="mini">'+ps.slice(0,3).map(p=>'<span style="--st:'+(ST[p.status]||ST.Aguardando).cor+'"><img src="'+thumb(p.arquivos[0].id).replace('w600','w120')+'" alt="" loading="lazy"></span>').join('')+'</div>':'')+(adm?'<span class="gs-mais" aria-hidden="true">+</span>':'')+'</div>'}}
+      const tem=ps.length||igs.length;
+      h+='<div class="gs-d'+(tem||adm?' tem':'')+(adm?' adm':'')+(ehHj?' hj':'')+'" data-d="'+dk+'"'+(igs.length?' data-ig="'+escH(igs[0].id)+'"':'')+(tem||adm?' role="button" tabindex="0" data-k="'+escH(ps.length?ps[0].k:'')+'" aria-label="'+d+' de '+MESES[mm-1]+': '+escH(ps.map(p=>p.titulo+' ('+(ST[p.status]||ST.Aguardando).r+')').join(', '))+'"':'')+'>'+d+
+        (tem?'<div class="mini">'+ps.slice(0,3).map(p=>'<span style="--st:'+(ST[p.status]||ST.Aguardando).cor+'"><img src="'+thumb(p.arquivos[0].id).replace('w600','w120')+'" alt="" loading="lazy"></span>').join('')+igs.slice(0,Math.max(0,3-ps.length)).map(x=>'<span class="igm" style="--st:'+(x.q==='cliente'?'#f58fbf':'#c48af0')+'"><img src="'+escH(x.img)+'" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()"></span>').join('')+'</div>':'')+(adm?'<span class="gs-mais" aria-hidden="true">+</span>':'')+'</div>'}}
   const gr=$('gsGr');gr.innerHTML=h;
-  gr.querySelectorAll('.gs-d.tem').forEach(c=>{const ir=g.admin?()=>diaAdmin(g,c.dataset.d):()=>{gsF='todos';pintarGestao(g);const card=document.querySelector('.pc[data-k="'+CSS.escape(c.dataset.k)+'"]');if(card){card.scrollIntoView({behavior:'smooth',block:'center'});card.classList.add('foco');setTimeout(()=>card.classList.remove('foco'),2200)}};
+  gr.querySelectorAll('.gs-d.tem').forEach(c=>{const ir=g.admin?()=>diaAdmin(g,c.dataset.d):()=>{gsF='todos';pintarGestao(g);const card=c.dataset.k?document.querySelector('.pc[data-k="'+CSS.escape(c.dataset.k)+'"]'):document.querySelector('.igc[data-id="'+CSS.escape(c.dataset.ig||'')+'"]');if(card){card.scrollIntoView({behavior:'smooth',block:'center'});card.classList.add('foco');setTimeout(()=>card.classList.remove('foco'),2200)}};
     c.onclick=ir;c.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();ir()}}});
   pintarRelatorio(g,mesP);
   // lista
   const filtroF={todos:()=>true,pend:pend,ap:p=>p.status==='Aprovado',rf:p=>p.status==='Refazer'}[gsF];
   const lista2=mesP.filter(filtroF).concat(gsF==='todos'||gsF==='pend'?g.posts.filter(p=>!p.data&&filtroF(p)):[]);
-  const L=$('gsLista');if(!g.posts.length)return;
-  L.innerHTML=lista2.length?'':'<p class="vazio">Nenhum post '+({pend:'aguardando',ap:'aprovado',rf:'com ajuste pedido'}[gsF]||'')+' neste mês.</p>';
+  const L=$('gsLista');const igMes=gsF==='todos'?(g.igPosts||[]).filter(x=>x.d.slice(0,7)===gsMes):[];
+  if(!g.posts.length&&!igMes.length){L.innerHTML=(g.igPosts||[]).length?'<p class="vazio">Nada neste mês.</p>':'<p class="vazio">Ainda não tem posts no seu calendário. Assim que a Brius colocar, eles aparecem aqui para você aprovar.</p>';return}
+  L.innerHTML=lista2.length||igMes.length?'':'<p class="vazio">Nenhum post '+({pend:'aguardando',ap:'aprovado',rf:'com ajuste pedido'}[gsF]||'')+' neste mês.</p>';
   lista2.forEach((p,n)=>L.appendChild(cartao(g,p,n)));
+  if(igMes.length){const box=document.createElement('div');box.className='igl';
+    box.innerHTML='<h4>📷 No Instagram neste mês</h4><p class="igl-s">Posts que já estão no perfil. Os que não passaram pela aprovação aparecem aqui sozinhos.</p>'+igMes.map(x=>cartaoIg(g,x)).join('');L.appendChild(box)}
 }
 function pintarRelatorio(g,mesP){
   const box=$('gsRelC');if(!box)return;const [a,mm]=(gsMes||'').split('-').map(Number);
@@ -799,7 +813,8 @@ function itensAgenda(j){const it=[];const vistos=new Set();
   (j.proximos||[]).forEach(x=>it.push({d:x.data,h:x.hora||'',t:'ev',tt:x.nome,s:[x.local,x.endereco].filter(Boolean).join(' · ')||'Evento'}));
   galerias.filter(g=>g.tipo==='gestao').forEach(g=>{const nm=(g.marca&&g.marca.nome)||g.evento;(g.posts||[]).forEach(p=>{if(!p.data)return;
     const st=p.pub?'Publicado '+p.pub.quando:p.status==='Aprovado'?(g.autopub?'Aprovado · sai sozinho':'Aprovado'):p.status==='Refazer'?'Ajuste pedido':p.status==='Nova versão'?'Nova versão · aguardando cliente':'Aguardando cliente';
-    it.push({d:p.data,h:(g.autopub||p.pub)?(p.hora||g.horaPadrao||''):'',t:p.pub?'pu':'po',tt:nm+' · '+p.titulo,s:(p.tipo||'Post')+' · '+st,at:p.status==='Refazer'})})});
+    it.push({d:p.data,h:(g.autopub||p.pub)?(p.hora||g.horaPadrao||''):'',t:p.pub?'pu':'po',tt:nm+' · '+p.titulo,s:(p.tipo||'Post')+' · '+st,at:p.status==='Refazer'})});
+    (g.igPosts||[]).forEach(x=>it.push({d:x.d,h:x.h||'',t:'pu',tt:nm+' · '+((x.leg||x.t||'Post').split('\n')[0].slice(0,60)),s:x.t+' · '+(x.q==='cliente'?'publicado pela cliente':'publicado pela Brius')}))});
   ((j.agenda||{}).receber||[]).forEach(x=>it.push({d:x.data,h:'',t:'di',tt:x.desc,s:x.sit==='atrasado'?'⚠ atrasado':x.sit==='confirmando'?'cliente avisou que pagou':x.sit==='evento'?'restante do evento':'vencimento',at:x.sit==='atrasado'}));
   return it.filter(x=>x.d).sort((a,b)=>(a.d+(a.h||'99')).localeCompare(b.d+(b.h||'99')))}
 function pintarAgenda(j){
@@ -870,6 +885,8 @@ async function abrirContrato(c,admin){
       '<button type="button" class="btn sec" id="ctrPdf">⬇ '+(pend?'Baixar prévia em PDF':'Baixar PDF')+'</button>';
     $('ctrPdf').onclick=e=>baixarContrato(c,e.currentTarget)}
 }
+function quemIg(g,x){if(x.q!=='cliente')return '📤 Publicado pela Brius';if(!g.admin)return '📱 Publicado por você';const n=((g.marca&&(g.marca.resp||g.marca.nome))||'cliente').split(' ')[0];return '📱 Publicado por '+n}
+function cartaoIg(g,x){return '<a class="igc'+(x.q==='cliente'?' cli':'')+'" data-id="'+escH(x.id)+'" href="'+escH(x.url)+'" target="_blank" rel="noopener"><span class="igc-i">'+(x.img?'<img src="'+escH(x.img)+'" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">':'')+'</span><span class="igc-t"><b>'+escH((x.leg||x.t||'Post').split('\n')[0].slice(0,80))+'</b><small>'+escH(x.t)+' · '+x.d.split('-').reverse().slice(0,2).join('/')+(x.h?' às '+escH(x.h):'')+'</small><span class="igc-q">'+quemIg(g,x)+'</span></span><em>Ver ↗</em></a>'}
 const linksPost={};
 async function compartilharPost(g,p,b){
   const t0=b.innerHTML;b.disabled=true;
@@ -1077,8 +1094,8 @@ function formArquivos(titulo,pasta,depois){
   async(f,st)=>{if(!f.arqs.files.length)throw new Error('Escolha pelo menos um arquivo.');await subir(pasta,f.arqs.files,null,st);if(depois)await depois();await admRecarregar('✓ '+f.arqs.files.length+' arquivo(s) enviados')},'Enviar');
 }
 // Admin: tocar num dia do calendário mostra os posts daquele dia e o botão + para adicionar
-function diaAdmin(g,dk){const ps=g.posts.filter(p=>p.data===dk);const [a,m,d]=dk.split('-');
-  const f=modal(+d+' de '+MESES[+m-1],(ps.length?'<div class="dia-l">'+ps.map(p=>'<button type="button" class="dia-p" data-k="'+escH(p.k)+'"><img src="'+thumb(p.arquivos[0].id).replace('w600','w160')+'" alt=""><span><b>'+escH(p.titulo)+'</b><small><i style="background:'+(ST[p.status]||ST.Aguardando).cor+'"></i>'+escH(p.tipo||'Post')+' · '+(p.pub?'Publicado':({Aguardando:'Aguardando cliente','Nova versão':'Nova versão · aguardando cliente'}[p.status]||(ST[p.status]||ST.Aguardando).r))+(p.hora?' · '+escH(p.hora):'')+'</small></span><em>Ver ›</em></button>').join('')+'</div>':'<p class="am-dica" style="font-size:15px">Nenhum post neste dia ainda.</p>'),
+function diaAdmin(g,dk){const ps=g.posts.filter(p=>p.data===dk);const igs=(g.igPosts||[]).filter(x=>x.d===dk);const [a,m,d]=dk.split('-');
+  const f=modal(+d+' de '+MESES[+m-1],(igs.length?'<div style="margin-bottom:10px">'+igs.map(x=>cartaoIg(g,x)).join('')+'</div>':'')+(ps.length?'<div class="dia-l">'+ps.map(p=>'<button type="button" class="dia-p" data-k="'+escH(p.k)+'"><img src="'+thumb(p.arquivos[0].id).replace('w600','w160')+'" alt=""><span><b>'+escH(p.titulo)+'</b><small><i style="background:'+(ST[p.status]||ST.Aguardando).cor+'"></i>'+escH(p.tipo||'Post')+' · '+(p.pub?'Publicado':({Aguardando:'Aguardando cliente','Nova versão':'Nova versão · aguardando cliente'}[p.status]||(ST[p.status]||ST.Aguardando).r))+(p.hora?' · '+escH(p.hora):'')+'</small></span><em>Ver ›</em></button>').join('')+'</div>':(igs.length?'':'<p class="am-dica" style="font-size:15px">Nenhum post neste dia ainda.</p>')),
     async()=>{},'＋ Adicionar post neste dia');
   f.querySelectorAll('.dia-p').forEach(b=>b.onclick=()=>{$('admModal').hidden=true;document.body.style.overflow='';gsF='todos';pintarGestao(g);const card=document.querySelector('.pc[data-k="'+CSS.escape(b.dataset.k)+'"]');if(card){card.scrollIntoView({behavior:'smooth',block:'center'});card.classList.add('foco');setTimeout(()=>card.classList.remove('foco'),2200)}});
   f.onsubmit=e=>{e.preventDefault();formPost(g,dk)};
@@ -1186,7 +1203,7 @@ function blocoInsights(g){
   const n=[[fmt(m.seguidores),'seguidores',(cres>=0?'+':'')+fmt(cres)+' no mês'],[fmt(m.alcance),'alcance (soma diária)'],[fmt(m.views),'visualizações'],[fmt(m.interacoes),'interações'],[fmt(m.salvos),'salvamentos'],[fmt(m.compart),'compartilhamentos'],[fmt(m.visitas),'visitas ao perfil'],[fmt(m.cliques),'cliques no link']];
   box.innerHTML='<div class="ins-h"><b>📸 Instagram <a href="https://www.instagram.com/'+encodeURIComponent(ins.usuario)+'/" target="_blank" rel="noopener">@'+escH(ins.usuario)+'</a></b>'+(g.admin?'<button class="btn sec ins-at">Atualizar números</button>':'')+'</div>'+
     '<div class="ins-n">'+n.map(([v,t,x])=>'<div><b>'+v+'</b><small>'+t+'</small>'+(x?'<em class="'+(cres>=0?'up':'dn')+'">'+x+'</em>':'')+'</div>').join('')+'</div>'+spark+
-    (m.top&&m.top.length?'<h4 class="ins-t">Posts que mais performaram</h4><div class="ins-top">'+m.top.map((p,i)=>'<a href="'+escH(p.url)+'" target="_blank" rel="noopener"><span class="ins-i">'+(p.img?'<img src="'+escH(p.img)+'" alt="" loading="lazy" referrerpolicy="no-referrer">':'')+'<i>'+(i+1)+'º</i></span><span><b>'+escH(p.t)+' · '+escH(p.d.split('-').reverse().slice(0,2).join('/'))+'</b><small>👁 '+fmt(p.alc||p.vis)+' · ❤ '+fmt(p.cur)+' · 💬 '+fmt(p.com)+' · 🔖 '+fmt(p.sal)+'</small><small class="leg">'+escH(p.leg)+'</small></span></a>').join('')+'</div>':'')+
+    (m.top&&m.top.length?'<h4 class="ins-t">Posts que mais performaram</h4><div class="ins-top">'+m.top.map((p,i)=>'<a href="'+escH(p.url)+'" target="_blank" rel="noopener"><span class="ins-i">'+(p.img?'<img src="'+escH(p.img)+'" alt="" loading="lazy" referrerpolicy="no-referrer">':'')+'<i>'+(i+1)+'º</i></span><span><b>'+escH(p.t)+' · '+escH(p.d.split('-').reverse().slice(0,2).join('/'))+'</b>'+(p.q==='cliente'?'<small class="ins-q">'+(g.admin?'📱 Publicado pela cliente':'📱 Publicado por você')+'</small>':'')+'<small>👁 '+fmt(p.alc||p.vis)+' · ❤ '+fmt(p.cur)+' · 💬 '+fmt(p.com)+' · 🔖 '+fmt(p.sal)+'</small><small class="leg">'+escH(p.leg)+'</small></span></a>').join('')+'</div>':'')+
     '<p class="ins-obs">Dados do Instagram, atualizados todo dia.</p>';
   const at=box.querySelector('.ins-at');if(at)at.onclick=()=>atualizarIG(g,at);
   return box;
