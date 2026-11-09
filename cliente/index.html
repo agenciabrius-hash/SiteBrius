@@ -355,6 +355,13 @@ input:focus{border-color:var(--gold)}
 .pc-q{font-size:12px;color:#8d8478}
 .gs-ok{position:fixed;left:50%;bottom:24px;transform:translate(-50%,30px);opacity:0;background:var(--bone);color:var(--ink);font:700 14px var(--body);padding:12px 20px;border-radius:999px;box-shadow:0 12px 30px rgba(0,0,0,.35);transition:transform .35s,opacity .35s;z-index:70;pointer-events:none}
 .gs-ok.on{transform:translate(-50%,0);opacity:1}
+.gs-ok.acao{pointer-events:auto;white-space:nowrap;max-width:calc(100vw - 32px);display:flex;align-items:center;gap:14px;padding:10px 10px 10px 20px}
+.gs-ok .desf{background:var(--ink);color:var(--gold-soft);border:0;border-radius:999px;padding:8px 14px;font:700 13px var(--body);cursor:pointer}
+.cf-lista{list-style:none;margin:0 0 6px;padding:0;display:grid;gap:8px;max-height:46vh;overflow:auto}
+.cf-lista li{display:flex;gap:12px;align-items:center;background:var(--graphite-2);border:1px solid #3a352f;border-radius:12px;padding:10px 12px}
+.cf-lista small{display:block;color:var(--muted-d);font-size:12px}
+.cf-dica{color:var(--muted-d);font-size:13px;line-height:1.5;margin:10px 0 4px}
+.am-ok.esp{opacity:.45}
 @keyframes gsPop{0%{transform:scale(1)}40%{transform:scale(1.06)}100%{transform:scale(1)}}
 .pc.pop{animation:gsPop .45s ease}
 @media (max-width:720px){.mk{grid-template-columns:auto 1fr}.mk-prog{grid-column:1/-1;grid-template-columns:auto 1fr;justify-items:start;text-align:left}.mk-prog p{max-width:none}}
@@ -593,7 +600,16 @@ const escH=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;
 const ST={Aguardando:{c:'c-ag',cor:'#e6d3ae',r:'Aguardando você'},'Nova versão':{c:'c-nv',cor:'#8ab4f8',r:'Nova versão'},Aprovado:{c:'c-ap',cor:'#7fc49a',r:'Aprovado'},Refazer:{c:'c-rf',cor:'#f0a28f',r:'Ajuste pedido'}};
 const pend=p=>p.status==='Aguardando'||p.status==='Nova versão';
 let gsF='todos',gsMes=null,gsIdx={};
-function toast(t){let e=document.querySelector('.gs-ok');if(!e){e=document.createElement('div');e.className='gs-ok';document.body.appendChild(e)}e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),2600)}
+function toast(t,rot,fn,ms){let e=document.querySelector('.gs-ok');if(!e){e=document.createElement('div');e.className='gs-ok';document.body.appendChild(e)}
+  e.textContent=t;e.classList.toggle('acao',!!fn);
+  if(fn){const b=document.createElement('button');b.type='button';b.className='desf';b.textContent=rot;b.onclick=()=>{e.classList.remove('on');clearTimeout(e._t);fn()};e.appendChild(b)}
+  e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),ms||2600)}
+// confirmação antes de aprovar/desfazer: o botão de confirmar fica bloqueado por um instante para um toque duplo não confirmar sem querer
+function confirmar(titulo,html,rotulo,acao){
+  const f=modal(titulo,html,async()=>{await acao()},rotulo);const ok=f.querySelector('.am-ok');ok.disabled=true;ok.classList.add('esp');
+  setTimeout(()=>{ok.disabled=false;ok.classList.remove('esp')},900);
+}
+function itensConf(ps){return '<ul class="cf-lista">'+ps.map(p=>'<li><span>'+(p.tipo==='Vídeo'||p.tipo==='Reels'?'🎬':p.tipo==='Carrossel'?'🖼️':'📷')+'</span><span><b>'+escH(p.titulo)+'</b><small>'+(p.data?p.data.split('-').reverse().slice(0,2).join('/'):'sem data')+' · '+escH(p.tipo||'')+'</small></span></li>').join('')+'</ul>'}
 function abrirGestao(g){
   const cont=$('gConteudo');$('gPrazo').innerHTML=g.admin?escH(g.email)+' · '+escH(g.statusPlanilha||'')+' · <a href="'+escH(g.pasta)+'" target="_blank" rel="noopener">pasta no Drive</a>':'';$('gAcoes').innerHTML='';$('gTitulo').textContent='Calendário de conteúdo';
   g.fav=g.fav instanceof Set?g.fav:new Set();
@@ -616,9 +632,8 @@ function abrirGestao(g){
     gsMes=pp?pp.data.slice(0,7):(meses.indexOf(atualM)>=0?atualM:(meses[meses.length-1]||atualM))}
   $('gsAnt').onclick=()=>{const i=meses.indexOf(gsMes);if(i>0){gsMes=meses[i-1];pintarGestao(g)}};
   $('gsProx').onclick=()=>{const i=meses.indexOf(gsMes);if(i<meses.length-1){gsMes=meses[i+1];pintarGestao(g)}};
-  $('gsTodos').onclick=()=>{const b=$('gsTodos');const ks=doMes(g).filter(pend).map(p=>p.k);if(!ks.length)return;
-    if(!b.dataset.c){b.dataset.c=1;b.textContent='Toque de novo para aprovar '+ks.length+' post'+(ks.length>1?'s':'');setTimeout(()=>{delete b.dataset.c;b.textContent='✓ Aprovar todos os pendentes'},4000);return}
-    responder(g,ks,'Aprovado','')};
+  $('gsTodos').onclick=()=>{const ps=doMes(g).filter(pend);if(!ps.length)return;
+    confirmar('Aprovar '+ps.length+' post'+(ps.length>1?'s':'')+'?',itensConf(ps)+'<p class="cf-dica">Confira se são esses mesmo. Se aprovar algum sem querer, dá para desfazer depois.</p>','✓ Sim, aprovar '+(ps.length>1?'todos':''),()=>responder(g,ps.map(p=>p.k),'Aprovado',''))};
   pintarMens(g);pintarGestao(g);
 }
 function doMes(g){return g.posts.filter(p=>(p.data||'').slice(0,7)===gsMes||(!p.data&&gsMes===null))}
@@ -680,7 +695,7 @@ function cartao(g,p,n){
     (p.status==='Refazer'&&p.obs?'<div class="pc-obs"><b>Seu pedido de ajuste:</b><br>'+escH(p.obs)+'</div>':'')+
     (p.status==='Nova versão'?'<div class="pc-obs nv"><b>Nova versão!</b> A Brius atualizou este post'+(p.antes==='Refazer'&&p.obs?' depois do seu pedido: “'+escH(p.obs)+'”':'')+'. Dá uma olhada e responda de novo.</div>':'')+
     (p.status==='Aprovado'?'<div class="pc-obs ok">✓ Você aprovou'+(p.quando?' em '+escH(p.quando):'')+'.</div>':'')+
-    (g.admin&&!g.propria?'<div class="pc-adm">👁️ Visualização da agência · quem aprova é o cliente</div>':'')+'<div class="pc-ac"'+(g.admin&&!g.propria?' hidden':'')+'><button class="ap'+(p.status==='Aprovado'?' feito':'')+'">'+(p.status==='Aprovado'?'✓ Aprovado':'✓ Aprovar')+'</button><button class="rf'+(p.status==='Refazer'?' feito':'')+'">'+(p.status==='Refazer'?'✎ Editar pedido':'✎ Pedir ajuste')+'</button></div>'+
+    (g.admin&&!g.propria?'<div class="pc-adm">👁️ Visualização da agência · quem aprova é o cliente</div>':'')+'<div class="pc-ac"'+(g.admin&&!g.propria?' hidden':'')+'><button class="ap'+(p.status==='Aprovado'?' feito':'')+'">'+(p.status==='Aprovado'?'✓ Aprovado · desfazer':'✓ Aprovar')+'</button><button class="rf'+(p.status==='Refazer'?' feito':'')+'">'+(p.status==='Refazer'?'✎ Editar pedido':'✎ Pedir ajuste')+'</button></div>'+
     '<div class="pc-aj" hidden><textarea maxlength="1500" placeholder="O que precisa mudar? Ex.: trocar a foto da capa, corrigir o preço na arte, mudar a música do vídeo…"></textarea><div class="bts"><button class="cc">Cancelar</button><button class="env">Enviar pedido</button></div></div>'+
     (p.quando&&p.status!=='Aprovado'?'<span class="pc-q">Respondido em '+escH(p.quando)+'</span>':'')+'</div>';
   // carrossel
@@ -694,7 +709,9 @@ function cartao(g,p,n){
   if(leg)requestAnimationFrame(()=>{if(leg.scrollHeight>leg.clientHeight+4){mais.hidden=false;mais.onclick=()=>{leg.classList.toggle('aberta');mais.textContent=leg.classList.contains('aberta')?'Ver menos':'Ver legenda completa'}}});
   // ações
   const aj=c.querySelector('.pc-aj'),ta=aj.querySelector('textarea');
-  c.querySelector('.ap').onclick=()=>{if(p.status!=='Aprovado')responder(g,[p.k],'Aprovado','')};
+  c.querySelector('.ap').onclick=()=>{
+    if(p.status==='Aprovado')confirmar('Desfazer a aprovação?',itensConf([p])+'<p class="cf-dica">O post volta para “aguardando” e você pode aprovar ou pedir ajuste de novo.</p>','↩ Sim, desfazer',()=>responder(g,[p.k],'Desfazer',''));
+    else confirmar('Aprovar este post?',itensConf([p])+'<p class="cf-dica">Viu todas as imagens e a legenda? Se aprovar sem querer, dá para desfazer depois.</p>','✓ Sim, aprovar',()=>responder(g,[p.k],'Aprovado',''))};
   c.querySelector('.rf').onclick=()=>{aj.hidden=!aj.hidden;if(!aj.hidden){ta.value=p.status==='Refazer'?p.obs||'':'';ta.focus()}};
   aj.querySelector('.cc').onclick=()=>{aj.hidden=true};
   aj.querySelector('.env').onclick=()=>{if(!ta.value.trim()){ta.focus();ta.placeholder='Escreva o que precisa mudar 🙂';return}responder(g,[p.k],'Refazer',ta.value.trim())};
@@ -704,11 +721,12 @@ async function responder(g,ks,status,obs){
   document.querySelectorAll('.pc-ac button,.pc-aj button,#gsTodos').forEach(b=>b.disabled=true);
   try{const j=await api({acao:'aprovar',sessao:guardar.get(),ent:g.id,k:ks,status:status,obs:obs});
     if(!j.ok){if(j.sair){guardar.set('');location.reload();return}throw new Error(j.erro)}
-    g.posts.forEach(p=>{if(ks.indexOf(p.k)>=0){p.status=status;p.obs=obs;p.quando=j.quando;p.antes=''}});
+    g.posts.forEach(p=>{if(ks.indexOf(p.k)>=0){if(status==='Desfazer'){p.status='Aguardando';p.obs='';p.quando=''}else{p.status=status;p.obs=obs;p.quando=j.quando}p.antes=''}});
     const y=scrollY;pintarGestao(g);window.scrollTo(0,y);
     const mb=$('gAbas').querySelector('.marca[aria-pressed="true"]');if(mb){const pd=g.posts.filter(pend).length;mb.querySelector('small').textContent=pd?pd+' para aprovar':'Tudo em dia ✓';const bd=mb.querySelector('.mb');if(bd){if(pd)bd.textContent=pd;else bd.remove()}}
     ks.forEach(k=>{const el=document.querySelector('.pc[data-k="'+CSS.escape(k)+'"]');if(el)el.classList.add('pop')});
-    toast(status==='Aprovado'?(ks.length>1?'✓ '+ks.length+' posts aprovados!':'✓ Post aprovado!'):'✎ Pedido de ajuste enviado para a Brius');
+    if(status==='Aprovado')toast(ks.length>1?'✓ '+ks.length+' posts aprovados!':'✓ Post aprovado!','↩ Desfazer',()=>responder(g,ks,'Desfazer',''),9000);
+    else toast(status==='Desfazer'?'↩ Aprovação desfeita · o post voltou para “aguardando”':'✎ Pedido de ajuste enviado para a Brius');
   }catch(e){toast(e.message||'Não foi possível enviar agora. Tente de novo.')}
   document.querySelectorAll('.pc-ac button,.pc-aj button,#gsTodos').forEach(b=>b.disabled=false);
 }
