@@ -591,7 +591,7 @@ async function carregarGaleria(){
   mostrar('telaCarregando');
   try{const j=await api({acao:'galeria',sessao:guardar.get()});
     if(!j.ok){guardar.set('');mostrar('telaLogin');msg($('mLogin'),j.erro,true);return}
-    galerias=j.galerias;$('gOla').textContent='Olá, '+(j.nome||'')+'!';
+    galerias=j.galerias;$('gOla').textContent='Olá, '+(j.nome||'')+'!';ultimoHash=hashDados(j);
     pintarContratos(j.contratos||[],!!j.admin);
     if(j.admin){mostrar('telaGal');montarAdmin(j);return}
     const abas=$('gAbas');abas.innerHTML='';
@@ -606,6 +606,27 @@ async function carregarGaleria(){
     abrir(Math.max(0,galerias.findIndex(g=>g.aberto)));mostrar('telaGal');
   }catch(err){mostrar('telaLogin');msg($('mLogin'),'Não foi possível carregar agora. Tente de novo.',true)}
 }
+// ---- Atualiza sozinho (sem F5): a cada 60 s, só com a aba visível e quando ninguém está digitando ou com janela aberta
+let ultimoHash='';
+const hashDados=j=>JSON.stringify([j.galerias,j.contratos,j.proximos,j.eventos,j.agenda]);
+function ocupadoAgora(){const vis=id=>{const e=$(id);return e&&!e.hidden};
+  if(vis('admModal')||vis('ctrModal')||vis('lb')||vis('dl'))return true;
+  const a=document.activeElement;if(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))return true;
+  if([...document.querySelectorAll('.pc-aj')].some(x=>!x.hidden))return true;
+  if(document.querySelector('.pc-sh:disabled,.pc-pub:disabled,.pc-ac button:disabled'))return true;
+  return false}
+async function atualizarSozinho(){
+  if(document.hidden||!guardar.get()||$('telaGal').hidden||ocupadoAgora())return;
+  let j;try{j=await api({acao:'galeria',sessao:guardar.get()})}catch(e){return}
+  if(!j||!j.ok)return;const h=hashDados(j);if(h===ultimoHash||ocupadoAgora())return;ultimoHash=h;
+  const y=scrollY;const g0=galerias[atual]||{};const chave=g0.id||g0.pastaId||g0.evento;
+  galerias=j.galerias;const i=galerias.findIndex(g=>(g.id||g.pastaId||g.evento)===chave);if(i>=0)atual=i;
+  pintarContratos(j.contratos||[],!!j.admin);
+  if(j.admin){admDados=j;if(admSec==='financeiro'||admSec==='relatorios')return;montarAdmin(j)}
+  else{abrir(atual,true);$('gAbas').querySelectorAll('.marca[data-i]').forEach(b=>{const g=galerias[+b.dataset.i];if(!g)return;const pd=(g.posts||[]).filter(p=>p.status==='Aguardando'||p.status==='Nova versão').length;const sm=b.querySelector('small');if(sm)sm.textContent=pd?pd+' para aprovar':'Tudo em dia ✓'})}
+  window.scrollTo(0,y)}
+setInterval(atualizarSozinho,60000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)atualizarSozinho()});
 let filtro='todas';
 function abrir(i,manterFiltro){
   setTimeout(()=>{const g0=galerias[i];if(g0&&g0.admin)barraAdmin(g0)},0);
