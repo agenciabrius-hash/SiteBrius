@@ -1299,25 +1299,20 @@ const ALBUNS=[{"t": "Ensaio de bodas Sirlene & Valdinei", "c": "casamentos", "p"
   const encher=lista=>{feed.innerHTML='';const imgs=lista.concat(lista);imgs.forEach((src,i)=>{const im=new Image();im.alt='';im.decoding='async';if(i>8)im.loading='lazy';im.src=src;feed.appendChild(im)})};
   // enquanto o Instagram não responde, mostra trabalhos do portfólio
   encher(['img/14.webp','img/18.webp','img/06.webp','img/44.webp','img/46.webp','img/37.webp','img/17.webp','img/47.webp','img/16.webp','cli/1-ouLRvWyXPEIuYx3g4PEnIIRA5K50Jq8.webp','img/03.webp','img/19.webp']);
-  av.addEventListener('click',e=>{if(av.classList.contains('st')){e.preventDefault();e.stopPropagation();abrir(window.__igStories,0)}});
   if(!API_URL)return;
   const tempo=t=>{if(!t)return'';const h=Math.max(1,Math.round((Date.now()-new Date(t))/3600000));return h<24?h+' h':Math.round(h/24)+' d'};
-  let ultPosts='',tecla=false;
+  let ultPosts='';
   const carregarIG=()=>fetch(API_URL+'?acao=instagram').then(r=>r.json()).then(j=>{
     if(!j||!j.ok)return;
     const pf=j.perfil,num=n=>n>=10000?(n/1000).toFixed(n>=100000?0:1).replace('.',',')+' mil':String(n),pt=(id,v)=>{const e=document.getElementById(id);if(e&&v!=null&&v!=='')e.textContent=v};
     if(pf){pt('igPosts',num(pf.posts));pt('igSeg',num(pf.seguidores));pt('igSegd',num(pf.seguindo));pt('igNome',pf.nome);pt('igUser',pf.usuario);
       if(pf.foto){const im=av.querySelector('img');const t=new Image();t.onload=()=>{im.src=pf.foto};t.src=pf.foto}}
-    const st=j.stories||[];window.__igStories=st;
-    if(st.length){if(!av.classList.contains('st')){av.classList.add('st');av.setAttribute('role','button');av.setAttribute('tabindex','0');av.setAttribute('aria-label','Ver os stories de hoje')}
-      if(!tecla){tecla=true;av.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&av.classList.contains('st')){e.preventDefault();e.stopPropagation();abrir(window.__igStories,0)}})}}
-    else{av.classList.remove('st');av.removeAttribute('role');av.removeAttribute('tabindex');av.removeAttribute('aria-label')}
     if(!(j.posts||[]).length)return;
     const ps=j.posts.slice(0,12).map(p=>p.img);const k=ps.join('|');if(k!==ultPosts){ultPosts=k;encher(ps)}
   }).catch(()=>{});
   carregarIG();
-  // confere sozinho a cada 3 minutos (só com a página visível) e quando a pessoa volta para a aba
-  setInterval(()=>{if(!document.hidden&&document.getElementById('igv').hidden)carregarIG()},180000);
+  // confere os posts sozinho a cada 3 minutos (só com a página visível) e quando a pessoa volta para a aba
+  setInterval(()=>{if(!document.hidden)carregarIG()},180000);
   let volta=Date.now();document.addEventListener('visibilitychange',()=>{if(!document.hidden&&Date.now()-volta>60000){volta=Date.now();carregarIG()}});
   // visualizador de stories
   const v=document.getElementById('igv'),media=document.getElementById('igvMedia'),bars=document.getElementById('igvBars');let lista=[],k=0,tmr=null;
