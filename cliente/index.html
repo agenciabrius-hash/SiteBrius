@@ -404,6 +404,10 @@ input:focus{border-color:var(--gold)}
 @media(max-width:520px){.aval{flex-wrap:wrap}.aval .go{margin-left:0}}
 .pc-adm2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.pc-adm2 button{background:none;border:1px solid #3a352f;border-radius:999px;padding:9px;color:var(--muted-d);font:600 13px var(--body);cursor:pointer;transition:color .2s,border-color .2s}
 .pc-adm2 .pc-data:hover{color:var(--gold-soft);border-color:var(--gold)}.pc-adm2 .pc-del:hover{color:#f0a28f;border-color:#f0a28f}
+.fx{background:var(--graphite);border:1px solid #3a352f;border-radius:18px;padding:16px;margin:18px 0}
+.fx-h .btn{padding:9px 16px;font-size:13.5px}.fx-h{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:10px}.fx-h small{color:var(--muted-d);font-size:13px}.fx-h small b{color:var(--bone)}
+.fin-l.fx-l{display:grid;grid-template-columns:56px minmax(0,1fr) auto;gap:6px 10px;align-items:center}.fx-a{grid-column:2/-1;display:flex;gap:8px;align-items:center;justify-content:flex-end}.fx-s{font:700 11.5px var(--body);color:var(--c);border:1px solid var(--c);border-radius:999px;padding:3px 9px;white-space:nowrap}
+.fx-pg{background:#7fc49a;color:#10241a;border:0;border-radius:999px;padding:7px 12px;font:700 12.5px var(--body);cursor:pointer;white-space:nowrap}
 .pc-sh:hover{color:var(--gold-soft);border-color:var(--gold)}.pc-sh svg{width:16px;height:16px}
 .pc-ac .ap{background:#7fc49a;border-color:#7fc49a;color:#10241a}
 .pc-ac .ap.feito{background:transparent;color:#7fc49a}
@@ -1271,6 +1275,7 @@ async function pintarFinanceiro(recarregar){
       '<div class="fin-bts"><button class="btn" id="finEnt">+ Entrada</button><button class="btn sec" id="finSai">− Saída</button><button class="btn sec" id="finAj">Ajustar saldo</button></div></div>'+
     '<div class="ra-top"><label>Mês <select id="finSel">'+meses.map(x=>'<option value="'+x+'"'+(x===finMes?' selected':'')+'>'+nomeM(x)+'</option>').join('')+'</select></label><button class="btn sec" id="finCsv">⬇ Baixar planilha (CSV)</button></div>'+
     '<div class="rel-n fin-n"><div><b class="pos">'+rv(ent)+'</b><small>entradas</small></div><div><b class="neg">'+rv(sai)+'</b><small>saídas</small></div><div><b class="'+(res<0?'neg':'pos')+'">'+rv(res)+'</b><small>resultado do mês</small></div><div><b>'+rv(totRec)+'</b><small>a receber ('+rec.length+')</small></div></div>'+
+    blocoFixas()+
     '<div class="rel-g fin-g"><div><h4>Saídas por categoria</h4>'+barras(porCat('Saída'),'#f0a28f')+'</div><div><h4>Entradas por categoria</h4>'+barras(porCat('Entrada'),'#7fc49a')+'</div></div>'+
     '<h4 class="fin-h">Últimos 6 meses</h4><div class="fin-6">'+ult6.map(([ym,e,s])=>'<div><span><i class="e" style="--h:'+(e/mx6*100)+'%" title="Entradas '+(finVer?rv(e):'oculto')+'"></i><i class="s" style="--h:'+(s/mx6*100)+'%" title="Saídas '+(finVer?rv(s):'oculto')+'"></i></span><small>'+MESES[+ym.slice(5)-1].slice(0,3)+'</small></div>').join('')+'</div><p class="fin-leg"><i class="e"></i>Entradas <i class="s"></i>Saídas</p>'+
     '<h4 class="fin-h">Lançamentos de '+nomeM(finMes)+'</h4>'+(doMes.length?'<div class="fin-lista">'+doMes.map(i=>'<div class="fin-l '+(i.tipo==='Entrada'?'e':'s')+'"><span class="d">'+i.data.split('-').reverse().slice(0,2).join('/')+'</span><span class="t"><b>'+escH(i.desc||i.cat)+'</b><small>'+escH(i.cat)+(i.cliente?' · '+escH(i.cliente):'')+(i.forma?' · '+escH(i.forma):'')+(i.origem&&i.origem!=='Manual'?' · <em>automático</em>':'')+'</small></span><span class="v">'+(i.tipo==='Entrada'?'+ ':'− ')+rv(i.valor)+'</span><button type="button" class="del2" data-del="'+escH(i.id)+'" aria-label="Apagar lançamento">🗑</button></div>').join('')+'</div>':'<p class="ra-t">Nenhum lançamento neste mês.</p>')+
@@ -1278,20 +1283,41 @@ async function pintarFinanceiro(recarregar){
     '<p class="fin-obs">Mensalidades, sinais e restantes entram sozinhos como entrada quando você marca como pago. Tudo fica na aba "Financeiro" da planilha.</p></div>';
   $('finOlho').onclick=()=>{finVer=!finVer;const y=scrollY;pintarFinanceiro();window.scrollTo(0,y)};
   $('finSel').onchange=e=>{finMes=e.target.value;pintarFinanceiro()};
+  ligarFixas();
   $('finEnt').onclick=()=>formFin('Entrada');$('finSai').onclick=()=>formFin('Saída');$('finAj').onclick=()=>formFin('Saldo inicial');
   $('finCsv').onclick=()=>{const l=[['Data','Tipo','Categoria','Descrição','Valor','Cliente','Forma','Origem']].concat(it.map(i=>[i.data.split('-').reverse().join('/'),i.tipo,i.cat,i.desc,String(i.valor).replace('.',','),i.cliente,i.forma,i.origem]));
     const csv='﻿'+l.map(r=>r.map(x=>'"'+String(x||'').replace(/"/g,'""')+'"').join(';')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='financeiro-brius.csv';a.click()};
   c.querySelectorAll('[data-del]').forEach(b=>b.onclick=async()=>{if(!b.dataset.c){b.dataset.c=1;b.textContent='Apagar?';setTimeout(()=>{delete b.dataset.c;b.textContent='🗑'},3500);return}
     try{finDados=await chamar({acao:'adm_fin_del',id:b.dataset.del});pintarFinanceiro();toast('Lançamento apagado')}catch(e){toast(e.message)}});
 }
+// ---- Contas fixas: parcelas e assinaturas do mês
+function blocoFixas(){const fx=(finDados.fixas||[]).filter(f=>f.sit!=='quitada');const ativas=fx.filter(f=>f.sit!=='futura');
+  const tot=ativas.reduce((s,f)=>s+f.valor,0),falta=ativas.filter(f=>f.sit==='aberta'||f.sit==='atrasada').reduce((s,f)=>s+f.valor,0);
+  const chip={paga:['✓ paga','#7fc49a'],aberta:['a pagar','#e6d3ae'],atrasada:['⚠ atrasada','#f0a28f'],futura:['começa depois','#8d8478']};
+  return '<div class="fx"><div class="fx-h"><div><h4 class="fin-h" style="margin:0">Contas fixas do mês</h4><small>Por mês: <b>'+rv(tot)+'</b> · falta pagar: <b>'+rv(falta)+'</b></small></div><button type="button" class="btn sec" id="fxAdd">+ Conta fixa</button></div>'+
+    (fx.length?'<div class="fin-lista">'+fx.map(f=>'<div class="fin-l fx-l"><span class="d">dia '+f.dia+'</span><span class="t"><b>'+escH(f.nome)+'</b><small>'+escH(f.cat||'')+(f.total?' · parcela '+Math.max(1,Math.min(f.n,f.total))+'/'+f.total:' · assinatura')+(f.forma?' · '+escH(f.forma):'')+'</small></span><span class="v">'+rv(f.valor)+'</span>'+
+      '<span class="fx-a"><span class="fx-s" style="--c:'+chip[f.sit][1]+'">'+chip[f.sit][0]+'</span>'+((f.sit==='aberta'||f.sit==='atrasada')?'<button type="button" class="fx-pg" data-fx="'+escH(f.id)+'">✓ Paguei</button>':'')+'<button type="button" class="del2" data-fxdel="'+escH(f.id)+'" aria-label="Remover conta fixa">🗑</button></span></div>').join('')+'</div>'
+    :'<p class="ra-t">Nenhuma conta fixa ainda. Cadastre a parcela da câmera, Adobe, Canva, internet…</p>')+'</div>'}
+function ligarFixas(){
+  if($('fxAdd'))$('fxAdd').onclick=()=>{const hj=new Date();const ym=hj.getFullYear()+'-'+String(hj.getMonth()+1).padStart(2,'0');
+    modal('Nova conta fixa',campo('nome','Nome (ex.: Parcela da câmera Sony, Adobe, Canva)','text',' required maxlength="80"')+'<div class="am-2">'+campo('valor','Valor por mês (R$)','text',' inputmode="decimal" required placeholder="Ex.: 389,90"')+campo('dia','Dia do vencimento','number',' min="1" max="31" required value="10"')+'</div>'+
+      '<div class="am-2"><label>Categoria<select name="categoria">'+CAT_SAI.map(c=>'<option'+(c==='Software e assinaturas'?' selected':'')+'>'+c+'</option>').join('')+'</select></label>'+campo('parcelas','Quantas parcelas? (vazio = assinatura)','number',' min="1" max="120" placeholder="Ex.: 12"')+'</div>'+
+      '<div class="am-2">'+campo('inicio','Primeira parcela em','month',' required value="'+ym+'"')+'<label>Forma<select name="forma"><option>Cartão de crédito</option><option>Pix</option><option>Boleto</option><option>Débito automático</option><option>Cartão de débito</option></select></label></div>'+
+      '<p class="am-dica">Todo mês ela aparece aqui como "a pagar". Quando pagar, toque em <b>✓ Paguei</b> e a saída é lançada sozinha, com a parcela.</p>',
+      async f=>{const d=Object.fromEntries(new FormData(f));finDados=await chamar(Object.assign({acao:'adm_fixa_add'},d));pintarFinanceiro();toast('✓ Conta fixa cadastrada')},'Cadastrar')};
+  document.querySelectorAll('[data-fx]').forEach(b=>b.onclick=()=>{const f=(finDados.fixas||[]).find(x=>x.id===b.dataset.fx);if(!f)return;
+    confirmar('Marcar como paga?','<p class="cf-dica"><b>'+escH(f.nome)+'</b>'+(f.total?' · parcela '+f.n+'/'+f.total:'')+'<br>Vai lançar uma <b>saída</b> de hoje no Financeiro.</p>','✓ Paguei',async()=>{finDados=await chamar({acao:'adm_fixa_pagar',id:f.id,mes:f.mes});pintarFinanceiro();toast('✓ Pagamento lançado')})});
+  document.querySelectorAll('[data-fxdel]').forEach(b=>b.onclick=async()=>{if(!b.dataset.c){b.dataset.c=1;b.textContent='Remover?';setTimeout(()=>{delete b.dataset.c;b.textContent='🗑'},3500);return}
+    try{finDados=await chamar({acao:'adm_fixa_del',id:b.dataset.fxdel});pintarFinanceiro();toast('Conta fixa removida')}catch(e){toast(e.message)}});
+}
 function formFin(tipo){
   const hj=new Date();const iso=new Date(hj.getTime()-hj.getTimezoneOffset()*6e4).toISOString().slice(0,10);
   const cats=tipo==='Entrada'?CAT_ENT:CAT_SAI;
   const corpo=tipo==='Saldo inicial'?'<p class="am-dica" style="font-size:15px;color:var(--bone)">Coloque quanto tem <b>hoje</b> na conta da Brius (olhe no app do banco). Daqui para frente o saldo é calculado com as entradas e saídas lançadas.</p><div class="am-2">'+campo('valor','Saldo hoje (R$)','text',' inputmode="decimal" required placeholder="Ex.: 3.250,00"')+campo('data','Data','date',' required value="'+iso+'"')+'</div>'
     :'<div class="am-2">'+campo('valor','Valor (R$)','text',' inputmode="decimal" required placeholder="Ex.: 150,00"')+campo('data','Data','date',' required value="'+iso+'"')+'</div>'+
-     '<label>Categoria<select name="categoria">'+cats.map(c=>'<option>'+c+'</option>').join('')+'</select></label>'+campo('descricao',tipo==='Entrada'?'Descrição (ex.: Ensaio Ana)':'Descrição (ex.: Lente 50mm, Adobe, gasolina)','text')+
+     '<label>Categoria<select name="categoria">'+cats.map(c=>'<option>'+c+'</option>').join('')+'</select></label>'+(tipo==='Saída'?campo('descricao','Para que foi? (obrigatório · ex.: lente 50mm, gasolina do evento, retirada do Matheus)','text',' required maxlength="200"'):campo('descricao','Descrição (ex.: Ensaio Ana)','text'))+
      '<div class="am-2">'+campo('cliente',tipo==='Entrada'?'Cliente (opcional)':'Fornecedor (opcional)')+'<label>Forma<select name="forma"><option>Pix</option><option>Cartão de crédito</option><option>Cartão de débito</option><option>Dinheiro</option><option>Boleto</option><option>Transferência</option></select></label></div>'+
-     (tipo==='Saída'?'<label>Repetir todo mês (assinaturas)<select name="repetir"><option value="1">Não repetir</option><option value="3">Por 3 meses</option><option value="6">Por 6 meses</option><option value="12">Por 12 meses</option></select></label>':'');
+     (tipo==='Saída'?'<p class="am-dica">Gasto que se repete todo mês (parcela da câmera, assinatura)? Cadastre em <b>Contas fixas</b>, logo abaixo do resumo.</p>':'');
   modal(tipo==='Saldo inicial'?'Ajustar saldo da conta':tipo==='Entrada'?'Nova entrada':'Nova saída',corpo,async f=>{const d=Object.fromEntries(new FormData(f));
     finDados=await chamar(Object.assign({acao:'adm_fin_add',tipo:tipo},d));finMes=d.data.slice(0,7);pintarFinanceiro();toast(tipo==='Saldo inicial'?'✓ Saldo ajustado':'✓ '+tipo+' lançada')},tipo==='Saldo inicial'?'Salvar saldo':'Lançar');
 }
