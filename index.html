@@ -379,6 +379,40 @@ html{scroll-padding-top:66px}
 .about-text{display:grid;gap:16px;align-content:start}
 .about-text .since{font:400 clamp(26px,3vw,36px)/1.15 var(--serif);margin:0;max-width:24ch;text-wrap:balance}
 .about-text .since i{color:var(--gold)}
+
+/* NÚMEROS */
+.nums{background:var(--ink);color:var(--bone);padding-block:clamp(40px,6vw,72px);position:relative;overflow:hidden;isolation:isolate}
+.nums::before{content:"";position:absolute;inset:-40% -10% auto;height:120%;z-index:-1;background:radial-gradient(600px 300px at 20% 30%,rgba(184,149,90,.18),transparent 70%),radial-gradient(500px 260px at 85% 70%,rgba(184,149,90,.12),transparent 70%)}
+.nums ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:clamp(18px,3vw,36px)}
+.nums li{border-top:1px solid rgba(230,211,174,.25);padding-top:18px;opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.9,.3,1)}
+.nums.vis li{opacity:1;transform:none}.nums.vis li:nth-child(2){transition-delay:.1s}.nums.vis li:nth-child(3){transition-delay:.2s}.nums.vis li:nth-child(4){transition-delay:.3s}.nums.vis li:nth-child(5){transition-delay:.4s}
+.nums b{display:block;font:500 clamp(48px,7vw,84px)/1 var(--display);letter-spacing:-.02em;color:var(--gold-soft);font-variant-numeric:tabular-nums}
+.nums b small{font:italic 500 .42em var(--display);color:var(--bone);margin-left:6px;letter-spacing:0}
+.nums span{display:block;margin-top:10px;color:#d9d7d2;font-size:15px;max-width:22ch}
+/* AGENDA ABERTA */
+.agd{max-width:880px;width:100%;justify-self:center;background:var(--ink);color:var(--bone);padding:clamp(18px,3vw,30px);display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(18px,3vw,34px);align-items:center;box-shadow:0 30px 60px -40px rgba(0,0,0,.5)}
+.agd .eyebrow{color:var(--gold-soft)!important;margin-bottom:10px}
+.agd h3{margin:0;font:500 clamp(26px,3.6vw,38px)/1.1 var(--display)}.agd h3 em{color:var(--gold-soft)}
+.agd p{margin:12px 0 0;color:#d9d7d2;font-size:14.5px;line-height:1.55}
+.agd .leg{display:flex;flex-wrap:wrap;gap:14px;margin-top:16px;font-size:12.5px;color:var(--muted-d)}.agd .leg i{display:inline-block;width:12px;height:12px;border-radius:4px;vertical-align:-2px;margin-right:6px}
+.agd .leg .l1{background:rgba(127,196,154,.25);border:1px solid #7fc49a}.agd .leg .l2{background:repeating-linear-gradient(135deg,#3a352f 0 3px,transparent 3px 6px);border:1px solid #3a352f}
+.agc{background:#1b1916;border:1px solid #2f2b26;border-radius:16px;padding:14px}
+.agc-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}.agc-h b{font:500 19px var(--display);text-transform:capitalize}
+.agc-h small{display:block;font:600 12px var(--body);color:#7fc49a;margin-top:2px;text-transform:none}
+.agc-h button{width:34px;height:34px;border-radius:50%;border:1px solid #3a352f;background:none;color:var(--bone);font-size:17px;cursor:pointer;transition:background .2s}.agc-h button:hover:not(:disabled){background:#2f2b26}.agc-h button:disabled{opacity:.25;cursor:default}
+.agc-g{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.agc-g i{font:700 10.5px var(--body);font-style:normal;color:var(--muted-d);padding-bottom:3px}
+.agc-g span,.agc-g button{aspect-ratio:1;display:grid;place-items:center;border-radius:9px;font:700 13px var(--body);border:1px solid transparent;color:#6b6359;background:none;padding:0}
+.agc-g button{cursor:pointer;color:var(--bone);background:rgba(255,255,255,.03);transition:background .2s,transform .15s}
+.agc-g button.fds{background:rgba(127,196,154,.16);border-color:rgba(127,196,154,.45)}
+.agc-g button:hover{background:rgba(127,196,154,.32);transform:scale(1.06)}
+.agc-g .oc{color:#6b6359;text-decoration:line-through;background:repeating-linear-gradient(135deg,rgba(255,255,255,.05) 0 3px,transparent 3px 6px);border-color:#2f2b26}
+.agc-g button.sel{background:var(--gold-soft);color:var(--ink);border-color:var(--gold-soft)}
+.agc-g.entra{animation:agcIn .45s cubic-bezier(.2,.9,.3,1)}
+@keyframes agcIn{from{opacity:0;transform:translateX(var(--dx,14px))}to{opacity:1;transform:none}}
+.agd .ok{margin-top:10px;font:700 13.5px var(--body);color:var(--gold-soft);min-height:1.2em}
+@media (max-width:760px){.agd{grid-template-columns:minmax(0,1fr)}}
+@media (prefers-reduced-motion:reduce){.nums li{transition:none;opacity:1;transform:none}.agc-g.entra{animation:none}}
 /* HISTORY */
 .story{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(28px,5vw,72px);align-items:start}
 .story .note{border:1px dashed var(--muted-l);padding:18px 20px;font-size:14px;color:var(--muted-l);max-width:46ch}
@@ -792,6 +826,18 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
   </div>
 </section>
 
+<section class="nums" id="numeros" aria-label="A Brius em números">
+  <div class="wrap">
+    <ul id="numsL">
+      <li><b data-n="7">7<small>dias</small></b><span>no máximo para as fotos do seu evento chegarem</span></li>
+      <li><b data-n="2" id="nAnos">2<small>anos</small></b><span>juntando os nomes, as câmeras e muitas histórias</span></li>
+      <li id="nEvL" hidden><b data-n="0" id="nEv">0</b><span>eventos registrados</span></li>
+      <li><b data-n="3" id="nMarcas">3</b><span>marcas com as redes sociais nas nossas mãos todo mês</span></li>
+      <li id="nSegL" hidden><b data-n="0" id="nSeg">0</b><span>pessoas seguindo a Brius no Instagram</span></li>
+    </ul>
+  </div>
+</section>
+
 <section class="band dark" id="producoes">
   <div class="wrap">
     <div class="chapter">
@@ -843,6 +889,13 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
           <p class="eyebrow">Como funciona</p>
           <p class="lede">Conte sobre o seu evento em poucos passos. A gente analisa data, equipe e deslocamento e responde com a proposta pelo WhatsApp.</p>
         </div>
+      </div>
+      <div class="agd" id="agd">
+        <div><p class="eyebrow">Agenda aberta</p><h3 id="agdT">Veja as datas <em>livres</em></h3>
+          <p>Toque num dia livre para já começar o orçamento com ele. Os fins de semana costumam fechar primeiro.</p>
+          <div class="leg"><span><i class="l1"></i>Fim de semana livre</span><span><i class="l2"></i>Já reservado</span></div>
+          <p class="ok" id="agdOk" role="status"></p></div>
+        <div class="agc" id="agc" aria-label="Calendário de datas livres"></div>
       </div>
       <form class="qf" id="qf" novalidate>
         <ol class="qf-tabs" id="qf-tabs" aria-label="Etapas do orçamento"></ol>
@@ -1293,6 +1346,47 @@ const ALBUNS=[{"t": "Ensaio de bodas Sirlene & Valdinei", "c": "casamentos", "p"
     cards=lista.map(mk);cards.forEach(c=>io.observe(c));render();
   }).catch(()=>{})}
 })();
+
+// ===== NÚMEROS (contam sozinhos quando aparecem) =====
+(function(){
+  const sec=document.getElementById('numeros');if(!sec)return;
+  const fmt=n=>n>=10000?(n/1000).toLocaleString('pt-BR',{maximumFractionDigits:1})+' mil':n.toLocaleString('pt-BR');
+  const contar=b=>{const alvo=+b.dataset.n||0;const suf=b.querySelector('small');const sh=suf?suf.outerHTML:'';const t0=performance.now(),dur=1400;
+    const passo=t=>{const p=Math.min(1,(t-t0)/dur),e=1-Math.pow(1-p,3);b.innerHTML=(b.dataset.mais?'+':'')+fmt(Math.round(alvo*e))+sh;if(p<1)requestAnimationFrame(passo)};requestAnimationFrame(passo)};
+  let foi=false;const go=()=>{if(foi)return;foi=true;sec.classList.add('vis');sec.querySelectorAll('li:not([hidden]) b[data-n]').forEach(contar)};
+  const set=(id,n,mais)=>{const b=document.getElementById(id);if(!b||!(n>0))return;b.dataset.n=n;if(mais)b.dataset.mais=1;const li=b.closest('li');if(li)li.hidden=false;
+    const suf=b.querySelector('small');b.innerHTML=(mais?'+':'')+fmt(foi?n:0)+(suf?suf.outerHTML:'');if(foi)contar(b)};
+  if(API_URL)fetch(API_URL+'?acao=numeros').then(r=>r.json()).then(j=>{if(!j||!j.ok)return;
+    set('nMarcas',j.marcas);set('nEv',j.eventos,true);
+    const anos=new Date().getFullYear()-(j.desde||2024);const a=document.getElementById('nAnos');if(a&&anos>0){a.dataset.n=anos;a.querySelector('small').textContent=anos>1?'anos':'ano'}}).catch(()=>{});
+  window.addEventListener('ig-perfil',e=>set('nSeg',e.detail.seguidores));
+  if('IntersectionObserver' in window)new IntersectionObserver((es,o)=>es.forEach(e=>{if(e.isIntersecting){go();o.disconnect()}}),{threshold:.35}).observe(sec);else go();
+})();
+// ===== AGENDA ABERTA (datas livres, usa as datas reservadas da planilha) =====
+(function(){
+  const box=document.getElementById('agc');if(!box)return;
+  const MES=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+  const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  const hoje=new Date();hoje.setHours(12,0,0,0);const minimo=new Date(hoje.getTime()+2*864e5);
+  let ocup=new Set(),m=0,sel='';const MAX=5;
+  function livresFds(y,mo){let n=0;const dias=new Date(y,mo+1,0).getDate();for(let d=1;d<=dias;d++){const dt=new Date(y,mo,d,12);if(dt<minimo)continue;const w=dt.getDay();if((w===0||w===6)&&!ocup.has(iso(dt)))n++}return n}
+  function pintar(dir){const base=new Date(hoje.getFullYear(),hoje.getMonth()+m,1,12);const y=base.getFullYear(),mo=base.getMonth();const ini=base.getDay(),dias=new Date(y,mo+1,0).getDate();
+    const nl=livresFds(y,mo);
+    let h='<div class="agc-h"><button type="button" data-m="-1" aria-label="Mês anterior"'+(m<=0?' disabled':'')+'>‹</button><div style="text-align:center"><b>'+MES[mo]+' '+y+'</b><small>'+(nl?nl+' dia'+(nl>1?'s':'')+' de fim de semana livre'+(nl>1?'s':''):'fins de semana lotados')+'</small></div><button type="button" data-m="1" aria-label="Próximo mês"'+(m>=MAX?' disabled':'')+'>›</button></div><div class="agc-g'+(dir?' entra':'')+'" style="--dx:'+(dir>0?'14px':'-14px')+'">'+['D','S','T','Q','Q','S','S'].map(x=>'<i>'+x+'</i>').join('');
+    for(let i=0;i<ini;i++)h+='<span></span>';
+    for(let d=1;d<=dias;d++){const dt=new Date(y,mo,d,12),k=iso(dt),w=dt.getDay();
+      if(dt<minimo)h+='<span>'+d+'</span>';
+      else if(ocup.has(k))h+='<span class="oc" title="Data reservada">'+d+'</span>';
+      else h+='<button type="button" data-d="'+k+'" class="'+(w===0||w===6?'fds':'')+(sel===k?' sel':'')+'" aria-label="'+d+' de '+MES[mo]+', livre">'+d+'</button>'}
+    box.innerHTML=h+'</div>';
+    box.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{m=Math.max(0,Math.min(MAX,m+ +b.dataset.m));pintar(+b.dataset.m)});
+    box.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{sel=b.dataset.d;pintar();const inp=document.getElementById('q-data');if(inp){inp.value=sel;inp.dispatchEvent(new Event('change',{bubbles:true}))}
+      const dt=new Date(sel+'T12:00:00');document.getElementById('agdOk').textContent='✓ '+['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][dt.getDay()]+', '+dt.getDate()+' de '+MES[dt.getMonth()]+' guardado no seu orçamento. É só seguir o formulário abaixo.';
+      const ev=document.querySelector('#qf input[name="tipo"][value="evento"]');if(ev&&!document.querySelector('#qf input[name="tipo"]:checked')){ev.checked=true;ev.dispatchEvent(new Event('change',{bubbles:true}))}
+      setTimeout(()=>document.getElementById('qf').scrollIntoView({behavior:'smooth',block:'start'}),700)})}
+  pintar();
+  if(API_URL)fetch(API_URL+'?acao=datas').then(r=>r.json()).then(j=>{if(j&&j.ok){ocup=new Set(j.datas);pintar()}}).catch(()=>{});
+})();
 // ===== INSTAGRAM no celular do início (posts recentes + stories do dia) =====
 (function(){
   const feed=document.getElementById('igFeed'),av=document.getElementById('igAvatar');if(!feed)return;
@@ -1305,7 +1399,7 @@ const ALBUNS=[{"t": "Ensaio de bodas Sirlene & Valdinei", "c": "casamentos", "p"
   const carregarIG=()=>fetch(API_URL+'?acao=instagram').then(r=>r.json()).then(j=>{
     if(!j||!j.ok)return;
     const pf=j.perfil,num=n=>n>=10000?(n/1000).toFixed(n>=100000?0:1).replace('.',',')+' mil':String(n),pt=(id,v)=>{const e=document.getElementById(id);if(e&&v!=null&&v!=='')e.textContent=v};
-    if(pf){pt('igPosts',num(pf.posts));pt('igSeg',num(pf.seguidores));pt('igSegd',num(pf.seguindo));pt('igNome',pf.nome);pt('igUser',pf.usuario);
+    if(pf){try{window.dispatchEvent(new CustomEvent('ig-perfil',{detail:pf}))}catch(e){}pt('igPosts',num(pf.posts));pt('igSeg',num(pf.seguidores));pt('igSegd',num(pf.seguindo));pt('igNome',pf.nome);pt('igUser',pf.usuario);
       if(pf.foto){const im=av.querySelector('img');const t=new Image();t.onload=()=>{im.src=pf.foto};t.src=pf.foto}}
     if(!(j.posts||[]).length)return;
     const ps=j.posts.slice(0,12).map(p=>p.img);const k=ps.join('|');if(k!==ultPosts){ultPosts=k;encher(ps)}
