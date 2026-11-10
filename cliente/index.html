@@ -225,6 +225,8 @@ input:focus{border-color:var(--gold)}
 .fin-6 i.e,.fin-leg i.e{background:#7fc49a}.fin-6 i.s,.fin-leg i.s{background:#f0a28f}
 .fin-6 small{font-size:11px;color:var(--muted-d);text-transform:capitalize}
 .fx-ed{background:none;border:0;cursor:pointer;font-size:15px;padding:4px 6px;opacity:.75}.fx-ed:hover{opacity:1}
+.lim{margin-top:14px;padding:14px 16px;border-radius:14px;background:rgba(240,162,143,.12);border:1px solid rgba(240,162,143,.55);color:var(--bone);font-size:14px;line-height:1.5}.lim>b{color:#f5b3a3}.lim p{margin:6px 0 10px}
+.lim-ok{display:flex!important;align-items:center;gap:10px;font-weight:700;cursor:pointer}.lim-ok input{width:20px!important;height:20px;accent-color:#f0a28f;margin:0}
 .f6v{font-style:normal;font-size:11px;line-height:1.3;color:var(--muted-d);display:grid}.f6v b.e{color:#7fc49a}.f6v b.s{color:#f0a28f}
 .fin-6{height:170px}
 .fin-leg{font-size:12px;color:var(--muted-d);display:flex;gap:6px;align-items:center;margin:8px 0 0}.fin-leg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-left:8px}
@@ -825,7 +827,7 @@ function cartao(g,p,n){
   aj.querySelector('.cc').onclick=()=>{aj.hidden=true};
   c.querySelector('.pc-sh').onclick=e=>compartilharPost(g,p,e.currentTarget);
   const bd=c.querySelector('.pc-data');if(bd)bd.onclick=()=>modal('Mudar a data do post',itensConf([p])+campo('data','Nova data','date',' required value="'+escH(p.data||'')+'"')+'<p class="am-dica">Os arquivos no Drive são renomeados com a nova data. A aprovação continua valendo.</p>',
-    async f=>{const nd=f.data.value;if(!nd)throw new Error('Escolha a data.');if(nd===p.data)return;await chamar({acao:'adm_postdata',ent:g.id,k:p.k,data:nd});gsMes=nd.slice(0,7);await admRecarregar('📅 Data alterada para '+nd.split('-').reverse().join('/'))},'Salvar data');
+    async f=>{const nd=f.data.value;if(!nd)throw new Error('Escolha a data.');if(nd===p.data)return;checarContrato(f,excedeContrato(g,nd,p.tipo,p.k));await chamar({acao:'adm_postdata',ent:g.id,k:p.k,data:nd});gsMes=nd.slice(0,7);await admRecarregar('📅 Data alterada para '+nd.split('-').reverse().join('/'))},'Salvar data');
   const bx=c.querySelector('.pc-del');if(bx)bx.onclick=()=>confirmar('Excluir este post?',itensConf([p])+'<p class="cf-dica">Os arquivos vão para a <b>lixeira do Google Drive</b> (dá para recuperar por 30 dias) e o post sai do calendário'+(g.propria?'':' do cliente')+'.</p>','🗑 Sim, excluir',
     async()=>{await chamar({acao:'adm_postexcluir',ent:g.id,k:p.k});await admRecarregar('🗑 Post excluído')});
   const hi=c.querySelector('.pc-hora');if(hi)hi.onchange=async()=>{const v=hi.value;hi.disabled=true;
@@ -1134,11 +1136,31 @@ function diaAdmin(g,dk){const ps=g.posts.filter(p=>p.data===dk);const igs=(g.igP
   f.querySelectorAll('.dia-p').forEach(b=>b.onclick=()=>{$('admModal').hidden=true;document.body.style.overflow='';gsF='todos';pintarGestao(g);const card=document.querySelector('.pc[data-k="'+CSS.escape(b.dataset.k)+'"]');if(card){card.scrollIntoView({behavior:'smooth',block:'center'});card.classList.add('foco');setTimeout(()=>card.classList.remove('foco'),2200)}});
   f.onsubmit=e=>{e.preventDefault();formPost(g,dk)};
 }
+// Limite de posts por semana conforme o contrato de cada cliente (só avisa a agência)
+const LIM_SEMANA={
+  'ENT-greice01':{feed:3,txt:'3 postagens por semana'},
+  'ENT-guerir01':{feed:3,reels:2,carrossel:1,txt:'2 Reels + 1 carrossel por semana (stories conforme o planejamento)'},
+  'ENT-olimpio1':{feed:2,reels:1,carrossel:1,story:1,txt:'1 Reel + 1 carrossel + 1 story por semana'}
+};
+function tipoLim(t){t=String(t||'');return /stor/i.test(t)?'story':/reel|v[ií]deo/i.test(t)?'reels':/carross/i.test(t)?'carrossel':'post'}
+function excedeContrato(g,data,tipo,ignK){const L=LIM_SEMANA[g.id];if(!L||!data)return null;
+  const d0=new Date(data+'T12:00:00Z');d0.setUTCDate(d0.getUTCDate()-(d0.getUTCDay()+6)%7);const ini=d0.toISOString().slice(0,10);d0.setUTCDate(d0.getUTCDate()+6);const fim=d0.toISOString().slice(0,10);
+  const ps=(g.posts||[]).filter(p=>p.k!==ignK&&p.data&&p.data>=ini&&p.data<=fim);const tl=tipoLim(tipo);
+  const cnt=k=>ps.filter(p=>k==='feed'?tipoLim(p.tipo)!=='story':tipoLim(p.tipo)===k).length;const pr=[];
+  if(tl==='story'){if(L.story!=null&&cnt('story')>=L.story)pr.push([cnt('story'),'story(s)',L.story])}
+  else{if(L.feed!=null&&cnt('feed')>=L.feed)pr.push([cnt('feed'),'post(s) no feed',L.feed]);if(L[tl]!=null&&cnt(tl)>=L[tl])pr.push([cnt(tl),{reels:'Reel(s)',carrossel:'carrossel(éis)'}[tl],L[tl]])}
+  if(!pr.length)return null;const dd=x=>x.split('-').reverse().slice(0,2).join('/');const nm=(g.marca&&g.marca.nome)||g.evento||'cliente';
+  return '<div class="lim"><b>⚠️ Isso passa do contrato</b><p>O contrato de <b>'+escH(nm)+'</b> prevê <b>'+L.txt+'</b>. Na semana de '+dd(ini)+' a '+dd(fim)+' já tem '+pr.map(([c,n,m])=>c+' '+n+' (limite '+m+')').join(' e ')+'. Com este, passa do combinado.</p><label class="lim-ok"><input type="checkbox" name="limok"> Tenho certeza, quero colocar mesmo assim</label></div>'}
+function checarContrato(f,html){const ex=f.querySelector('.lim');if(!html){if(ex)ex.remove();return}
+  if(ex&&ex.querySelector('input').checked)return;
+  if(ex)ex.outerHTML=html;else f.querySelector('.am-b').insertAdjacentHTML('beforeend',html);
+  f.querySelector('.lim').scrollIntoView({behavior:'smooth',block:'nearest'});throw new Error('Passa do limite do contrato. Marque a confirmação para continuar.')}
 function formPost(g,dataPre){
   const hj=new Date();const iso=dataPre||new Date(hj.getTime()-hj.getTimezoneOffset()*6e4).toISOString().slice(0,10);
   modal('Novo post · '+escH(g.marca&&g.marca.nome||g.evento),'<div class="am-2">'+campo('data','Data da publicação','date',' required value="'+iso+'"')+'<label>Tipo<select name="tipo"><option value="">Automático</option><option>Reels</option><option>Carrossel</option><option>Post</option><option>Stories</option></select></label></div>'+
     campo('titulo','Título (ex.: Promo Black Friday)','text',' required')+'<label>Legenda (opcional)<textarea name="legenda" rows="5"></textarea></label>'+arqCampo('arqs','Imagem, vídeo ou fotos do carrossel (na ordem)',true),
   async(f,st)=>{const d=Object.fromEntries(new FormData(f));if(!f.arqs.files.length)throw new Error('Escolha a arte ou o vídeo do post.');
+    checarContrato(f,excedeContrato(g,d.data,d.tipo||(f.arqs.files.length>1?'Carrossel':/^video/.test(f.arqs.files[0].type)?'Reels':'Post')));
     const [a,m,dd]=d.data.split('-');let tit=d.titulo.trim().replace(/[\\/:*?"<>|#]/g,'-');
     if(d.tipo==='Stories'&&!/stor/i.test(tit))tit='Stories '+tit;if(d.tipo==='Reels'&&!/reel/i.test(tit))tit='Reels '+tit;
     const base=dd+'-'+m+'-'+a+' '+tit;const pasta=g.pastaId;
