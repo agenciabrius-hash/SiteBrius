@@ -395,6 +395,9 @@ html{scroll-padding-top:66px}
 /* toque rápido: sem espera de duplo toque, com resposta imediata ao apertar */
 a,button,label,summary,select,input,textarea,[role=button],[tabindex]{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 button:not(:disabled):active,.h2-b:active,.h2-l:active,a.btn:active,.svt:active,.grid button:active{transform:scale(.97);transition:transform .06s}
+
+/* passagem suave entre faixas de cores diferentes */
+.fade-sec{height:clamp(56px,9vw,130px);margin:0;pointer-events:none;position:relative;z-index:1}
 /* ===== MAIS MOVIMENTO ===== */
 .prog{position:fixed;top:0;left:0;right:0;height:3px;z-index:120;pointer-events:none;transform-origin:0 50%;transform:scaleX(var(--p,0));background:linear-gradient(90deg,var(--gold),var(--gold-soft))}
 /* títulos grandes: letras sobem uma a uma */
@@ -1367,6 +1370,18 @@ const ALBUNS=[{"t": "Ensaio de bodas Sirlene & Valdinei", "c": "casamentos", "p"
   if('IntersectionObserver' in window)new IntersectionObserver((es,o)=>es.forEach(e=>{if(e.isIntersecting){go();o.disconnect()}}),{threshold:.35}).observe(sec);else go();
 })();
 
+
+// ===== PASSAGEM SUAVE ENTRE AS PARTES (escuro -> claro sem corte seco) =====
+(function(){
+  const corDe=el=>{if(el.classList.contains('hero2'))return 'rgb(20, 18, 16)';const c=getComputedStyle(el).backgroundColor;return(!c||c==='transparent'||/rgba\(.*,\s*0\)$/.test(c))?getComputedStyle(document.body).backgroundColor:c};
+  const blocos=[...document.body.children].filter(e=>/^(SECTION|HEADER|FOOTER)$/.test(e.tagName)&&e.offsetHeight>0&&getComputedStyle(e).position!=='fixed');
+  const lum=c=>{const m=c.match(/\d+(\.\d+)?/g);if(!m)return 0;const [r,g,b]=m.map(Number);return(r*299+g*587+b*114)/1000};
+  for(let i=0;i<blocos.length-1;i++){const a=blocos[i],b=blocos[i+1];let x=a.nextElementSibling,ok=true;while(x&&x!==b){const cs=getComputedStyle(x);if(x.offsetHeight>0&&cs.position!=='fixed'&&cs.position!=='absolute'){ok=false;break}x=x.nextElementSibling}if(!ok)continue;const ca=corDe(a),cb=corDe(b);
+    if(Math.abs(lum(ca)-lum(cb))<60)continue;// só onde a troca é forte (preto -> claro)
+    const d=document.createElement('div');d.className='fade-sec';d.setAttribute('aria-hidden','true');
+    d.style.background='linear-gradient(180deg,'+ca+' 0%,'+ca+' 8%,color-mix(in srgb,'+ca+' 55%,'+cb+') 45%,color-mix(in srgb,'+ca+' 15%,'+cb+') 75%,'+cb+' 100%)';
+    a.after(d)}
+})();
 // ===== MAIS MOVIMENTO: barra de progresso, títulos, eyebrows, parallax e inclinação =====
 (function(){
   const reduz=matchMedia('(prefers-reduced-motion: reduce)').matches;
