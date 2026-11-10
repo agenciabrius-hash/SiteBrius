@@ -641,16 +641,16 @@ async function carregarGaleria(){
   mostrar('telaCarregando');
   try{const j=await api({acao:'galeria',sessao:guardar.get()});
     if(!j.ok){guardar.set('');mostrar('telaLogin');msg($('mLogin'),j.erro,true);return}
-    galerias=j.galerias;$('gOla').textContent='Olá, '+(j.nome||'')+'!';ultimoHash=hashDados(j);
+    galerias=j.galerias;$('gOla').textContent='Olá, '+(j.nome||'')+'!'+(j.parceiro?' · acesso de visualização':'');ultimoHash=hashDados(j);
     pintarContratos(j.contratos||[],!!j.admin);
     if(j.admin){mostrar('telaGal');montarAdmin(j);return}
     const abas=$('gAbas');abas.innerHTML='';
     const marcas=galerias.filter(g=>g.tipo==='gestao').length;
     abas.classList.toggle('marcas',marcas>1);
-    if(marcas>1){const t=document.createElement('p');t.className='marcas-t';t.textContent='Escolha a marca para ver e aprovar os posts:';abas.appendChild(t)}
+    if(marcas>1){const t=document.createElement('p');t.className='marcas-t';t.textContent=j.parceiro?'Escolha a marca:':'Escolha a marca para ver e aprovar os posts:';abas.appendChild(t)}
     if(galerias.length>1)galerias.forEach((g,i)=>{const b=document.createElement('button');
       if(g.tipo==='gestao'&&marcas>1){const m=g.marca||{},pd=(g.posts||[]).filter(p=>p.status==='Aguardando'||p.status==='Nova versão').length;
-        b.className='marca';b.innerHTML='<span class="ml">'+(m.logo?'<img src="'+escH(m.logo)+'" alt="">':escH((m.nome||'?').charAt(0)))+'</span><span class="mt"><b>'+escH(m.nome||g.evento)+'</b><small>'+(pd?pd+' para aprovar':'Tudo em dia ✓')+'</small></span>'+(pd?'<i class="mb">'+pd+'</i>':'')}
+        b.className='marca';b.innerHTML='<span class="ml">'+(m.logo?'<img src="'+escH(m.logo)+'" alt="">':escH((m.nome||'?').charAt(0)))+'</span><span class="mt"><b>'+escH(m.nome||g.evento)+'</b><small>'+(pd?pd+(g.leitura?' aguardando a cliente':' para aprovar'):'Tudo em dia ✓')+'</small></span>'+(pd?'<i class="mb">'+pd+'</i>':'')}
       else b.textContent=g.evento;
       b.dataset.i=i;b.onclick=()=>{gsMes=null;gsF='todos';abrir(i)};abas.appendChild(b)});
     abrir(Math.max(0,galerias.findIndex(g=>g.aberto)));mostrar('telaGal');
@@ -837,7 +837,7 @@ function gsBadges(g){const nav=$('gsNav');if(!nav)return;const set=(p,t)=>{const
   set('posts',(g.posts||[]).filter(p=>p.status==='Aguardando'||p.status==='Nova versão').length||'');
   const c=g.capt;const hj=hojeISO();set('grav',c?((c.minhas||[]).some(x=>x.status==='Pedido'&&x.data>=hj)?(g.admin?'!':'⏳'):(!(c.minhas||[]).some(x=>x.data>=hj&&(x.status==='Confirmado'||x.status==='Pedido'))&&!g.admin?'!':'')):'');
   const m=g.mensalidade;set('mens',m&&(m.situacao==='atrasado'||(g.admin&&m.situacao==='confirmando'))?'!':'')}
-function ligarGsNav(g){const nav=$('gsNav');if(!nav)return;nav.querySelectorAll('button').forEach(b=>b.onclick=()=>gsIr(b.dataset.p));gsBadges(g);
+function ligarGsNav(g){const nav=$('gsNav');if(!nav)return;if(g.leitura&&!ligarGsNav.foi){ligarGsNav.foi=1;gsSec='rel'}nav.querySelectorAll('button').forEach(b=>b.onclick=()=>gsIr(b.dataset.p));gsBadges(g);
   document.querySelectorAll('.gs-pan').forEach(x=>x.hidden=true);gsIr(gsSec);requestAnimationFrame(gsInd)}
 addEventListener('resize',()=>gsInd());
 {const _a=pintarGestao,_b=pintarCapt,_c=pintarMens;pintarGestao=function(g){_a(g);gsBadges(g)};pintarCapt=function(g){_b(g);gsBadges(g)};pintarMens=function(g){_c(g);gsBadges(g)}}
@@ -845,11 +845,11 @@ function doMes(g){return g.posts.filter(p=>(p.data||'').slice(0,7)===gsMes||(!p.
 function pintarGestao(g){
   const tot=g.posts.length,ap=g.posts.filter(p=>p.status==='Aprovado').length,rf=g.posts.filter(p=>p.status==='Refazer').length,pd=g.posts.filter(pend).length;
   const pct=tot?Math.round(ap/tot*100):0;$('gsAnel').style.setProperty('--p',pct);$('gsPct').innerHTML=ap+'/'+tot+'<small>aprovados</small>';
-  $('gsResumo').textContent=pd?pd+' aguardando sua aprovação':(tot?'Tudo respondido. Obrigado! 💛':'');
+  $('gsResumo').textContent=g.leitura?(pd?pd+' aguardando aprovação da cliente':(tot?'Tudo aprovado ✓':'')):pd?pd+' aguardando sua aprovação':(tot?'Tudo respondido. Obrigado! 💛':'');
   const mesP=doMes(g);const cont={todos:mesP.length,pend:mesP.filter(pend).length,ap:mesP.filter(p=>p.status==='Aprovado').length,rf:mesP.filter(p=>p.status==='Refazer').length};
   const f=$('gsF');f.innerHTML=[['todos','Todos',''],['pend','Aguardando','c-ag'],['ap','Aprovados','c-ap'],['rf','Ajustes','c-rf']].map(([k,t,c])=>'<button data-f="'+k+'" aria-pressed="'+(gsF===k)+'">'+(c?'<i class="'+c+'"></i>':'')+t+' ('+cont[k]+')</button>').join('');
   f.querySelectorAll('button').forEach(b=>b.onclick=()=>{gsF=b.dataset.f;pintarGestao(g)});
-  $('gsTodos').hidden=!cont.pend||(!!g.admin&&!g.propria);
+  $('gsTodos').hidden=!cont.pend||(!!g.admin&&!g.propria)||!!g.leitura;
   // calendário
   const [a,mm]=(gsMes||'').split('-').map(Number);const meses=[...new Set(g.posts.filter(p=>p.data).map(p=>p.data.slice(0,7)))].sort();
   $('gsMesT').textContent=a?MESES[mm-1]+' '+a:'Posts';$('gsAnt').disabled=!g.admin&&meses.indexOf(gsMes)<=0;$('gsProx').disabled=!g.admin&&meses.indexOf(gsMes)>=meses.length-1;
@@ -899,7 +899,7 @@ function cartao(g,p,n){
   const v=p.arquivos.length;
   c.innerHTML='<div class="pc-m"><div class="tr">'+p.arquivos.map((a,i)=>'<button data-i="'+i+'" aria-label="Ver '+(a.t==='video'?'vídeo':'imagem')+' '+(i+1)+'"><img src="'+thumb(a.id)+'" alt="" loading="lazy">'+(a.t==='video'?'<span class="play">▶</span>':'')+'</button>').join('')+'</div>'+
     (v>1?'<button class="seta p" aria-label="Anterior">‹</button><button class="seta n" aria-label="Próxima">›</button><div class="pts">'+p.arquivos.map((x,i)=>'<i'+(i?'':' class="on"')+'></i>').join('')+'</div>':'')+
-    '<span class="tp">'+escH(p.tipo)+(v>1?' · '+v:'')+'</span><span class="st" style="background:'+st.cor+'">'+st.r+'</span></div>'+
+    '<span class="tp">'+escH(p.tipo)+(v>1?' · '+v:'')+'</span><span class="st" style="background:'+st.cor+'">'+(g.leitura&&st.r==='Aguardando você'?'Aguardando cliente':st.r)+'</span></div>'+
     '<div class="pc-b"><div class="pc-d">'+escH(dt)+'</div><h3>'+escH(p.titulo)+'</h3>'+
     (p.legenda?'<p class="pc-leg">'+escH(p.legenda)+'</p><button class="pc-mais" hidden>Ver legenda completa</button>':'')+
     (p.status==='Refazer'&&p.obs?'<div class="pc-obs"><b>Seu pedido de ajuste:</b><br>'+escH(p.obs)+'</div>':'')+
@@ -907,7 +907,7 @@ function cartao(g,p,n){
     (p.status==='Aprovado'?'<div class="pc-obs ok">✓ Você aprovou'+(p.quando?' em '+escH(p.quando):'')+'.</div>':'')+
     (p.pub?'<a class="pc-pubok" href="'+escH(p.pub.link)+'" target="_blank" rel="noopener">📤 Publicado no Instagram em '+escH(p.pub.quando)+' · ver post ↗</a>':(g.admin&&g.igPub&&!p.pub&&p.data&&p.data>=hojeISO()?'<label class="pc-ag">🕒 '+(g.autopub?(p.status==='Aprovado'?'Sai sozinho em ':'Se aprovado, sai em '):'Horário de publicação · ')+p.data.split('-').reverse().slice(0,2).join('/')+' às <input type="time" class="pc-hora" value="'+escH(p.hora||g.horaPadrao||'18:00')+'" aria-label="Horário de publicação"></label>':'')+
     (g.admin&&g.igPub&&p.status==='Aprovado'?'<button type="button" class="pc-pub">📤 Publicar no Instagram agora</button>':''))+
-    (g.admin&&!g.propria?'<div class="pc-adm">👁️ Visualização da agência · quem aprova é o cliente</div>':'')+'<button type="button" class="pc-sh" title="Gera um link que mostra só este post (sem aprovar nem ver os outros)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>Compartilhar só este post</button>'+(g.admin&&!p.pub?'<div class="pc-adm2"><button type="button" class="pc-data">📅 Mudar data</button><button type="button" class="pc-del">🗑 Excluir post</button></div>':'')+'<div class="pc-ac"'+(g.admin&&!g.propria?' hidden':'')+'><button class="ap'+(p.status==='Aprovado'?' feito':'')+'">'+(p.status==='Aprovado'?(p.pub?'✓ Aprovado':'✓ Aprovado · desfazer'):'✓ Aprovar')+'</button><button class="rf'+(p.status==='Refazer'?' feito':'')+'">'+(p.status==='Refazer'?'✎ Editar pedido':'✎ Pedir ajuste')+'</button></div>'+
+    (g.admin&&!g.propria?'<div class="pc-adm">👁️ Visualização da agência · quem aprova é o cliente</div>':g.leitura?'<div class="pc-adm">👁️ Só visualização · quem aprova é a cliente</div>':'')+'<button type="button" class="pc-sh" title="Gera um link que mostra só este post (sem aprovar nem ver os outros)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>Compartilhar só este post</button>'+(g.admin&&!p.pub?'<div class="pc-adm2"><button type="button" class="pc-data">📅 Mudar data</button><button type="button" class="pc-del">🗑 Excluir post</button></div>':'')+'<div class="pc-ac"'+((g.admin&&!g.propria)||g.leitura?' hidden':'')+'><button class="ap'+(p.status==='Aprovado'?' feito':'')+'">'+(p.status==='Aprovado'?(p.pub?'✓ Aprovado':'✓ Aprovado · desfazer'):'✓ Aprovar')+'</button><button class="rf'+(p.status==='Refazer'?' feito':'')+'">'+(p.status==='Refazer'?'✎ Editar pedido':'✎ Pedir ajuste')+'</button></div>'+
     '<div class="pc-aj" hidden><textarea maxlength="1500" placeholder="O que precisa mudar? Ex.: trocar a foto da capa, corrigir o preço na arte, mudar a música do vídeo…"></textarea><div class="bts"><button class="cc">Cancelar</button><button class="env">Enviar pedido</button></div></div>'+
     (p.quando&&p.status!=='Aprovado'?'<span class="pc-q">Respondido em '+escH(p.quando)+'</span>':'')+'</div>';
   // carrossel
