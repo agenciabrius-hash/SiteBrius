@@ -393,6 +393,23 @@ input:focus{border-color:var(--gold)}
 .ag-top{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin:0 0 14px}
 .ag-f{display:flex;flex-wrap:wrap;gap:6px}.ag-f button{border:1px solid #3a352f;background:transparent;color:var(--bone);border-radius:999px;padding:7px 12px;font:600 13px var(--body);cursor:pointer;display:flex;align-items:center;gap:6px}
 .ag-f button[aria-pressed="false"]{opacity:.45}.ag-f i,.ag-d i{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
+.t-ca{background:#7fb6e6}
+.cap{background:var(--graphite);border:1px solid #3a352f;border-radius:18px;padding:16px 18px;margin:0 0 18px}
+.cap-h{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}.cap h4{margin:0 0 3px;font:500 20px var(--serif)}.cap-h small{color:var(--muted-d);font-size:13.5px}
+.cap-it{margin-top:12px;padding:12px 14px;border-radius:14px;border:1px solid #3a352f;display:grid;gap:4px;background:var(--graphite-2)}.cap-it b{font-size:15.5px}.cap-it small{color:var(--muted-d);font-size:13px}
+.cap-it.ok{border-color:rgba(127,196,154,.55)}.cap-it.pd{border-color:rgba(127,182,230,.55)}.cap-it.no{border-color:rgba(240,162,143,.55)}
+.cap-st{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#9fc8ee}.cap-it.ok .cap-st{color:#7fc49a}.cap-it.no .cap-st{color:#f0a28f}
+.cap-ac{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}.cap-ac .btn{padding:9px 16px;font-size:14px}.cap-v{margin:10px 0 0;color:var(--muted-d);font-size:14px}
+.ag-pend h4{font:500 19px var(--serif);margin:0}
+.cpk{background:var(--graphite-2);border-radius:14px;padding:12px;margin:6px 0 12px}.cpk-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.cpk-h b{font:500 18px var(--serif)}
+.cpk-h button{width:34px;height:34px;border-radius:50%;border:1px solid #3a352f;background:none;color:var(--bone);font-size:17px;cursor:pointer}.cpk-h button:disabled{opacity:.3;cursor:default}
+.cpk-g{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;text-align:center}.cpk-g i{font-style:normal;font-size:11px;font-weight:700;color:var(--muted-d)}
+.cpk-g>span,.cpk-g>button{aspect-ratio:1;display:grid;place-items:center;border-radius:10px;font:700 14px var(--body);border:1px solid transparent}
+.cpk-g .off{color:#5a534b}.cpk-g .bl{color:#6b6359;text-decoration:line-through;background:repeating-linear-gradient(135deg,transparent 0 5px,rgba(255,255,255,.04) 5px 10px)}
+.cpk-g button.ok{background:rgba(127,196,154,.14);border-color:rgba(127,196,154,.5);color:var(--bone);cursor:pointer}.cpk-g button.ok:hover{background:rgba(127,196,154,.28)}
+.cpk-g button.sel{background:var(--gold);border-color:var(--gold);color:#141210}
+.cpk-t{margin:0 0 8px;font-weight:700}.cpk-t::first-letter{text-transform:uppercase}.cpk-hs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.cpk-hs button{border:1px solid #3a352f;background:transparent;color:var(--bone);border-radius:999px;padding:9px 16px;font:700 14px var(--body);cursor:pointer}.cpk-hs button.sel{background:var(--gold);border-color:var(--gold);color:#141210}
 .t-ev{background:#e6d3ae}.t-po{background:#c48af0}.t-pu{background:#f58fbf}.t-di{background:#7fc49a}.t-at{background:#f0a28f}
 .ag-cal{background:var(--graphite);border:1px solid #3a352f;border-radius:18px;padding:14px;margin-bottom:18px}
 .ag-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.ag-h b{font:500 20px var(--serif)}.ag-h button{width:36px;height:36px;border-radius:50%;border:1px solid #3a352f;background:none;color:var(--bone);font-size:18px;cursor:pointer}
@@ -715,7 +732,7 @@ function abrirGestao(g){
   cont.innerHTML='<div class="gs"><div class="mk"><div class="mk-logo"><span>'+(m.logo?'<img src="'+escH(m.logo)+'" alt="Logo '+escH(m.nome)+'">':escH(ini))+'</span></div>'+
     '<div>'+ig+'<h2>'+escH(m.nome||g.evento)+'</h2>'+(m.resp?'<p class="resp">'+escH(m.resp)+'</p>':'')+((tel||mail)?'<div class="mk-ct">'+tel+mail+'</div>':'')+'</div>'+
     '<div class="mk-prog"><div class="mk-anel" id="gsAnel"><span id="gsPct">0<small>aprovados</small></span></div><p id="gsResumo"></p></div></div>'+
-    '<div class="mens" id="gsMens" hidden></div>'+
+    '<div class="mens" id="gsMens" hidden></div><div class="cap" id="gsCap" hidden></div>'+
     (g.admin?'<div class="gs-auto"><p><b>🤖 Publicação automática</b><br><span id="gsAutoT"></span>'+(g.igPub&&!g.propria?'<span class="ig-corte">Posts que não saírem pelo site, a partir de <input type="date" id="gsCorte" value="'+escH(g.igCorte||'2026-12-01')+'">, aparecem como publicados pela cliente.</span>':'')+'</p><button type="button" class="sw" id="gsAuto" role="switch" aria-checked="'+!!g.autopub+'" aria-label="Publicação automática"></button></div>':'')+
     '<div class="gs-bar"><div class="gs-f" id="gsF"></div><button class="btn gs-todos" id="gsTodos" hidden>✓ Aprovar todos os pendentes</button></div>'+
     '<div class="gs-cal"><div class="gs-cal-h"><button type="button" id="gsAnt" aria-label="Mês anterior">‹</button><b id="gsMesT"></b><button type="button" id="gsProx" aria-label="Próximo mês">›</button></div><div class="gs-gr" id="gsGr"></div></div>'+
@@ -737,7 +754,51 @@ function abrirGestao(g){
       const go=async()=>{sw.disabled=true;try{const j=await api({acao:'adm_autopub',sessao:guardar.get(),ent:g.id,on:on});if(!j.ok){if(j.sair){guardar.set('');location.reload();return}throw new Error(j.erro)}
         g.autopub=j.autopub;sw.setAttribute('aria-checked',g.autopub);tx();const y=scrollY;pintarGestao(g);window.scrollTo(0,y);toast(g.autopub?'🤖 Publicação automática ligada':'Publicação automática desligada')}catch(e){toast(e.message||'Não foi possível agora.',null,null,7000)}sw.disabled=false};
       if(on)confirmar('Ligar a publicação automática?','<p class="cf-dica">Todo post <b>aprovado</b> de <b>'+escH((g.marca&&g.marca.nome)||g.evento)+'</b> vai ser publicado sozinho no Instagram no dia dele, no horário que vocês definirem em cada post (padrão <b>'+escH(g.horaPadrao||'18:00')+'</b>). Você recebe um e-mail a cada publicação.</p>','🤖 Ligar',go);else go()}}
-  pintarMens(g);pintarGestao(g);
+  pintarMens(g);pintarCapt(g);pintarGestao(g);
+}
+// ---- Gravação do mês (captação): a cliente escolhe o dia, a Brius confirma
+const DSEM=['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
+function capQuando(c){const d=new Date(c.data+'T12:00:00');return DSEM[d.getDay()]+', '+c.data.split('-').reverse().slice(0,2).join('/')+' às '+c.ini.replace(':00','h')+(c.fim?' (até '+c.fim.replace(':00','h')+')':'')}
+function pintarCapt(g){const box=$('gsCap');if(!box)return;const C=g.capt;if(!C){box.hidden=true;return}box.hidden=false;
+  const hj=hojeISO();const ativos=(C.minhas||[]).filter(c=>c.data>=hj&&(c.status==='Pedido'||c.status==='Confirmado'));
+  const ult=(C.minhas||[]).filter(c=>c.status==='Recusado').pop();const adm=!!g.admin;
+  let h='<div class="cap-h"><div><h4>🎥 Gravação do mês</h4><small>'+escH(C.regra)+'</small></div><button type="button" class="btn'+(ativos.length?' sec':'')+'" id="capNovo">'+(adm?'＋ Marcar data':ativos.some(c=>c.status==='Pedido')?'Trocar o dia':'📅 Escolher o dia')+'</button></div>';
+  if(ativos.length)h+=ativos.map(c=>'<div class="cap-it '+(c.status==='Confirmado'?'ok':'pd')+'"><span class="cap-st">'+(c.status==='Confirmado'?'✓ Confirmada':'⏳ Aguardando a Brius confirmar')+'</span><b>'+escH(capQuando(c))+'</b>'+(c.obs?'<small>Recado: '+escH(c.obs)+'</small>':'')+
+    '<span class="cap-ac">'+(adm?(c.status==='Pedido'?'<button type="button" class="btn" data-cok="'+escH(c.id)+'">✓ Confirmar</button><button type="button" class="btn sec" data-cno="'+escH(c.id)+'">✕ Não dá</button>':'<button type="button" class="btn sec" data-ccan="'+escH(c.id)+'">Cancelar gravação</button>')
+      :(c.status==='Pedido'?'<button type="button" class="btn sec" data-cdel="'+escH(c.id)+'">Cancelar pedido</button>':''))+'</span></div>').join('');
+  else if(ult&&!adm)h+='<div class="cap-it no"><span class="cap-st">A Brius não consegue em '+escH(capQuando(ult))+'</span>'+(ult.obs?'<small>'+escH(ult.obs)+'</small>':'')+'<small>Escolha outro dia, por favor.</small></div>';
+  else h+='<p class="cap-v">'+(adm?'Nenhuma gravação marcada. A cliente escolhe o dia aqui pela Área do Cliente.':'Escolha o melhor dia para a gente ir gravar os conteúdos do próximo mês.')+'</p>';
+  box.innerHTML=h;
+  $('capNovo').onclick=()=>escolherCapt(g);
+  const resp=async(id,status,obs)=>{const j=await chamar({acao:'adm_capt',id:id,status:status,obs:obs||''});g.capt=j.info;if(admDados&&admDados.agenda)admDados.agenda.capt=j.capt;pintarCapt(g)};
+  box.querySelectorAll('[data-cok]').forEach(b=>b.onclick=()=>{const c=C.minhas.find(x=>x.id===b.dataset.cok);confirmar('Confirmar a gravação?','<p class="cf-dica"><b>'+escH((g.marca&&g.marca.nome)||g.evento)+'</b><br>'+escH(capQuando(c))+'<br><br>A cliente recebe um e-mail de confirmação e o horário entra na agenda do Google.</p>','✓ Confirmar',async()=>{await resp(c.id,'Confirmado');toast('✓ Gravação confirmada')})});
+  box.querySelectorAll('[data-cno],[data-ccan]').forEach(b=>b.onclick=()=>{const id=b.dataset.cno||b.dataset.ccan;const c=C.minhas.find(x=>x.id===id);
+    modal(b.dataset.cno?'Recusar este dia?':'Cancelar a gravação?','<p class="am-dica" style="font-size:15px">'+escH(capQuando(c))+'</p><label>Recado para a cliente (opcional)<textarea name="obs" rows="3" placeholder="Ex.: nesse dia já temos um evento. Pode ser no fim de semana seguinte?"></textarea></label><p class="am-dica">Ela recebe um e-mail pedindo para escolher outro dia.</p>',
+      async f=>{await resp(id,b.dataset.cno?'Recusado':'Cancelado',f.obs.value);toast('Feito. A cliente foi avisada.')},b.dataset.cno?'✕ Recusar':'Cancelar gravação')});
+  box.querySelectorAll('[data-cdel]').forEach(b=>b.onclick=()=>confirmar('Cancelar o pedido?','<p class="cf-dica">Você pode escolher outro dia depois.</p>','Cancelar pedido',async()=>{const j=await chamar({acao:'captcancelar',id:b.dataset.cdel});g.capt=j.capt;pintarCapt(g);toast('Pedido cancelado')}));
+}
+function escolherCapt(g){const C=g.capt;const disp={};(C.disp||[]).forEach(x=>disp[x.d]=x);const ks=Object.keys(disp).sort();
+  if(!ks.length){toast('Nenhuma data disponível agora. Fale com a Brius.');return}
+  let mes=ks[0].slice(0,7),sel=null;const ultM=ks[ks.length-1].slice(0,7);
+  const f=modal(g.admin?'Marcar gravação · '+escH((g.marca&&g.marca.nome)||g.evento):'Escolha o dia da gravação','<p class="am-dica" style="margin-top:0">'+escH(C.regra)+'. Os dias apagados não estão disponíveis.</p><div class="cpk" id="cpk"></div><div id="cpH"></div>'+
+    '<input type="hidden" name="data"><input type="hidden" name="hora"><label>Recado (opcional)<textarea name="obs" rows="2" maxlength="300" placeholder="Ex.: endereço, o que quer gravar, quem vai estar..."></textarea></label>'+
+    (g.admin?'<p class="am-dica">Marcando por aqui, a gravação já fica <b>confirmada</b> e a cliente recebe o e-mail.</p>':'<p class="am-dica">Ao enviar, você confirma que aceita a visita da Brius neste dia e horário. A gente confirma em seguida.</p>'),
+    async fm=>{if(!fm.data.value||!fm.hora.value)throw new Error('Escolha o dia e o horário.');
+      const j=await chamar({acao:g.admin?'adm_captmarcar':'captpedir',ent:g.id,data:fm.data.value,hora:fm.hora.value,obs:fm.obs.value});g.capt=j.capt;if(g.admin&&admDados&&admDados.agenda&&j.lista)admDados.agenda.capt=j.lista;pintarCapt(g);
+      toast(g.admin?'✓ Gravação marcada e confirmada':'✓ Pedido enviado! Avisamos quando a Brius confirmar.')},g.admin?'✓ Marcar':'Aceito, quero neste dia');
+  const pinta=()=>{const [A,M]=mes.split('-').map(Number);const ini=new Date(A,M-1,1).getDay(),dias=new Date(A,M,0).getDate();
+    let h='<div class="cpk-h"><button type="button" data-m="-1"'+(mes<=ks[0].slice(0,7)?' disabled':'')+' aria-label="Mês anterior">‹</button><b>'+MESES[M-1].replace(/^./,x=>x.toUpperCase())+' '+A+'</b><button type="button" data-m="1"'+(mes>=ultM?' disabled':'')+' aria-label="Próximo mês">›</button></div><div class="cpk-g">'+['D','S','T','Q','Q','S','S'].map(x=>'<i>'+x+'</i>').join('');
+    for(let i=0;i<ini;i++)h+='<span></span>';
+    for(let d=1;d<=dias;d++){const iso=mes+'-'+String(d).padStart(2,'0');const x=disp[iso];
+      h+=x&&x.h?'<button type="button" class="ok'+(sel===iso?' sel':'')+'" data-d="'+iso+'">'+d+'</button>':'<span class="'+(x?'bl':'off')+'"'+(x&&g.admin?' title="'+(x.b==='evento'?'Evento reservado':'Horários ocupados')+'"':'')+'>'+d+'</span>'}
+    $('cpk').innerHTML=h+'</div>';
+    $('cpk').querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{const d=new Date(A,M-1+ +b.dataset.m,1);mes=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');pinta()});
+    $('cpk').querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{sel=b.dataset.d;f.data.value=sel;f.hora.value='';pinta();horas()})};
+  const horas=()=>{const x=disp[sel];if(!x){$('cpH').innerHTML='';return}
+    $('cpH').innerHTML='<p class="cpk-t">'+DSEM[new Date(sel+'T12:00:00').getDay()]+', '+sel.split('-').reverse().slice(0,2).join('/')+' · '+(x.h.length>1?'escolha o horário de início'+(C.dur?' (a gravação leva cerca de '+C.dur+'h)':''):'horário')+'</p><div class="cpk-hs">'+x.h.map(h=>'<button type="button" data-h="'+h+'">'+h.replace(':00','h')+'</button>').join('')+'</div>';
+    $('cpH').querySelectorAll('[data-h]').forEach(b=>b.onclick=()=>{f.hora.value=b.dataset.h;$('cpH').querySelectorAll('[data-h]').forEach(o=>o.classList.toggle('sel',o===b))});
+    if(x.h.length===1)$('cpH').querySelector('[data-h]').click()};
+  pinta();
 }
 function doMes(g){return g.posts.filter(p=>(p.data||'').slice(0,7)===gsMes||(!p.data&&gsMes===null))}
 function pintarGestao(g){
@@ -843,7 +904,7 @@ function cartao(g,p,n){
 }
 const hojeISO=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
 // ---- Agenda geral (admin): eventos, posts, publicações e dinheiro a receber
-let agMes=null,agTipos={ev:true,po:true,pu:true,di:true},agSel=null;
+let agMes=null,agTipos={ev:true,ca:true,po:true,pu:true,di:true},agSel=null;
 function itensAgenda(j){const it=[];const vistos=new Set();
   ((j.agenda||{}).reservas||[]).forEach(x=>it.push({d:x.data,h:'',t:'ev',tt:x.motivo,s:'Data reservada'}));
   (j.proximos||[]).forEach(x=>it.push({d:x.data,h:x.hora||'',t:'ev',tt:x.nome,s:[x.local,x.endereco].filter(Boolean).join(' · ')||'Evento'}));
@@ -851,6 +912,7 @@ function itensAgenda(j){const it=[];const vistos=new Set();
     const st=p.pub?'Publicado '+p.pub.quando:p.status==='Aprovado'?(g.autopub?'Aprovado · sai sozinho':'Aprovado'):p.status==='Refazer'?'Ajuste pedido':p.status==='Nova versão'?'Nova versão · aguardando cliente':'Aguardando cliente';
     it.push({d:p.data,h:(g.autopub||p.pub)?(p.hora||g.horaPadrao||''):'',t:p.pub?'pu':'po',tt:nm+' · '+p.titulo,s:(p.tipo||'Post')+' · '+st,at:p.status==='Refazer'})});
     (g.igPosts||[]).forEach(x=>it.push({d:x.d,h:x.h||'',t:'pu',tt:nm+' · '+((x.leg||x.t||'Post').split('\n')[0].slice(0,60)),s:x.t+' · '+(x.q==='cliente'?'publicado pela cliente':'publicado pela Brius')}))});
+  ((j.agenda||{}).capt||[]).forEach(x=>it.push({d:x.data,h:x.ini,t:'ca',tt:'Gravação · '+x.cliente,s:(x.status==='Confirmado'?'Confirmada':'⏳ Pedido da cliente, falta confirmar')+' · até '+x.fim,at:x.status!=='Confirmado'}));
   ((j.agenda||{}).receber||[]).forEach(x=>it.push({d:x.data,h:'',t:'di',tt:x.desc,s:x.sit==='atrasado'?'⚠ atrasado':x.sit==='confirmando'?'cliente avisou que pagou':x.sit==='evento'?'restante do evento':'vencimento',at:x.sit==='atrasado'}));
   return it.filter(x=>x.d).sort((a,b)=>(a.d+(a.h||'99')).localeCompare(b.d+(b.h||'99')))}
 function pintarAgenda(j){
@@ -859,7 +921,7 @@ function pintarAgenda(j){
   const vis=todos.filter(x=>agTipos[x.t==='pu'?'pu':x.t]);
   const [A,M]=agMes.split('-').map(Number);const ini=new Date(A,M-1,1).getDay(),dias=new Date(A,M,0).getDate();
   const doMes=vis.filter(x=>x.d.slice(0,7)===agMes);const por={};doMes.forEach(x=>(por[x.d]=por[x.d]||[]).push(x));
-  const nomes={ev:'Eventos',po:'Posts',pu:'Publicados',di:'A receber'};
+  const nomes={ev:'Eventos',ca:'Gravações',po:'Posts',pu:'Publicados',di:'A receber'};
   let gr='<div class="ag-gr">'+['D','S','T','Q','Q','S','S'].map(d=>'<span class="ds">'+d+'</span>').join('');
   for(let i=0;i<ini;i++)gr+='<span class="ag-c vz"></span>';
   for(let d=1;d<=dias;d++){const iso=agMes+'-'+String(d).padStart(2,'0');const l=por[iso]||[];
@@ -867,10 +929,15 @@ function pintarAgenda(j){
   gr+='</div>';
   const dSem=d=>['domingo','segunda','terça','quarta','quinta','sexta','sábado'][new Date(d+'T12:00:00').getDay()];
   const lst=Object.keys(por).sort().filter(d=>!agSel||d===agSel);
-  c.innerHTML='<div class="gs"><div class="ag-top"><div class="ag-f">'+Object.keys(nomes).map(k=>'<button type="button" data-t="'+k+'" aria-pressed="'+agTipos[k]+'"><i class="t-'+k+'"></i>'+nomes[k]+'</button>').join('')+'</div>'+(agSel?'<button type="button" class="btn sec" id="agTudo">Ver o mês todo</button>':'')+'</div>'+
+  const pend=((j.agenda||{}).capt||[]).filter(x=>x.status==='Pedido');
+  const pendH=pend.length?'<div class="cap ag-pend"><h4>🎥 '+pend.length+' pedido'+(pend.length>1?'s':'')+' de gravação para confirmar</h4>'+pend.map(x=>'<div class="cap-it pd"><b>'+escH(x.cliente)+'</b><span>'+escH(capQuando(x))+'</span>'+(x.obs?'<small>Recado: '+escH(x.obs)+'</small>':'')+'<span class="cap-ac"><button type="button" class="btn" data-aok="'+escH(x.id)+'">✓ Confirmar</button><button type="button" class="btn sec" data-ano="'+escH(x.id)+'">✕ Não dá</button></span></div>').join('')+'</div>':'';
+  c.innerHTML='<div class="gs">'+pendH+'<div class="ag-top"><div class="ag-f">'+Object.keys(nomes).map(k=>'<button type="button" data-t="'+k+'" aria-pressed="'+agTipos[k]+'"><i class="t-'+k+'"></i>'+nomes[k]+'</button>').join('')+'</div>'+(agSel?'<button type="button" class="btn sec" id="agTudo">Ver o mês todo</button>':'')+'</div>'+
     '<div class="ag-cal"><div class="ag-h"><button type="button" id="agAnt" aria-label="Mês anterior">‹</button><b>'+MESES[M-1].replace(/^./,x=>x.toUpperCase())+' '+A+'</b><button type="button" id="agProx" aria-label="Próximo mês">›</button></div>'+gr+'</div>'+
     '<div class="ag-l">'+(lst.length?lst.map(d=>'<h4 class="'+(d===hj?'hj':'')+'">'+dSem(d)+', '+d.split('-').reverse().slice(0,2).join('/')+'</h4>'+por[d].map(x=>'<div class="ag-it"><span class="hr">'+escH(x.h||'—')+'</span><i class="'+(x.at?'t-at':'t-'+x.t)+'"></i><span><b>'+escH(x.tt)+'</b><small>'+escH(x.s)+'</small></span></div>').join('')).join(''):'<p class="vazio">Nada '+(agSel?'neste dia':'neste mês')+'.</p>')+'</div></div>';
   c.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{agTipos[b.dataset.t]=!agTipos[b.dataset.t];pintarAgenda(j)});
+  const capResp=async(id,st,obs)=>{const r=await chamar({acao:'adm_capt',id:id,status:st,obs:obs||''});j.agenda.capt=r.capt;const gg=galerias.find(x=>x.id===(r.info&&pend.find(p=>p.id===id).ent));if(gg)gg.capt=r.info;pintarAgenda(j)};
+  c.querySelectorAll('[data-aok]').forEach(b=>b.onclick=()=>{const x=pend.find(p=>p.id===b.dataset.aok);confirmar('Confirmar a gravação?','<p class="cf-dica"><b>'+escH(x.cliente)+'</b><br>'+escH(capQuando(x))+'<br><br>A cliente recebe um e-mail e o horário entra na agenda do Google.</p>','✓ Confirmar',async()=>{await capResp(x.id,'Confirmado');toast('✓ Gravação confirmada')})});
+  c.querySelectorAll('[data-ano]').forEach(b=>b.onclick=()=>{const x=pend.find(p=>p.id===b.dataset.ano);modal('Recusar este dia?','<p class="am-dica" style="font-size:15px">'+escH(x.cliente)+' · '+escH(capQuando(x))+'</p><label>Recado para a cliente (opcional)<textarea name="obs" rows="3"></textarea></label><p class="am-dica">Ela recebe um e-mail pedindo para escolher outro dia.</p>',async f=>{await capResp(x.id,'Recusado',f.obs.value);toast('Feito. A cliente foi avisada.')},'✕ Recusar')});
   c.querySelectorAll('.ag-c[data-d]').forEach(b=>b.onclick=()=>{agSel=agSel===b.dataset.d?null:b.dataset.d;pintarAgenda(j)});
   const mv=k=>{const d=new Date(A,M-1+k,1);agMes=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');agSel=null;pintarAgenda(j)};
   $('agAnt').onclick=()=>mv(-1);$('agProx').onclick=()=>mv(1);if($('agTudo'))$('agTudo').onclick=()=>{agSel=null;pintarAgenda(j)};
