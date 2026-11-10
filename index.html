@@ -831,8 +831,7 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
     <ul id="numsL">
       <li><b data-n="7">7<small>dias</small></b><span>no máximo para as fotos do seu evento chegarem</span></li>
       <li><b data-n="2" id="nAnos">2<small>anos</small></b><span>juntando os nomes, as câmeras e muitas histórias</span></li>
-      <li id="nEvL" hidden><b data-n="0" id="nEv">0</b><span>eventos registrados</span></li>
-      <li><b data-n="3" id="nMarcas">3</b><span>marcas com as redes sociais nas nossas mãos todo mês</span></li>
+      <li id="nEvL"><b data-n="300" data-mais="1" id="nEv">+300</b><span>eventos registrados, de casamentos a estádio</span></li>
       <li id="nSegL" hidden><b data-n="0" id="nSeg">0</b><span>pessoas seguindo a Brius no Instagram</span></li>
     </ul>
   </div>
@@ -1358,7 +1357,7 @@ const ALBUNS=[{"t": "Ensaio de bodas Sirlene & Valdinei", "c": "casamentos", "p"
   const set=(id,n,mais)=>{const b=document.getElementById(id);if(!b||!(n>0))return;b.dataset.n=n;if(mais)b.dataset.mais=1;const li=b.closest('li');if(li)li.hidden=false;
     const suf=b.querySelector('small');b.innerHTML=(mais?'+':'')+fmt(foi?n:0)+(suf?suf.outerHTML:'');if(foi)contar(b)};
   if(API_URL)fetch(API_URL+'?acao=numeros').then(r=>r.json()).then(j=>{if(!j||!j.ok)return;
-    set('nMarcas',j.marcas);set('nEv',j.eventos,true);
+    set('nEv',j.eventos,true);
     const anos=new Date().getFullYear()-(j.desde||2024);const a=document.getElementById('nAnos');if(a&&anos>0){a.dataset.n=anos;a.querySelector('small').textContent=anos>1?'anos':'ano'}}).catch(()=>{});
   window.addEventListener('ig-perfil',e=>set('nSeg',e.detail.seguidores));
   if('IntersectionObserver' in window)new IntersectionObserver((es,o)=>es.forEach(e=>{if(e.isIntersecting){go();o.disconnect()}}),{threshold:.35}).observe(sec);else go();
