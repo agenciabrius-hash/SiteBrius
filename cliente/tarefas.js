@@ -2,6 +2,8 @@
    Usado no painel da agência (cliente/) e no link da equipe (tarefas/). */
 (function(){
 const CSS=`
+.tf button,.tf input,.tf select,.tf summary,.tf-mod button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.tf button:not(:disabled):active{transform:scale(.96)}
 .tf{--m:#f0b26b;--s:#c48af0;--d:#7fb6e6;--ok:#7fc49a;--late:#f0a28f}
 .tf-top{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin:0 0 16px}
 .tf-pes{display:inline-flex;background:var(--graphite);border:1px solid #3a352f;border-radius:999px;padding:4px;gap:2px;position:relative}
