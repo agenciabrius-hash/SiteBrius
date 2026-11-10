@@ -1302,15 +1302,23 @@ const ALBUNS=[{"t": "Ensaio de bodas Sirlene & Valdinei", "c": "casamentos", "p"
   av.addEventListener('click',e=>{if(av.classList.contains('st')){e.preventDefault();e.stopPropagation();abrir(window.__igStories,0)}});
   if(!API_URL)return;
   const tempo=t=>{if(!t)return'';const h=Math.max(1,Math.round((Date.now()-new Date(t))/3600000));return h<24?h+' h':Math.round(h/24)+' d'};
-  fetch(API_URL+'?acao=instagram').then(r=>r.json()).then(j=>{
+  let ultPosts='',tecla=false;
+  const carregarIG=()=>fetch(API_URL+'?acao=instagram').then(r=>r.json()).then(j=>{
     if(!j||!j.ok)return;
     const pf=j.perfil,num=n=>n>=10000?(n/1000).toFixed(n>=100000?0:1).replace('.',',')+' mil':String(n),pt=(id,v)=>{const e=document.getElementById(id);if(e&&v!=null&&v!=='')e.textContent=v};
     if(pf){pt('igPosts',num(pf.posts));pt('igSeg',num(pf.seguidores));pt('igSegd',num(pf.seguindo));pt('igNome',pf.nome);pt('igUser',pf.usuario);
       if(pf.foto){const im=av.querySelector('img');const t=new Image();t.onload=()=>{im.src=pf.foto};t.src=pf.foto}}
+    const st=j.stories||[];window.__igStories=st;
+    if(st.length){if(!av.classList.contains('st')){av.classList.add('st');av.setAttribute('role','button');av.setAttribute('tabindex','0');av.setAttribute('aria-label','Ver os stories de hoje')}
+      if(!tecla){tecla=true;av.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&av.classList.contains('st')){e.preventDefault();e.stopPropagation();abrir(window.__igStories,0)}})}}
+    else{av.classList.remove('st');av.removeAttribute('role');av.removeAttribute('tabindex');av.removeAttribute('aria-label')}
     if(!(j.posts||[]).length)return;
-    encher(j.posts.slice(0,12).map(p=>p.img));
-    const st=j.stories||[];if(st.length){window.__igStories=st;av.classList.add('st');av.setAttribute('role','button');av.setAttribute('tabindex','0');av.setAttribute('aria-label','Ver os stories de hoje');av.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();abrir(st,0)}})}
+    const ps=j.posts.slice(0,12).map(p=>p.img);const k=ps.join('|');if(k!==ultPosts){ultPosts=k;encher(ps)}
   }).catch(()=>{});
+  carregarIG();
+  // confere sozinho a cada 3 minutos (só com a página visível) e quando a pessoa volta para a aba
+  setInterval(()=>{if(!document.hidden&&document.getElementById('igv').hidden)carregarIG()},180000);
+  let volta=Date.now();document.addEventListener('visibilitychange',()=>{if(!document.hidden&&Date.now()-volta>60000){volta=Date.now();carregarIG()}});
   // visualizador de stories
   const v=document.getElementById('igv'),media=document.getElementById('igvMedia'),bars=document.getElementById('igvBars');let lista=[],k=0,tmr=null;
   function abrir(l,i){if(!l||!l.length)return;lista=l;v.hidden=false;document.body.style.overflow='hidden';bars.innerHTML=l.map(()=>'<i></i>').join('');mostrar(i);document.getElementById('igvX').focus()}
