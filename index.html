@@ -397,13 +397,6 @@ a,button,label,summary,select,input,textarea,[role=button],[tabindex]{touch-acti
 button:not(:disabled):active,.h2-b:active,.h2-l:active,a.btn:active,.svt:active,.grid button:active{transform:scale(.97);transition:transform .06s}
 /* ===== MAIS MOVIMENTO ===== */
 .prog{position:fixed;top:0;left:0;right:0;height:3px;z-index:120;pointer-events:none;transform-origin:0 50%;transform:scaleX(var(--p,0));background:linear-gradient(90deg,var(--gold),var(--gold-soft))}
-.marq{background:var(--ink);color:var(--gold-soft);overflow:hidden;border-block:1px solid #2c2925;padding:16px 0;user-select:none}
-.marq-t{display:flex;width:max-content;animation:marq 38s linear infinite}
-.marq:hover .marq-t{animation-play-state:paused}
-.marq-t span{font:italic 500 clamp(22px,3vw,34px)/1 var(--display);white-space:nowrap;padding:0 22px;display:flex;align-items:center;gap:44px}
-.marq-t span::after{content:"✦";font-style:normal;font-size:.55em;color:var(--gold)}
-.marq-t span:nth-child(even){color:var(--bone);font-style:normal}
-@keyframes marq{to{transform:translateX(-50%)}}
 /* títulos grandes: letras sobem uma a uma */
 .mega.ani .lt{opacity:0;transform:translateY(.5em) rotate(4deg)}
 .mega.ani.on .lt{opacity:1;transform:none;transition:transform .6s cubic-bezier(.2,.9,.25,1),opacity .4s ease;transition-delay:calc(var(--i)*24ms)}
@@ -429,7 +422,7 @@ button:not(:disabled):active,.h2-b:active,.h2-l:active,a.btn:active,.svt:active,
 @media (hover:hover){.reels>*{transition:transform .5s cubic-bezier(.2,.9,.25,1);transform-style:preserve-3d}.reels>*:hover{transition-duration:.15s}}
 /* chamada final: palavras surgem */
 .contact .mega .w{display:inline-block}
-@media (prefers-reduced-motion:reduce){.marq-t,.hero2 .h2-txt>*,.hero2 .h2-vis,.h2-b::after{animation:none!important}.mega.ani .lt{opacity:1;transform:none;filter:none}.grid>.reveal.pre{clip-path:none;transform:none}.prog{display:none}}
+@media (prefers-reduced-motion:reduce){.hero2 .h2-txt>*,.hero2 .h2-vis,.h2-b::after{animation:none!important}.mega.ani .lt{opacity:1;transform:none;filter:none}.grid>.reveal.pre{clip-path:none;transform:none}.prog{display:none}}
 /* HISTORY */
 .story{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(28px,5vw,72px);align-items:start}
 .story .note{border:1px dashed var(--muted-l);padding:18px 20px;font-size:14px;color:var(--muted-l);max-width:46ch}
@@ -833,8 +826,6 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
   <a class="igv-link" id="igvLink" target="_blank" rel="noopener">Ver no Instagram</a></div>
 </div>
 
-
-<div class="marq" aria-hidden="true"><div class="marq-t"><span>Casamentos</span><span>Fotografia</span><span>15 anos</span><span>Vídeo</span><span>Chás</span><span>Storymaker</span><span>Eventos</span><span>Gestão de redes</span><span>Marcas</span><span>Bastidores</span><span>Casamentos</span><span>Fotografia</span><span>15 anos</span><span>Vídeo</span><span>Chás</span><span>Storymaker</span><span>Eventos</span><span>Gestão de redes</span><span>Marcas</span><span>Bastidores</span></div></div>
 
 <section class="band light" id="servicos">
   <div class="wrap">
