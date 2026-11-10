@@ -1320,7 +1320,7 @@ const ALBUNS=[{"t": "Ensaio de bodas Sirlene & Valdinei", "c": "casamentos", "p"
 (function(){
   const sec=document.getElementById('numeros');if(!sec)return;
   const fmt=n=>n>=10000?(n/1000).toLocaleString('pt-BR',{maximumFractionDigits:1})+' mil':n.toLocaleString('pt-BR');
-  const contar=b=>{const alvo=+b.dataset.n||0;const suf=b.querySelector('small');const sh=suf?suf.outerHTML:'';const t0=performance.now(),dur=1400;
+  const contar=b=>{const alvo=+b.dataset.n||0;const suf=b.querySelector('small');const sh=suf?suf.outerHTML:'';if(document.hidden||matchMedia('(prefers-reduced-motion: reduce)').matches){b.innerHTML=(b.dataset.mais?'+':'')+fmt(alvo)+sh;return}const t0=performance.now(),dur=1400;
     const passo=t=>{const p=Math.min(1,(t-t0)/dur),e=1-Math.pow(1-p,3);b.innerHTML=(b.dataset.mais?'+':'')+fmt(Math.round(alvo*e))+sh;if(p<1)requestAnimationFrame(passo)};requestAnimationFrame(passo);
     setTimeout(()=>{b.innerHTML=(b.dataset.mais?'+':'')+fmt(alvo)+sh},dur+300)};
   let foi=false;const go=()=>{if(foi)return;foi=true;sec.classList.add('vis');sec.querySelectorAll('li:not([hidden]) b[data-n]').forEach(contar)};
