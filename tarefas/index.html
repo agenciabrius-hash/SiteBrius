@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Tarefas · Brius</title>
+<meta name="theme-color" content="#141210">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../img/icone-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..800;1,400..700&family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+:root{--ink:#141210;--graphite:#1b1916;--graphite-2:#24211d;--bone:#fbf8f3;--muted-d:#b4ab9d;--gold:#b8955a;--gold-soft:#e6d3ae;
+--serif:"Playfair Display",Georgia,serif;--body:"Manrope","Segoe UI",system-ui,sans-serif}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--ink);color:var(--bone);font-family:var(--body);-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px max(16px,4vw);border-bottom:1px solid #2c2925}
+.top img{height:28px;display:block;filter:invert(1) brightness(.98)}
+.top button{background:none;border:1px solid #3a352f;color:var(--muted-d);padding:8px 14px;border-radius:999px;font:600 13px var(--body);cursor:pointer}
+main{max-width:860px;margin:0 auto;padding:30px 16px 80px}
+.kick{font:700 12px var(--body);letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+h1{font:500 clamp(34px,7vw,48px)/1.05 var(--serif);margin:8px 0 6px}h1 em{color:var(--gold-soft)}
+.sub{color:var(--muted-d);margin:0 0 24px}
+.quem{display:grid;gap:12px;max-width:420px;margin:30px auto;text-align:center;animation:entra .5s both}
+.quem button{border:1px solid #3a352f;background:var(--graphite);color:var(--bone);border-radius:18px;padding:18px;font:500 22px var(--serif);cursor:pointer;transition:transform .2s,border-color .2s}
+.quem button:hover{transform:translateY(-2px);border-color:var(--gold)}
+.erro{border:1px solid rgba(240,162,143,.5);background:rgba(240,162,143,.08);border-radius:18px;padding:20px;color:#f5c7bb}
+@keyframes entra{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<header class="top"><img src="../img/logo-brius.png" alt="Brius Agência"><button id="troca" hidden>Trocar pessoa</button></header>
+<main>
+  <div class="kick">Brius · equipe</div>
+  <h1 id="ola">Nossas <em>tarefas</em></h1>
+  <p class="sub">Gravações, roteiros, edição e posts. Marque o que já fez e adicione o que faltar.</p>
+  <div id="quem" class="quem" hidden><p class="sub" style="margin:0">Quem está usando?</p><button data-q="Sabrina">Sou a Sabrina</button><button data-q="Matheus">Sou o Matheus</button></div>
+  <div id="box"></div>
+</main>
+<script src="../cliente/tarefas.js"></script>
+<script>
+const API_URL='https://script.google.com/macros/s/AKfycbxv6WLxKRDICMjAqAGWB8Uu5oZnL-zMWQWgFxdwFTwFRyiFFvH6YV5cxWbDOoV7hOQm/exec';
+const ls={get:k=>{try{return localStorage.getItem(k)||''}catch(e){return ''}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
+// o link chega com ?t=...; guardamos e tiramos da barra de endereço
+const q=new URLSearchParams(location.search);if(q.get('t')){ls.set('tf_tk',q.get('t'));history.replaceState(null,'',location.pathname)}
+const tk=ls.get('tf_tk');
+let inst=null;
+function iniciar(nome){document.getElementById('quem').hidden=true;document.getElementById('troca').hidden=false;
+  document.getElementById('ola').innerHTML='Oi, <em>'+nome+'</em>!';ls.set('tf_eu',nome);
+  if(!ls.get('tf_quem'))ls.set('tf_quem',nome);
+  inst=Tarefas({el:document.getElementById('box'),admin:false,quem:nome,call:async(op,d)=>{const r=await fetch(API_URL,{method:'POST',body:JSON.stringify(Object.assign({acao:'tar',t:tk,op:op},d))});return r.json()}});
+  setInterval(()=>{if(!document.hidden&&!document.querySelector('.tf-mod')&&!(document.activeElement&&/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)))inst.recarregar()},60000)}
+if(!tk){document.getElementById('box').innerHTML='<p class="erro">Este endereço precisa do link completo que o Matheus mandou. Abra o link de novo pelo WhatsApp.</p>'}
+else if(ls.get('tf_eu'))iniciar(ls.get('tf_eu'));
+else document.getElementById('quem').hidden=false;
+document.querySelectorAll('#quem [data-q]').forEach(b=>b.onclick=()=>{ls.set('tf_quem',b.dataset.q);iniciar(b.dataset.q)});
+document.getElementById('troca').onclick=()=>{localStorage.removeItem('tf_eu');localStorage.removeItem('tf_quem');location.reload()};
+</script>
+</body>
+</html>

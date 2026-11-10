@@ -393,6 +393,27 @@ input:focus{border-color:var(--gold)}
 .ag-top{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin:0 0 14px}
 .ag-f{display:flex;flex-wrap:wrap;gap:6px}.ag-f button{border:1px solid #3a352f;background:transparent;color:var(--bone);border-radius:999px;padding:7px 12px;font:600 13px var(--body);cursor:pointer;display:flex;align-items:center;gap:6px}
 .ag-f button[aria-pressed="false"]{opacity:.45}.ag-f i,.ag-d i{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
+.gs-nav{position:sticky;top:8px;z-index:30;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding:5px;margin:0 0 18px;border-radius:999px;background:rgba(27,25,22,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid #3a352f;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.gs-nav::-webkit-scrollbar{display:none}
+.gs-nav button{position:relative;z-index:1;flex:none;display:flex;align-items:center;gap:7px;border:0;background:none;color:var(--muted-d);font:700 14px var(--body);padding:10px 16px;border-radius:999px;cursor:pointer;transition:color .25s}
+.gs-nav button[aria-pressed="true"]{color:var(--ink)}.gs-nav .ic{font-size:15px;transition:transform .3s}.gs-nav button[aria-pressed="true"] .ic{transform:scale(1.15) rotate(-6deg)}
+.gs-nav .ind{position:absolute;z-index:0;top:5px;bottom:5px;left:0;width:0;border-radius:999px;background:var(--gold-soft);transition:left .4s cubic-bezier(.3,1.3,.5,1),width .4s cubic-bezier(.3,1.3,.5,1)}
+.gs-nav .bd{font-style:normal;min-width:19px;height:19px;border-radius:10px;background:#f0a28f;color:#141210;font:800 11px/19px var(--body);text-align:center;padding:0 5px}
+.gs-pan.entra{animation:gsPan .45s cubic-bezier(.2,.9,.3,1) both}
+@keyframes gsPan{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.gs-pan .mens,.gs-pan .cap,.gs-pan .gs-auto{margin-top:0}
+.gs-pan .rel>summary{pointer-events:none}.gs-pan .rel>summary::after{display:none}
+.adm-seg{display:flex!important;gap:4px;overflow-x:auto;scrollbar-width:none;padding:5px;border-radius:999px;position:sticky;top:8px;z-index:40;background:rgba(27,25,22,.9);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.adm-seg::-webkit-scrollbar{display:none}
+.adm-seg button{flex:none;display:flex!important;align-items:center;gap:6px;padding:10px 15px!important;border-radius:999px!important}
+.adm-seg button b{font-size:14px!important;white-space:nowrap}.adm-seg button small{font-size:11px!important;background:rgba(255,255,255,.08);border-radius:999px;padding:2px 7px;white-space:nowrap}
+.adm-seg button[aria-selected="true"] small{background:rgba(20,18,16,.12)}
+.adm-seg button:not([aria-selected="true"]):hover{background:var(--graphite-2);color:var(--bone)}
+.adm-links{gap:6px!important;margin:-10px 0 16px!important}.adm-links .btn{padding:7px 13px!important;font-size:12.5px!important;background:transparent!important;border:1px solid #3a352f!important;color:var(--muted-d)!important}
+.mais{position:relative;order:9}.mais-l{position:absolute;left:0;top:calc(100% + 8px);z-index:60;display:grid;gap:4px;min-width:260px;padding:6px;border-radius:16px;background:var(--graphite-2);border:1px solid #3a352f;box-shadow:0 18px 40px rgba(0,0,0,.45);animation:gsPop .2s ease-out}
+.mais-l .btn{width:100%!important;justify-content:flex-start;text-align:left;border:0!important;background:none!important;color:var(--bone)!important;border-radius:11px!important;padding:12px 14px!important;font-size:14px!important}.mais-l .btn:hover{background:#2f2b26!important}
+@keyframes gsPop{from{opacity:0;transform:translateY(-6px) scale(.97)}to{opacity:1;transform:none}}
+.adm-abas .marca{animation-delay:calc(var(--i,0)*45ms)}
 .t-ca{background:#7fb6e6}
 .cap{background:var(--graphite);border:1px solid #3a352f;border-radius:18px;padding:16px 18px;margin:0 0 18px}
 .cap-h{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}.cap h4{margin:0 0 3px;font:500 20px var(--serif)}.cap-h small{color:var(--muted-d);font-size:13.5px}
@@ -552,6 +573,7 @@ input:focus{border-color:var(--gold)}
   </div>
 </div>
 
+<script src="tarefas.js"></script>
 <script>
 const API_URL='https://script.google.com/macros/s/AKfycbxv6WLxKRDICMjAqAGWB8Uu5oZnL-zMWQWgFxdwFTwFRyiFFvH6YV5cxWbDOoV7hOQm/exec';
 const $=id=>document.getElementById(id);
@@ -638,7 +660,7 @@ async function carregarGaleria(){
 let ultimoHash='';
 const hashDados=j=>JSON.stringify([j.galerias,j.contratos,j.proximos,j.eventos,j.agenda]);
 function ocupadoAgora(){const vis=id=>{const e=$(id);return e&&!e.hidden};
-  if(vis('admModal')||vis('ctrModal')||vis('lb')||vis('dl'))return true;
+  if(vis('admModal')||vis('ctrModal')||vis('lb')||vis('dl')||document.querySelector('.tf-mod,.mais-l:not([hidden])'))return true;
   const a=document.activeElement;if(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))return true;
   if([...document.querySelectorAll('.pc-aj')].some(x=>!x.hidden))return true;
   if(document.querySelector('.pc-sh:disabled,.pc-pub:disabled,.pc-ac button:disabled'))return true;
@@ -650,7 +672,7 @@ async function atualizarSozinho(){
   const y=scrollY;const g0=galerias[atual]||{};const chave=g0.id||g0.pastaId||g0.evento;
   galerias=j.galerias;const i=galerias.findIndex(g=>(g.id||g.pastaId||g.evento)===chave);if(i>=0)atual=i;
   pintarContratos(j.contratos||[],!!j.admin);
-  if(j.admin){admDados=j;if(admSec==='financeiro'||admSec==='relatorios')return;montarAdmin(j)}
+  if(j.admin){admDados=j;if(admSec==='financeiro'||admSec==='relatorios')return;if(admSec==='tarefas'){if(tfInst)tfInst.recarregar();return}montarAdmin(j)}
   else{abrir(atual,true);$('gAbas').querySelectorAll('.marca[data-i]').forEach(b=>{const g=galerias[+b.dataset.i];if(!g)return;const pd=(g.posts||[]).filter(p=>p.status==='Aguardando'||p.status==='Nova versão').length;const sm=b.querySelector('small');if(sm)sm.textContent=pd?pd+' para aprovar':'Tudo em dia ✓'})}
   window.scrollTo(0,y)}
 setInterval(atualizarSozinho,60000);
@@ -732,12 +754,13 @@ function abrirGestao(g){
   cont.innerHTML='<div class="gs"><div class="mk"><div class="mk-logo"><span>'+(m.logo?'<img src="'+escH(m.logo)+'" alt="Logo '+escH(m.nome)+'">':escH(ini))+'</span></div>'+
     '<div>'+ig+'<h2>'+escH(m.nome||g.evento)+'</h2>'+(m.resp?'<p class="resp">'+escH(m.resp)+'</p>':'')+((tel||mail)?'<div class="mk-ct">'+tel+mail+'</div>':'')+'</div>'+
     '<div class="mk-prog"><div class="mk-anel" id="gsAnel"><span id="gsPct">0<small>aprovados</small></span></div><p id="gsResumo"></p></div></div>'+
-    '<div class="mens" id="gsMens" hidden></div><div class="cap" id="gsCap" hidden></div>'+
-    (g.admin?'<div class="gs-auto"><p><b>🤖 Publicação automática</b><br><span id="gsAutoT"></span>'+(g.igPub&&!g.propria?'<span class="ig-corte">Posts que não saírem pelo site, a partir de <input type="date" id="gsCorte" value="'+escH(g.igCorte||'2026-12-01')+'">, aparecem como publicados pela cliente.</span>':'')+'</p><button type="button" class="sw" id="gsAuto" role="switch" aria-checked="'+!!g.autopub+'" aria-label="Publicação automática"></button></div>':'')+
-    '<div class="gs-bar"><div class="gs-f" id="gsF"></div><button class="btn gs-todos" id="gsTodos" hidden>✓ Aprovar todos os pendentes</button></div>'+
+    gsNavHtml(g)+
+    '<div class="gs-pan" data-p="mens"><div class="mens" id="gsMens" hidden></div></div><div class="gs-pan" data-p="grav"><div class="cap" id="gsCap" hidden></div></div>'+
+    (g.admin?'<div class="gs-pan" data-p="auto"><div class="gs-auto"><p><b>🤖 Publicação automática</b><br><span id="gsAutoT"></span>'+(g.igPub&&!g.propria?'<span class="ig-corte">Posts que não saírem pelo site, a partir de <input type="date" id="gsCorte" value="'+escH(g.igCorte||'2026-12-01')+'">, aparecem como publicados pela cliente.</span>':'')+'</p><button type="button" class="sw" id="gsAuto" role="switch" aria-checked="'+!!g.autopub+'" aria-label="Publicação automática"></button></div></div>':'')+
+    '<div class="gs-pan" data-p="posts"><div class="gs-bar"><div class="gs-f" id="gsF"></div><button class="btn gs-todos" id="gsTodos" hidden>✓ Aprovar todos os pendentes</button></div>'+
     '<div class="gs-cal"><div class="gs-cal-h"><button type="button" id="gsAnt" aria-label="Mês anterior">‹</button><b id="gsMesT"></b><button type="button" id="gsProx" aria-label="Próximo mês">›</button></div><div class="gs-gr" id="gsGr"></div></div>'+
-    '<details class="rel" id="gsRel"><summary><span>📊 Relatório do mês</span><b id="gsRelT"></b></summary><div id="gsRelC"></div></details>'+
-    '<div class="gs-lista" id="gsLista"></div></div>';
+    '<div class="gs-lista" id="gsLista"></div></div>'+
+    '<div class="gs-pan" data-p="rel"><details class="rel" id="gsRel" open><summary><span>📊 Relatório do mês</span><b id="gsRelT"></b></summary><div id="gsRelC"></div></details></div></div>';
   if(m.logo){const im=cont.querySelector('.mk-logo img');im.onerror=()=>{im.parentNode.textContent=ini}}
   if(!g.posts.length){$('gsLista').innerHTML='<p class="vazio">Ainda não tem posts no seu calendário. Assim que a Brius colocar, eles aparecem aqui para você aprovar.</p>'}
   const meses=[...new Set(g.posts.filter(p=>p.data).map(p=>p.data.slice(0,7)))].sort();
@@ -754,7 +777,7 @@ function abrirGestao(g){
       const go=async()=>{sw.disabled=true;try{const j=await api({acao:'adm_autopub',sessao:guardar.get(),ent:g.id,on:on});if(!j.ok){if(j.sair){guardar.set('');location.reload();return}throw new Error(j.erro)}
         g.autopub=j.autopub;sw.setAttribute('aria-checked',g.autopub);tx();const y=scrollY;pintarGestao(g);window.scrollTo(0,y);toast(g.autopub?'🤖 Publicação automática ligada':'Publicação automática desligada')}catch(e){toast(e.message||'Não foi possível agora.',null,null,7000)}sw.disabled=false};
       if(on)confirmar('Ligar a publicação automática?','<p class="cf-dica">Todo post <b>aprovado</b> de <b>'+escH((g.marca&&g.marca.nome)||g.evento)+'</b> vai ser publicado sozinho no Instagram no dia dele, no horário que vocês definirem em cada post (padrão <b>'+escH(g.horaPadrao||'18:00')+'</b>). Você recebe um e-mail a cada publicação.</p>','🤖 Ligar',go);else go()}}
-  pintarMens(g);pintarCapt(g);pintarGestao(g);
+  pintarMens(g);pintarCapt(g);pintarGestao(g);ligarGsNav(g);
 }
 // ---- Gravação do mês (captação): a cliente escolhe o dia, a Brius confirma
 const DSEM=['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
@@ -800,6 +823,24 @@ function escolherCapt(g){const C=g.capt;const disp={};(C.disp||[]).forEach(x=>di
     if(x.h.length===1)$('cpH').querySelector('[data-h]').click()};
   pinta();
 }
+// ---- seções do calendário (botões no topo para não ficar tudo empilhado)
+let gsSec='posts';
+function gsNavHtml(g){const it=[['posts','📅','Posts'],['grav','🎥','Gravação'],['mens','💳','Mensalidade'],['rel','📊','Relatório']];if(g.admin)it.push(['auto','🤖','Publicação']);
+  return '<nav class="gs-nav" id="gsNav" aria-label="Seções">'+it.filter(([k])=>k!=='grav'||g.capt).filter(([k])=>k!=='mens'||(!g.propria&&(g.mensalidade||g.admin))).map(([k,i,t])=>'<button type="button" data-p="'+k+'" aria-pressed="false"><span class="ic">'+i+'</span>'+t+'<i class="bd" hidden></i></button>').join('')+'<span class="ind"></span></nav>'}
+function gsIr(p,rolar){const nav=$('gsNav');if(!nav)return;if(!nav.querySelector('[data-p="'+p+'"]'))p='posts';gsSec=p;
+  document.querySelectorAll('.gs-pan').forEach(x=>{const on=x.dataset.p===p;if(on&&x.hidden){x.hidden=false;x.classList.remove('entra');void x.offsetWidth;x.classList.add('entra')}else x.hidden=!on});
+  nav.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.p===p));gsInd();
+  if(rolar)nav.scrollIntoView({behavior:'smooth',block:'start'})}
+function gsInd(){const nav=$('gsNav');if(!nav)return;const b=nav.querySelector('[aria-pressed="true"]'),i=nav.querySelector('.ind');if(b&&i){i.style.left=b.offsetLeft+'px';i.style.width=b.offsetWidth+'px';
+  const r=b.offsetLeft-nav.scrollLeft;if(r<0||r+b.offsetWidth>nav.clientWidth)nav.scrollTo({left:b.offsetLeft-20,behavior:'smooth'})}}
+function gsBadges(g){const nav=$('gsNav');if(!nav)return;const set=(p,t)=>{const b=nav.querySelector('[data-p="'+p+'"] .bd');if(b){b.hidden=!t;b.textContent=t||''}};
+  set('posts',(g.posts||[]).filter(p=>p.status==='Aguardando'||p.status==='Nova versão').length||'');
+  const c=g.capt;const hj=hojeISO();set('grav',c?((c.minhas||[]).some(x=>x.status==='Pedido'&&x.data>=hj)?(g.admin?'!':'⏳'):(!(c.minhas||[]).some(x=>x.data>=hj&&(x.status==='Confirmado'||x.status==='Pedido'))&&!g.admin?'!':'')):'');
+  const m=g.mensalidade;set('mens',m&&(m.situacao==='atrasado'||(g.admin&&m.situacao==='confirmando'))?'!':'')}
+function ligarGsNav(g){const nav=$('gsNav');if(!nav)return;nav.querySelectorAll('button').forEach(b=>b.onclick=()=>gsIr(b.dataset.p));gsBadges(g);
+  document.querySelectorAll('.gs-pan').forEach(x=>x.hidden=true);gsIr(gsSec);requestAnimationFrame(gsInd)}
+addEventListener('resize',()=>gsInd());
+{const _a=pintarGestao,_b=pintarCapt,_c=pintarMens;pintarGestao=function(g){_a(g);gsBadges(g)};pintarCapt=function(g){_b(g);gsBadges(g)};pintarMens=function(g){_c(g);gsBadges(g)}}
 function doMes(g){return g.posts.filter(p=>(p.data||'').slice(0,7)===gsMes||(!p.data&&gsMes===null))}
 function pintarGestao(g){
   const tot=g.posts.length,ap=g.posts.filter(p=>p.status==='Aprovado').length,rf=g.posts.filter(p=>p.status==='Refazer').length,pd=g.posts.filter(pend).length;
@@ -942,6 +983,13 @@ function pintarAgenda(j){
   const mv=k=>{const d=new Date(A,M-1+k,1);agMes=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');agSel=null;pintarAgenda(j)};
   $('agAnt').onclick=()=>mv(-1);$('agProx').onclick=()=>mv(1);if($('agTudo'))$('agTudo').onclick=()=>{agSel=null;pintarAgenda(j)};
 }
+// ---- Tarefas (checklists do Matheus e da Sabrina)
+let tfInst=null;
+function pintarTarefasAdmin(){$('gTitulo').textContent='Tarefas';$('gAcoes').innerHTML='';$('gPrazo').textContent='O que cada um precisa fazer: gravações, roteiros, edição e posts';
+  const c=$('gConteudo');if(tfInst&&tfInst.ativo()&&c.querySelector('#tfBox')){tfInst.recarregar();return}
+  c.innerHTML='<div class="gs" id="tfBox"></div>';
+  tfInst=Tarefas({el:$('tfBox'),admin:true,clientes:galerias.filter(g=>g.tipo==='gestao'&&g.id).map(g=>({id:g.id,nome:(g.marca&&g.marca.nome)||g.evento})),
+    call:(op,d)=>api(Object.assign({acao:'adm_tar_'+op,sessao:guardar.get()},d)),callLink:novo=>chamar({acao:'adm_tar_link',novo:novo}),callModelo:itens=>chamar({acao:'adm_tar_modelo',itens:itens})})}
 // ---- Contratos
 let contratos=[];
 function pintarContratos(lista,admin){contratos=lista;const box=$('gContratos');box.innerHTML='';if(!lista.length)return;
@@ -1019,7 +1067,7 @@ async function responder(g,ks,status,obs){
 }
 
 // ---- Acesso da agência: vê todos os clientes, fotos e eventos
-let admSec='gestao',admDados=null;
+let admSec='tarefas',admDados=null;
 function montarAdmin(j){
   admDados=j;document.body.classList.add('adm');
   $('gOla').textContent='Acesso da agência';
@@ -1035,11 +1083,13 @@ function montarAdmin(j){
   const alertaHtml=alertas.length?'<div class="adm-alerta" role="alert"><span class="sino">🔔</span>'+alertas.map(g=>{const m=g.mensalidade;const i=galerias.indexOf(g);
     return '<span>'+(m.situacao==='atrasado'?'<b>'+escH(m.clientes)+'</b> está com a mensalidade atrasada há '+(m.atraso||1)+' dia'+((m.atraso||1)>1?'s':'')+' ('+reais(m.valor)+')':'<b>'+escH(m.clientes)+'</b> avisou que pagou: confirme')+' · <button type="button" data-ir="'+i+'">ver</button></span>'}).join('')+'</div>':'';
   try{document.title=(alertas.length?'('+alertas.length+') ':'')+'Área do Cliente · Brius Agência'}catch(e){}
-  abas.innerHTML=alertaHtml+'<div class="adm-seg" role="tablist">'+[['agenda','🗓️ Agenda','tudo num lugar',''],['gestao','📅 Gestão de redes',nG,pend?pend+' aguardando cliente':''],['relatorios','📊 Relatórios','por mês',''],['financeiro','💰 Financeiro','entradas e saídas',''],['fotos','📸 Fotos',nF,''],['eventos','🎟️ Eventos',nE,'']].map(([k,t,n,x])=>
+  abas.innerHTML=alertaHtml+'<div class="adm-seg" role="tablist">'+[['tarefas','✅ Tarefas','Matheus e Sabrina',''],['agenda','🗓️ Agenda','tudo num lugar',''],['gestao','📅 Gestão de redes',nG,pend?pend+' aguardando cliente':''],['relatorios','📊 Relatórios','por mês',''],['financeiro','💰 Financeiro','entradas e saídas',''],['fotos','📸 Fotos',nF,''],['eventos','🎟️ Eventos',nE,'']].map(([k,t,n,x])=>
     '<button type="button" role="tab" data-sec="'+k+'" aria-selected="'+(admSec===k)+'"><b>'+t+'</b><small>'+n+(x?' · '+x:'')+'</small></button>').join('')+'</div><div class="adm-cards" id="admCards"></div>';
   abas.querySelectorAll('[data-sec]').forEach(b=>b.onclick=()=>{admSec=b.dataset.sec;montarAdmin(admDados)});
-  abas.querySelectorAll('[data-ir]').forEach(b=>b.onclick=()=>{admSec='gestao';atual=+b.dataset.ir;montarAdmin(admDados);setTimeout(()=>{const x=$('gsMens');if(x)x.scrollIntoView({behavior:'smooth',block:'center'})},200)});
+  {const seg=abas.querySelector('.adm-seg'),sel=seg&&seg.querySelector('[aria-selected="true"]');if(sel)seg.scrollLeft=Math.max(0,sel.offsetLeft-seg.clientWidth/2+sel.offsetWidth/2)}
+  abas.querySelectorAll('[data-ir]').forEach(b=>b.onclick=()=>{admSec='gestao';atual=+b.dataset.ir;montarAdmin(admDados);setTimeout(()=>gsIr('mens',true),200)});
   const cards=$('admCards');$('gContratos').hidden=admSec!=='gestao';
+  if(admSec==='tarefas'){cards.hidden=true;pintarTarefasAdmin();return}
   if(admSec==='agenda'){cards.hidden=true;pintarAgenda(j);return}
   if(admSec==='relatorios'){cards.hidden=true;pintarRelatoriosAdmin();return}
   if(admSec==='financeiro'){cards.hidden=true;finVer=false;pintarFinanceiro(true);return}
@@ -1252,10 +1302,14 @@ function formEventoFotos(){
 async function admStatus(g,status,b){b.disabled=true;try{await chamar({acao:'adm_status',id:g.id,status:status});await admRecarregar(status==='Redefinir senha'?'✓ Link de nova senha enviado para '+g.email:status==='Enviar acesso'?'✓ Acesso enviado para '+g.email:status==='Avisar novos posts'?'✓ Cliente avisado dos novos posts':'✓ Feito')}catch(e){toast(e.message);b.disabled=false}}
 function barraAdmin(g){
   // ações da agência dentro de um cliente aberto
-  const ac=$('gAcoes');if(g.tipo==='gestao')ac.innerHTML='';ac.querySelectorAll('.adm-b').forEach(x=>x.remove());const bt=(t,fn,sec)=>{const b=document.createElement('button');b.className='btn adm-b'+(sec?' sec':'');b.textContent=t;b.onclick=()=>fn(b);ac.appendChild(b)};
+  const ac=$('gAcoes');if(g.tipo==='gestao')ac.innerHTML='';ac.querySelectorAll('.adm-b,.mais').forEach(x=>x.remove());
+  let menu=null;const mais=()=>{if(menu)return menu;const w=document.createElement('div');w.className='mais';w.innerHTML='<button type="button" class="btn sec" aria-expanded="false">⋯ Mais ações</button><div class="mais-l" hidden></div>';
+    const tg=w.firstChild,l=w.lastChild;tg.onclick=e=>{e.stopPropagation();l.hidden=!l.hidden;tg.setAttribute('aria-expanded',!l.hidden);if(!l.hidden)setTimeout(()=>document.addEventListener('click',function f(ev){if(!l.contains(ev.target)||ev.target.tagName==='BUTTON'&&!ev.target.dataset.c){l.hidden=true;tg.setAttribute('aria-expanded',false)}if(l.hidden)document.removeEventListener('click',f)}),0)};
+    ac.appendChild(w);menu=l;return l};
+  const bt=(t,fn,sec)=>{const b=document.createElement('button');b.className='btn adm-b'+(sec?' sec':'');b.textContent=t;b.onclick=()=>fn(b);(sec?mais():ac).appendChild(b)};
   const senha=()=>{if(g.id&&/Ativo|Acesso enviado/.test(g.statusPlanilha))bt('🔑 Redefinir senha',b=>{if(!b.dataset.c){b.dataset.c=1;b.textContent='Toque de novo: enviar para '+g.email;return}admStatus(g,'Redefinir senha',b)},1)};
   if(!g.propria)setTimeout(senha,0);
-  if(g.tipo==='gestao'&&g.id){const ins=g.insights;bt(ins&&ins.conectado?'📸 @'+ins.usuario+' conectado':'📸 Conectar Instagram',()=>{if(ins&&ins.conectado){const r=$('gsRel');if(r){r.open=true;r.scrollIntoView({behavior:'smooth',block:'center'})}}else conectarIG(g)},1)}
+  if(g.tipo==='gestao'&&g.id){const ins=g.insights;bt(ins&&ins.conectado?'📸 @'+ins.usuario+' conectado':'📸 Conectar Instagram',()=>{if(ins&&ins.conectado){gsIr('rel',true)}else conectarIG(g)},1)}
   if(g.propria){bt('+ Adicionar post',()=>formPost(g));return}
   if(g.tipo==='gestao'){bt('+ Adicionar post',()=>formPost(g));
     if(g.id&&/Ativo|Acesso enviado/.test(g.statusPlanilha))bt('🔔 Avisar cliente dos novos posts',b=>admStatus(g,'Avisar novos posts',b),1);
@@ -1293,7 +1347,7 @@ function pintarRelatoriosAdmin(){
           :'<p class="ra-t">Nenhum conteúdo em '+nomeM(relMes)+'.</p>')+'</article>'}).join('')+'</div></div>';
   $('relSel').onchange=e=>{relMes=e.target.value;pintarRelatoriosAdmin()};
   $('relPrint').onclick=()=>{document.body.classList.add('imprimindo-adm');window.print();setTimeout(()=>document.body.classList.remove('imprimindo-adm'),500)};
-  c.querySelectorAll('[data-ver]').forEach(b=>b.onclick=()=>{admSec='gestao';atual=+b.dataset.ver;gsMes=relMes;gsF='todos';montarAdmin(admDados);setTimeout(()=>{const r=$('gsRel');if(r){r.open=true;r.scrollIntoView({behavior:'smooth',block:'center'})}},300)});
+  c.querySelectorAll('[data-ver]').forEach(b=>b.onclick=()=>{admSec='gestao';atual=+b.dataset.ver;gsMes=relMes;gsF='todos';montarAdmin(admDados);setTimeout(()=>gsIr('rel',true),300)});
   c.querySelectorAll('[data-env]').forEach(b=>b.onclick=async()=>{if(!b.dataset.c){b.dataset.c=1;b.textContent='Toque de novo para enviar';return}
     b.disabled=true;try{await chamar({acao:'adm_relatorio',id:b.dataset.env,mes:relMes});b.textContent='✓ Enviado';toast('Relatório de '+nomeM(relMes)+' enviado ao cliente')}catch(e){toast(e.message);b.disabled=false;b.textContent='✉️ Enviar ao cliente';delete b.dataset.c}});
 }
