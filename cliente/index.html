@@ -424,7 +424,9 @@ button:not(:disabled):active,.btn:active,.marca:active,.gs-d:active{transform:sc
 .cap-it{margin-top:12px;padding:12px 14px;border-radius:14px;border:1px solid #3a352f;display:grid;gap:4px;background:var(--graphite-2)}.cap-it b{font-size:15.5px}.cap-it small{color:var(--muted-d);font-size:13px}
 .cap-it.ok{border-color:rgba(127,196,154,.55)}.cap-it.pd{border-color:rgba(127,182,230,.55)}.cap-it.no{border-color:rgba(240,162,143,.55)}
 .cap-st{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#9fc8ee}.cap-it.ok .cap-st{color:#7fc49a}.cap-it.no .cap-st{color:#f0a28f}
-.cap-ac{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}.cap-ac .btn{padding:9px 16px;font-size:14px}.cap-v{margin:10px 0 0;color:var(--muted-d);font-size:14px}
+.cap-ac{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}.cap-ac .btn{padding:9px 16px;font-size:14px}.cap-it.sg{border-color:#4a443d;border-style:dashed}.cap-it.sg .cap-st{color:var(--muted-d)}
+.cap-sem{margin-top:12px;background:none;border:1px dashed #4a443d;color:var(--muted-d);border-radius:999px;padding:9px 16px;font:700 13px var(--body);cursor:pointer}.cap-sem:hover{color:var(--bone);border-color:var(--muted-d)}
+.cap-v{margin:10px 0 0;color:var(--muted-d);font-size:14px}
 .ag-pend h4{font:500 19px var(--serif);margin:0}
 .cpk{background:var(--graphite-2);border-radius:14px;padding:12px;margin:6px 0 12px}.cpk-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.cpk-h b{font:500 18px var(--serif)}
 .cpk-h button{width:34px;height:34px;border-radius:50%;border:1px solid #3a352f;background:none;color:var(--bone);font-size:17px;cursor:pointer}.cpk-h button:disabled{opacity:.3;cursor:default}
@@ -789,14 +791,24 @@ function capQuando(c){const d=new Date(c.data+'T12:00:00');return DSEM[d.getDay(
 function pintarCapt(g){const box=$('gsCap');if(!box)return;const C=g.capt;if(!C){box.hidden=true;return}box.hidden=false;
   const hj=hojeISO();const ativos=(C.minhas||[]).filter(c=>c.data>=hj&&(c.status==='Pedido'||c.status==='Confirmado'));
   const ult=(C.minhas||[]).filter(c=>c.status==='Recusado').pop();const adm=!!g.admin;
+  const sem=(C.minhas||[]).filter(c=>c.status==='Sem gravação'&&c.data.slice(0,7)>=hj.slice(0,7));
+  const nomeMes=d=>MESES[+d.slice(5,7)-1];
   let h='<div class="cap-h"><div><h4>🎥 Gravação do mês</h4><small>'+escH(C.regra)+'</small></div><button type="button" class="btn'+(ativos.length?' sec':'')+'" id="capNovo">'+(adm?'＋ Marcar data':ativos.some(c=>c.status==='Pedido')?'Trocar o dia':'📅 Escolher o dia')+'</button></div>';
+  h+=sem.map(c=>'<div class="cap-it no sg"><span class="cap-st">🚫 Sem gravação em '+nomeMes(c.data)+'</span><b>'+(adm?'Este mês não vai ter gravação':'Neste mês não vai ter gravação. Tudo certo!')+'</b>'+(c.obs?'<small>'+escH(c.obs)+'</small>':'')+(adm?'<span class="cap-ac"><button type="button" class="btn sec" data-csd="'+escH(c.id)+'">Desfazer</button></span>':'')+'</div>').join('');
   if(ativos.length)h+=ativos.map(c=>'<div class="cap-it '+(c.status==='Confirmado'?'ok':'pd')+'"><span class="cap-st">'+(c.status==='Confirmado'?'✓ Confirmada':'⏳ Aguardando a Brius confirmar')+'</span><b>'+escH(capQuando(c))+'</b>'+(c.obs?'<small>Recado: '+escH(c.obs)+'</small>':'')+
     '<span class="cap-ac">'+(adm?(c.status==='Pedido'?'<button type="button" class="btn" data-cok="'+escH(c.id)+'">✓ Confirmar</button><button type="button" class="btn sec" data-cno="'+escH(c.id)+'">✕ Não dá</button>':'<button type="button" class="btn sec" data-ccan="'+escH(c.id)+'">Cancelar gravação</button>')
       :(c.status==='Pedido'?'<button type="button" class="btn sec" data-cdel="'+escH(c.id)+'">Cancelar pedido</button>':''))+'</span></div>').join('');
+  else if(sem.some(c=>c.data.slice(0,7)===hj.slice(0,7)));
   else if(ult&&!adm)h+='<div class="cap-it no"><span class="cap-st">A Brius não consegue em '+escH(capQuando(ult))+'</span>'+(ult.obs?'<small>'+escH(ult.obs)+'</small>':'')+'<small>Escolha outro dia, por favor.</small></div>';
   else h+='<p class="cap-v">'+(adm?'Nenhuma gravação marcada. A cliente escolhe o dia aqui pela Área do Cliente.':'Escolha o melhor dia para a gente ir gravar os conteúdos do próximo mês.')+'</p>';
+  if(adm)h+='<button type="button" class="cap-sem" id="capSem">🚫 Marcar um mês sem gravação</button>';
   box.innerHTML=h;
   $('capNovo').onclick=()=>escolherCapt(g);
+  if($('capSem'))$('capSem').onclick=()=>{const hj2=new Date();const ms=[0,1,2].map(i=>{const d=new Date(hj2.getFullYear(),hj2.getMonth()+i,1);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')}).filter(m=>!sem.some(c=>c.data.slice(0,7)===m));
+    if(!ms.length){toast('Os próximos meses já estão marcados.');return}
+    modal('Mês sem gravação · '+escH((g.marca&&g.marca.nome)||g.evento),'<label>Qual mês?<select name="mes">'+ms.map(m=>'<option value="'+m+'">'+MESES[+m.slice(5)-1].replace(/^./,x=>x.toUpperCase())+' de '+m.slice(0,4)+'</option>').join('')+'</select></label><label>Recado para a cliente (opcional)<textarea name="obs" rows="2" maxlength="300" placeholder="Ex.: este mês vamos usar o material que já temos."></textarea></label><p class="am-dica">Ela vê no calendário que neste mês não tem gravação, e os dias desse mês somem da escolha. Se ela já tinha pedido um dia, o pedido é cancelado.</p>',
+      async f=>{const j=await chamar({acao:'adm_captsem',ent:g.id,mes:f.mes.value,obs:f.obs.value});g.capt=j.capt;if(admDados&&admDados.agenda&&j.lista)admDados.agenda.capt=j.lista;pintarCapt(g);toast('✓ Marcado: sem gravação em '+MESES[+f.mes.value.slice(5)-1])},'Confirmar')};
+  box.querySelectorAll('[data-csd]').forEach(b=>b.onclick=async()=>{b.disabled=true;try{const j=await chamar({acao:'adm_capt',id:b.dataset.csd,status:'Cancelado'});g.capt=j.info;pintarCapt(g);toast('Desfeito. O mês voltou a ter gravação.')}catch(x){toast(x.message);b.disabled=false}});
   const resp=async(id,status,obs)=>{const j=await chamar({acao:'adm_capt',id:id,status:status,obs:obs||''});g.capt=j.info;if(admDados&&admDados.agenda)admDados.agenda.capt=j.capt;pintarCapt(g)};
   box.querySelectorAll('[data-cok]').forEach(b=>b.onclick=()=>{const c=C.minhas.find(x=>x.id===b.dataset.cok);confirmar('Confirmar a gravação?','<p class="cf-dica"><b>'+escH((g.marca&&g.marca.nome)||g.evento)+'</b><br>'+escH(capQuando(c))+'<br><br>A cliente recebe um e-mail de confirmação e o horário entra na agenda do Google.</p>','✓ Confirmar',async()=>{await resp(c.id,'Confirmado');toast('✓ Gravação confirmada')})});
   box.querySelectorAll('[data-cno],[data-ccan]').forEach(b=>b.onclick=()=>{const id=b.dataset.cno||b.dataset.ccan;const c=C.minhas.find(x=>x.id===id);
@@ -817,7 +829,7 @@ function escolherCapt(g){const C=g.capt;const disp={};(C.disp||[]).forEach(x=>di
     let h='<div class="cpk-h"><button type="button" data-m="-1"'+(mes<=ks[0].slice(0,7)?' disabled':'')+' aria-label="Mês anterior">‹</button><b>'+MESES[M-1].replace(/^./,x=>x.toUpperCase())+' '+A+'</b><button type="button" data-m="1"'+(mes>=ultM?' disabled':'')+' aria-label="Próximo mês">›</button></div><div class="cpk-g">'+['D','S','T','Q','Q','S','S'].map(x=>'<i>'+x+'</i>').join('');
     for(let i=0;i<ini;i++)h+='<span></span>';
     for(let d=1;d<=dias;d++){const iso=mes+'-'+String(d).padStart(2,'0');const x=disp[iso];
-      h+=x&&x.h?'<button type="button" class="ok'+(sel===iso?' sel':'')+'" data-d="'+iso+'">'+d+'</button>':'<span class="'+(x?'bl':'off')+'"'+(x&&g.admin?' title="'+(x.b==='evento'?'Evento reservado':'Horários ocupados')+'"':'')+'>'+d+'</span>'}
+      h+=x&&x.h?'<button type="button" class="ok'+(sel===iso?' sel':'')+'" data-d="'+iso+'">'+d+'</button>':'<span class="'+(x?'bl':'off')+'"'+(x&&g.admin?' title="'+(x.b==='evento'?'Evento reservado':x.b==='sem'?'Mês sem gravação':'Horários ocupados')+'"':'')+'>'+d+'</span>'}
     $('cpk').innerHTML=h+'</div>';
     $('cpk').querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{const d=new Date(A,M-1+ +b.dataset.m,1);mes=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');pinta()});
     $('cpk').querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{sel=b.dataset.d;f.data.value=sel;f.hora.value='';pinta();horas()})};
@@ -839,7 +851,7 @@ function gsInd(){const nav=$('gsNav');if(!nav)return;const b=nav.querySelector('
   const r=b.offsetLeft-nav.scrollLeft;if(r<0||r+b.offsetWidth>nav.clientWidth)nav.scrollTo({left:b.offsetLeft-20,behavior:'smooth'})}}
 function gsBadges(g){const nav=$('gsNav');if(!nav)return;const set=(p,t)=>{const b=nav.querySelector('[data-p="'+p+'"] .bd');if(b){b.hidden=!t;b.textContent=t||''}};
   set('posts',(g.posts||[]).filter(p=>p.status==='Aguardando'||p.status==='Nova versão').length||'');
-  const c=g.capt;const hj=hojeISO();set('grav',c?((c.minhas||[]).some(x=>x.status==='Pedido'&&x.data>=hj)?(g.admin?'!':'⏳'):(!(c.minhas||[]).some(x=>x.data>=hj&&(x.status==='Confirmado'||x.status==='Pedido'))&&!g.admin?'!':'')):'');
+  const c=g.capt;const hj=hojeISO();set('grav',c?((c.minhas||[]).some(x=>x.status==='Pedido'&&x.data>=hj)?(g.admin?'!':'⏳'):(!(c.minhas||[]).some(x=>(x.data>=hj&&(x.status==='Confirmado'||x.status==='Pedido'))||(x.status==='Sem gravação'&&x.data.slice(0,7)===hj.slice(0,7)))&&!g.admin?'!':'')):'');
   const m=g.mensalidade;set('mens',m&&(m.situacao==='atrasado'||(g.admin&&m.situacao==='confirmando'))?'!':'')}
 function ligarGsNav(g){const nav=$('gsNav');if(!nav)return;if(g.leitura&&!ligarGsNav.foi){ligarGsNav.foi=1;gsSec='rel'}nav.querySelectorAll('button').forEach(b=>b.onclick=()=>gsIr(b.dataset.p));gsBadges(g);
   document.querySelectorAll('.gs-pan').forEach(x=>x.hidden=true);gsIr(gsSec);requestAnimationFrame(gsInd)}
