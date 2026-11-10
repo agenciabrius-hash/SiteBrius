@@ -1,7 +1,7 @@
 /* Tarefas da Brius · checklists do Matheus e da Sabrina
    Usado no painel da agência (cliente/) e no link da equipe (tarefas/). */
 (function(){
-const CSS=`
+const ESTILO=`
 .tf button,.tf input,.tf select,.tf summary,.tf-mod button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .tf button:not(:disabled):active{transform:scale(.96)}
 .tf{--m:#f0b26b;--s:#c48af0;--d:#7fb6e6;--ok:#7fc49a;--late:#f0a28f}
@@ -38,6 +38,7 @@ const CSS=`
 .tf-bar.cem i{background:linear-gradient(90deg,#5aa977,var(--ok))}
 .tf-dica{margin:-2px 0 10px;font-size:13px;color:var(--muted-d)}.tf-dica.ok{color:var(--ok);font-weight:700}
 .tf-l{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.tf-i.env{opacity:.6}.tf-i.env button{pointer-events:none}
 .tf-i{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:12px;background:var(--graphite-2);transition:opacity .3s,background .3s;animation:tfIn .35s both}
 .tf-ck{width:26px;height:26px;flex:none;border-radius:8px;border:2px solid #5a534b;background:none;cursor:pointer;display:grid;place-items:center;color:#141210;transition:background .2s,border-color .2s,transform .15s}
 .tf-ck:hover{border-color:var(--gold-soft)}.tf-ck:active{transform:scale(.85)}
@@ -87,13 +88,15 @@ const pct=l=>l.length?Math.round(l.filter(x=>x.feito).length/l.length*100):0;
 const CK='<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 
 window.Tarefas=function(opts){
-  if(!document.getElementById('tfCss')){const st=document.createElement('style');st.id='tfCss';st.textContent=CSS;document.head.appendChild(st)}
+  if(!document.getElementById('tfCss')){const st=document.createElement('style');st.id='tfCss';st.textContent=ESTILO;document.head.appendChild(st)}
   const el=opts.el;let D=null;let quem=(()=>{try{return localStorage.getItem('tf_quem')||opts.quem||''}catch(e){return opts.quem||''}})();
   const abertos=new Set();let primeira=true;let menuAberto=false;
   const toast=t=>{const e=document.createElement('div');e.className='tf-toast';e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),2700)};
   const festa=(x,y)=>{['🎉','✨','🎬','💛','⭐'].forEach((c,i)=>{for(let k=0;k<2;k++){const s=document.createElement('span');s.className='tf-fest';s.textContent=c;s.style.left=x+'px';s.style.top=y+'px';
     s.style.setProperty('--x',(Math.random()*240-120)+'px');s.style.setProperty('--y',(-80-Math.random()*160)+'px');s.style.setProperty('--r',(Math.random()*400-200)+'deg');document.body.appendChild(s);setTimeout(()=>s.remove(),1200)}})};
-  async function call(op,d){const j=await opts.call(op,d||{});if(!j||!j.ok)throw new Error((j&&j.erro)||'Não foi possível agora.');if(j.projetos){D=j}return j}
+  const pendentes=[];// tarefas que já aparecem na tela mas ainda estão indo para a planilha
+  function reinjetar(){pendentes.forEach(x=>{const p=D.projetos.find(q=>q.id===x.pid);if(p&&!p.itens.some(i=>i.id===x.it.id))p.itens.push(x.it)})}
+  async function call(op,d){const j=await opts.call(op,d||{});if(!j||!j.ok)throw new Error((j&&j.erro)||'Não foi possível agora.');if(j.projetos){D=j;reinjetar()}return j}
   function visivel(it){return !quem||it.resp===quem||it.resp==='Os dois'}
   function modal(titulo,html,enviar,rot,extra){const m=document.createElement('div');m.className='tf-mod';
     m.innerHTML='<form><h3>'+titulo+'</h3>'+html+'<p class="msg"></p><div class="rod">'+(extra||'')+'<button type="button" class="tf-btn cc">Cancelar</button>'+(enviar?'<button class="tf-btn pri">'+(rot||'Salvar')+'</button>':'')+'</div></form>';
@@ -106,7 +109,7 @@ window.Tarefas=function(opts){
   const opF=(sel)=>(D.fases||FASES_GRAV.concat('Tarefas')).map(r=>'<option'+(r===sel?' selected':'')+'>'+r+'</option>').join('');
 
   function itemHtml(it,comProj){const hj=hoje();const late=!it.feito&&it.prazo&&it.prazo<hj;const ehHj=!it.feito&&it.prazo===hj;
-    return '<li class="tf-i'+(it.feito?' feito':'')+'" data-id="'+esc(it.id)+'"><button type="button" class="tf-ck" aria-pressed="'+it.feito+'" aria-label="Marcar como feito">'+CK+'</button>'+
+    return '<li class="tf-i'+(it.feito?' feito':'')+(/^tmp/.test(it.id)?' env':'')+'" data-id="'+esc(it.id)+'"><button type="button" class="tf-ck" aria-pressed="'+it.feito+'" aria-label="Marcar como feito">'+CK+'</button>'+
       '<span class="tf-t"><span>'+esc(it.texto)+'</span><small><span class="tf-r"><i class="tf-dot '+cls(it.resp)+'"></i>'+esc(it.resp)+'</span>'+
       (it.prazo?'<span class="tf-pz'+(late?' late':ehHj?' hj':'')+'">'+(late?'⚠ atrasada · ':ehHj?'hoje · ':'até ')+esc(dBr(it.prazo))+'</span>':'')+
       (comProj?'<span>· '+esc(comProj)+'</span>':'')+(it.feito&&it.feitoEm?'<span>✓ '+esc(it.feitoEm)+'</span>':'')+'</small></span>'+
@@ -142,6 +145,9 @@ window.Tarefas=function(opts){
       (ativos.length?ativos.map((p,i)=>projHtml(p).replace('<article ','<article style="animation-delay:'+(i*.05)+'s" ')).join(''):'<p class="tf-vz">Nenhum projeto em andamento. '+(opts.admin?'Toque em <b>＋ Projeto</b> para criar, ou confirme uma gravação na agenda que o checklist aparece aqui sozinho.':'')+'</p>')+
       (feitos.length?'<details class="tf-conc"><summary>Concluídos ('+feitos.length+')</summary>'+feitos.map(projHtml).join('')+'</details>':'')+'</div>';
     ligar()}
+  function pintarMantendo(){const a=document.activeElement;let alvo=null,val='',sel=null;
+    if(a&&el.contains(a)&&a.name==='texto'&&a.closest('.tf-add')){alvo=[a.closest('.tf-p').dataset.pid,a.closest('.tf-f').dataset.fase];val=a.value;sel=a.closest('.tf-add').resp.value}
+    pintar();if(alvo){const f=el.querySelector('.tf-p[data-pid="'+CSS.escape(alvo[0])+'"] .tf-f[data-fase="'+CSS.escape(alvo[1])+'"] .tf-add');if(f){f.texto.value=val;f.resp.value=sel;f.texto.focus()}}}
   function moverPill(){const g=el.querySelector('.tf-pes');if(!g)return;const b=g.querySelector('[aria-pressed="true"]'),p=g.querySelector('.pill');if(b&&p){p.style.left=b.offsetLeft+'px';p.style.width=b.offsetWidth+'px'}}
   function acharItem(id){for(const p of D.projetos){const it=p.itens.find(x=>x.id===id);if(it)return [p,it]}return []}
   function ligar(){
@@ -153,13 +159,18 @@ window.Tarefas=function(opts){
       const r=b.getBoundingClientRect();
       setTimeout(()=>{pintar();const dep=pct(p.itens),prep=pct(p.itens.filter(x=>x.fase==='Preparação'));
         if(it.feito&&((dep===100&&antes<100)||(p.tipo==='gravacao'&&prep===100&&prepAntes<100))){festa(r.left,r.top);toast(dep===100?'🎉 Projeto concluído!':'🎬 Tudo pronto para a gravação!')}},380);
-      try{await call('item_feito',{id:it.id,feito:it.feito,quem:quem||opts.quem||''});pintar()}catch(x){it.feito=!it.feito;pintar();toast(x.message)}});
+      try{await call('item_feito',{id:it.id,feito:it.feito,quem:quem||opts.quem||''});pintarMantendo()}catch(x){it.feito=!it.feito;pintarMantendo();toast(x.message)}});
     el.querySelectorAll('.tf-add').forEach(f=>f.onsubmit=async e=>{e.preventDefault();const t=f.texto.value.trim();if(!t)return;const pid=f.closest('.tf-p').dataset.pid;const fase=f.closest('.tf-f').dataset.fase;
-      const bt=f.querySelector('button');bt.disabled=true;try{await call('item_add',{pid:pid,fase:fase,resp:f.resp.value,texto:t});abertos.add(pid);pintar();
-        const nf=el.querySelector('.tf-p[data-pid="'+CSS.escape(pid)+'"] .tf-f[data-fase="'+CSS.escape(fase)+'"] .tf-add input');if(nf)nf.focus()}catch(x){toast(x.message)}bt.disabled=false});
+      // aparece na hora; a planilha é atualizada por trás
+      const p=D.projetos.find(q=>q.id===pid);if(!p)return;const it={id:'tmp'+Date.now()+Math.random().toString(36).slice(2,6),fase:fase,resp:f.resp.value,texto:t,prazo:'',feito:false,ordem:9999};
+      const x={pid:pid,it:it};pendentes.push(x);p.itens.push(it);abertos.add(pid);const resp=f.resp.value;pintar();
+      const nf=el.querySelector('.tf-p[data-pid="'+CSS.escape(pid)+'"] .tf-f[data-fase="'+CSS.escape(fase)+'"] .tf-add');if(nf){nf.resp.value=resp;nf.texto.focus()}
+      try{await call('item_add',{pid:pid,fase:fase,resp:resp,texto:t});pendentes.splice(pendentes.indexOf(x),1);D.projetos.forEach(q=>q.itens=q.itens.filter(i=>i!==it));pintarMantendo()}
+      catch(err){pendentes.splice(pendentes.indexOf(x),1);p.itens=p.itens.filter(i=>i!==it);pintarMantendo();toast('Não salvou "'+t.slice(0,30)+'": '+err.message)}});
     el.querySelectorAll('.tf-ed').forEach(b=>b.onclick=()=>{const [p,it]=acharItem(b.closest('.tf-i').dataset.id);if(!it)return;
       const f=modal('Editar tarefa','<label>Tarefa<input name="texto" maxlength="200" required value="'+esc(it.texto)+'"></label><div class="dois"><label>Quem faz<select name="resp">'+opR(it.resp)+'</select></label><label>Prazo<input type="date" name="prazo" value="'+esc(it.prazo)+'"></label></div><label>Etapa<select name="fase">'+opF(it.fase)+'</select></label>',
-        async f=>{await call('item_edit',{id:it.id,texto:f.texto.value,resp:f.resp.value,prazo:f.prazo.value,fase:f.fase.value});toast('✓ Tarefa salva')},'Salvar',
+        async f=>{const novo={texto:f.texto.value.trim(),resp:f.resp.value,prazo:f.prazo.value,fase:f.fase.value};if(!novo.texto)throw new Error('Escreva a tarefa.');const velho={texto:it.texto,resp:it.resp,prazo:it.prazo,fase:it.fase};
+          Object.assign(it,novo);call('item_edit',Object.assign({id:it.id},novo)).then(()=>pintarMantendo()).catch(x=>{Object.assign(it,velho);pintarMantendo();toast('Não salvou: '+x.message)})},'Salvar',
         '<span class="esq" style="display:flex;gap:6px"><button type="button" class="tf-btn" data-del>🗑</button><button type="button" class="tf-btn" data-up aria-label="Subir">↑</button><button type="button" class="tf-btn" data-dn aria-label="Descer">↓</button></span>');
       f.querySelector('[data-del]').onclick=async e=>{const bt=e.currentTarget;if(!bt.dataset.c){bt.dataset.c=1;bt.textContent='Apagar?';return}try{await call('item_del',{id:it.id});f.parentNode.remove();pintar();toast('Tarefa apagada')}catch(x){f.querySelector('.msg').textContent=x.message}};
       f.querySelector('[data-up]').onclick=async()=>{try{await call('item_mover',{id:it.id,dir:-1});pintar()}catch(x){f.querySelector('.msg').textContent=x.message}};
