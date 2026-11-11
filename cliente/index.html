@@ -681,7 +681,8 @@ async function carregarGaleria(){
 // ---- Atualiza sozinho (sem F5): a cada 60 s, só com a aba visível e quando ninguém está digitando ou com janela aberta
 let ultimoHash='';
 const hashDados=j=>JSON.stringify([j.galerias,j.contratos,j.proximos,j.eventos,j.agenda]);
-function ocupadoAgora(){const vis=id=>{const e=$(id);return e&&!e.hidden};
+let salvandoFundo=0;
+function ocupadoAgora(){if(salvandoFundo>0)return true;const vis=id=>{const e=$(id);return e&&!e.hidden};
   if(vis('admModal')||vis('ctrModal')||vis('lb')||vis('dl')||document.querySelector('.tf-mod,.mais-l:not([hidden])'))return true;
   const a=document.activeElement;if(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))return true;
   if([...document.querySelectorAll('.pc-aj')].some(x=>!x.hidden))return true;
@@ -976,7 +977,17 @@ function cartao(g,p,n){
   aj.querySelector('.cc').onclick=()=>{aj.hidden=true};
   c.querySelector('.pc-sh').onclick=e=>compartilharPost(g,p,e.currentTarget);
   const bd=c.querySelector('.pc-data');if(bd)bd.onclick=()=>modal('Mudar a data do post',itensConf([p])+campo('data','Nova data','date',' required value="'+escH(p.data||'')+'"')+'<p class="am-dica">Os arquivos no Drive são renomeados com a nova data. A aprovação continua valendo.</p>',
-    async f=>{const nd=f.data.value;if(!nd)throw new Error('Escolha a data.');if(nd===p.data)return;checarContrato(f,excedeContrato(g,nd,p.tipo,p.k));await chamar({acao:'adm_postdata',ent:g.id,k:p.k,data:nd});gsMes=nd.slice(0,7);await admRecarregar('📅 Data alterada para '+nd.split('-').reverse().join('/'))},'Salvar data');
+    async f=>{const nd=f.data.value;if(!nd)throw new Error('Escolha a data.');if(nd===p.data)return;checarContrato(f,excedeContrato(g,nd,p.tipo,p.k));
+      // muda na tela na hora (data, dia da semana no título, calendário) e o Drive é atualizado por trás
+      const SIG=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];const dw=SIG[new Date(nd+'T12:00:00').getDay()];
+      const antes={data:p.data,titulo:p.titulo,k:p.k};const mesAntes=gsMes;
+      p.data=nd;p.titulo=p.titulo.replace(/^(dom|seg|ter|qua|qui|sex|s[áa]b)(?=$|[\s._-])/i,m=>m===m.toUpperCase()?dw.toUpperCase():m[0]===m[0].toUpperCase()?dw:dw.toLowerCase());
+      gsMes=nd.slice(0,7);const y=scrollY;pintarGestao(g);
+      const foco=()=>{const el=document.querySelector('.pc[data-k="'+CSS.escape(p.k)+'"]');if(el&&gsMes===mesAntes){el.classList.add('pop');window.scrollTo(0,y)}else if(el){el.scrollIntoView({block:'center'});el.classList.add('pop')}else window.scrollTo(0,y)};
+      requestAnimationFrame(foco);toast('📅 Data alterada para '+nd.split('-').reverse().join('/')+' · salvando no Drive…');
+      salvandoFundo++;chamar({acao:'adm_postdata',ent:g.id,k:antes.k,data:nd}).finally(()=>salvandoFundo--).then(j=>{if(j.k){const velho=p.k;p.k=j.k;if(j.titulo)p.titulo=j.titulo;if(j.v)p.v=j.v;
+          const el=document.querySelector('.pc[data-k="'+CSS.escape(velho)+'"]');if(el){const y2=scrollY;pintarGestao(g);window.scrollTo(0,y2)}}toast('✓ Data salva no Drive')})
+        .catch(x=>{Object.assign(p,antes);gsMes=mesAntes;const y2=scrollY;pintarGestao(g);window.scrollTo(0,y2);toast('Não deu para mudar a data: '+x.message)})},'Salvar data');
   const bx=c.querySelector('.pc-del');if(bx)bx.onclick=()=>confirmar('Excluir este post?',itensConf([p])+'<p class="cf-dica">Os arquivos vão para a <b>lixeira do Google Drive</b> (dá para recuperar por 30 dias) e o post sai do calendário'+(g.propria?'':' do cliente')+'.</p>','🗑 Sim, excluir',
     async()=>{await chamar({acao:'adm_postexcluir',ent:g.id,k:p.k});await admRecarregar('🗑 Post excluído')});
   const hi=c.querySelector('.pc-hora');if(hi)hi.onchange=async()=>{const v=hi.value;hi.disabled=true;
