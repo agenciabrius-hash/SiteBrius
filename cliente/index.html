@@ -8,6 +8,11 @@
 <meta name="theme-color" content="#141210">
 <link rel="icon" href="../favicon.ico" sizes="any">
 <link rel="apple-touch-icon" href="../img/icone-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Brius">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta property="og:title" content="Área do Cliente · Brius Agência">
 <meta property="og:description" content="Fotos, vídeos e conteúdos dos clientes da Brius Agência.">
 <meta property="og:image" content="https://agenciabrius.com.br/img/capa-compartilhar.jpg">
@@ -418,6 +423,15 @@ input:focus{border-color:var(--gold)}
 /* toque rápido: sem espera de duplo toque, com resposta imediata ao apertar */
 a,button,label,summary,select,input,textarea,[role=button],[tabindex]{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 button:not(:disabled):active,.btn:active,.marca:active,.gs-d:active{transform:scale(.97);transition:transform .06s}
+
+/* ---- app na tela inicial ---- */
+.app-dica{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;position:relative;padding-right:40px!important;margin:0 0 18px;padding:14px 16px;border-radius:18px;background:linear-gradient(135deg,rgba(184,149,90,.16),rgba(184,149,90,.04));border:1px solid rgba(184,149,90,.4);animation:gsPan .5s both}
+.app-dica img{width:46px;height:46px;border-radius:12px;flex:none}
+.app-dica .tx{flex:1 1 170px;min-width:0}.app-dica b{display:block;font:500 17px var(--serif)}.app-dica small{display:block;color:var(--muted-d);font-size:13px;line-height:1.4;margin-top:2px}
+.app-dica .btn{padding:9px 16px;font-size:14px;flex:none;width:auto!important;margin-left:60px}.app-dica .x{position:absolute;top:8px;right:8px;background:none;border:0;color:var(--muted-d);font-size:18px;cursor:pointer;padding:6px}
+.ios-passo{display:grid;gap:12px;margin:4px 0 8px}.ios-passo div{display:flex;gap:12px;align-items:center;background:var(--graphite-2);border-radius:14px;padding:12px 14px;font-size:15px}
+.ios-passo i{font-style:normal;width:30px;height:30px;border-radius:50%;background:var(--gold-soft);color:var(--ink);display:grid;place-items:center;font-weight:800;flex:none}
+@media (display-mode:standalone){.kick#gOla{margin-top:env(safe-area-inset-top)}}
 .t-ca{background:#7fb6e6}
 .cap{background:var(--graphite);border:1px solid #3a352f;border-radius:18px;padding:16px 18px;margin:0 0 18px}
 .cap-h{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}.cap h4{margin:0 0 3px;font:500 20px var(--serif)}.cap-h small{color:var(--muted-d);font-size:13.5px}
@@ -554,6 +568,7 @@ button:not(:disabled):active,.btn:active,.marca:active,.gs-d:active{transform:sc
       </div>
       <div class="acoes" id="gAcoes"></div>
     </div>
+    <div class="app-dica" id="appDica" hidden></div>
     <div class="abas" id="gAbas"></div>
     <div id="gContratos"></div>
     <div id="gConteudo"></div>
@@ -584,7 +599,7 @@ button:not(:disabled):active,.btn:active,.marca:active,.gs-d:active{transform:sc
 const API_URL='https://script.google.com/macros/s/AKfycbxv6WLxKRDICMjAqAGWB8Uu5oZnL-zMWQWgFxdwFTwFRyiFFvH6YV5cxWbDOoV7hOQm/exec';
 const $=id=>document.getElementById(id);
 const telas=['telaCodigo','telaLogin','telaSenha','telaEsqueci','telaGal','telaCarregando'];
-function mostrar(t){telas.forEach(x=>$(x).hidden=x!==t);$('sair').hidden=t!=='telaGal';$('voltar').hidden=t==='telaGal';window.scrollTo(0,0)}
+function mostrar(t){telas.forEach(x=>$(x).hidden=x!==t);$('sair').hidden=t!=='telaGal';$('voltar').hidden=t==='telaGal';window.scrollTo(0,0);if(t==='telaGal')setTimeout(()=>{try{appInst.mostrar()}catch(e){}},1500)}
 const guardar={get(){try{return localStorage.getItem('brius_sessao')||''}catch(e){return memo}},set(v){memo=v;try{v?localStorage.setItem('brius_sessao',v):localStorage.removeItem('brius_sessao')}catch(e){}}};
 let memo='';
 async function api(dados){
@@ -857,6 +872,21 @@ function ligarGsNav(g){const nav=$('gsNav');if(!nav)return;if(g.leitura&&!ligarG
   document.querySelectorAll('.gs-pan').forEach(x=>x.hidden=true);gsIr(gsSec);requestAnimationFrame(gsInd)}
 addEventListener('resize',()=>gsInd());
 {const _a=pintarGestao,_b=pintarCapt,_c=pintarMens;pintarGestao=function(g){_a(g);gsBadges(g)};pintarCapt=function(g){_b(g);gsBadges(g)};pintarMens=function(g){_c(g);gsBadges(g)}}
+
+// ---- Área do Cliente como app (tela inicial do celular)
+const appInst=(()=>{let ev=null;const ls=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
+  const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+  const ios=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  const movel=/android|iphone|ipad|ipod/i.test(navigator.userAgent)||ios;
+  if('serviceWorker' in navigator&&location.protocol==='https:')addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{scope:'./'}).catch(()=>{}));
+  addEventListener('beforeinstallprompt',e=>{e.preventDefault();ev=e;mostrar()});
+  addEventListener('appinstalled',()=>{try{localStorage.setItem('app_ok','1')}catch(x){}const d=$('appDica');if(d)d.hidden=true;toast('✓ Pronto! A Brius está na sua tela inicial.')});
+  function mostrar(){const d=$('appDica');if(!d||standalone||ls('app_ok')||(+ls('app_nao')||0)>Date.now())return;if(!ev&&!(ios&&movel))return;if($('telaGal').hidden)return;
+    d.innerHTML='<img src="../img/icone-192.png" alt=""><span class="tx"><b>Coloque a Brius na tela inicial</b><small>Abre como um app, direto na sua área, sem procurar o link.</small></span><button type="button" class="btn" id="appSim">Adicionar</button><button type="button" class="x" id="appNao" aria-label="Agora não">✕</button>';d.hidden=false;
+    $('appNao').onclick=()=>{try{localStorage.setItem('app_nao',String(Date.now()+30*864e5))}catch(x){}d.hidden=true};
+    $('appSim').onclick=async()=>{if(ev){ev.prompt();const r=await ev.userChoice.catch(()=>null);ev=null;if(r&&r.outcome==='accepted'){try{localStorage.setItem('app_ok','1')}catch(x){}d.hidden=true}return}
+      modal('Adicionar à tela inicial','<div class="ios-passo"><div><i>1</i><span>Toque em <b>Compartilhar</b> <span aria-hidden="true">( ⬆︎ )</span> na barra do Safari</span></div><div><i>2</i><span>Role e toque em <b>Adicionar à Tela de Início</b></span></div><div><i>3</i><span>Toque em <b>Adicionar</b>. Pronto, o ícone da Brius aparece no seu celular.</span></div></div><p class="am-dica">No iPhone isso só funciona pelo <b>Safari</b>.</p>',async()=>{try{localStorage.setItem('app_ok','1')}catch(x){}d.hidden=true},'Entendi')}}
+  return {mostrar}})();
 function doMes(g){return g.posts.filter(p=>(p.data||'').slice(0,7)===gsMes||(!p.data&&gsMes===null))}
 function pintarGestao(g){
   const tot=g.posts.length,ap=g.posts.filter(p=>p.status==='Aprovado').length,rf=g.posts.filter(p=>p.status==='Refazer').length,pd=g.posts.filter(pend).length;
