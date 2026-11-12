@@ -433,6 +433,10 @@ button:not(:disabled):active,.btn:active,.marca:active,.gs-d:active{transform:sc
 .ios-passo i{font-style:normal;width:30px;height:30px;border-radius:50%;background:var(--gold-soft);color:var(--ink);display:grid;place-items:center;font-weight:800;flex:none}
 @media (display-mode:standalone){.kick#gOla{margin-top:env(safe-area-inset-top)}}
 .ins,.ins *{min-width:0}.ins-top a>span{overflow:hidden}.ins-top a>span b,.ins-top a>span small{overflow-wrap:anywhere}
+.fx-tot{margin-top:12px;padding:14px 16px;border-radius:16px;background:var(--graphite-2);border:1px solid #3a352f;display:grid;gap:8px}
+.fx-tl{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:14px;color:var(--muted-d)}.fx-tl small{font-size:12px}.fx-tl b{color:var(--bone);font-size:15px;font-variant-numeric:tabular-nums}.fx-tl b.ok{color:#7fc49a}
+.fx-big{padding-top:8px;border-top:1px dashed #4a443d;color:var(--bone)}.fx-big b{font:500 24px var(--serif);color:var(--gold-soft)}
+.fx-prox{padding-top:8px;border-top:1px solid #2f2b26}.fx-tot .btn{justify-self:start;margin-top:4px}
 .t-ca{background:#7fb6e6}
 .cap{background:var(--graphite);border:1px solid #3a352f;border-radius:18px;padding:16px 18px;margin:0 0 18px}
 .cap-h{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}.cap h4{margin:0 0 3px;font:500 20px var(--serif)}.cap-h small{color:var(--muted-d);font-size:13.5px}
@@ -1503,7 +1507,21 @@ function blocoFixas(){const fx=(finDados.fixas||[]).filter(f=>f.sit!=='quitada')
   return '<div class="fx"><div class="fx-h"><div><h4 class="fin-h" style="margin:0">Contas fixas do mês</h4><small>Por mês: <b>'+rv(tot)+'</b> · falta pagar: <b>'+rv(falta)+'</b></small></div><button type="button" class="btn sec" id="fxAdd">+ Conta fixa</button></div>'+
     (fx.length?'<div class="fin-lista">'+fx.map(f=>'<div class="fin-l fx-l"><span class="d">dia '+f.dia+'</span><span class="t"><b>'+escH(f.nome)+'</b><small>'+escH(f.cat||'')+(f.total?' · parcela '+Math.max(1,Math.min(f.n,f.total))+'/'+f.total:' · assinatura')+(f.forma?' · '+escH(f.forma):'')+'</small></span><span class="v">'+rv(f.valor)+'</span>'+
       '<span class="fx-a"><span class="fx-s" style="--c:'+chip[f.sit][1]+'">'+chip[f.sit][0]+'</span>'+((f.sit==='aberta'||f.sit==='atrasada')?'<button type="button" class="fx-pg" data-fx="'+escH(f.id)+'">✓ Paguei</button>':'')+'<button type="button" class="fx-ed" data-fxed="'+escH(f.id)+'" aria-label="Editar conta fixa">✏️</button><button type="button" class="del2" data-fxdel="'+escH(f.id)+'" aria-label="Remover conta fixa">🗑</button></span></div>').join('')+'</div>'
-    :'<p class="ra-t">Nenhuma conta fixa ainda. Cadastre a parcela da câmera, Adobe, Canva, internet…</p>')+'</div>'}
+    :'<p class="ra-t">Nenhuma conta fixa ainda. Cadastre a parcela da câmera, Adobe, Canva, internet…</p>')+fxTotais(fx)+'</div>'}
+// soma de todas as contas fixas (refeita sempre que você adiciona, edita, remove ou paga uma)
+function fxTotais(fx){if(!fx.length)return '';const hj=new Date();const ym=(y,m)=>y+'-'+String(m).padStart(2,'0');
+  const mesN=d=>{const [y,m]=d.split('-').map(Number);return y*12+m-1};const agora=ym(hj.getFullYear(),hj.getMonth()+1);const prox=ym(new Date(hj.getFullYear(),hj.getMonth()+1,1).getFullYear(),new Date(hj.getFullYear(),hj.getMonth()+1,1).getMonth()+1);
+  const vale=(f,mes)=>{const ini=f.inicio||mes;if(mesN(ini)>mesN(mes))return false;const n=mesN(mes)-mesN(ini)+1;return !f.total||n<=f.total};
+  const soma=l=>l.reduce((s,f)=>s+(+f.valor||0),0);
+  const este=fx.filter(f=>vale(f,agora)),seg=fx.filter(f=>vale(f,prox));
+  const pago=soma(este.filter(f=>f.sit==='paga')),falta=soma(este.filter(f=>f.sit==='aberta'||f.sit==='atrasada'));
+  const cartao=este.filter(f=>/cart[aã]o de cr[eé]dito/i.test(f.forma||'')&&(f.sit==='aberta'||f.sit==='atrasada'));
+  const NM=d=>MESES[+d.slice(5)-1];
+  return '<div class="fx-tot"><div class="fx-tl"><span>Total de '+NM(agora)+' <small>('+este.length+' conta'+(este.length===1?'':'s')+')</small></span><b>'+rv(soma(este))+'</b></div>'+
+    (este.length?'<div class="fx-tl"><span>Já pago</span><b class="ok">'+rv(pago)+'</b></div><div class="fx-tl fx-big"><span>Falta pagar</span><b>'+rv(falta)+'</b></div>':'')+
+    (cartao.length>1?'<div class="fx-tl"><span>💳 No cartão de crédito <small>('+cartao.length+' contas)</small></span><b>'+rv(soma(cartao))+'</b></div>':'')+
+    '<div class="fx-tl fx-prox"><span>Total de '+NM(prox)+' <small>('+seg.length+' conta'+(seg.length===1?'':'s')+')</small></span><b>'+rv(soma(seg))+'</b></div>'+
+    (este.filter(f=>f.sit==='aberta'||f.sit==='atrasada').length>1?'<button type="button" class="btn" id="fxTodas">✓ Paguei todas ('+rv(falta)+')</button>':'')+'</div>'}
 function formFixa(f){const hj=new Date();const ym=hj.getFullYear()+'-'+String(hj.getMonth()+1).padStart(2,'0');const e=f||{};const va=x=>' value="'+escH(String(x))+'"';
   const fmts=['Cartão de crédito','Pix','Boleto','Débito automático','Cartão de débito'];const cats=CAT_SAI.indexOf(e.cat)===-1&&e.cat?CAT_SAI.concat([e.cat]):CAT_SAI;
   modal(f?'Editar conta fixa':'Nova conta fixa',campo('nome','Nome (ex.: Parcela da câmera Sony, Adobe, Canva)','text',' required maxlength="80"'+(f?va(e.nome):''))+'<div class="am-2">'+campo('valor','Valor por mês (R$)','text',' inputmode="decimal" required placeholder="Ex.: 389,90"'+(f?va(String(e.valor).replace('.',',')):''))+campo('dia','Dia do vencimento','number',' min="1" max="31" required'+va(f?e.dia:10))+'</div>'+
@@ -1513,6 +1531,9 @@ function formFixa(f){const hj=new Date();const ym=hj.getFullYear()+'-'+String(hj
     async fm=>{const d=Object.fromEntries(new FormData(fm));finDados=await chamar(Object.assign({acao:f?'adm_fixa_edit':'adm_fixa_add',id:e.id},d));pintarFinanceiro();toast(f?'✓ Conta fixa atualizada':'✓ Conta fixa cadastrada')},f?'Salvar':'Cadastrar')}
 function ligarFixas(){
   if($('fxAdd'))$('fxAdd').onclick=()=>formFixa(null);
+  if($('fxTodas'))$('fxTodas').onclick=()=>{const l=(finDados.fixas||[]).filter(f=>f.sit==='aberta'||f.sit==='atrasada');const tot=l.reduce((s,f)=>s+(+f.valor||0),0);
+    confirmar('Marcar todas como pagas?','<ul class="cf-lista">'+l.map(f=>'<li><span>💳</span><span><b>'+escH(f.nome)+'</b><small>'+(f.total?'parcela '+f.n+'/'+f.total+' · ':'')+reais(f.valor)+'</small></span></li>').join('')+'</ul><p class="cf-dica">Total: <b>'+reais(tot)+'</b>. Vai lançar uma <b>saída</b> de hoje para cada conta no Financeiro.</p>','✓ Paguei todas',async()=>{
+      for(const f of l){finDados=await chamar({acao:'adm_fixa_pagar',id:f.id,mes:f.mes})}pintarFinanceiro();toast('✓ '+l.length+' contas pagas · '+reais(tot))})};
   document.querySelectorAll('[data-fxed]').forEach(b=>b.onclick=()=>{const f=(finDados.fixas||[]).find(x=>x.id===b.dataset.fxed);if(f)formFixa(f)});
   document.querySelectorAll('[data-fx]').forEach(b=>b.onclick=()=>{const f=(finDados.fixas||[]).find(x=>x.id===b.dataset.fx);if(!f)return;
     confirmar('Marcar como paga?','<p class="cf-dica"><b>'+escH(f.nome)+'</b>'+(f.total?' · parcela '+f.n+'/'+f.total:'')+'<br>Vai lançar uma <b>saída</b> de hoje no Financeiro.</p>','✓ Paguei',async()=>{finDados=await chamar({acao:'adm_fixa_pagar',id:f.id,mes:f.mes});pintarFinanceiro();toast('✓ Pagamento lançado')})});
