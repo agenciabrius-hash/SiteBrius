@@ -18,7 +18,9 @@ const ESTILO=`
 .tf-menu{position:relative}.tf-menu ul{position:absolute;right:0;top:calc(100% + 6px);z-index:20;list-style:none;margin:0;padding:6px;background:var(--graphite-2);border:1px solid #3a352f;border-radius:14px;min-width:230px;box-shadow:0 18px 40px rgba(0,0,0,.45);animation:tfPop .18s ease-out}
 .tf-menu li button{width:100%;text-align:left;border:0;background:none;color:var(--bone);font:600 14px var(--body);padding:11px 12px;border-radius:10px;cursor:pointer}.tf-menu li button:hover{background:#2f2b26}
 .tf-res{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:0 0 18px}
-.tf-res div{background:var(--graphite);border:1px solid #3a352f;border-radius:16px;padding:14px 16px;animation:tfIn .5s both}
+.tf-res .tf-c{text-align:left;font:inherit;color:inherit;cursor:pointer;background:var(--graphite);border:1px solid #3a352f;border-radius:16px;padding:14px 16px;animation:tfIn .5s both;transition:border-color .2s,background .2s,transform .15s}
+.tf-res .tf-c:hover{border-color:#5a534b}.tf-res .tf-c.on{border-color:var(--gold-soft);background:rgba(230,211,174,.08);box-shadow:0 0 0 3px rgba(230,211,174,.15)}
+.tf-fh2{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}.tf-fh2 h4{margin:0!important}.tf-fh2 .tf-btn{padding:7px 12px;font-size:13px}
 .tf-res b{display:block;font:500 30px/1 var(--serif)}.tf-res small{color:var(--muted-d);font-size:13px}.tf-res .late b{color:var(--late)}.tf-res .ok b{color:var(--ok)}
 .tf-hoje{background:linear-gradient(135deg,rgba(184,149,90,.14),rgba(184,149,90,.03));border:1px solid rgba(184,149,90,.4);border-radius:18px;padding:14px 16px;margin:0 0 18px;animation:tfIn .5s both}
 .tf-hoje h4{margin:0 0 6px;font:500 20px var(--serif)}.tf-hoje .tf-i{background:rgba(20,18,16,.35)}
@@ -90,7 +92,7 @@ const CK='<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 window.Tarefas=function(opts){
   if(!document.getElementById('tfCss')){const st=document.createElement('style');st.id='tfCss';st.textContent=ESTILO;document.head.appendChild(st)}
   const el=opts.el;let D=null;let quem=(()=>{try{return localStorage.getItem('tf_quem')||opts.quem||''}catch(e){return opts.quem||''}})();
-  const abertos=new Set();let primeira=true;let menuAberto=false;
+  const abertos=new Set();let primeira=true;let menuAberto=false;let filtro='';
   const toast=t=>{const e=document.createElement('div');e.className='tf-toast';e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),2700)};
   const festa=(x,y)=>{['🎉','✨','🎬','💛','⭐'].forEach((c,i)=>{for(let k=0;k<2;k++){const s=document.createElement('span');s.className='tf-fest';s.textContent=c;s.style.left=x+'px';s.style.top=y+'px';
     s.style.setProperty('--x',(Math.random()*240-120)+'px');s.style.setProperty('--y',(-80-Math.random()*160)+'px');s.style.setProperty('--r',(Math.random()*400-200)+'deg');document.body.appendChild(s);setTimeout(()=>s.remove(),1200)}})};
@@ -140,10 +142,14 @@ window.Tarefas=function(opts){
     const pes=[['','Todos',''],['Matheus','Matheus','m'],['Sabrina','Sabrina','s']];
     el.innerHTML='<div class="tf"><div class="tf-top"><div class="tf-pes" role="group" aria-label="Ver tarefas de">'+pes.map(([v,t,c])=>'<button type="button" data-q="'+v+'" aria-pressed="'+(quem===v)+'">'+(c?'<i class="tf-dot '+c+'"></i>':'')+t+'</button>').join('')+'<span class="pill"></span></div>'+
       (opts.admin?'<div class="tf-bts"><button type="button" class="tf-btn pri" data-np>＋ Projeto</button><div class="tf-menu"><button type="button" class="tf-btn" data-mn aria-label="Mais opções">⋯</button>'+(menuAberto?'<ul><li><button type="button" data-ml>🔗 Link para a Sabrina</button></li><li><button type="button" data-mm>📋 Editar o checklist padrão da gravação</button></li></ul>':'')+'</div></div>':'')+'</div>'+
-      '<div class="tf-res"><div class="'+(late.length?'late':'')+'" style="animation-delay:.02s"><b>'+late.length+'</b><small>atrasada'+(late.length===1?'':'s')+'</small></div><div style="animation-delay:.06s"><b>'+hjL.length+'</b><small>para hoje</small></div><div style="animation-delay:.1s"><b>'+sem.length+'</b><small>nos próximos 7 dias</small></div><div class="ok" style="animation-delay:.14s"><b>'+todas.filter(x=>x.feito).length+'/'+todas.length+'</b><small>feitas'+(quem?' por '+esc(quem):'')+'</small></div></div>'+
-      (urg.length?'<div class="tf-hoje"><h4>'+(late.length?'⚠ Fazer primeiro':'☀️ Para hoje')+'</h4><ul class="tf-l">'+urg.slice(0,8).map(it=>itemHtml(it,it.proj)).join('')+'</ul></div>':'')+
+      (()=>{const card=(k,n,txt,cls,d)=>'<button type="button" class="tf-c'+(cls?' '+cls:'')+(filtro===k?' on':'')+'" data-f="'+k+'" aria-pressed="'+(filtro===k)+'" style="animation-delay:'+d+'s"><b>'+n+'</b><small>'+txt+'</small></button>';
+        return '<div class="tf-res">'+card('late',late.length,'atrasada'+(late.length===1?'':'s'),late.length?'late':'',.02)+card('hoje',hjL.length,'para hoje','',.06)+card('sem',sem.length,'nos próximos 7 dias','',.1)+card('feitas',todas.filter(x=>x.feito).length+'/'+todas.length,'feitas'+(quem?' por '+esc(quem):''),'ok',.14)+'</div>'})()+
+      (filtro?(()=>{const L={late:late,hoje:hjL,sem:sem,feitas:todas.filter(x=>x.feito)}[filtro]||[];const T={late:'⚠ Atrasadas',hoje:'☀️ Para hoje',sem:'📅 Nos próximos 7 dias',feitas:'✓ Feitas'}[filtro];
+        L.sort((a,b)=>(a.prazo||'9999').localeCompare(b.prazo||'9999'));
+        return '<div class="tf-hoje tf-filt"><div class="tf-fh2"><h4>'+T+(quem?' · '+esc(quem):'')+'</h4><button type="button" class="tf-btn" data-f="">✕ Ver tudo</button></div>'+(L.length?'<ul class="tf-l">'+L.map(it=>itemHtml(it,it.proj)).join('')+'</ul>':'<p class="tf-dica">Nada aqui. 🎉</p>')+'</div>'})()
+      :(urg.length?'<div class="tf-hoje"><h4>'+(late.length?'⚠ Fazer primeiro':'☀️ Para hoje')+'</h4><ul class="tf-l">'+urg.slice(0,8).map(it=>itemHtml(it,it.proj)).join('')+'</ul></div>':'')+
       (ativos.length?ativos.map((p,i)=>projHtml(p).replace('<article ','<article style="animation-delay:'+(i*.05)+'s" ')).join(''):'<p class="tf-vz">Nenhum projeto em andamento. '+(opts.admin?'Toque em <b>＋ Projeto</b> para criar, ou confirme uma gravação na agenda que o checklist aparece aqui sozinho.':'')+'</p>')+
-      (feitos.length?'<details class="tf-conc"><summary>Concluídos ('+feitos.length+')</summary>'+feitos.map(projHtml).join('')+'</details>':'')+'</div>';
+      (feitos.length?'<details class="tf-conc"><summary>Concluídos ('+feitos.length+')</summary>'+feitos.map(projHtml).join('')+'</details>':''))+'</div>';
     ligar()}
   function pintarMantendo(){const a=document.activeElement;let alvo=null,val='',sel=null;
     if(a&&el.contains(a)&&a.name==='texto'&&a.closest('.tf-add')){alvo=[a.closest('.tf-p').dataset.pid,a.closest('.tf-f').dataset.fase];val=a.value;sel=a.closest('.tf-add').resp.value}
@@ -152,6 +158,7 @@ window.Tarefas=function(opts){
   function acharItem(id){for(const p of D.projetos){const it=p.itens.find(x=>x.id===id);if(it)return [p,it]}return []}
   function ligar(){
     moverPill();
+    el.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{filtro=filtro===b.dataset.f?'':b.dataset.f;pintar()});
     el.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>{quem=b.dataset.q;try{localStorage.setItem('tf_quem',quem)}catch(e){}pintar()});
     el.querySelectorAll('.tf-ph').forEach(b=>b.onclick=()=>{const a=b.closest('.tf-p');const id=a.dataset.pid;if(abertos.has(id))abertos.delete(id);else abertos.add(id);a.classList.toggle('aberto');b.setAttribute('aria-expanded',a.classList.contains('aberto'))});
     el.querySelectorAll('.tf-ck').forEach(b=>b.onclick=async e=>{const li=b.closest('.tf-i');const [p,it]=acharItem(li.dataset.id);if(!it)return;
