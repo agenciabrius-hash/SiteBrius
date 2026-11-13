@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /cliente/
+Disallow: /tarefas/
+Disallow: /post/
 
 Sitemap: https://agenciabrius.com.br/sitemap.xml
