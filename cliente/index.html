@@ -934,7 +934,9 @@ function pintarGestao(g){
 function pintarRelatorio(g,mesP){
   const box=$('gsRelC');if(!box)return;const [a,mm]=(gsMes||'').split('-').map(Number);
   $('gsRelT').textContent=a?MESES[mm-1]+' '+a:'';
-  if(!mesP.length){box.innerHTML='<p class="vazio" style="margin:6px 0 0">Nenhum conteúdo neste mês.</p>';const bi=blocoInsights(g);if(bi)box.appendChild(bi);return}
+  const imprimir=()=>{const bt=document.createElement('button');bt.type='button';bt.className='btn sec rel-imp';bt.textContent='🖨️ Imprimir / salvar em PDF';
+    bt.onclick=()=>{try{gsIr('rel')}catch(e){}$('gsRel').open=true;document.body.classList.add('imprimindo-rel');setTimeout(()=>{window.print();setTimeout(()=>document.body.classList.remove('imprimindo-rel'),500)},120)};box.appendChild(bt)};
+  if(!mesP.length){box.innerHTML='<p class="vazio" style="margin:6px 0 0">Nenhum post do calendário neste mês.</p>';const bi=blocoInsights(g);if(bi)box.appendChild(bi);imprimir();return}
   const ap=mesP.filter(p=>p.status==='Aprovado').length,rf=mesP.filter(p=>p.status==='Refazer').length,pd=mesP.filter(pend).length;
   const tipos={};mesP.forEach(p=>tipos[p.tipo]=(tipos[p.tipo]||0)+1);const max=Math.max(...Object.values(tipos));
   const sem=[0,0,0,0,0];mesP.forEach(p=>{if(p.data)sem[Math.min(4,Math.floor((+p.data.slice(8)-1)/7))]++});const ms=Math.max(1,...sem);
@@ -945,7 +947,7 @@ function pintarRelatorio(g,mesP){
     '<p class="rel-taxa">'+(mesP.length?Math.round(ap/mesP.length*100):0)+'% aprovado · '+(ap+rf?Math.round(mesP.filter(p=>p.status==='Aprovado').length/(ap+rf)*100):0)+'% de aprovação entre os respondidos</p>'+
     '<button type="button" class="btn sec rel-imp">🖨️ Imprimir / salvar em PDF</button>';
   const bi=blocoInsights(g);if(bi)box.insertBefore(bi,box.querySelector('.rel-taxa'));
-  box.querySelector('.rel-imp').onclick=()=>{$('gsRel').open=true;document.body.classList.add('imprimindo-rel');window.print();setTimeout(()=>document.body.classList.remove('imprimindo-rel'),500)};
+  {const b0=box.querySelector('.rel-imp');if(b0)b0.remove();imprimir()}
 }
 function cartao(g,p,n){
   const c=document.createElement('article');c.className='pc';c.dataset.k=p.k;c.style.animationDelay=Math.min(n*60,400)+'ms';
