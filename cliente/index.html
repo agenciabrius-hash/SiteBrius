@@ -437,6 +437,9 @@ button:not(:disabled):active,.btn:active,.marca:active,.gs-d:active{transform:sc
 .fx-tl{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:14px;color:var(--muted-d)}.fx-tl small{font-size:12px}.fx-tl b{color:var(--bone);font-size:15px;font-variant-numeric:tabular-nums}.fx-tl b.ok{color:#7fc49a}
 .fx-big{padding-top:8px;border-top:1px dashed #4a443d;color:var(--bone)}.fx-big b{font:500 24px var(--serif);color:var(--gold-soft)}
 .fx-prox{padding-top:8px;border-top:1px solid #2f2b26}.fx-tot .btn{justify-self:start;margin-top:4px}
+button.fin-l.rec-b{width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;background:none;border:0;border-bottom:1px solid #2f2b26;transition:background .2s}button.fin-l.rec-b:hover{background:rgba(255,255,255,.03)}.rec-b u{color:var(--gold-soft);text-decoration-color:rgba(230,211,174,.4)}
+.rec-res{display:flex;gap:10px;margin:0 0 12px}.rec-res div{flex:1;background:var(--graphite-2);border-radius:14px;padding:12px 14px}.rec-res small{display:block;color:var(--muted-d);font-size:12px}.rec-res b{font:500 22px var(--serif)}.rec-res b.ok{color:#7fc49a}
+.rec-op{display:flex;gap:8px;margin:0 0 12px}.rec-op button{flex:1;border:1px solid #3a352f;background:none;color:var(--bone);border-radius:999px;padding:11px;font:700 14px var(--body);cursor:pointer}.rec-op button.on{background:var(--gold-soft);border-color:var(--gold-soft);color:var(--ink)}
 .t-ca{background:#7fb6e6}
 .cap{background:var(--graphite);border:1px solid #3a352f;border-radius:18px;padding:16px 18px;margin:0 0 18px}
 .cap-h{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}.cap h4{margin:0 0 3px;font:500 20px var(--serif)}.cap-h small{color:var(--muted-d);font-size:13.5px}
@@ -1489,11 +1492,12 @@ async function pintarFinanceiro(recarregar){
     '<div class="rel-g fin-g"><div><h4>Saídas por categoria</h4>'+barras(porCat('Saída'),'#f0a28f')+'</div><div><h4>Entradas por categoria</h4>'+barras(porCat('Entrada'),'#7fc49a')+'</div></div>'+
     '<h4 class="fin-h">Últimos 6 meses</h4><div class="fin-6">'+ult6.map(([ym,e,s])=>{const k=v=>finVer?(v>=1000?(v/1000).toLocaleString('pt-BR',{maximumFractionDigits:1})+' mil':Math.round(v).toLocaleString('pt-BR')):'•••';return '<div><span><i class="e" style="--h:'+(e/mx6*100)+'%" title="Entradas '+(finVer?reais(e):'oculto')+'"></i><i class="s" style="--h:'+(s/mx6*100)+'%" title="Saídas '+(finVer?reais(s):'oculto')+'"></i></span><small>'+MESES[+ym.slice(5)-1].slice(0,3)+'</small><em class="f6v">'+(e||s?(e?'<b class="e">+'+k(e)+'</b>':'')+(s?'<b class="s">−'+k(s)+'</b>':''):'—')+'</em></div>'}).join('')+'</div><p class="fin-leg"><i class="e"></i>Entradas <i class="s"></i>Saídas</p>'+
     '<h4 class="fin-h">Lançamentos de '+nomeM(finMes)+'</h4>'+(doMes.length?'<div class="fin-lista">'+doMes.map(i=>'<div class="fin-l '+(i.tipo==='Entrada'?'e':'s')+'"><span class="d">'+i.data.split('-').reverse().slice(0,2).join('/')+'</span><span class="t"><b>'+escH(i.desc||i.cat)+'</b><small>'+escH(i.cat)+(i.cliente?' · '+escH(i.cliente):'')+(i.forma?' · '+escH(i.forma):'')+(i.origem&&i.origem!=='Manual'?' · <em>automático</em>':'')+'</small></span><span class="v">'+(i.tipo==='Entrada'?'+ ':'− ')+rv(i.valor)+'</span><button type="button" class="del2" data-del="'+escH(i.id)+'" aria-label="Apagar lançamento">🗑</button></div>').join('')+'</div>':'<p class="ra-t">Nenhum lançamento neste mês.</p>')+
-    '<h4 class="fin-h">A receber</h4>'+(rec.length?'<div class="fin-lista">'+rec.map(r=>'<div class="fin-l r'+(r.sit==='atrasado'?' at':'')+'"><span class="d">'+r.data.split('-').reverse().slice(0,2).join('/')+'</span><span class="t"><b>'+escH(r.desc)+'</b><small>'+(r.sit==='atrasado'?'⚠ atrasado':r.sit==='confirmando'?'cliente avisou que pagou':r.sit==='evento'?'restante do evento':'a vencer')+'</small></span><span class="v">'+rv(r.valor)+'</span></div>').join('')+'</div>':'<p class="ra-t">Nada a receber agora.</p>')+
+    '<h4 class="fin-h">A receber</h4>'+(rec.length?'<div class="fin-lista">'+rec.map(r=>'<'+(r.manual&&r.id?'button type="button" data-rec="'+escH(r.id)+'"':'div')+' class="fin-l r'+(r.sit==='atrasado'?' at':'')+(r.manual&&r.id?' rec-b':'')+'"><span class="d">'+r.data.split('-').reverse().slice(0,2).join('/')+'</span><span class="t"><b>'+escH(r.desc)+'</b><small>'+(r.sit==='atrasado'?'⚠ atrasado':r.sit==='confirmando'?'cliente avisou que pagou':r.sit==='evento'?'falta receber':'a vencer')+(r.pago>0?' · já recebido '+rv(r.pago):'')+(r.manual&&r.id?' · <u>toque para registrar pagamento</u>':'')+'</small></span><span class="v">'+rv(r.valor)+'</span></'+(r.manual&&r.id?'button':'div')+'>').join('')+'</div>':'<p class="ra-t">Nada a receber agora.</p>')+
     '<p class="fin-obs">Mensalidades, sinais e restantes entram sozinhos como entrada quando você marca como pago. Tudo fica na aba "Financeiro" da planilha.</p></div>';
   $('finOlho').onclick=()=>{finVer=!finVer;const y=scrollY;pintarFinanceiro();window.scrollTo(0,y)};
   $('finSel').onchange=e=>{finMes=e.target.value;pintarFinanceiro()};
   ligarFixas();
+  c.querySelectorAll('[data-rec]').forEach(b=>b.onclick=()=>formReceber((finDados.receber||[]).find(x=>x.id===b.dataset.rec)));
   $('finEnt').onclick=()=>formFin('Entrada');$('finSai').onclick=()=>formFin('Saída');$('finAj').onclick=()=>formFin('Saldo inicial');
   $('finCsv').onclick=()=>{const l=[['Data','Tipo','Categoria','Descrição','Valor','Cliente','Forma','Origem']].concat(it.map(i=>[i.data.split('-').reverse().join('/'),i.tipo,i.cat,i.desc,String(i.valor).replace('.',','),i.cliente,i.forma,i.origem]));
     const csv='﻿'+l.map(r=>r.map(x=>'"'+String(x||'').replace(/"/g,'""')+'"').join(';')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='financeiro-brius.csv';a.click()};
@@ -1540,6 +1544,19 @@ function ligarFixas(){
   document.querySelectorAll('[data-fxdel]').forEach(b=>b.onclick=async()=>{if(!b.dataset.c){b.dataset.c=1;b.textContent='Remover?';setTimeout(()=>{delete b.dataset.c;b.textContent='🗑'},3500);return}
     try{finDados=await chamar({acao:'adm_fixa_del',id:b.dataset.fxdel});pintarFinanceiro();toast('Conta fixa removida')}catch(e){toast(e.message)}});
 }
+function formReceber(r){if(!r)return;const hj=new Date();const iso=new Date(hj.getTime()-hj.getTimezoneOffset()*6e4).toISOString().slice(0,10);
+  const v=n=>Number(n||0).toFixed(2).replace('.',',');
+  const f=modal('Registrar pagamento','<p class="am-dica" style="font-size:15px;color:var(--bone);margin-top:0"><b>'+escH(r.desc)+'</b>'+(r.cliente?'<br>'+escH(r.cliente):'')+'</p>'+
+    '<div class="rec-res"><div><small>Falta receber</small><b>'+reais(r.valor)+'</b></div>'+(r.pago>0?'<div><small>Já recebido</small><b class="ok">'+reais(r.pago)+'</b></div>':'')+'</div>'+
+    '<div class="rec-op"><button type="button" class="on" data-op="tudo">✓ Pagou tudo</button><button type="button" data-op="parte">Pagou uma parte</button></div>'+
+    '<div class="am-2">'+campo('valor','Quanto entrou (R$)','text',' inputmode="decimal" required value="'+v(r.valor)+'" readonly')+campo('data','Data','date',' required value="'+iso+'"')+'</div>'+
+    '<label>Forma<select name="forma"><option>Pix</option><option>Dinheiro</option><option>Transferência</option><option>Cartão</option></select></label><p class="am-dica" id="recDica">Entra no saldo e sai do "a receber".</p>',
+    async fm=>{finDados=await chamar({acao:'adm_fin_receber',id:r.id,valor:fm.valor.value,data:fm.data.value,forma:fm.forma.value});pintarFinanceiro();
+      const x=(finDados.receber||[]).find(y=>y.id===r.id);toast(x?'✓ Recebido · ainda faltam '+reais(x.valor):'✓ Pago tudo · '+escH(r.desc.split(' · ')[0])+' quitado')},'Registrar');
+  const dica=()=>{const n=Number(String(f.valor.value).replace(/\./g,'').replace(',','.'))||0;const resto=Math.max(0,r.valor-n);$('recDica').textContent=n>r.valor+0.005?'Esse valor é maior do que falta.':resto>0.004?'Entra '+reais(n)+' no saldo e ainda vão faltar '+reais(resto)+'.':'Entra '+reais(n)+' no saldo e o valor sai do "a receber".'};
+  f.querySelectorAll('[data-op]').forEach(b=>b.onclick=()=>{f.querySelectorAll('[data-op]').forEach(x=>x.classList.toggle('on',x===b));
+    if(b.dataset.op==='tudo'){f.valor.value=v(r.valor);f.valor.readOnly=true}else{f.valor.readOnly=false;f.valor.value='';f.valor.focus()}dica()});
+  f.valor.oninput=dica;dica()}
 function formFin(tipo){
   const hj=new Date();const iso=new Date(hj.getTime()-hj.getTimezoneOffset()*6e4).toISOString().slice(0,10);
   const cats=tipo==='Entrada'?CAT_ENT:CAT_SAI;
