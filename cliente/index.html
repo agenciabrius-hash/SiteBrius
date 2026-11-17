@@ -632,12 +632,15 @@ $('fLogin').addEventListener('submit',async e=>{
   ocupado(f,false);
 });
 let desafio='';
+function descAparelho(){const u=navigator.userAgent||'';const so=/iPhone/.test(u)?'iPhone':/iPad/.test(u)||(/Macintosh/.test(u)&&navigator.maxTouchPoints>1)?'iPad':/Android/.test(u)?'Android':/Windows/.test(u)?'Windows':/Mac OS X/.test(u)?'Mac':/CrOS/.test(u)?'Chromebook':/Linux/.test(u)?'Linux':'Outro';
+  const nav=/Edg\//.test(u)?'Edge':/OPR\//.test(u)?'Opera':/SamsungBrowser/.test(u)?'Samsung Internet':/CriOS|Chrome\//.test(u)?'Chrome':/FxiOS|Firefox\//.test(u)?'Firefox':/Safari\//.test(u)?'Safari':'outro navegador';
+  let app=false;try{app=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}catch(e){}return so+' · '+nav+(app?' · app instalado':'')}
 const aparelho={get(){try{return localStorage.getItem('brius_disp')||''}catch(e){return ''}},set(v){try{if(v)localStorage.setItem('brius_disp',v)}catch(e){}}};
 $('verCodigo').addEventListener('click',()=>{const i=$('inCodigo'),b=$('verCodigo'),v=i.type==='password';i.type=v?'text':'password';b.setAttribute('aria-pressed',v);b.setAttribute('aria-label',v?'Esconder código':'Mostrar código');b.title=v?'Esconder código':'Mostrar código';b.style.opacity=v?'1':'.7';i.focus()});
 $('fCodigo').addEventListener('reset',()=>{$('inCodigo').type='password'});
 $('fCodigo').addEventListener('submit',async e=>{
   e.preventDefault();const f=e.target;msg($('mCodigo'),'');ocupado(f,true);
-  try{const j=await api({acao:'login2',desafio:desafio,codigo:f.codigo.value});
+  try{const j=await api({acao:'login2',desafio:desafio,codigo:f.codigo.value,apar:descAparelho()});
     if(!j.ok){if(j.expirou){setTimeout(()=>mostrar('telaLogin'),1800)}throw new Error(j.erro)}
     aparelho.set(j.disp);guardar.set(j.sessao);f.reset();carregarGaleria();
   }catch(err){msg($('mCodigo'),err.message||'Não foi possível entrar agora.',true)}
@@ -650,7 +653,7 @@ $('fSenha').addEventListener('submit',async e=>{
   e.preventDefault();const f=e.target;
   if(f.senha.value!==f.senha2.value)return msg($('mSenha'),'As senhas não são iguais.',true);
   msg($('mSenha'),'');ocupado(f,true);
-  try{const j=await api({acao:'criarsenha',convite:convite,senha:f.senha.value});
+  try{const j=await api({acao:'criarsenha',convite:convite,senha:f.senha.value,apar:descAparelho()});
     if(!j.ok)throw new Error(j.erro);aparelho.set(j.disp);guardar.set(j.sessao);history.replaceState(null,'',location.pathname);carregarGaleria();
   }catch(err){msg($('mSenha'),err.message||'Não foi possível agora.',true)}
   ocupado(f,false);
