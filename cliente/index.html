@@ -449,6 +449,9 @@ button.fin-l.rec-b{width:100%;text-align:left;font:inherit;color:inherit;cursor:
 .cap-ac{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}.cap-ac .btn{padding:9px 16px;font-size:14px}.cap-it.sg{border-color:#4a443d;border-style:dashed}.cap-it.sg .cap-st{color:var(--muted-d)}
 .cap-sem{margin-top:12px;background:none;border:1px dashed #4a443d;color:var(--muted-d);border-radius:999px;padding:9px 16px;font:700 13px var(--body);cursor:pointer}.cap-sem:hover{color:var(--bone);border-color:var(--muted-d)}
 .cap-v{margin:10px 0 0;color:var(--muted-d);font-size:14px}
+.pp{margin-top:16px;padding-top:16px;border-top:1px solid #3a352f}.pp-h{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;justify-content:space-between}.pp-h>div{flex:1 1 260px}.pp h4{margin:0 0 4px;font:500 19px var(--serif)}.pp-h small{color:var(--muted-d);font-size:13.5px;line-height:1.45;display:block}
+.pp-l{display:grid;gap:10px;margin-top:12px}.pp-it{padding:12px 14px;border-radius:14px;border:1px solid rgba(127,182,230,.45);background:var(--graphite-2);display:grid;gap:3px}.pp-it.ok{border-color:rgba(127,196,154,.5)}.pp-it.ok .cap-st{color:#7fc49a}.pp-it p{margin:2px 0;font-size:14px;white-space:pre-wrap;color:var(--bone)}.pp-it small{color:var(--muted-d);font-size:12.5px}
+.pp-tp{display:grid;gap:8px;margin-bottom:12px}.pp-tp label{display:flex;gap:10px;align-items:flex-start;border:1px solid #3a352f;border-radius:14px;padding:10px 12px;cursor:pointer;margin:0}.pp-tp label:has(input:checked){border-color:var(--gold);background:rgba(184,149,90,.08)}.pp-tp input{margin:3px 0 0;accent-color:var(--gold);width:18px!important;height:18px;flex:0 0 18px;padding:0}.pp-tp span{display:grid;gap:2px}.pp-tp b{font-size:14.5px}.pp-tp small{color:var(--muted-d);font-size:12.5px}
 .ag-pend h4{font:500 19px var(--serif);margin:0}
 .cpk{background:var(--graphite-2);border-radius:14px;padding:12px;margin:6px 0 12px}.cpk-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.cpk-h b{font:500 18px var(--serif)}
 .cpk-h button{width:34px;height:34px;border-radius:50%;border:1px solid #3a352f;background:none;color:var(--bone);font-size:17px;cursor:pointer}.cpk-h button:disabled{opacity:.3;cursor:default}
@@ -812,7 +815,7 @@ function abrirGestao(g){
 // ---- Gravação do mês (captação): a cliente escolhe o dia, a Brius confirma
 const DSEM=['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
 function capQuando(c){const d=new Date(c.data+'T12:00:00');return DSEM[d.getDay()]+', '+c.data.split('-').reverse().slice(0,2).join('/')+' às '+c.ini.replace(':00','h')+(c.fim?' (até '+c.fim.replace(':00','h')+')':'')}
-function pintarCapt(g){const box=$('gsCap');if(!box)return;const C=g.capt;if(!C){box.hidden=true;return}box.hidden=false;
+function pintarCapt(g){const box=$('gsCap');if(!box)return;const C=g.capt;if(!C){box.hidden=true;return}box.hidden=false;if(C.parceiro){pintarCaptParceiro(g,box);return}
   const hj=hojeISO();const ativos=(C.minhas||[]).filter(c=>c.data>=hj&&(c.status==='Pedido'||c.status==='Confirmado'));
   const ult=(C.minhas||[]).filter(c=>c.status==='Recusado').pop();const adm=!!g.admin;
   const sem=(C.minhas||[]).filter(c=>c.status==='Sem gravação'&&c.data.slice(0,7)>=hj.slice(0,7));
@@ -840,6 +843,26 @@ function pintarCapt(g){const box=$('gsCap');if(!box)return;const C=g.capt;if(!C)
       async f=>{await resp(id,b.dataset.cno?'Recusado':'Cancelado',f.obs.value);toast('Feito. A cliente foi avisada.')},b.dataset.cno?'✕ Recusar':'Cancelar gravação')});
   box.querySelectorAll('[data-cdel]').forEach(b=>b.onclick=()=>confirmar('Cancelar o pedido?','<p class="cf-dica">Você pode escolher outro dia depois.</p>','Cancelar pedido',async()=>{const j=await chamar({acao:'captcancelar',id:b.dataset.cdel});g.capt=j.capt;pintarCapt(g);toast('Pedido cancelado')}));
 }
+// ---- acesso de parceiro (tráfego): vê as gravações confirmadas e faz pedidos para a Brius
+const PP_TIPOS=[['criativo','🎯','Criativo para o tráfego','Um vídeo ou imagem pensado para anúncio'],['gravacao','🎥','Ideia para a gravação','Uma cena, fala ou produto para gravar no dia'],['arte','🖼️','Arte ou imagem','Uma arte, banner ou ajuste de imagem'],['outro','💬','Outro pedido','Qualquer outra coisa']];
+function pintarCaptParceiro(g,box){const C=g.capt;const hj=hojeISO();const prox=(C.minhas||[]).filter(c=>c.data>=hj);const peds=g.pedidos||[];
+  const nm=escH((g.marca&&g.marca.nome)||g.evento);
+  let h='<div class="cap-h"><div><h4>🎥 Gravações</h4><small>Os dias em que a Brius vai gravar com '+nm+'.</small></div></div>';
+  h+=prox.length?prox.map(c=>'<div class="cap-it ok"><span class="cap-st">✓ Gravação confirmada</span><b>'+escH(capQuando(c))+'</b><span class="cap-ac"><button type="button" class="btn sec" data-ppg="'+escH(c.id)+'">📣 Pedir algo para esta gravação</button></span></div>').join('')
+    :'<p class="cap-v">Ainda não tem gravação marcada. Assim que a cliente marcar o dia, ele aparece aqui.</p>';
+  h+='<div class="pp"><div class="pp-h"><div><h4>📣 Pedidos para a Brius</h4><small>Precisa de um criativo para o tráfego, quer aproveitar a gravação para algo ou precisa de uma arte? Peça por aqui. A gente recebe na hora e você é avisado por e-mail quando ficar pronto.</small></div><button type="button" class="btn" id="ppNovo">＋ Fazer um pedido</button></div>';
+  h+=peds.length?'<div class="pp-l">'+peds.map(p=>'<div class="pp-it'+(p.feito?' ok':'')+'"><span class="cap-st">'+(p.feito?'✓ Pronto':'⏳ Recebido pela Brius')+'</span><b>'+escH(p.tipo)+'</b><p>'+escH(p.texto)+'</p><small>Pedido em '+escH(String(p.quando).slice(0,10))+(p.gdata?' · para a gravação de '+escH(p.gdata.split('-').reverse().join('/')):'')+(p.prazo?' · precisa até '+escH(p.prazo.split('-').reverse().join('/')):'')+'</small></div>').join('')+'</div>':'';
+  h+='</div>';box.innerHTML=h;
+  $('ppNovo').onclick=()=>pedirParceiro(g,'');box.querySelectorAll('[data-ppg]').forEach(b=>b.onclick=()=>pedirParceiro(g,b.dataset.ppg));
+}
+function pedirParceiro(g,captId){const C=g.capt;const hj=hojeISO();const prox=(C.minhas||[]).filter(c=>c.data>=hj);const nm=escH((g.marca&&g.marca.nome)||g.evento);
+  const f=modal('Novo pedido · '+nm,'<div class="pp-tp">'+PP_TIPOS.map(([k,i,t,d],n)=>'<label><input type="radio" name="tipo" value="'+k+'"'+((captId?k==='criativo':n===0)?' checked':'')+'><span><b>'+i+' '+t+'</b><small>'+d+'</small></span></label>').join('')+'</div>'+
+    '<label>Para qual gravação?<select name="capt"><option value="">Não é para uma gravação</option>'+prox.map(c=>'<option value="'+escH(c.id)+'"'+(c.id===captId?' selected':'')+'>'+escH(capQuando(c))+'</option>').join('')+'</select></label>'+
+    '<label>O que você precisa?<textarea name="texto" rows="4" maxlength="1500" required placeholder="Ex.: um Reels de 15s mostrando o espaço, com a frase “agende sua visita” no final, no formato 9:16 para anúncio."></textarea></label>'+
+    '<label>Precisa até quando? (opcional)<input type="date" name="prazo" min="'+hj+'"></label><p class="am-dica">A Brius recebe o pedido na hora, como tarefa. Quando ficar pronto, você recebe um e-mail.</p>',
+    async fm=>{const t=fm.texto.value.trim();if(t.length<3)throw new Error('Conte o que você precisa.');
+      const j=await chamar({acao:'parpedido',ent:g.id,tipo:(fm.querySelector('[name=tipo]:checked')||{}).value||'outro',capt:fm.capt.value,texto:t,prazo:fm.prazo.value});
+      g.pedidos=j.pedidos;pintarCapt(g);toast('✓ Pedido enviado para a Brius')},'Enviar pedido')}
 function escolherCapt(g){const C=g.capt;const disp={};(C.disp||[]).forEach(x=>disp[x.d]=x);const ks=Object.keys(disp).sort();
   if(!ks.length){toast('Nenhuma data disponível agora. Fale com a Brius.');return}
   let mes=ks[0].slice(0,7),sel=null;const ultM=ks[ks.length-1].slice(0,7);
@@ -865,7 +888,7 @@ function escolherCapt(g){const C=g.capt;const disp={};(C.disp||[]).forEach(x=>di
 }
 // ---- seções do calendário (botões no topo para não ficar tudo empilhado)
 let gsSec='posts';
-function gsNavHtml(g){const it=[['posts','📅','Posts'],['grav','🎥','Gravação'],['mens','💳','Mensalidade'],['rel','📊','Relatório']];if(g.admin)it.push(['auto','🤖','Publicação']);
+function gsNavHtml(g){const it=[['posts','📅','Posts'],['grav','🎥',g.parceiro?'Gravação e pedidos':'Gravação'],['mens','💳','Mensalidade'],['rel','📊','Relatório']];if(g.admin)it.push(['auto','🤖','Publicação']);
   return '<nav class="gs-nav" id="gsNav" aria-label="Seções">'+it.filter(([k])=>k!=='grav'||g.capt).filter(([k])=>k!=='mens'||(!g.propria&&(g.mensalidade||g.admin))).map(([k,i,t])=>'<button type="button" data-p="'+k+'" aria-pressed="false"><span class="ic">'+i+'</span>'+t+'<i class="bd" hidden></i></button>').join('')+'<span class="ind"></span></nav>'}
 function gsIr(p,rolar){const nav=$('gsNav');if(!nav)return;if(!nav.querySelector('[data-p="'+p+'"]'))p='posts';gsSec=p;
   document.querySelectorAll('.gs-pan').forEach(x=>{const on=x.dataset.p===p;if(on&&x.hidden){x.hidden=false;x.classList.remove('entra');void x.offsetWidth;x.classList.add('entra')}else x.hidden=!on});
@@ -875,7 +898,7 @@ function gsInd(){const nav=$('gsNav');if(!nav)return;const b=nav.querySelector('
   const r=b.offsetLeft-nav.scrollLeft;if(r<0||r+b.offsetWidth>nav.clientWidth)nav.scrollTo({left:b.offsetLeft-20,behavior:'smooth'})}}
 function gsBadges(g){const nav=$('gsNav');if(!nav)return;const set=(p,t)=>{const b=nav.querySelector('[data-p="'+p+'"] .bd');if(b){b.hidden=!t;b.textContent=t||''}};
   set('posts',(g.posts||[]).filter(p=>p.status==='Aguardando'||p.status==='Nova versão').length||'');
-  const c=g.capt;const hj=hojeISO();set('grav',c?((c.minhas||[]).some(x=>x.status==='Pedido'&&x.data>=hj)?(g.admin?'!':'⏳'):(!(c.minhas||[]).some(x=>(x.data>=hj&&(x.status==='Confirmado'||x.status==='Pedido'))||(x.status==='Sem gravação'&&x.data.slice(0,7)===hj.slice(0,7)))&&!g.admin?'!':'')):'');
+  const c=g.capt;const hj=hojeISO();set('grav',c&&c.parceiro?'':c?((c.minhas||[]).some(x=>x.status==='Pedido'&&x.data>=hj)?(g.admin?'!':'⏳'):(!(c.minhas||[]).some(x=>(x.data>=hj&&(x.status==='Confirmado'||x.status==='Pedido'))||(x.status==='Sem gravação'&&x.data.slice(0,7)===hj.slice(0,7)))&&!g.admin?'!':'')):'');
   const m=g.mensalidade;set('mens',m&&(m.situacao==='atrasado'||(g.admin&&m.situacao==='confirmando'))?'!':'')}
 function ligarGsNav(g){const nav=$('gsNav');if(!nav)return;if(g.leitura&&!ligarGsNav.foi){ligarGsNav.foi=1;gsSec='rel'}nav.querySelectorAll('button').forEach(b=>b.onclick=()=>gsIr(b.dataset.p));gsBadges(g);
   document.querySelectorAll('.gs-pan').forEach(x=>x.hidden=true);gsIr(gsSec);requestAnimationFrame(gsInd)}
