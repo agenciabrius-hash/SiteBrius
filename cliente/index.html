@@ -533,9 +533,9 @@ button.fin-l.rec-b{width:100%;text-align:left;font:inherit;color:inherit;cursor:
   <!-- Código da agência (2ª etapa) -->
   <section class="acesso" id="telaCodigo" hidden>
     <form class="card" id="fCodigo">
-      <div class="kick">Acesso da agência</div>
+      <div class="kick" id="cdKick">Acesso da agência</div>
       <h1>Confirme que <em>é você</em></h1>
-      <p class="lead">Mandamos um código de 6 números para o e-mail da agência. Ele vale por 10 minutos.</p>
+      <p class="lead" id="cdLead">Mandamos um código de 6 números para o e-mail da agência. Ele vale por 10 minutos.</p>
       <label>Código<span style="position:relative;display:block"><input type="password" name="codigo" id="inCodigo" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required style="font-size:26px;letter-spacing:10px;text-align:center;padding-right:48px;width:100%;box-sizing:border-box"><button type="button" id="verCodigo" aria-label="Mostrar código" aria-pressed="false" title="Mostrar código" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:0;cursor:pointer;font-size:20px;padding:6px;opacity:.7">👁</button></span></label>
       <button class="btn" type="submit">Entrar</button>
       <p class="msg" id="mCodigo" role="status"></p>
@@ -623,21 +623,23 @@ function msg(el,t,erro){el.textContent=t||'';el.classList.toggle('erro',!!erro)}
 // ---- entrar
 $('fLogin').addEventListener('submit',async e=>{
   e.preventDefault();const f=e.target;msg($('mLogin'),'');ocupado(f,true);
-  try{const j=await api({acao:'login',email:f.email.value,senha:f.senha.value});
+  try{const j=await api({acao:'login',email:f.email.value,senha:f.senha.value,disp:aparelho.get()});
     if(!j.ok)throw new Error(j.erro);
-    if(j.codigo){desafio=j.desafio;f.reset();$('fCodigo').reset();$('inCodigo').type='password';mostrar('telaCodigo');setTimeout(()=>$('fCodigo').codigo.focus(),50);ocupado(f,false);return}
+    if(j.codigo){desafio=j.desafio;$('cdKick').textContent=j.cli?'Novo aparelho':'Acesso da agência';
+      $('cdLead').textContent=j.cli?'Como é a primeira vez que você entra por este celular ou computador, mandamos um código de 6 números para '+(j.para||'o seu e-mail')+'. Ele vale por 10 minutos. Depois este aparelho fica lembrado por 30 dias.':'Mandamos um código de 6 números para o e-mail da agência. Ele vale por 10 minutos.';f.reset();$('fCodigo').reset();$('inCodigo').type='password';mostrar('telaCodigo');setTimeout(()=>$('fCodigo').codigo.focus(),50);ocupado(f,false);return}
     guardar.set(j.sessao);f.reset();carregarGaleria();
   }catch(err){msg($('mLogin'),err.message||'Não foi possível entrar agora.',true)}
   ocupado(f,false);
 });
 let desafio='';
+const aparelho={get(){try{return localStorage.getItem('brius_disp')||''}catch(e){return ''}},set(v){try{if(v)localStorage.setItem('brius_disp',v)}catch(e){}}};
 $('verCodigo').addEventListener('click',()=>{const i=$('inCodigo'),b=$('verCodigo'),v=i.type==='password';i.type=v?'text':'password';b.setAttribute('aria-pressed',v);b.setAttribute('aria-label',v?'Esconder código':'Mostrar código');b.title=v?'Esconder código':'Mostrar código';b.style.opacity=v?'1':'.7';i.focus()});
 $('fCodigo').addEventListener('reset',()=>{$('inCodigo').type='password'});
 $('fCodigo').addEventListener('submit',async e=>{
   e.preventDefault();const f=e.target;msg($('mCodigo'),'');ocupado(f,true);
   try{const j=await api({acao:'login2',desafio:desafio,codigo:f.codigo.value});
     if(!j.ok){if(j.expirou){setTimeout(()=>mostrar('telaLogin'),1800)}throw new Error(j.erro)}
-    guardar.set(j.sessao);f.reset();carregarGaleria();
+    aparelho.set(j.disp);guardar.set(j.sessao);f.reset();carregarGaleria();
   }catch(err){msg($('mCodigo'),err.message||'Não foi possível entrar agora.',true)}
   ocupado(f,false);
 });
@@ -649,7 +651,7 @@ $('fSenha').addEventListener('submit',async e=>{
   if(f.senha.value!==f.senha2.value)return msg($('mSenha'),'As senhas não são iguais.',true);
   msg($('mSenha'),'');ocupado(f,true);
   try{const j=await api({acao:'criarsenha',convite:convite,senha:f.senha.value});
-    if(!j.ok)throw new Error(j.erro);guardar.set(j.sessao);history.replaceState(null,'',location.pathname);carregarGaleria();
+    if(!j.ok)throw new Error(j.erro);aparelho.set(j.disp);guardar.set(j.sessao);history.replaceState(null,'',location.pathname);carregarGaleria();
   }catch(err){msg($('mSenha'),err.message||'Não foi possível agora.',true)}
   ocupado(f,false);
 });
