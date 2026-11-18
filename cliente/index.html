@@ -1356,7 +1356,7 @@ const LIM_SEMANA={
   'ENT-guerir01':{feed:3,reels:2,carrossel:1,txt:'2 Reels + 1 carrossel por semana (stories conforme o planejamento)'},
   'ENT-olimpio1':{feed:2,reels:1,carrossel:1,story:1,txt:'1 Reel + 1 carrossel + 1 story por semana'}
 };
-function tipoLim(t){t=String(t||'');return /stor/i.test(t)?'story':/reel|v[ií]deo/i.test(t)?'reels':/carross/i.test(t)?'carrossel':'post'}
+function tipoLim(t){t=String(t||'');return /\bstor(y|ies)\b/i.test(t)?'story':/reel|v[ií]deo/i.test(t)?'reels':/carross/i.test(t)?'carrossel':'post'}
 function excedeContrato(g,data,tipo,ignK){const L=LIM_SEMANA[g.id];if(!L||!data)return null;
   const d0=new Date(data+'T12:00:00Z');d0.setUTCDate(d0.getUTCDate()-(d0.getUTCDay()+6)%7);const ini=d0.toISOString().slice(0,10);d0.setUTCDate(d0.getUTCDate()+6);const fim=d0.toISOString().slice(0,10);
   const ps=(g.posts||[]).filter(p=>p.k!==ignK&&p.data&&p.data>=ini&&p.data<=fim);const tl=tipoLim(tipo);
@@ -1376,7 +1376,7 @@ function formPost(g,dataPre){
   async(f,st)=>{const d=Object.fromEntries(new FormData(f));if(!f.arqs.files.length)throw new Error('Escolha a arte ou o vídeo do post.');
     checarContrato(f,excedeContrato(g,d.data,d.tipo||(f.arqs.files.length>1?'Carrossel':/^video/.test(f.arqs.files[0].type)?'Reels':'Post')));
     const [a,m,dd]=d.data.split('-');let tit=d.titulo.trim().replace(/[\\/:*?"<>|#]/g,'-');
-    if(d.tipo==='Stories'&&!/stor/i.test(tit))tit='Stories '+tit;if(d.tipo==='Reels'&&!/reel/i.test(tit))tit='Reels '+tit;
+    if(d.tipo==='Stories'&&!/\bstor(y|ies)\b/i.test(tit))tit='Stories '+tit;if(d.tipo==='Reels'&&!/reel/i.test(tit))tit='Reels '+tit;
     const base=dd+'-'+m+'-'+a+' '+tit;const pasta=g.pastaId;
     await subir(pasta,f.arqs.files,(fl,i,n)=>base+(n>1?' '+(i+1):'')+ext(fl),st);
     if(d.legenda.trim())await chamar({acao:'adm_texto',pasta:pasta,nome:base,texto:d.legenda.trim()});
