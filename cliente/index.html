@@ -449,6 +449,7 @@ button.fin-l.rec-b{width:100%;text-align:left;font:inherit;color:inherit;cursor:
 .cap-ac{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}.cap-ac .btn{padding:9px 16px;font-size:14px}.cap-it.sg{border-color:#4a443d;border-style:dashed}.cap-it.sg .cap-st{color:var(--muted-d)}
 .cap-sem{margin-top:12px;background:none;border:1px dashed #4a443d;color:var(--muted-d);border-radius:999px;padding:9px 16px;font:700 13px var(--body);cursor:pointer}.cap-sem:hover{color:var(--bone);border-color:var(--muted-d)}
 .cap-v{margin:10px 0 0;color:var(--muted-d);font-size:14px}
+.rec-t{margin:14px 0 0;font:700 12px var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
 .pp{margin-top:16px;padding-top:16px;border-top:1px solid #3a352f}.pp-h{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;justify-content:space-between}.pp-h>div{flex:1 1 260px}.pp h4{margin:0 0 4px;font:500 19px var(--serif)}.pp-h small{color:var(--muted-d);font-size:13.5px;line-height:1.45;display:block}
 .pp-l{display:grid;gap:10px;margin-top:12px}.pp-it{padding:12px 14px;border-radius:14px;border:1px solid rgba(127,182,230,.45);background:var(--graphite-2);display:grid;gap:3px}.pp-it.ok{border-color:rgba(127,196,154,.5)}.pp-it.ok .cap-st{color:#7fc49a}.pp-it p{margin:2px 0;font-size:14px;white-space:pre-wrap;color:var(--bone)}.pp-it small{color:var(--muted-d);font-size:12.5px}
 .pp-tp{display:grid;gap:8px;margin-bottom:12px}.pp-tp label{display:flex;gap:10px;align-items:flex-start;border:1px solid #3a352f;border-radius:14px;padding:10px 12px;cursor:pointer;margin:0}.pp-tp label:has(input:checked){border-color:var(--gold);background:rgba(184,149,90,.08)}.pp-tp input{margin:3px 0 0;accent-color:var(--gold);width:18px!important;height:18px;flex:0 0 18px;padding:0}.pp-tp span{display:grid;gap:2px}.pp-tp b{font-size:14.5px}.pp-tp small{color:var(--muted-d);font-size:12.5px}
@@ -793,7 +794,7 @@ function abrirGestao(g){
     '<div>'+ig+'<h2>'+escH(m.nome||g.evento)+'</h2>'+(m.resp?'<p class="resp">'+escH(m.resp)+'</p>':'')+((tel||mail)?'<div class="mk-ct">'+tel+mail+'</div>':'')+'</div>'+
     '<div class="mk-prog"><div class="mk-anel" id="gsAnel"><span id="gsPct">0<small>aprovados</small></span></div><p id="gsResumo"></p></div></div>'+
     gsNavHtml(g)+
-    '<div class="gs-pan" data-p="mens"><div class="mens" id="gsMens" hidden></div></div><div class="gs-pan" data-p="grav"><div class="cap" id="gsCap" hidden></div></div>'+
+    '<div class="gs-pan" data-p="mens"><div class="mens" id="gsMens" hidden></div></div><div class="gs-pan" data-p="grav"><div class="cap" id="gsCap" hidden></div></div>'+(g.admin&&g.parPedidos?'<div class="gs-pan" data-p="ron"><div class="cap rec" id="gsRec"></div></div>':'')+
     (g.admin?'<div class="gs-pan" data-p="auto"><div class="gs-auto"><p><b>🤖 Publicação automática</b><br><span id="gsAutoT"></span>'+(g.igPub&&!g.propria?'<span class="ig-corte">Posts que não saírem pelo site, a partir de <input type="date" id="gsCorte" value="'+escH(g.igCorte||'2026-12-01')+'">, aparecem como publicados pela cliente.</span>':'')+'</p><button type="button" class="sw" id="gsAuto" role="switch" aria-checked="'+!!g.autopub+'" aria-label="Publicação automática"></button></div></div>':'')+
     '<div class="gs-pan" data-p="posts"><div class="gs-bar"><div class="gs-f" id="gsF"></div><button class="btn gs-todos" id="gsTodos" hidden>✓ Aprovar todos os pendentes</button></div>'+
     '<div class="gs-cal"><div class="gs-cal-h"><button type="button" id="gsAnt" aria-label="Mês anterior">‹</button><b id="gsMesT"></b><button type="button" id="gsProx" aria-label="Próximo mês">›</button></div><div class="gs-gr" id="gsGr"></div></div>'+
@@ -893,7 +894,7 @@ function escolherCapt(g){const C=g.capt;const disp={};(C.disp||[]).forEach(x=>di
 }
 // ---- seções do calendário (botões no topo para não ficar tudo empilhado)
 let gsSec='posts';
-function gsNavHtml(g){const it=[['posts','📅','Posts'],['grav','🎥',g.parceiro?'Gravação e pedidos':'Gravação'],['mens','💳','Mensalidade'],['rel','📊','Relatório']];if(g.admin)it.push(['auto','🤖','Publicação']);
+function gsNavHtml(g){const it=[['posts','📅','Posts'],['grav','🎥',g.parceiro?'Gravação e pedidos':'Gravação'],['mens','💳','Mensalidade'],['rel','📊','Relatório']];if(g.admin&&g.parPedidos)it.splice(2,0,['ron','📣','Recados do '+g.parPedidos.quem]);if(g.admin)it.push(['auto','🤖','Publicação']);
   return '<nav class="gs-nav" id="gsNav" aria-label="Seções">'+it.filter(([k])=>k!=='grav'||g.capt).filter(([k])=>k!=='mens'||(!g.propria&&(g.mensalidade||g.admin))).map(([k,i,t])=>'<button type="button" data-p="'+k+'" aria-pressed="false"><span class="ic">'+i+'</span>'+t+'<i class="bd" hidden></i></button>').join('')+'<span class="ind"></span></nav>'}
 function gsIr(p,rolar){const nav=$('gsNav');if(!nav)return;if(!nav.querySelector('[data-p="'+p+'"]'))p='posts';gsSec=p;
   document.querySelectorAll('.gs-pan').forEach(x=>{const on=x.dataset.p===p;if(on&&x.hidden){x.hidden=false;x.classList.remove('entra');void x.offsetWidth;x.classList.add('entra')}else x.hidden=!on});
@@ -904,11 +905,25 @@ function gsInd(){const nav=$('gsNav');if(!nav)return;const b=nav.querySelector('
 function gsBadges(g){const nav=$('gsNav');if(!nav)return;const set=(p,t)=>{const b=nav.querySelector('[data-p="'+p+'"] .bd');if(b){b.hidden=!t;b.textContent=t||''}};
   set('posts',(g.posts||[]).filter(p=>p.status==='Aguardando'||p.status==='Nova versão').length||'');
   const c=g.capt;const hj=hojeISO();set('grav',c&&c.parceiro?'':c?((c.minhas||[]).some(x=>x.status==='Pedido'&&x.data>=hj)?(g.admin?'!':'⏳'):(!(c.minhas||[]).some(x=>(x.data>=hj&&(x.status==='Confirmado'||x.status==='Pedido'))||(x.status==='Sem gravação'&&x.data.slice(0,7)===hj.slice(0,7)))&&!g.admin?'!':'')):'');
+  set('ron',g.admin&&g.parPedidos?(g.parPedidos.lista.filter(p=>!p.feito).length||''):'');
   const m=g.mensalidade;set('mens',m&&(m.situacao==='atrasado'||(g.admin&&m.situacao==='confirmando'))?'!':'')}
 function ligarGsNav(g){const nav=$('gsNav');if(!nav)return;if(g.leitura&&!ligarGsNav.foi){ligarGsNav.foi=1;gsSec='rel'}nav.querySelectorAll('button').forEach(b=>b.onclick=()=>gsIr(b.dataset.p));gsBadges(g);
   document.querySelectorAll('.gs-pan').forEach(x=>x.hidden=true);gsIr(gsSec);requestAnimationFrame(gsInd)}
 addEventListener('resize',()=>gsInd());
-{const _a=pintarGestao,_b=pintarCapt,_c=pintarMens;pintarGestao=function(g){_a(g);gsBadges(g)};pintarCapt=function(g){_b(g);gsBadges(g)};pintarMens=function(g){_c(g);gsBadges(g)}}
+function pintarRecados(g){const box=$('gsRec');if(!box||!g.parPedidos)return;const P=g.parPedidos,q=escH(P.quem),L=P.lista||[];const pend=L.filter(p=>!p.feito);
+  const dt=x=>x?escH(String(x).split('-').reverse().join('/')):'';
+  const item=p=>'<div class="pp-it'+(p.feito?' ok':'')+'"><span class="cap-st">'+(p.feito?'✓ Feito'+(p.feitoEm?' em '+escH(String(p.feitoEm).slice(0,5)):''):'⏳ Aguardando vocês')+'</span><b>'+escH(p.tipo)+'</b><p>'+escH(p.texto)+'</p>'+
+    '<small>'+escH(p.quem||P.quem)+' · '+escH(String(p.quando).slice(0,16))+(p.gdata?' · para a gravação de '+dt(p.gdata):'')+(p.prazo?' · <b>precisa até '+dt(p.prazo)+'</b>':'')+'</small>'+
+    '<span class="cap-ac"><button type="button" class="btn'+(p.feito?' sec':'')+'" data-rf="'+escH(p.id)+'" data-v="'+(p.feito?'0':'1')+'">'+(p.feito?'Desfazer':'✓ Marcar como feito')+'</button></span></div>';
+  box.innerHTML='<div class="cap-h"><div><h4>📣 Recados do '+q+'</h4><small>Pedidos e ideias que o '+q+' (tráfego) mandou pelo acesso dele: criativos para anúncio, ideias para a gravação e artes. Quando vocês marcam como feito, ele recebe um e-mail avisando.</small></div></div>'+
+    (L.length?(pend.length?'<p class="rec-t">Para fazer ('+pend.length+')</p><div class="pp-l">'+pend.map(item).join('')+'</div>':'<p class="cap-v">Tudo em dia ✨ Nenhum recado esperando.</p>')+
+      (L.length>pend.length?'<p class="rec-t">Já feitos</p><div class="pp-l">'+L.filter(p=>p.feito).map(item).join('')+'</div>':'')
+    :'<p class="cap-v">O '+q+' ainda não mandou nenhum recado para esta marca. Quando ele pedir algo, aparece aqui (e chega por e-mail e nas Tarefas).</p>');
+  box.querySelectorAll('[data-rf]').forEach(b=>b.onclick=async()=>{const p=L.find(x=>x.id===b.dataset.rf);if(!p)return;const v=b.dataset.v==='1';
+    p.feito=v;pintarRecados(g);gsBadges(g);
+    try{const j=await chamar({acao:'adm_ped_feito',id:p.id,feito:v,ent:g.id});if(j.pedidos)g.parPedidos=j.pedidos;pintarRecados(g);gsBadges(g);toast(v?'✓ Feito. O '+P.quem+' vai receber um e-mail.':'Voltou para "aguardando".')}
+    catch(e){p.feito=!v;pintarRecados(g);gsBadges(g);toast(e.message)}})}
+{const _a=pintarGestao,_b=pintarCapt,_c=pintarMens;pintarGestao=function(g){_a(g);pintarRecados(g);gsBadges(g)};pintarCapt=function(g){_b(g);gsBadges(g)};pintarMens=function(g){_c(g);gsBadges(g)}}
 
 // ---- Área do Cliente como app (tela inicial do celular)
 const appInst=(()=>{let ev=null;const ls=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
