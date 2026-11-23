@@ -1317,12 +1317,24 @@ function lerB64(file){return new Promise((ok,no)=>{const r=new FileReader();r.on
 async function subir(pasta,files,nomeDe,progresso,publico){
   const lista=[...files];let n=0;const ids=[];
   for(const f of lista){
-    if(f.size>45*1024*1024)throw new Error('"'+f.name+'" tem mais de 45 MB. Arquivos grandes (vídeos longos) coloque direto na pasta do Drive.');
+    const nm=nomeDe?nomeDe(f,n,lista.length):f.name;
+    if(f.size>30*1024*1024){ids.push(await subirGrande(pasta,f,nm,p=>progresso&&progresso('Enviando '+(n+1)+' de '+lista.length+'… ('+f.name+') '+p+'%'),publico));n++;continue}
     progresso&&progresso('Enviando '+(n+1)+' de '+lista.length+'… ('+f.name+')');
     const j=await api({acao:'adm_arquivo',sessao:guardar.get(),pasta:pasta,nome:nomeDe?nomeDe(f,n,lista.length):f.name,tipo:f.type||'application/octet-stream',b64:await lerB64(f),publico:!!publico});
     if(!j.ok)throw new Error(j.erro||'Falha ao enviar '+f.name);ids.push(j.id);n++}
   return ids;
 }
+// vídeos grandes: o Apps Script só abre a "sessão de envio" e o navegador manda o arquivo direto para o Google Drive (aguenta vários GB)
+async function subirGrande(pasta,f,nome,pct,publico){
+  const j=await api({acao:'adm_upload',sessao:guardar.get(),pasta:pasta,nome:nome,tipo:f.type||'application/octet-stream',tamanho:f.size,origem:location.origin});
+  if(!j.ok)throw new Error(j.erro||'Não foi possível começar o envio de '+f.name);
+  const ant=window.onbeforeunload;window.onbeforeunload=()=>'O vídeo ainda está sendo enviado.';
+  try{const id=await new Promise((ok,erro)=>{const x=new XMLHttpRequest();x.open('PUT',j.url);x.setRequestHeader('Content-Type',f.type||'application/octet-stream');
+      x.upload.onprogress=e=>{if(e.lengthComputable)pct(Math.floor(e.loaded/e.total*100))};
+      x.onload=()=>{if(x.status===200||x.status===201){let r={};try{r=JSON.parse(x.responseText)}catch(e){}ok(r.id||'')}else erro(new Error('O Drive recusou o envio de '+f.name+' ('+x.status+'). Tente de novo.'))};
+      x.onerror=()=>erro(new Error('A conexão caiu enviando '+f.name+'. Tente de novo (ou coloque direto no Drive).'));x.send(f)});
+    await api({acao:'adm_upload_fim',sessao:guardar.get(),pasta:pasta,id:id,publico:!!publico});return id}
+  finally{window.onbeforeunload=ant||null}}
 const ext=f=>{const m=f.name.match(/\.[^.]+$/);return m?m[0].toLowerCase():''};
 async function admRecarregar(msgTxt){if(msgTxt)toast(msgTxt);const sec=admSec;const at=galerias[atual]&&(galerias[atual].id||galerias[atual].pastaId);await carregarGaleria();admSec=sec;
   const i=galerias.findIndex(g=>(g.id||g.pastaId)===at);if(i>=0){atual=i}if(admDados)montarAdmin(admDados)}
@@ -1360,7 +1372,7 @@ function formApagar(g){
   const ok=document.querySelector('#admModal .am-ok');if(ok)ok.classList.add('perigo');
 }
 function formArquivos(titulo,pasta,depois){
-  modal(titulo,arqCampo('arqs','Escolha os arquivos',true)+'<p class="am-dica">Fotos e vídeos de até 45 MB cada. Para muitos arquivos ou vídeos grandes, é mais rápido colocar direto na pasta do Drive.</p>',
+  modal(titulo,arqCampo('arqs','Escolha os arquivos',true)+'<p class="am-dica">Fotos e vídeos de qualquer tamanho (até vídeos de vários GB). Vídeos grandes mostram a porcentagem do envio: deixe esta página aberta até terminar.</p>',
   async(f,st)=>{if(!f.arqs.files.length)throw new Error('Escolha pelo menos um arquivo.');await subir(pasta,f.arqs.files,null,st);if(depois)await depois();await admRecarregar('✓ '+f.arqs.files.length+' arquivo(s) enviados')},'Enviar');
 }
 // Admin: tocar num dia do calendário mostra os posts daquele dia e o botão + para adicionar
