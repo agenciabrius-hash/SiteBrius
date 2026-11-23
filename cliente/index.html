@@ -464,6 +464,10 @@ button.fin-l.rec-b{width:100%;text-align:left;font:inherit;color:inherit;cursor:
 .indl-st{font-size:12.5px;font-weight:700;color:#7fb6e6}.indl-st.ok{color:#7fc49a}.indl-st.no{color:#e08b7a}.indl-ac{display:flex;gap:6px;flex-wrap:wrap}.indl-ac .btn{width:auto!important;padding:7px 12px!important;font-size:13px!important}
 .indl-nova{margin-top:12px;border-top:1px solid #3a352f;padding-top:12px}.indl-nova summary{cursor:pointer;font-weight:700;color:var(--gold-soft);margin-bottom:8px}
 @media(max-width:520px){.indl-top{grid-template-columns:repeat(2,1fr)}}
+.ag-blq{display:grid;gap:8px;margin:12px 0;padding:14px 16px;border-radius:16px;border:1px solid #3a352f;background:var(--graphite-2)}.ag-blq-i{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}.ag-blq .btn{width:auto!important;padding:7px 12px!important;font-size:13px!important;justify-self:start}
+.ctr-adm{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.ctr-adm .btn{width:auto!important}
+#admImp{margin-top:18px}.imp-ac{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:6px}.imp-ac select,.imp-ac input{width:auto;flex:1 1 140px;min-width:0}.imp-ac .btn{width:auto!important;padding:8px 12px!important;font-size:13px!important;text-decoration:none}
+.cfg-l{display:grid;gap:4px;margin:10px 0}.cfg-l span{font-size:13px;color:var(--muted-d);font-weight:500}
 .rec-t{margin:14px 0 0;font:700 12px var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
 .pp{margin-top:16px;padding-top:16px;border-top:1px solid #3a352f}.pp-h{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;justify-content:space-between}.pp-h>div{flex:1 1 260px}.pp h4{margin:0 0 4px;font:500 19px var(--serif)}.pp-h small{color:var(--muted-d);font-size:13.5px;line-height:1.45;display:block}
 .pp-l{display:grid;gap:10px;margin-top:12px}.pp-it{padding:12px 14px;border-radius:14px;border:1px solid rgba(127,182,230,.45);background:var(--graphite-2);display:grid;gap:3px}.pp-it.ok{border-color:rgba(127,196,154,.5)}.pp-it.ok .cap-st{color:#7fc49a}.pp-it p{margin:2px 0;font-size:14px;white-space:pre-wrap;color:var(--bone)}.pp-it small{color:var(--muted-d);font-size:12.5px}
@@ -1125,7 +1129,72 @@ function pintarAgenda(j){
   c.querySelectorAll('.ag-c[data-d]').forEach(b=>b.onclick=()=>{agSel=agSel===b.dataset.d?null:b.dataset.d;pintarAgenda(j)});
   const mv=k=>{const d=new Date(A,M-1+k,1);agMes=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');agSel=null;pintarAgenda(j)};
   $('agAnt').onclick=()=>mv(-1);$('agProx').onclick=()=>mv(1);if($('agTudo'))$('agTudo').onclick=()=>{agSel=null;pintarAgenda(j)};
+  // bloquear / liberar datas (aba Reservas) sem abrir a planilha
+  const bb=document.createElement('button');bb.className='btn sec';bb.textContent='🚫 Bloquear datas';bb.onclick=()=>formBloquear(j,agSel);$('gAcoes').appendChild(bb);
+  if(agSel){const rs=((j.agenda||{}).reservas||[]).filter(r=>r.data===agSel);
+    const box=document.createElement('div');box.className='ag-blq';
+    box.innerHTML='<b>'+(rs.length?'🚫 Este dia está bloqueado':'✅ Este dia está livre para orçamentos')+'</b>'+rs.map((r,k)=>'<div class="ag-blq-i"><span>'+escH(r.motivo)+(r.origem&&r.origem!=='Manual'?' <small>('+escH(r.origem)+')</small>':'')+'</span>'+(!r.origem||r.origem==='Manual'?'<button type="button" class="btn sec" data-lib="'+k+'">Liberar</button>':'')+'</div>').join('')+
+      '<button type="button" class="btn sec" id="agBlqDia">🚫 Bloquear '+(rs.length?'outro horário neste dia':'este dia')+'</button>';
+    const ref=c.querySelector('.ag-l');if(ref)ref.before(box);else c.appendChild(box);
+    $('agBlqDia').onclick=()=>formBloquear(j,agSel);
+    box.querySelectorAll('[data-lib]').forEach(b=>b.onclick=async()=>{const r=rs[+b.dataset.lib];if(!b.dataset.c){b.dataset.c=1;b.textContent='Toque de novo para liberar';return}
+      b.disabled=true;try{await chamar({acao:'adm_reserva',op:'del',data:r.data,motivo:r.motivo});j.agenda.reservas.splice(j.agenda.reservas.indexOf(r),1);pintarAgenda(j);toast('✓ Dia liberado no site')}catch(e){b.disabled=false;toast(e.message)}})}
 }
+function formBloquear(j,dia){
+  modal('🚫 Bloquear datas','<p class="am-dica" style="margin-top:0">O dia some da agenda do orçamento no site e as clientes não conseguem marcar gravação nele.</p><div class="am-2">'+campo('de','Dia','date',' required value="'+(dia||'')+'"')+campo('ate','Até (opcional, para vários dias)','date','')+'</div>'+
+    campo('motivo','Motivo (só vocês veem)','text',' maxlength="120" value="Indisponível" placeholder="Ex.: Casamento da Ana, folga, viagem"')+
+    '<label>Período<select name="per"><option value="">O dia todo</option><option value="h">Só um horário</option></select></label><div class="am-2" id="blqH" hidden>'+campo('hi','Das','time',' value="08:00"')+campo('hf','Até','time',' value="12:00"')+'</div>',
+    async(f,st)=>{const de=f.de.value,ate=f.ate.value||f.de.value;if(!de)throw new Error('Escolha o dia.');if(ate<de)throw new Error('O "até" precisa ser depois do dia.');
+      const hor=f.per.value?f.hi.value+'-'+f.hf.value:'';const dias=[];for(let d=new Date(de+'T12:00:00');d<=new Date(ate+'T12:00:00');d.setDate(d.getDate()+1))dias.push(d.toISOString().slice(0,10));
+      if(dias.length>60)throw new Error('No máximo 60 dias de uma vez.');
+      for(let k=0;k<dias.length;k++){st&&st('Bloqueando '+(k+1)+' de '+dias.length+'…');await chamar({acao:'adm_reserva',op:'add',data:dias[k],motivo:f.motivo.value,horario:hor});
+        j.agenda.reservas.push({data:dias[k],motivo:(f.motivo.value||'Indisponível')+(hor?' ('+hor+')':''),origem:'Manual'})}
+      agSel=dias[0];agMes=dias[0].slice(0,7);pintarAgenda(j);toast('✓ '+(dias.length>1?dias.length+' dias bloqueados':'Dia bloqueado'))},'Bloquear');
+  const f=$('admModal').querySelector('form');f.per.onchange=()=>{$('blqH').hidden=!f.per.value}}
+function pintarImpressoes(j,ib){const L=j.impressoes||[];const ST=['Fazer orçamento','Valor passado','Fechou','Não fechou','Entregue'];
+  ib.innerHTML='<div class="cap rec"><div class="cap-h"><div><h4>📖 Pedidos de álbum, quadro e impressão</h4><small>Clientes que pediram orçamento pela galeria. Orce com a gráfica, passe o valor e atualize aqui.</small></div></div><div class="pp-l">'+
+    L.map((p,k)=>'<div class="pp-it'+(p.status==='Fechou'||p.status==='Entregue'?' ok':'')+'"><span class="cap-st">'+escH(p.status||'Fazer orçamento')+'</span><b>'+escH(p.cliente)+' · '+escH(p.tipos)+'</b><small>'+escH(p.data)+' · '+escH(p.evento)+'</small>'+(p.obs?'<p>'+escH(p.obs)+'</p>':'')+'<small>'+escH(p.fotos)+'</small>'+
+      '<span class="cap-ac imp-ac"><select data-is="'+k+'">'+ST.map(s=>'<option'+(s===p.status?' selected':'')+'>'+s+'</option>').join('')+'</select><input data-iv="'+k+'" inputmode="decimal" placeholder="Valor passado (R$)" value="'+escH(p.valor||'')+'"><button type="button" class="btn sec" data-ik="'+k+'">Salvar</button><a class="btn sec" href="'+escH(p.pasta)+'" target="_blank" rel="noopener">Pasta</a></span></div>').join('')+'</div></div>';
+  ib.querySelectorAll('[data-ik]').forEach(b=>b.onclick=async()=>{const k=+b.dataset.ik;b.disabled=true;try{const r=await chamar({acao:'adm_imp',id:L[k].id,status:ib.querySelector('[data-is="'+k+'"]').value,valor:ib.querySelector('[data-iv="'+k+'"]').value});j.impressoes=r.impressoes;pintarImpressoes(j,ib);toast('✓ Pedido atualizado')}catch(e){b.disabled=false;toast(e.message)}})}
+// ---- cliente: editar dados (sem abrir a planilha)
+function formEditarCliente(g){const D=g.dados||{};
+  modal('✏️ Dados · '+escH(g.cliente),campo('cliente','Nome do cliente','text',' required maxlength="80" value="'+escH(D.cliente)+'"')+campo('email','E-mail de acesso','email',' maxlength="80" value="'+escH(D.email)+'"')+
+    (g.tipo!=='gestao'?campo('evento','Evento','text',' maxlength="120" value="'+escH(D.evento)+'"'):'')+'<div class="am-2">'+campo('responsavel','Responsável','text',' maxlength="80" value="'+escH(D.responsavel)+'"')+campo('telefone','WhatsApp','tel',' maxlength="30" value="'+escH(D.telefone)+'"')+'</div>'+
+    campo('instagram','Instagram (sem @)','text',' maxlength="60" value="'+escH(D.instagram)+'"')+(D.email?'<p class="am-dica">Se trocar o e-mail, o cliente vai precisar receber o acesso de novo (Mais ações › Enviar acesso).</p>':''),
+    async f=>{const d=Object.fromEntries(new FormData(f).entries());const r=await chamar(Object.assign({acao:'adm_cliente_edit',id:g.id},d));
+      await admRecarregar(r.trocouEmail?'✓ Salvo. Agora envie o acesso de novo para o e-mail novo.':'✓ Dados salvos')},'Salvar')}
+// ---- cliente: adicionar contrato (PDF) sem abrir a planilha
+function formContrato(g){
+  modal('📄 Novo contrato · '+escH(g.cliente),(g.email?'':'<p class="msg erro" style="display:block">Este cliente ainda não tem e-mail. Use ✏️ Editar dados primeiro.</p>')+campo('titulo','Título','text',' required maxlength="140" value="'+escH(g.tipo==='gestao'?'Contrato de Gestão de Redes · '+g.cliente:'Contrato de Fotografia e Vídeo · '+(g.dados&&g.dados.evento||g.cliente))+'"')+
+    arqCampo('pdf','PDF do contrato',false,'application/pdf')+campo('data','Data do contrato','date',' value="'+hojeISO()+'"')+
+    '<label class="am-chk"><input type="checkbox" name="assinado"> Já foi assinado fora do site (ex.: ZapSign)</label><p class="am-dica">Se não marcar, o contrato aparece para o cliente ler e aceitar no login dele.</p>',
+    async(f,st)=>{const a=f.pdf.files[0];if(!a)throw new Error('Escolha o PDF.');if(a.size>40*1024*1024)throw new Error('O PDF passou de 40 MB.');st&&st('Enviando o contrato…');
+      const r=await chamar({acao:'adm_contrato',op:'add',email:g.email,titulo:f.titulo.value,data:f.data.value,assinado:f.assinado.checked,nome:a.name,b64:await lerB64(a)});
+      if(admDados)admDados.contratos=r.contratos;contratos=r.contratos;if(admDados)montarAdmin(admDados);toast('✓ Contrato adicionado')},'Adicionar')}
+// ---- parceiros (ex.: Ronald, tráfego) sem abrir a planilha
+async function admParceiros(){let P=[];const marcas=galerias.filter(g=>g.tipo==='gestao'&&!g.propria&&g.id);
+  const desenhar=()=>{const m=$('admModal');const b=m.querySelector('.am-b');const ST={'Ativo':'ok','Acesso enviado':'ok','Bloqueado':'no'};
+    b.innerHTML='<p class="am-dica" style="margin-top:0">Parceiros veem só o calendário de posts, as gravações e o relatório das marcas escolhidas, e podem mandar recados. Nunca veem valores nem contrato.</p>'+
+      (P.length?'<div class="indl">'+P.map(p=>'<div class="indl-i"><div><b>'+escH(p.nome)+'</b><small>'+escH(p.email)+(p.perfil?' · '+escH(p.perfil):'')+'</small><small>'+p.marcas.map(id=>{const g=marcas.find(x=>x.id===id);return escH(g?g.cliente:id)}).join(' · ')+'</small><span class="indl-st '+(ST[p.status]||'')+'">'+escH(p.status||'Preparando')+(p.ultimo?' · último acesso '+escH(p.ultimo):'')+'</span></div>'+
+        '<div class="indl-ac"><button type="button" class="btn sec" data-pe="'+p.i+'">✏️ Editar</button>'+(p.status==='Bloqueado'?'<button type="button" class="btn sec" data-po="reativar" data-pi="'+p.i+'">Reativar</button>':(/Ativo|Acesso enviado/.test(p.status)?'<button type="button" class="btn sec" data-po="enviar" data-pi="'+p.i+'">Reenviar acesso</button><button type="button" class="btn sec" data-po="bloquear" data-pi="'+p.i+'">Cortar acesso</button>':'<button type="button" class="btn" data-po="enviar" data-pi="'+p.i+'">✉️ Enviar acesso</button>'))+'</div></div>').join('')+'</div>':'<p class="cap-v">Nenhum parceiro ainda.</p>')+
+      '<button type="button" class="btn sec" id="parNovo" style="width:auto">＋ Novo parceiro</button>';
+    $('parNovo').onclick=()=>editar(null);b.querySelectorAll('[data-pe]').forEach(x=>x.onclick=()=>editar(P.find(p=>p.i===+x.dataset.pe)));
+    b.querySelectorAll('[data-po]').forEach(x=>x.onclick=async()=>{if(x.dataset.po==='bloquear'&&!x.dataset.c){x.dataset.c=1;x.textContent='Toque de novo para cortar';return}x.disabled=true;
+      try{const r=await chamar({acao:'adm_parceiros',op:x.dataset.po,i:+x.dataset.pi});P=r.parceiros;desenhar();toast(x.dataset.po==='enviar'?'✓ Acesso enviado por e-mail':x.dataset.po==='bloquear'?'✓ Acesso cortado':'✓ Reativado')}catch(e){x.disabled=false;toast(e.message)}})};
+  const editar=p=>{const b=$('admModal').querySelector('.am-b');p=p||{marcas:[],perfil:'Tráfego pago'};
+    b.innerHTML=campo('nome','Nome','text',' required maxlength="80" value="'+escH(p.nome||'')+'"')+campo('email','E-mail','email',' required maxlength="80" value="'+escH(p.email||'')+'"')+campo('perfil','O que ele faz','text',' maxlength="60" value="'+escH(p.perfil||'')+'"')+
+      '<p class="am-dica">Marcas que ele pode ver:</p><div class="pp-tp imp-tp">'+marcas.map(g=>'<label><input type="checkbox" name="mc" value="'+escH(g.id)+'"'+(p.marcas.indexOf(g.id)>=0?' checked':'')+'><span><b>'+escH(g.cliente)+'</b></span></label>').join('')+'</div>'+
+      '<div class="ctr-adm"><button type="button" class="btn sec" id="parVolta">Voltar</button><button type="button" class="btn" id="parSalva">Salvar</button></div>';
+    $('parVolta').onclick=desenhar;$('parSalva').onclick=async()=>{const f=$('admModal');const v=n=>f.querySelector('[name='+n+']').value;
+      try{const r=await chamar({acao:'adm_parceiros',op:'salvar',i:p.i===undefined?'':p.i,nome:v('nome'),email:v('email'),perfil:v('perfil'),marcas:[...f.querySelectorAll('[name=mc]:checked')].map(x=>x.value)});P=r.parceiros;desenhar();toast('✓ Salvo. Agora é só tocar em Enviar acesso.')}catch(e){toast(e.message)}}};
+  modal('🤝 Parceiros','<p class="vazio">Carregando…</p>',async()=>{},'Fechar');const m=$('admModal');m.querySelector('.am-cc').hidden=true;
+  try{const r=await chamar({acao:'adm_parceiros',op:'listar'});P=r.parceiros;desenhar()}catch(e){m.querySelector('.am-b').innerHTML='<p class="msg erro" style="display:block">'+escH(e.message)+'</p>'}}
+// ---- configurações (preços, Pix, prazos…) sem abrir a planilha
+async function admConfig(){modal('⚙️ Configurações','<p class="vazio">Carregando…</p>',async f=>{const vals={};f.querySelectorAll('[data-k]').forEach(i=>vals[i.dataset.k]=i.value);await chamar({acao:'adm_config',op:'salvar',valores:vals});toast('✓ Configurações salvas')},'Salvar');
+  const b=$('admModal').querySelector('.am-b');
+  try{const r=await chamar({acao:'adm_config'});b.innerHTML='<p class="am-dica" style="margin-top:0">Valores usados no orçamento automático do site, nos e-mails e nos contratos. Mudou aqui, vale para os próximos pedidos.</p>'+r.grupos.map(g=>'<h3 class="msgp-g">'+escH(g.titulo)+'</h3>'+g.campos.map(c=>'<label class="cfg-l"><span>'+escH(c.d)+'</span>'+(c.sn?'<select data-k="'+c.k+'"><option'+(/^s/i.test(c.v)?' selected':'')+'>sim</option><option'+(/^n/i.test(c.v)?' selected':'')+'>não</option></select>':'<input data-k="'+c.k+'" value="'+escH(c.v)+'" maxlength="300">')+'</label>').join('')).join('')}
+  catch(e){b.innerHTML='<p class="msg erro" style="display:block">'+escH(e.message)+'</p>'}}
+
 // ---- Tarefas (checklists do Matheus e da Sabrina)
 let tfInst=null;
 function pintarTarefasAdmin(){$('gTitulo').textContent='Tarefas';$('gAcoes').innerHTML='';$('gPrazo').textContent='O que cada um precisa fazer: gravações, roteiros, edição e posts';
@@ -1176,8 +1245,13 @@ async function abrirContrato(c,admin){
         $('ctrPdf').onclick=e=>baixarContrato(c,e.currentTarget);toast('✍️ Contrato aceito!')})};
   }else{
     f.innerHTML=(pend?'<div class="cm-ok" style="background:rgba(184,149,90,.12);border-color:rgba(184,149,90,.4);color:var(--gold-soft)">Aguardando o cliente aceitar pelo login dele.</div>':(j.aceitoEm?'<div class="cm-ok">✓ Aceito por '+escH(j.aceitoPor)+' em '+escH(j.aceitoEm)+'.</div>':'<div class="cm-ok">✓ Contrato assinado'+(j.data?' em '+escH(j.data):'')+'.</div>'))+
-      '<button type="button" class="btn sec" id="ctrPdf">⬇ '+(pend?'Baixar prévia em PDF':'Baixar PDF')+'</button>';
-    $('ctrPdf').onclick=e=>baixarContrato(c,e.currentTarget)}
+      '<button type="button" class="btn sec" id="ctrPdf">⬇ '+(pend?'Baixar prévia em PDF':'Baixar PDF')+'</button>'+
+      (admin?'<div class="ctr-adm">'+(pend?'<button type="button" class="btn sec" data-co="assinado">✍️ Marcar como assinado (fora do site)</button>':'')+(j.status==='Assinado'&&!j.aceitoEm?'<button type="button" class="btn sec" data-co="reabrir">↩️ Voltar para "aguardando"</button>':'')+'<button type="button" class="btn sec" data-co="cancelar">🗑️ Cancelar contrato</button></div>':'');
+    $('ctrPdf').onclick=e=>baixarContrato(c,e.currentTarget);
+    f.querySelectorAll('[data-co]').forEach(b=>b.onclick=async()=>{const op=b.dataset.co;if(op==='cancelar'&&!b.dataset.c){b.dataset.c=1;b.textContent='Toque de novo para cancelar';return}
+      let quem='';if(op==='assinado'){quem=prompt('Quem assinou? (nome completo, opcional)')||''}
+      b.disabled=true;try{const r=await chamar({acao:'adm_contrato',op:op,id:c.id,quem:quem});fechar();if(admDados)admDados.contratos=r.contratos;contratos=r.contratos;if(admDados)montarAdmin(admDados);
+        toast(op==='assinado'?'✓ Marcado como assinado':op==='cancelar'?'✓ Contrato cancelado':'✓ Voltou para aguardando')}catch(e){b.disabled=false;toast(e.message)}})}
 }
 function quemIg(g,x){if(x.q!=='cliente')return '📤 Publicado pela Brius';if(!g.admin)return '📱 Publicado por você';const n=((g.marca&&(g.marca.resp||g.marca.nome))||'cliente').split(' ')[0];return '📱 Publicado por '+n}
 function cartaoIg(g,x){return '<a class="igc'+(x.q==='cliente'?' cli':'')+'" data-id="'+escH(x.id)+'" href="'+escH(x.url)+'" target="_blank" rel="noopener"><span class="igc-i">'+(x.img?'<img src="'+escH(x.img)+'" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">':'')+'</span><span class="igc-t"><b>'+escH((x.leg||x.t||'Post').split('\n')[0].slice(0,80))+'</b><small>'+escH(x.t)+' · '+x.d.split('-').reverse().slice(0,2).join('/')+(x.h?' às '+escH(x.h):'')+'</small><span class="igc-q">'+quemIg(g,x)+'</span></span><em>Ver ↗</em></a>'}
@@ -1220,7 +1294,8 @@ function montarAdmin(j){
   const bt=(t,u,sec)=>u?'<a class="btn'+(sec?' sec':'')+'" href="'+escH(u)+'" target="_blank" rel="noopener">'+t+'</a>':'';
   const cab=document.querySelector('.cab');let lk=document.getElementById('admLinks');
   if(!lk){lk=document.createElement('div');lk.id='admLinks';lk.className='adm-links';cab.after(lk)}
-  lk.innerHTML=bt('📊 Painel de resultados',L.painel)+bt('🧑‍💻 Preparar fotos dos eventos',L.indexar,1)+bt('📄 Planilha',L.planilha,1)+'<button type="button" class="btn sec" id="admMsgs">💬 Mensagens prontas</button>'+bt('🌐 Ver o site','../',1);
+  lk.innerHTML=bt('📊 Painel de resultados',L.painel)+bt('🧑‍💻 Preparar fotos dos eventos',L.indexar,1)+bt('📄 Planilha',L.planilha,1)+'<button type="button" class="btn sec" id="admMsgs">💬 Mensagens prontas</button><button type="button" class="btn sec" id="admPar">🤝 Parceiros</button><button type="button" class="btn sec" id="admCfg">⚙️ Configurações</button>'+bt('🌐 Ver o site','../',1);
+  $('admPar').onclick=()=>admParceiros();$('admCfg').onclick=()=>admConfig();
   $('admMsgs').onclick=()=>{if(window.abrirMensagens)abrirMensagens();else{const sc=document.createElement('script');sc.src='mensagens.js?v=1';sc.onload=()=>abrirMensagens();document.head.appendChild(sc)}};
   const nG=galerias.filter(g=>g.tipo==='gestao').length,nF=galerias.filter(g=>g.tipo!=='gestao').length,nE=(j.eventos||[]).length+(j.proximos||[]).length;
   const pend=galerias.filter(g=>g.tipo==='gestao').reduce((s,g)=>s+(g.posts||[]).filter(p=>p.status==='Aguardando'||p.status==='Nova versão').length,0);
@@ -1235,6 +1310,7 @@ function montarAdmin(j){
   {const seg=abas.querySelector('.adm-seg'),sel=seg&&seg.querySelector('[aria-selected="true"]');if(sel)seg.scrollLeft=Math.max(0,sel.offsetLeft-seg.clientWidth/2+sel.offsetWidth/2)}
   abas.querySelectorAll('[data-ir]').forEach(b=>b.onclick=()=>{admSec='gestao';atual=+b.dataset.ir;montarAdmin(admDados);setTimeout(()=>gsIr('mens',true),200)});
   const cards=$('admCards');
+  {let ib=$('admImp');if(admSec==='fotos'&&(j.impressoes||[]).length){if(!ib){ib=document.createElement('div');ib.id='admImp';cards.after(ib)}pintarImpressoes(j,ib)}else if(ib)ib.remove()}
   // contratos: na Gestão só os de clientes de gestão; em Fotos só os de clientes de fotos/vídeo
   {const tudo=j.contratos||[];const sec=admSec;const em=new Set(galerias.filter(g=>sec==='gestao'?g.tipo==='gestao':g.tipo!=='gestao').map(g=>String(g.email||'').trim().toLowerCase()));
     const vis=tudo.filter(c=>em.has(String(c.email||'').trim().toLowerCase()));pintarContratos(vis,true);contratos=tudo;$('gContratos').hidden=!(sec==='gestao'||sec==='fotos')||!vis.length}
@@ -1470,6 +1546,7 @@ function barraAdmin(g){
   const bt=(t,fn,sec)=>{const b=document.createElement('button');b.className='btn adm-b'+(sec?' sec':'');b.textContent=t;b.onclick=()=>fn(b);(sec?mais():ac).appendChild(b)};
   const senha=()=>{if(g.id&&/Ativo|Acesso enviado/.test(g.statusPlanilha))bt('🔑 Redefinir senha',b=>{if(!b.dataset.c){b.dataset.c=1;b.textContent='Toque de novo: enviar para '+g.email;return}admStatus(g,'Redefinir senha',b)},1)};
   if(!g.propria)setTimeout(senha,0);
+  if(!g.propria&&g.dados){setTimeout(()=>{bt('✏️ Editar dados',()=>formEditarCliente(g),1);bt('📄 Adicionar contrato',()=>formContrato(g),1)},0)}
   if(g.indicacao){setTimeout(()=>{bt('🎁 Indicações'+(g.indicacao.lista.length?' ('+g.indicacao.lista.length+')':''),()=>admIndicacoes(g),1);chipInd(g)},0)}
   if(g.tipo==='gestao'&&g.id){const ins=g.insights;bt(ins&&ins.conectado?'📸 @'+ins.usuario+' conectado':'📸 Conectar Instagram',()=>{if(ins&&ins.conectado){gsIr('rel',true)}else conectarIG(g)},1)}
   if(g.propria){bt('+ Adicionar post',()=>formPost(g));return}
