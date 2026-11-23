@@ -457,6 +457,13 @@ button.fin-l.rec-b{width:100%;text-align:left;font:inherit;color:inherit;cursor:
 .imp-card{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin:0 0 18px;padding:14px 16px;border-radius:18px;border:1px solid rgba(184,149,90,.45);background:linear-gradient(135deg,rgba(184,149,90,.12),rgba(184,149,90,.03))}.imp-card .ic{font-size:26px}.imp-card>div{flex:1 1 240px;display:grid;gap:2px}.imp-card small{color:var(--muted-d);font-size:13.5px;line-height:1.45}.imp-card .btn{width:auto}
 .imp-tp{grid-template-columns:repeat(2,1fr)}
 #gInd{margin:0 0 18px}.ind-c{display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding:16px 18px;border-radius:20px;border:1px solid #3a352f;background:var(--graphite)}.ind-c .ic{font-size:28px}.ind-t{flex:1 1 280px;display:grid;gap:4px}.ind-t>b{font:500 19px var(--serif)}.ind-t small{color:var(--muted-d);font-size:13.5px;line-height:1.5}.ind-t small b{color:var(--bone)}.ind-t .ok{color:#7fc49a}.ind-cod{font-size:13px;color:var(--muted-d)}.ind-cod b{color:var(--gold-soft);letter-spacing:.06em}.ind-ac{display:flex;gap:8px;flex-wrap:wrap}.ind-ac .btn{width:auto;text-decoration:none}
+.ind-chip{display:inline-flex;align-items:center;gap:4px;margin-left:8px;padding:3px 10px;border-radius:999px;border:1px solid rgba(184,149,90,.5);background:rgba(184,149,90,.1);color:var(--bone);font:600 12.5px var(--body);cursor:pointer;vertical-align:middle}.ind-chip b{color:var(--gold-soft);letter-spacing:.04em}.ind-chip .ok{color:#7fc49a}
+.indl-top{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}.indl-top>div{background:var(--graphite-2);border:1px solid #3a352f;border-radius:14px;padding:10px;display:grid;gap:2px}.indl-top small{color:var(--muted-d);font-size:11.5px}.indl-top b{font:500 20px var(--serif);color:var(--gold-soft)}.indl-top b.ok{color:#7fc49a}
+.indl-link{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px}.indl-link input{flex:1 1 220px;min-width:0}.indl-link .btn{width:auto!important;text-decoration:none}
+.indl{display:grid;gap:10px;margin:12px 0}.indl-i{display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;align-items:center;padding:12px 14px;border-radius:14px;border:1px solid #3a352f;background:var(--graphite-2)}.indl-i>div:first-child{display:grid;gap:3px;flex:1 1 220px}.indl-i small{color:var(--muted-d);font-size:12.5px}
+.indl-st{font-size:12.5px;font-weight:700;color:#7fb6e6}.indl-st.ok{color:#7fc49a}.indl-st.no{color:#e08b7a}.indl-ac{display:flex;gap:6px;flex-wrap:wrap}.indl-ac .btn{width:auto!important;padding:7px 12px!important;font-size:13px!important}
+.indl-nova{margin-top:12px;border-top:1px solid #3a352f;padding-top:12px}.indl-nova summary{cursor:pointer;font-weight:700;color:var(--gold-soft);margin-bottom:8px}
+@media(max-width:520px){.indl-top{grid-template-columns:repeat(2,1fr)}}
 .rec-t{margin:14px 0 0;font:700 12px var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
 .pp{margin-top:16px;padding-top:16px;border-top:1px solid #3a352f}.pp-h{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;justify-content:space-between}.pp-h>div{flex:1 1 260px}.pp h4{margin:0 0 4px;font:500 19px var(--serif)}.pp-h small{color:var(--muted-d);font-size:13.5px;line-height:1.45;display:block}
 .pp-l{display:grid;gap:10px;margin-top:12px}.pp-it{padding:12px 14px;border-radius:14px;border:1px solid rgba(127,182,230,.45);background:var(--graphite-2);display:grid;gap:3px}.pp-it.ok{border-color:rgba(127,196,154,.5)}.pp-it.ok .cap-st{color:#7fc49a}.pp-it p{margin:2px 0;font-size:14px;white-space:pre-wrap;color:var(--bone)}.pp-it small{color:var(--muted-d);font-size:12.5px}
@@ -1463,6 +1470,7 @@ function barraAdmin(g){
   const bt=(t,fn,sec)=>{const b=document.createElement('button');b.className='btn adm-b'+(sec?' sec':'');b.textContent=t;b.onclick=()=>fn(b);(sec?mais():ac).appendChild(b)};
   const senha=()=>{if(g.id&&/Ativo|Acesso enviado/.test(g.statusPlanilha))bt('🔑 Redefinir senha',b=>{if(!b.dataset.c){b.dataset.c=1;b.textContent='Toque de novo: enviar para '+g.email;return}admStatus(g,'Redefinir senha',b)},1)};
   if(!g.propria)setTimeout(senha,0);
+  if(g.indicacao){setTimeout(()=>{bt('🎁 Indicações'+(g.indicacao.lista.length?' ('+g.indicacao.lista.length+')':''),()=>admIndicacoes(g),1);chipInd(g)},0)}
   if(g.tipo==='gestao'&&g.id){const ins=g.insights;bt(ins&&ins.conectado?'📸 @'+ins.usuario+' conectado':'📸 Conectar Instagram',()=>{if(ins&&ins.conectado){gsIr('rel',true)}else conectarIG(g)},1)}
   if(g.propria){bt('+ Adicionar post',()=>formPost(g));return}
   if(g.tipo==='gestao'){bt('+ Adicionar post',()=>formPost(g));
@@ -1473,6 +1481,29 @@ function barraAdmin(g){
     if(!/Ativo|Acesso enviado/.test(g.statusPlanilha))bt('✉️ Enviar acesso ao cliente',b=>admStatus(g,'Enviar acesso',b),1);
     else bt('🔒 Encerrar galeria',b=>{if(!b.dataset.c){b.dataset.c=1;b.textContent='Toque de novo para encerrar';return}admStatus(g,'Encerrar agora',b)},1)}
 }
+// ---- agência: indicações de cada cliente (código, quem ele indicou, fechou?, desconto usado?)
+function chipInd(g){const I=g.indicacao,pz=$('gPrazo');if(!I||!pz)return;pz.querySelectorAll('.ind-chip').forEach(x=>x.remove());
+  const c=document.createElement('button');c.type='button';c.className='ind-chip';
+  c.innerHTML='🎁 <b>'+escH(I.codigo)+'</b>'+(I.lista.length?' · '+I.lista.length+' indicaç'+(I.lista.length>1?'ões':'ão')+(I.fecharam?' · '+I.fecharam+' fechou'+(I.fecharam>1?'ram':''):''):' · nenhuma indicação ainda')+(I.disponiveis?' · <span class="ok">'+I.disponiveis+' desconto'+(I.disponiveis>1?'s':'')+' para usar</span>':'');
+  c.onclick=()=>admIndicacoes(g);pz.appendChild(c)}
+function admIndicacoes(g){const I=g.indicacao;if(!I)return;const nm=escH(g.cliente||g.evento);
+  const ST={'Fechou':['ok','✓ Fechou'],'Orçamento':['','📝 Pediu orçamento'],'Reunião':['','📅 Marcou reunião'],'Conversando':['','💬 Conversando'],'Não fechou':['no','✕ Não fechou']};
+  const item=i=>{const st=ST[i.status]||['',escH(i.status||'')];return '<div class="indl-i"><div><b>'+escH(i.nome||'—')+'</b><small>'+escH(String(i.data).slice(0,10))+(i.zap?' · '+escH(i.zap):'')+(i.email?' · '+escH(i.email):'')+'</small>'+
+    '<span class="indl-st '+st[0]+'">'+st[1]+(i.fechouEm?' em '+escH(i.fechouEm):'')+'</span>'+(i.status==='Fechou'?(i.usadoEm?'<span class="indl-st">🎟️ Desconto usado em '+escH(i.usadoEm)+'</span>':'<span class="indl-st ok">🎟️ Desconto de '+I.pct+'% liberado para '+escH(primeiroNomeJS(g.cliente))+'</span>'):'')+'</div>'+
+    '<div class="indl-ac">'+(i.status!=='Fechou'?'<button type="button" class="btn sec" data-op="fechou" data-l="'+i.linha+'">✓ Fechou</button>'+(i.status!=='Não fechou'?'<button type="button" class="btn sec" data-op="naofechou" data-l="'+i.linha+'">✕ Não fechou</button>':''):
+      (i.usadoEm?'<button type="button" class="btn sec" data-op="desusar" data-l="'+i.linha+'">Desfazer desconto</button>':'<button type="button" class="btn sec" data-op="usado" data-l="'+i.linha+'">🎟️ Desconto usado</button>'))+'</div></div>'};
+  const txtCli='Oi! 🤍 Você sabia que pode indicar a Brius? Quem você indicar ganha '+I.pct+'% de desconto no primeiro serviço, e quando fechar com a gente você ganha '+I.pct+'% no seu próximo. É só mandar este link: '+I.link+'\n(ou passar o seu código: '+I.codigo+')';
+  const f=modal('🎁 Indicações · '+nm,'<div class="indl-top"><div><small>Código</small><b>'+escH(I.codigo)+'</b></div><div><small>Indicou</small><b>'+I.lista.length+'</b></div><div><small>Fecharam</small><b>'+(I.fecharam||0)+'</b></div><div><small>Descontos para usar</small><b class="'+(I.disponiveis?'ok':'')+'">'+(I.disponiveis||0)+'</b></div></div>'+
+    '<div class="indl-link"><input readonly value="'+escH(I.link)+'"><button type="button" class="btn sec" data-cp>Copiar link</button><a class="btn sec" target="_blank" rel="noopener" href="https://wa.me/?text='+encodeURIComponent(txtCli)+'">Mandar para o cliente</a></div>'+
+    '<p class="am-dica">Quem chegar por esse link ganha '+I.pct+'% no primeiro serviço. Quando o indicado paga o sinal pelo site, já fica como <b>Fechou</b> sozinho; se fechou pelo WhatsApp, marque aqui. Quando '+escH(primeiroNomeJS(g.cliente))+' usar o desconto, toque em <b>Desconto usado</b>.</p>'+
+    (I.lista.length?'<div class="indl">'+I.lista.map(item).join('')+'</div>':'<p class="cap-v">'+nm+' ainda não indicou ninguém.</p>')+
+    '<details class="indl-nova"><summary>＋ Registrar uma indicação que chegou pelo WhatsApp</summary>'+campo('nome','Nome de quem foi indicado','text',' maxlength="80"')+'<div class="am-2">'+campo('zap','WhatsApp (opcional)','tel',' maxlength="30"')+campo('emailInd','E-mail (opcional)','email',' maxlength="80"')+'</div><label class="am-chk"><input type="checkbox" name="fechou"> Já fechou com a gente</label></details>',
+    async fm=>{if(!fm.nome.value.trim())return;const j=await chamar({acao:'adm_ind',op:'nova',email:g.email,nome:fm.nome.value,zap:fm.zap.value,emailInd:fm.emailInd.value,fechou:fm.fechou.checked});
+      g.indicacao=j.indicacao;barraAdmin(g);toast('✓ Indicação registrada');setTimeout(()=>admIndicacoes(g),50)},'Salvar');
+  const m=$('admModal');m.querySelector('[data-cp]').onclick=async()=>{try{await navigator.clipboard.writeText(I.link);toast('✓ Link copiado')}catch(e){}};
+  m.querySelectorAll('[data-op]').forEach(b=>b.onclick=async()=>{b.disabled=true;try{const j=await chamar({acao:'adm_ind',op:b.dataset.op,linha:+b.dataset.l,email:g.email});g.indicacao=j.indicacao;barraAdmin(g);admIndicacoes(g);
+    toast(b.dataset.op==='fechou'?'✓ Marcado como fechou. '+primeiroNomeJS(g.cliente)+' ganhou '+I.pct+'% no próximo serviço.':'✓ Atualizado')}catch(e){b.disabled=false;toast(e.message)}})}
+const primeiroNomeJS=n=>String(n||'').trim().split(/\s+/)[0]||'o cliente';
 // ---- cliente: pedir orçamento de álbum / quadro / fotos impressas
 function pedirImpressao(g){const nf=g.arquivos.filter(a=>g.fav.has(a.id)).length;
   const tp=[['album','📖','Álbum'],['quadro','🖼️','Quadro / canvas'],['fotos','📷','Fotos impressas'],['outro','✨','Outra ideia']];
