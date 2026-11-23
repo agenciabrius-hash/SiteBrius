@@ -468,6 +468,9 @@ button.fin-l.rec-b{width:100%;text-align:left;font:inherit;color:inherit;cursor:
 .ctr-adm{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.ctr-adm .btn{width:auto!important}
 #admImp{margin-top:18px}.imp-ac{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:6px}.imp-ac select,.imp-ac input{width:auto;flex:1 1 140px;min-width:0}.imp-ac .btn{width:auto!important;padding:8px 12px!important;font-size:13px!important;text-decoration:none}
 .cfg-l{display:grid;gap:4px;margin:10px 0}.cfg-l span{font-size:13px;color:var(--muted-d);font-weight:500}
+#gTrab{margin:0 0 18px}.trb-l{display:grid;gap:14px}.trb{display:grid;gap:10px;padding:18px;border-radius:20px;border:1px solid rgba(184,149,90,.45);background:var(--graphite)}.trb.ok{border-color:rgba(127,196,154,.45)}.trb.ok .cap-st{color:#7fc49a}.trb h3{margin:4px 0 0;font:500 22px/1.2 var(--serif)}
+.trb-g{display:grid;gap:6px;font-size:14.5px}.trb-g a{color:var(--gold-soft)}.trb-ins{padding:12px 14px;border-radius:14px;background:var(--graphite-2);border:1px solid #3a352f}.trb-ins small{color:var(--gold);font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase}.trb-ins p{margin:6px 0 0;white-space:pre-wrap;font-size:14.5px;line-height:1.5}.trb-ins .muted{color:var(--muted-d);font-size:12.5px}.trb-ins a{color:var(--gold-soft)}
+.trb-nota{display:grid;gap:6px;font-weight:600;font-size:14px}.trb-nota textarea{background:var(--graphite-2);color:var(--bone);border:1px solid #3a352f;border-radius:12px;padding:10px 12px;font:14px/1.45 var(--body);resize:vertical}.trb .btn{width:auto;justify-self:start}.trb-up{display:grid;gap:6px;padding:14px;border-radius:14px;border:1px dashed rgba(184,149,90,.5)}.trb-up small{color:var(--muted-d);font-size:13px;line-height:1.45}.trb-up label.btn{cursor:pointer}.trb-pg{margin:0;font-size:13px;color:var(--gold-soft);min-height:1em}.trb-vz{padding:16px;border-radius:16px;border:1px dashed #3a352f;color:var(--muted-d)}
 .rec-t{margin:14px 0 0;font:700 12px var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
 .pp{margin-top:16px;padding-top:16px;border-top:1px solid #3a352f}.pp-h{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;justify-content:space-between}.pp-h>div{flex:1 1 260px}.pp h4{margin:0 0 4px;font:500 19px var(--serif)}.pp-h small{color:var(--muted-d);font-size:13.5px;line-height:1.45;display:block}
 .pp-l{display:grid;gap:10px;margin-top:12px}.pp-it{padding:12px 14px;border-radius:14px;border:1px solid rgba(127,182,230,.45);background:var(--graphite-2);display:grid;gap:3px}.pp-it.ok{border-color:rgba(127,196,154,.5)}.pp-it.ok .cap-st{color:#7fc49a}.pp-it p{margin:2px 0;font-size:14px;white-space:pre-wrap;color:var(--bone)}.pp-it small{color:var(--muted-d);font-size:12.5px}
@@ -603,6 +606,7 @@ button.fin-l.rec-b{width:100%;text-align:left;font:inherit;color:inherit;cursor:
     <div class="abas" id="gAbas"></div>
     <div id="gContratos"></div>
     <div id="gInd" hidden></div>
+    <div id="gTrab" hidden></div>
     <div id="gConteudo"></div>
   </section>
 
@@ -714,9 +718,10 @@ async function carregarGaleria(forcar){
   finally{sincronizando(false)}
 }
 function pintarTudo(j){
-    galerias=j.galerias;$('gOla').textContent='Olá, '+(j.nome||'')+'!'+(j.parceiro?' · acesso de visualização':'');ultimoHash=hashDados(j);
-    pintarContratos(j.contratos||[],!!j.admin);pintarIndicacao(j.admin?null:j.indicacao);
+    galerias=j.galerias;$('gOla').textContent='Olá, '+(j.nome||'')+'!'+(j.parceiro?(j.galerias.length?' · acesso de visualização':' · equipe Brius'):'');ultimoHash=hashDados(j);
+    pintarContratos(j.contratos||[],!!j.admin);pintarIndicacao(j.admin?null:j.indicacao);pintarTrabalhos(j.admin?null:j.trabalhos);
     if(j.admin){mostrar('telaGal');montarAdmin(j);return}
+    if(!galerias.length){$('gAbas').innerHTML='';$('gTitulo').textContent='Meus trabalhos';$('gPrazo').textContent=(j.trabalhos||[]).length?'Datas, horários, o que fazer e onde enviar os arquivos':'Quando a Brius marcar um trabalho com você, ele aparece aqui.';$('gAcoes').innerHTML='';$('gConteudo').innerHTML='';mostrar('telaGal');return}
     const abas=$('gAbas');abas.innerHTML='';
     const marcas=galerias.filter(g=>g.tipo==='gestao').length;
     abas.classList.toggle('marcas',marcas>1);
@@ -730,7 +735,7 @@ function pintarTudo(j){
 }
 // ---- Atualiza sozinho (sem F5): a cada 60 s, só com a aba visível e quando ninguém está digitando ou com janela aberta
 let ultimoHash='';
-const hashDados=j=>JSON.stringify([j.galerias,j.contratos,j.proximos,j.eventos,j.agenda]);
+const hashDados=j=>JSON.stringify([j.galerias,j.contratos,j.proximos,j.eventos,j.agenda,j.trabalhos,j.impressoes]);
 let salvandoFundo=0;
 function ocupadoAgora(){if(salvandoFundo>0)return true;const vis=id=>{const e=$(id);return e&&!e.hidden};
   if(vis('admModal')||vis('ctrModal')||vis('lb')||vis('dl')||document.querySelector('.tf-mod,.mais-l:not([hidden])'))return true;
@@ -745,7 +750,7 @@ async function atualizarSozinho(){
 function aplicarDados(j){ultimoHash=hashDados(j);
   const y=scrollY;const g0=galerias[atual]||{};const chave=g0.id||g0.pastaId||g0.evento;
   galerias=j.galerias;const i=galerias.findIndex(g=>(g.id||g.pastaId||g.evento)===chave);if(i>=0)atual=i;
-  pintarContratos(j.contratos||[],!!j.admin);pintarIndicacao(j.admin?null:j.indicacao);
+  pintarContratos(j.contratos||[],!!j.admin);pintarIndicacao(j.admin?null:j.indicacao);pintarTrabalhos(j.admin?null:j.trabalhos);if(!j.admin&&!galerias.length){window.scrollTo(0,y);return}
   if(j.admin){admDados=j;if(admSec==='financeiro'||admSec==='relatorios')return;if(admSec==='tarefas'){if(tfInst)tfInst.recarregar();return}montarAdmin(j)}
   else{abrir(atual,true);$('gAbas').querySelectorAll('.marca[data-i]').forEach(b=>{const g=galerias[+b.dataset.i];if(!g)return;const pd=(g.posts||[]).filter(p=>p.status==='Aguardando'||p.status==='Nova versão').length;const sm=b.querySelector('small');if(sm)sm.textContent=pd?pd+' para aprovar':'Tudo em dia ✓'})}
   window.scrollTo(0,y)}
@@ -1174,17 +1179,18 @@ function formContrato(g){
 // ---- parceiros (ex.: Ronald, tráfego) sem abrir a planilha
 async function admParceiros(){let P=[];const marcas=galerias.filter(g=>g.tipo==='gestao'&&!g.propria&&g.id);
   const desenhar=()=>{const m=$('admModal');const b=m.querySelector('.am-b');const ST={'Ativo':'ok','Acesso enviado':'ok','Bloqueado':'no'};
-    b.innerHTML='<p class="am-dica" style="margin-top:0">Parceiros veem só o calendário de posts, as gravações e o relatório das marcas escolhidas, e podem mandar recados. Nunca veem valores nem contrato.</p>'+
+    b.innerHTML='<p class="am-dica" style="margin-top:0">Tráfego pago vê o calendário, as gravações e o relatório das marcas escolhidas. A equipe (fotógrafo, videomaker, storymaker…) vê só os trabalhos marcados com ela e envia os arquivos por lá. Ninguém vê valores de clientes nem contratos.</p>'+
       (P.length?'<div class="indl">'+P.map(p=>'<div class="indl-i"><div><b>'+escH(p.nome)+'</b><small>'+escH(p.email)+(p.perfil?' · '+escH(p.perfil):'')+'</small><small>'+p.marcas.map(id=>{const g=marcas.find(x=>x.id===id);return escH(g?g.cliente:id)}).join(' · ')+'</small><span class="indl-st '+(ST[p.status]||'')+'">'+escH(p.status||'Preparando')+(p.ultimo?' · último acesso '+escH(p.ultimo):'')+'</span></div>'+
-        '<div class="indl-ac"><button type="button" class="btn sec" data-pe="'+p.i+'">✏️ Editar</button>'+(p.status==='Bloqueado'?'<button type="button" class="btn sec" data-po="reativar" data-pi="'+p.i+'">Reativar</button>':(/Ativo|Acesso enviado/.test(p.status)?'<button type="button" class="btn sec" data-po="enviar" data-pi="'+p.i+'">Reenviar acesso</button><button type="button" class="btn sec" data-po="bloquear" data-pi="'+p.i+'">Cortar acesso</button>':'<button type="button" class="btn" data-po="enviar" data-pi="'+p.i+'">✉️ Enviar acesso</button>'))+'</div></div>').join('')+'</div>':'<p class="cap-v">Nenhum parceiro ainda.</p>')+
+        '<div class="indl-ac">'+(/tr[áa]fego/i.test(p.perfil)?'':'<button type="button" class="btn" data-pt="'+p.i+'">📋 Trabalhos</button>')+'<button type="button" class="btn sec" data-pe="'+p.i+'">✏️ Editar</button>'+(p.status==='Bloqueado'?'<button type="button" class="btn sec" data-po="reativar" data-pi="'+p.i+'">Reativar</button>':(/Ativo|Acesso enviado/.test(p.status)?'<button type="button" class="btn sec" data-po="enviar" data-pi="'+p.i+'">Reenviar acesso</button><button type="button" class="btn sec" data-po="bloquear" data-pi="'+p.i+'">Cortar acesso</button>':'<button type="button" class="btn" data-po="enviar" data-pi="'+p.i+'">✉️ Enviar acesso</button>'))+'</div></div>').join('')+'</div>':'<p class="cap-v">Nenhum parceiro ainda.</p>')+
       '<button type="button" class="btn sec" id="parNovo" style="width:auto">＋ Novo parceiro</button>';
-    $('parNovo').onclick=()=>editar(null);b.querySelectorAll('[data-pe]').forEach(x=>x.onclick=()=>editar(P.find(p=>p.i===+x.dataset.pe)));
+    $('parNovo').onclick=()=>editar(null);b.querySelectorAll('[data-pt]').forEach(x=>x.onclick=()=>admTrabalhos(P.find(p=>p.i===+x.dataset.pt),desenhar));b.querySelectorAll('[data-pe]').forEach(x=>x.onclick=()=>editar(P.find(p=>p.i===+x.dataset.pe)));
     b.querySelectorAll('[data-po]').forEach(x=>x.onclick=async()=>{if(x.dataset.po==='bloquear'&&!x.dataset.c){x.dataset.c=1;x.textContent='Toque de novo para cortar';return}x.disabled=true;
       try{const r=await chamar({acao:'adm_parceiros',op:x.dataset.po,i:+x.dataset.pi});P=r.parceiros;desenhar();toast(x.dataset.po==='enviar'?'✓ Acesso enviado por e-mail':x.dataset.po==='bloquear'?'✓ Acesso cortado':'✓ Reativado')}catch(e){x.disabled=false;toast(e.message)}})};
   const editar=p=>{const b=$('admModal').querySelector('.am-b');p=p||{marcas:[],perfil:'Tráfego pago'};
-    b.innerHTML=campo('nome','Nome','text',' required maxlength="80" value="'+escH(p.nome||'')+'"')+campo('email','E-mail','email',' required maxlength="80" value="'+escH(p.email||'')+'"')+campo('perfil','O que ele faz','text',' maxlength="60" value="'+escH(p.perfil||'')+'"')+
-      '<p class="am-dica">Marcas que ele pode ver:</p><div class="pp-tp imp-tp">'+marcas.map(g=>'<label><input type="checkbox" name="mc" value="'+escH(g.id)+'"'+(p.marcas.indexOf(g.id)>=0?' checked':'')+'><span><b>'+escH(g.cliente)+'</b></span></label>').join('')+'</div>'+
+    b.innerHTML=campo('nome','Nome','text',' required maxlength="80" value="'+escH(p.nome||'')+'"')+campo('email','E-mail','email',' required maxlength="80" value="'+escH(p.email||'')+'"')+'<label>O que ele faz<select name="perfil">'+FUNCOES.map(f=>'<option'+(f===(p.perfil||'Fotógrafo')?' selected':'')+'>'+f+'</option>').join('')+(p.perfil&&FUNCOES.indexOf(p.perfil)<0?'<option selected>'+escH(p.perfil)+'</option>':'')+'</select></label>'+
+      '<div data-mcs><p class="am-dica">Marcas que ele pode ver (calendário, gravações e relatório). Só para tráfego; a equipe vê apenas os trabalhos dela.</p><div class="pp-tp imp-tp">'+marcas.map(g=>'<label><input type="checkbox" name="mc" value="'+escH(g.id)+'"'+(p.marcas.indexOf(g.id)>=0?' checked':'')+'><span><b>'+escH(g.cliente)+'</b></span></label>').join('')+'</div></div>'+
       '<div class="ctr-adm"><button type="button" class="btn sec" id="parVolta">Voltar</button><button type="button" class="btn" id="parSalva">Salvar</button></div>';
+    const pf=b.querySelector('[name=perfil]'),mcs=b.querySelector('[data-mcs]');const vm=()=>{mcs.hidden=!/tr[áa]fego/i.test(pf.value)};pf.onchange=vm;vm();
     $('parVolta').onclick=desenhar;$('parSalva').onclick=async()=>{const f=$('admModal');const v=n=>f.querySelector('[name='+n+']').value;
       try{const r=await chamar({acao:'adm_parceiros',op:'salvar',i:p.i===undefined?'':p.i,nome:v('nome'),email:v('email'),perfil:v('perfil'),marcas:[...f.querySelectorAll('[name=mc]:checked')].map(x=>x.value)});P=r.parceiros;desenhar();toast('✓ Salvo. Agora é só tocar em Enviar acesso.')}catch(e){toast(e.message)}}};
   modal('🤝 Parceiros','<p class="vazio">Carregando…</p>',async()=>{},'Fechar');const m=$('admModal');m.querySelector('.am-cc').hidden=true;
@@ -1432,7 +1438,11 @@ async function subir(pasta,files,nomeDe,progresso,publico){
     if(!j.ok)throw new Error(j.erro||'Falha ao enviar '+f.name);ids.push(j.id);n++}
   return ids;
 }
-// vídeos grandes: o Apps Script só abre a "sessão de envio" e o navegador manda o arquivo direto para o Google Drive (aguenta vários GB)
+function putDrive(url,f,pct){return new Promise((ok,erro)=>{const x=new XMLHttpRequest();x.open('PUT',url);x.setRequestHeader('Content-Type',f.type||'application/octet-stream');
+  x.upload.onprogress=e=>{if(e.lengthComputable&&pct)pct(Math.floor(e.loaded/e.total*100))};
+  x.onload=()=>{if(x.status===200||x.status===201){let r={};try{r=JSON.parse(x.responseText)}catch(e){}ok(r.id||'')}else erro(new Error('O Drive recusou '+f.name+' ('+x.status+').'))};
+  x.onerror=()=>erro(new Error('A conexão caiu enviando '+f.name+'.'));x.send(f)})}
+// vídeos grandes: o Apps Script só abre a "sessão de envio\" e o navegador manda o arquivo direto para o Google Drive (aguenta vários GB)
 async function subirGrande(pasta,f,nome,pct,publico){
   const j=await api({acao:'adm_upload',sessao:guardar.get(),pasta:pasta,nome:nome,tipo:f.type||'application/octet-stream',tamanho:f.size,origem:location.origin});
   if(!j.ok)throw new Error(j.erro||'Não foi possível começar o envio de '+f.name);
@@ -1558,6 +1568,65 @@ function barraAdmin(g){
     if(!/Ativo|Acesso enviado/.test(g.statusPlanilha))bt('✉️ Enviar acesso ao cliente',b=>admStatus(g,'Enviar acesso',b),1);
     else bt('🔒 Encerrar galeria',b=>{if(!b.dataset.c){b.dataset.c=1;b.textContent='Toque de novo para encerrar';return}admStatus(g,'Encerrar agora',b)},1)}
 }
+// ---- equipe (fotógrafo, videomaker, storymaker…): trabalhos no login do parceiro
+const fmtD=d=>{if(!/^\d{4}-\d{2}-\d{2}$/.test(d||''))return escH(d||'');const x=new Date(d+'T12:00:00');return ['dom','seg','ter','qua','qui','sex','sáb'][x.getDay()]+', '+d.split('-').reverse().join('/')};
+const brl=v=>{const n=Number(String(v||'').replace(/[^\d,.-]/g,'').replace(/\.(?=\d{3}(\D|$))/g,'').replace(',','.'));return n?'R$ '+n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):''};
+function pintarTrabalhos(T){const box=$('gTrab');if(!box)return;if(!T){box.hidden=true;box.innerHTML='';return}box.hidden=false;
+  if(!T.length){box.innerHTML='<div class="trb-vz">📋 Nenhum trabalho marcado com você no momento.</div>';return}
+  const hj=hojeISO();const prox=T.filter(t=>t.status!=='Entregue'),ent=T.filter(t=>t.status==='Entregue');
+  const card=t=>'<article class="trb'+(t.status==='Entregue'?' ok':'')+'" data-id="'+escH(t.id)+'"><div class="trb-h"><div><span class="cap-st">'+(t.status==='Entregue'?'✓ Entregue'+(t.entregueEm?' em '+escH(t.entregueEm.slice(0,10)):''):t.data<hj?'⏳ Falta entregar':'📅 Agendado')+(t.funcao?' · '+escH(t.funcao):'')+'</span><h3>'+escH(t.titulo)+'</h3></div></div>'+
+    '<div class="trb-g"><span>📅 <b>'+fmtD(t.data)+'</b></span>'+(t.chegada?'<span>⏰ Chegar às <b>'+escH(t.chegada)+'</b>'+(t.saida?' · até '+escH(t.saida):'')+'</span>':'')+(t.local?'<span>📍 <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(t.local)+'">'+escH(t.local)+'</a></span>':'')+(t.prazo?'<span>⏳ Entregar até <b>'+fmtD(t.prazo)+'</b></span>':'')+(brl(t.valor)?'<span>💰 Diária combinada: <b>'+brl(t.valor)+'</b></span>':'')+'</div>'+
+    (t.instrucoes?'<div class="trb-ins"><small>O que fazer (da Brius)</small><p>'+escH(t.instrucoes)+'</p></div>':'')+
+    (t.instagram?'<div class="trb-ins"><small>📱 Instagram do cliente</small><p><a target="_blank" rel="noopener" href="https://instagram.com/'+encodeURIComponent(t.instagram)+'">@'+escH(t.instagram)+'</a><br><span class="muted">A senha a Brius te passa pelo WhatsApp (por segurança ela não fica salva aqui).</span></p></div>':'')+
+    '<label class="trb-nota">📝 Seu bloco de notas<textarea rows="3" maxlength="5000" data-nota placeholder="Ex.: chegar 30 min antes, levar 2 baterias extras, fotos da família na saída da igreja…">'+escH(t.notas||'')+'</textarea></label><button type="button" class="btn sec" data-salva>Salvar notas</button>'+
+    '<div class="trb-up"><b>📤 Fotos e vídeos</b><small>'+(t.arquivos?t.arquivos+' arquivo'+(t.arquivos>1?'s':'')+' enviado'+(t.arquivos>1?'s':''):'Nenhum arquivo enviado ainda')+'. Pode mandar tudo do cartão de memória, de qualquer tamanho (inclusive RAW e vídeos grandes).</small>'+
+      '<label class="btn">Escolher arquivos<input type="file" multiple accept="image/*,video/*,.arw,.cr2,.cr3,.nef,.raf,.dng,.orf,.rw2,.heic,.mts" data-up hidden></label><p class="trb-pg" data-pg></p></div>'+
+    (t.status!=='Entregue'?'<button type="button" class="btn" data-ent>✓ Terminei de enviar (avisar a Brius)</button>':'')+'</article>';
+  box.innerHTML='<div class="trb-l">'+prox.map(card).join('')+(ent.length?'<p class="rec-t">Já entregues</p>'+ent.map(card).join(''):'')+'</div>';
+  box.querySelectorAll('.trb').forEach(el=>{const t=T.find(x=>x.id===el.dataset.id);const nota=el.querySelector('[data-nota]');
+    el.querySelector('[data-salva]').onclick=async e=>{const b=e.currentTarget;b.disabled=true;try{await chamar({acao:'trab_nota',id:t.id,notas:nota.value});t.notas=nota.value;toast('✓ Notas salvas')}catch(x){toast(x.message)}b.disabled=false};
+    const ent=el.querySelector('[data-ent]');if(ent)ent.onclick=()=>confirmar('Avisar a Brius que terminou?','<p class="cf-dica">Você enviou <b>'+t.arquivos+'</b> arquivo(s). A Brius recebe um aviso com as suas notas.</p>','✓ Sim, terminei',async()=>{await chamar({acao:'trab_entregue',id:t.id,notas:nota.value});t.status='Entregue';t.entregueEm=new Date().toLocaleDateString('pt-BR');pintarTrabalhos(T);toast('✓ Brius avisada. Obrigado!')});
+    el.querySelector('[data-up]').onchange=async e=>{const fs=[...e.target.files];e.target.value='';if(!fs.length)return;const pg=el.querySelector('[data-pg]');let feitos=0,falhas=[],i=0;
+      const ant=window.onbeforeunload;window.onbeforeunload=()=>'Ainda estão sendo enviados arquivos.';salvandoFundo++;
+      const prox1=async()=>{while(i<fs.length){const f=fs[i++];try{const j=await api({acao:'trab_upload',sessao:guardar.get(),id:t.id,nome:f.name,tipo:f.type||'application/octet-stream',tamanho:f.size,origem:location.origin});if(!j.ok)throw new Error(j.erro);
+          await putDrive(j.url,f,p=>{pg.textContent='Enviando '+(feitos+1)+' de '+fs.length+'… '+f.name+' '+p+'%'});feitos++;pg.textContent='Enviados '+feitos+' de '+fs.length+'…'}catch(x){falhas.push(f.name)}}};
+      try{await Promise.all([prox1(),prox1(),prox1()]);if(feitos){const r=await api({acao:'trab_upload_fim',sessao:guardar.get(),id:t.id,qtd:feitos});if(r.ok)t.arquivos=r.arquivos}}finally{window.onbeforeunload=ant||null;salvandoFundo--}
+      pintarTrabalhos(T);toast(falhas.length?'⚠️ '+feitos+' enviados, '+falhas.length+' falharam: '+falhas.slice(0,3).join(', ')+(falhas.length>3?'…':'')+'. Envie esses de novo.':'✓ '+feitos+' arquivo(s) enviados')}})}
+// ---- agência: trabalhos da equipe (dentro de Parceiros)
+async function admTrabalhos(p,voltar){const m=$('admModal');const b=m.querySelector('.am-b');let T=[];
+  const galFotos=galerias.filter(g=>g.tipo!=='gestao'&&g.pastaId);
+  const lista=()=>{b.innerHTML='<button type="button" class="btn sec" data-volta style="width:auto">‹ Parceiros</button><h3 class="msgp-g">📋 Trabalhos · '+escH(p.nome)+'</h3>'+
+    (T.length?'<div class="indl">'+T.map(t=>'<div class="indl-i"><div><b>'+escH(t.titulo)+'</b><small>'+fmtD(t.data)+(t.chegada?' · chegar '+escH(t.chegada):'')+(t.local?' · '+escH(t.local):'')+'</small>'+
+      '<span class="indl-st '+(t.status==='Entregue'?'ok':t.status==='Cancelado'?'no':'')+'">'+escH(t.status)+(t.arquivos?' · '+t.arquivos+' arquivos':'')+'</span>'+(brl(t.valor)?'<span class="indl-st '+(t.pagoEm?'ok':'no')+'">'+brl(t.valor)+(t.pagoEm?' · pago em '+escH(t.pagoEm):' · a pagar')+'</span>':'')+(t.notas?'<small>📝 '+escH(t.notas.slice(0,140))+'</small>':'')+'</div>'+
+      '<div class="indl-ac"><button type="button" class="btn sec" data-te="'+escH(t.id)+'">✏️ Editar</button>'+(t.pasta?'<a class="btn sec" target="_blank" rel="noopener" href="'+escH(t.pasta)+'">📁 Pasta</a>':'')+
+      (brl(t.valor)?(t.pagoEm?'<button type="button" class="btn sec" data-to="naopago" data-ti="'+escH(t.id)+'">Desfazer pago</button>':'<button type="button" class="btn sec" data-to="pago" data-ti="'+escH(t.id)+'">💸 Marcar como pago</button>'):'')+
+      (t.status==='Cancelado'?'<button type="button" class="btn sec" data-to="reabrir" data-ti="'+escH(t.id)+'">Reabrir</button>':'<button type="button" class="btn sec" data-to="cancelar" data-ti="'+escH(t.id)+'">Cancelar</button>')+'</div></div>').join('')+'</div>':'<p class="cap-v">Nenhum trabalho ainda.</p>')+
+    '<button type="button" class="btn" data-novo style="width:auto">＋ Novo trabalho</button>';
+    b.querySelector('[data-volta]').onclick=voltar;b.querySelector('[data-novo]').onclick=()=>form(null);
+    b.querySelectorAll('[data-te]').forEach(x=>x.onclick=()=>form(T.find(t=>t.id===x.dataset.te)));
+    b.querySelectorAll('[data-to]').forEach(x=>x.onclick=async()=>{const op=x.dataset.to;if((op==='cancelar'||op==='pago')&&!x.dataset.c){x.dataset.c=1;x.textContent=op==='pago'?'Toque de novo: lançar no Financeiro':'Toque de novo para cancelar';return}
+      x.disabled=true;try{const r=await chamar({acao:'adm_trab',op:op,id:x.dataset.ti});T=r.trabalhos;lista();toast(op==='pago'?'✓ Pago. A saída entrou no Financeiro.':'✓ Atualizado')}catch(e){x.disabled=false;toast(e.message)}})};
+  const form=t=>{t=t||{funcao:p.perfil};const story=/story/i.test(t.funcao||p.perfil||'');
+    b.innerHTML='<button type="button" class="btn sec" data-volta style="width:auto">‹ Trabalhos</button><h3 class="msgp-g">'+(t.id?'✏️ Editar trabalho':'＋ Novo trabalho')+' · '+escH(p.nome)+'</h3>'+
+      campo('titulo','Trabalho','text',' maxlength="120" placeholder="Ex.: Casamento da Ana · Chácara Nova Aliança" value="'+escH(t.titulo||'')+'"')+
+      '<label>Função neste trabalho<select name="funcao">'+FUNCOES.map(f=>'<option'+(f===(t.funcao||p.perfil)?' selected':'')+'>'+f+'</option>').join('')+'</select></label>'+
+      '<div class="am-2">'+campo('data','Data','date',' value="'+escH(t.data||'')+'"')+campo('prazo','Entregar os arquivos até','date',' value="'+escH(t.prazo||'')+'"')+'</div>'+
+      '<div class="am-2">'+campo('chegada','Chegar às','time',' value="'+escH(t.chegada||'')+'"')+campo('saida','Até (previsão)','time',' value="'+escH(t.saida||'')+'"')+'</div>'+
+      campo('local','Local / endereço','text',' maxlength="200" value="'+escH(t.local||'')+'"')+campo('valor','Valor da diária (R$)','text',' inputmode="decimal" placeholder="Ex.: 700" value="'+escH(t.valor||'')+'"')+
+      '<label>O que fazer (ele vê no login dele)<textarea name="instrucoes" rows="5" maxlength="3000" placeholder="Ex.: cobrir a cerimônia e a festa, fotos da família na saída, roupa preta, levar flash…">'+escH(t.instrucoes||'')+'</textarea></label>'+
+      '<div data-ig'+(story?'':' hidden')+'>'+campo('instagram','Instagram do cliente (@), para o storymaker','text',' maxlength="60" value="'+escH(t.instagram||'')+'"')+'<p class="am-dica">A senha não fica salva aqui, por segurança: passe pelo WhatsApp ou adicione ele como colaborador no Instagram do cliente.</p></div>'+
+      (t.id&&t.pasta?'<p class="am-dica">📁 Os arquivos dele vão para <a target="_blank" rel="noopener" href="'+escH(t.pasta)+'">esta pasta</a>.</p><label class="am-chk"><input type="checkbox" name="pastaNova"> Criar outra pasta</label>':'')+
+      '<label data-dest'+(t.id&&t.pasta?' hidden':'')+'>Para onde vão os arquivos dele<select name="destino"><option value="">Pasta separada da Brius (material bruto, o cliente não vê)</option>'+galFotos.map(g=>'<option value="'+escH(g.pastaId)+'">Direto na galeria: '+escH(g.cliente)+(g.dados&&g.dados.evento?' · '+escH(g.dados.evento):'')+'</option>').join('')+'</select></label>'+
+      '<label class="am-chk"><input type="checkbox" name="avisar" checked> Avisar '+escH(String(p.nome).split(' ')[0])+' por e-mail</label>'+
+      '<div class="ctr-adm"><button type="button" class="btn" data-salvar>Salvar trabalho</button></div>';
+    const q=n=>b.querySelector('[name='+n+']');q('funcao').onchange=()=>{b.querySelector('[data-ig]').hidden=!/story/i.test(q('funcao').value)};
+    if(q('pastaNova'))q('pastaNova').onchange=()=>{b.querySelector('[data-dest]').hidden=!q('pastaNova').checked};
+    b.querySelector('[data-volta]').onclick=lista;
+    b.querySelector('[data-salvar]').onclick=async e=>{const x=e.currentTarget;x.disabled=true;
+      try{const r=await chamar({acao:'adm_trab',op:'salvar',id:t.id||'',email:p.email,titulo:q('titulo').value,funcao:q('funcao').value,data:q('data').value,prazo:q('prazo').value,chegada:q('chegada').value,saida:q('saida').value,local:q('local').value,valor:q('valor').value,instrucoes:q('instrucoes').value,instagram:q('instagram').value,destino:q('destino').value,pastaNova:q('pastaNova')?q('pastaNova').checked:false,avisar:q('avisar').checked});
+        T=r.trabalhos;lista();toast('✓ Trabalho salvo'+(q('avisar')&&q('avisar').checked?' e '+String(p.nome).split(' ')[0]+' avisado':''))}catch(er){x.disabled=false;toast(er.message)}}};
+  b.innerHTML='<p class="vazio">Carregando…</p>';try{const r=await chamar({acao:'adm_trab',op:'listar',email:p.email});T=r.trabalhos;lista()}catch(e){b.innerHTML='<p class="msg erro" style="display:block">'+escH(e.message)+'</p>'}}
+const FUNCOES=['Fotógrafo','Videomaker','Storymaker','Fotógrafo + Videomaker','Editor de vídeo','Tráfego pago','Assistente','Outro'];
 // ---- agência: indicações de cada cliente (código, quem ele indicou, fechou?, desconto usado?)
 function chipInd(g){const I=g.indicacao,pz=$('gPrazo');if(!I||!pz)return;pz.querySelectorAll('.ind-chip').forEach(x=>x.remove());
   const c=document.createElement('button');c.type='button';c.className='ind-chip';
