@@ -450,6 +450,9 @@ button.fin-l.rec-b{width:100%;text-align:left;font:inherit;color:inherit;cursor:
 .cap-sem{margin-top:12px;background:none;border:1px dashed #4a443d;color:var(--muted-d);border-radius:999px;padding:9px 16px;font:700 13px var(--body);cursor:pointer}.cap-sem:hover{color:var(--bone);border-color:var(--muted-d)}
 .cap-v{margin:10px 0 0;color:var(--muted-d);font-size:14px}
 .dias-op{grid-template-columns:repeat(3,1fr)}.dias-op label{justify-content:center;padding:10px 6px}
+.msgp{max-width:760px}.msgp-g{margin:22px 0 8px;font:500 19px var(--serif);color:var(--gold-soft)}.msgp-i{border:1px solid #3a352f;border-radius:14px;margin:8px 0;background:var(--graphite-2)}
+.msgp-i summary{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;cursor:pointer;list-style:none;font-weight:600;font-size:14.5px}.msgp-i summary::-webkit-details-marker{display:none}.msgp-c{padding:7px 12px!important;font-size:13px!important;flex:0 0 auto;width:auto!important;margin:0!important}.msgp-i summary span{flex:1;min-width:0}
+.msgp-i pre{margin:0;padding:4px 14px 14px;white-space:pre-wrap;font:14px/1.5 var(--body);color:var(--muted-d)}
 .rec-t{margin:14px 0 0;font:700 12px var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
 .pp{margin-top:16px;padding-top:16px;border-top:1px solid #3a352f}.pp-h{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;justify-content:space-between}.pp-h>div{flex:1 1 260px}.pp h4{margin:0 0 4px;font:500 19px var(--serif)}.pp-h small{color:var(--muted-d);font-size:13.5px;line-height:1.45;display:block}
 .pp-l{display:grid;gap:10px;margin-top:12px}.pp-it{padding:12px 14px;border-radius:14px;border:1px solid rgba(127,182,230,.45);background:var(--graphite-2);display:grid;gap:3px}.pp-it.ok{border-color:rgba(127,196,154,.5)}.pp-it.ok .cap-st{color:#7fc49a}.pp-it p{margin:2px 0;font-size:14px;white-space:pre-wrap;color:var(--bone)}.pp-it small{color:var(--muted-d);font-size:12.5px}
@@ -1188,7 +1191,8 @@ function montarAdmin(j){
   const bt=(t,u,sec)=>u?'<a class="btn'+(sec?' sec':'')+'" href="'+escH(u)+'" target="_blank" rel="noopener">'+t+'</a>':'';
   const cab=document.querySelector('.cab');let lk=document.getElementById('admLinks');
   if(!lk){lk=document.createElement('div');lk.id='admLinks';lk.className='adm-links';cab.after(lk)}
-  lk.innerHTML=bt('📊 Painel de resultados',L.painel)+bt('🧑‍💻 Preparar fotos dos eventos',L.indexar,1)+bt('📄 Planilha',L.planilha,1)+bt('🌐 Ver o site','../',1);
+  lk.innerHTML=bt('📊 Painel de resultados',L.painel)+bt('🧑‍💻 Preparar fotos dos eventos',L.indexar,1)+bt('📄 Planilha',L.planilha,1)+'<button type="button" class="btn sec" id="admMsgs">💬 Mensagens prontas</button>'+bt('🌐 Ver o site','../',1);
+  $('admMsgs').onclick=()=>{if(window.abrirMensagens)abrirMensagens();else{const sc=document.createElement('script');sc.src='mensagens.js?v=1';sc.onload=()=>abrirMensagens();document.head.appendChild(sc)}};
   const nG=galerias.filter(g=>g.tipo==='gestao').length,nF=galerias.filter(g=>g.tipo!=='gestao').length,nE=(j.eventos||[]).length+(j.proximos||[]).length;
   const pend=galerias.filter(g=>g.tipo==='gestao').reduce((s,g)=>s+(g.posts||[]).filter(p=>p.status==='Aguardando'||p.status==='Nova versão').length,0);
   const abas=$('gAbas');abas.className='abas adm-abas';
