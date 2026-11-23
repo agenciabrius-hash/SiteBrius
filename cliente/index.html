@@ -468,6 +468,8 @@ button.fin-l.rec-b{width:100%;text-align:left;font:inherit;color:inherit;cursor:
 .ctr-adm{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.ctr-adm .btn{width:auto!important}
 #admImp{margin-top:18px}.imp-ac{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:6px}.imp-ac select,.imp-ac input{width:auto;flex:1 1 140px;min-width:0}.imp-ac .btn{width:auto!important;padding:8px 12px!important;font-size:13px!important;text-decoration:none}
 .cfg-l{display:grid;gap:4px;margin:10px 0}.cfg-l span{font-size:13px;color:var(--muted-d);font-weight:500}
+.par-tabs{display:flex;gap:6px;padding:5px;margin:0 0 18px;border-radius:999px;border:1px solid #3a352f;background:var(--graphite);width:max-content;max-width:100%;overflow-x:auto}.par-tabs button{border:0;background:none;color:var(--muted-d);padding:10px 16px;border-radius:999px;font:700 14px var(--body);cursor:pointer;white-space:nowrap}.par-tabs button.on{background:var(--gold-soft);color:#141210}.par-tabs span{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;margin-left:4px;border-radius:999px;background:#141210;color:var(--gold-soft);font-size:11.5px}
+body.pt-serv #gAbas,body.pt-serv #gConteudo,body.pt-serv #gAcoes,body.pt-serv #gTitulo,body.pt-serv #gPrazo,body.pt-serv #gContratos{display:none!important}body.pt-marcas #gTrab{display:none!important}.trb-tt{display:none;margin:0 0 14px;font:500 clamp(30px,6vw,44px)/1.1 var(--serif)}body.pt-serv .trb-tt{display:block}
 #gTrab{margin:0 0 18px}.trb-l{display:grid;gap:14px}.trb{display:grid;gap:10px;padding:18px;border-radius:20px;border:1px solid rgba(184,149,90,.45);background:var(--graphite)}.trb.ok{border-color:rgba(127,196,154,.45)}.trb.ok .cap-st{color:#7fc49a}.trb h3{margin:4px 0 0;font:500 22px/1.2 var(--serif)}
 .trb-g{display:grid;gap:6px;font-size:14.5px}.trb-g a{color:var(--gold-soft)}.trb-ins{padding:12px 14px;border-radius:14px;background:var(--graphite-2);border:1px solid #3a352f}.trb-ins small{color:var(--gold);font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase}.trb-ins p{margin:6px 0 0;white-space:pre-wrap;font-size:14.5px;line-height:1.5}.trb-ins .muted{color:var(--muted-d);font-size:12.5px}.trb-ins a{color:var(--gold-soft)}
 .trb-nota{display:grid;gap:6px;font-weight:600;font-size:14px}.trb-nota textarea{background:var(--graphite-2);color:var(--bone);border:1px solid #3a352f;border-radius:12px;padding:10px 12px;font:14px/1.45 var(--body);resize:vertical}.trb .btn{width:auto;justify-self:start}.trb-up{display:grid;gap:6px;padding:14px;border-radius:14px;border:1px dashed rgba(184,149,90,.5)}.trb-up small{color:var(--muted-d);font-size:13px;line-height:1.45}.trb-up label.btn{cursor:pointer}.trb-pg{margin:0;font-size:13px;color:var(--gold-soft);min-height:1em}.trb-vz{padding:16px;border-radius:16px;border:1px dashed #3a352f;color:var(--muted-d)}
@@ -604,6 +606,7 @@ button.fin-l.rec-b{width:100%;text-align:left;font:inherit;color:inherit;cursor:
       <div class="acoes" id="gAcoes"></div>
     </div>
     <div class="app-dica" id="appDica" hidden></div>
+    <div class="par-tabs" id="parTabs" hidden></div>
     <div class="abas" id="gAbas"></div>
     <div id="gContratos"></div>
     <div id="gInd" hidden></div>
@@ -722,10 +725,10 @@ async function carregarGaleria(forcar){
 }
 function pintarTudo(j){
     if(VER&&!$('verBar')){const b=document.createElement('div');b.id='verBar';b.innerHTML='<span>👁️ Você está vendo como <b>'+escH(j.nome||'o cliente')+'</b> vê. Modo só de olhar: nada que você tocar aqui muda para o cliente.</span><button type="button">Fechar</button>';document.body.prepend(b);b.querySelector('button').onclick=()=>{try{sessionStorage.removeItem('brius_ver')}catch(e){}window.close();setTimeout(()=>location.href='./',300)}}
-    galerias=j.galerias;$('gOla').textContent='Olá, '+(j.nome||'')+'!'+(j.parceiro?(j.galerias.length?' · acesso de visualização':' · equipe Brius'):'');ultimoHash=hashDados(j);
-    pintarContratos(j.contratos||[],!!j.admin);pintarIndicacao(j.admin?null:j.indicacao);pintarTrabalhos(j.admin?null:j.trabalhos);
+    galerias=j.galerias;$('gOla').textContent='Olá, '+(j.nome||'')+'!'+(j.parceiro?((j.trabalhos||[]).length||!j.galerias.length?' · equipe Brius':' · acesso de visualização'):'');ultimoHash=hashDados(j);
+    pintarContratos(j.contratos||[],!!j.admin);pintarIndicacao(j.admin?null:j.indicacao);pintarTrabalhos(j.admin?null:j.trabalhos);setTimeout(()=>parTabs(j),0);
     if(j.admin){mostrar('telaGal');montarAdmin(j);return}
-    if(!galerias.length){$('gAbas').innerHTML='';$('gTitulo').textContent='Meus trabalhos';$('gPrazo').textContent=(j.trabalhos||[]).length?'Datas, horários, o que fazer e onde enviar os arquivos':'Quando a Brius marcar um trabalho com você, ele aparece aqui.';$('gAcoes').innerHTML='';$('gConteudo').innerHTML='';mostrar('telaGal');return}
+    if(!galerias.length){$('gAbas').innerHTML='';$('gTitulo').textContent='Meus serviços';$('gPrazo').textContent=(j.trabalhos||[]).length?'Datas, horários, o que fazer e onde enviar os arquivos':'Quando a Brius marcar um trabalho com você, ele aparece aqui.';$('gAcoes').innerHTML='';$('gConteudo').innerHTML='';mostrar('telaGal');return}
     const abas=$('gAbas');abas.innerHTML='';
     const marcas=galerias.filter(g=>g.tipo==='gestao').length;
     abas.classList.toggle('marcas',marcas>1);
@@ -754,7 +757,7 @@ async function atualizarSozinho(){
 function aplicarDados(j){ultimoHash=hashDados(j);
   const y=scrollY;const g0=galerias[atual]||{};const chave=g0.id||g0.pastaId||g0.evento;
   galerias=j.galerias;const i=galerias.findIndex(g=>(g.id||g.pastaId||g.evento)===chave);if(i>=0)atual=i;
-  pintarContratos(j.contratos||[],!!j.admin);pintarIndicacao(j.admin?null:j.indicacao);pintarTrabalhos(j.admin?null:j.trabalhos);if(!j.admin&&!galerias.length){window.scrollTo(0,y);return}
+  pintarContratos(j.contratos||[],!!j.admin);pintarIndicacao(j.admin?null:j.indicacao);pintarTrabalhos(j.admin?null:j.trabalhos);parTabs(j);if(!j.admin&&!galerias.length){window.scrollTo(0,y);return}
   if(j.admin){admDados=j;if(admSec==='financeiro'||admSec==='relatorios')return;if(admSec==='tarefas'){if(tfInst)tfInst.recarregar();return}montarAdmin(j)}
   else{abrir(atual,true);$('gAbas').querySelectorAll('.marca[data-i]').forEach(b=>{const g=galerias[+b.dataset.i];if(!g)return;const pd=(g.posts||[]).filter(p=>p.status==='Aguardando'||p.status==='Nova versão').length;const sm=b.querySelector('small');if(sm)sm.textContent=pd?pd+' para aprovar':'Tudo em dia ✓'})}
   window.scrollTo(0,y)}
@@ -1576,6 +1579,15 @@ function barraAdmin(g){
 // ---- equipe (fotógrafo, videomaker, storymaker…): trabalhos no login do parceiro
 const fmtD=d=>{if(!/^\d{4}-\d{2}-\d{2}$/.test(d||''))return escH(d||'');const x=new Date(d+'T12:00:00');return ['dom','seg','ter','qua','qui','sex','sáb'][x.getDay()]+', '+d.split('-').reverse().join('/')};
 const brl=v=>{const n=Number(String(v||'').replace(/[^\d,.-]/g,'').replace(/\.(?=\d{3}(\D|$))/g,'').replace(',','.'));return n?'R$ '+n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):''};
+// parceiro com marcas E serviços: duas abas (Meus serviços | Calendário das marcas)
+let parTab='';
+function parTabs(j){const el=$('parTabs');const cl=document.body.classList;
+  if(!el||j.admin||!j.parceiro||!(j.trabalhos||[]).length||!j.galerias.length){if(el){el.hidden=true;el.innerHTML=''}cl.remove('pt-serv','pt-marcas');return}
+  const hj=hojeISO();const pend=j.trabalhos.filter(t=>t.status!=='Entregue'&&t.status!=='Cancelado').length;
+  if(!parTab){try{parTab=localStorage.getItem('par_tab')||''}catch(e){}if(!parTab)parTab=pend?'serv':'marcas'}
+  el.hidden=false;el.innerHTML='<button type="button" data-pt="serv"'+(parTab==='serv'?' class="on"':'')+'>📋 Meus serviços'+(pend?' <span>'+pend+'</span>':'')+'</button><button type="button" data-pt="marcas"'+(parTab==='marcas'?' class="on"':'')+'>📅 Calendário das marcas</button>';
+  cl.toggle('pt-serv',parTab==='serv');cl.toggle('pt-marcas',parTab==='marcas');
+  el.querySelectorAll('[data-pt]').forEach(b=>b.onclick=()=>{parTab=b.dataset.pt;try{localStorage.setItem('par_tab',parTab)}catch(e){}parTabs(j);window.scrollTo({top:0,behavior:'smooth'})})}
 function pintarTrabalhos(T){const box=$('gTrab');if(!box)return;if(!T){box.hidden=true;box.innerHTML='';return}box.hidden=false;
   if(!T.length){box.innerHTML='<div class="trb-vz">📋 Nenhum trabalho marcado com você no momento.</div>';return}
   const hj=hojeISO();const prox=T.filter(t=>t.status!=='Entregue'),ent=T.filter(t=>t.status==='Entregue');
@@ -1587,7 +1599,7 @@ function pintarTrabalhos(T){const box=$('gTrab');if(!box)return;if(!T){box.hidde
     '<div class="trb-up"><b>📤 Fotos e vídeos</b><small>'+(t.arquivos?t.arquivos+' arquivo'+(t.arquivos>1?'s':'')+' enviado'+(t.arquivos>1?'s':''):'Nenhum arquivo enviado ainda')+'. Pode mandar tudo do cartão de memória, de qualquer tamanho (inclusive RAW e vídeos grandes).</small>'+
       '<label class="btn">Escolher arquivos<input type="file" multiple accept="image/*,video/*,.arw,.cr2,.cr3,.nef,.raf,.dng,.orf,.rw2,.heic,.mts" data-up hidden></label><p class="trb-pg" data-pg></p></div>'+
     (t.status!=='Entregue'?'<button type="button" class="btn" data-ent>✓ Terminei de enviar (avisar a Brius)</button>':'')+'</article>';
-  box.innerHTML='<div class="trb-l">'+prox.map(card).join('')+(ent.length?'<p class="rec-t">Já entregues</p>'+ent.map(card).join(''):'')+'</div>';
+  box.innerHTML='<h2 class="trb-tt">Meus serviços</h2><div class="trb-l">'+prox.map(card).join('')+(ent.length?'<p class="rec-t">Já entregues</p>'+ent.map(card).join(''):'')+'</div>';
   box.querySelectorAll('.trb').forEach(el=>{const t=T.find(x=>x.id===el.dataset.id);const nota=el.querySelector('[data-nota]');
     el.querySelector('[data-salva]').onclick=async e=>{const b=e.currentTarget;b.disabled=true;try{await chamar({acao:'trab_nota',id:t.id,notas:nota.value});t.notas=nota.value;toast('✓ Notas salvas')}catch(x){toast(x.message)}b.disabled=false};
     const ent=el.querySelector('[data-ent]');if(ent)ent.onclick=()=>confirmar('Avisar a Brius que terminou?','<p class="cf-dica">Você enviou <b>'+t.arquivos+'</b> arquivo(s). A Brius recebe um aviso com as suas notas.</p>','✓ Sim, terminei',async()=>{await chamar({acao:'trab_entregue',id:t.id,notas:nota.value});t.status='Entregue';t.entregueEm=new Date().toLocaleDateString('pt-BR');pintarTrabalhos(T);toast('✓ Brius avisada. Obrigado!')});
