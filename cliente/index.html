@@ -449,6 +449,7 @@ button.fin-l.rec-b{width:100%;text-align:left;font:inherit;color:inherit;cursor:
 .cap-ac{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}.cap-ac .btn{padding:9px 16px;font-size:14px}.cap-it.sg{border-color:#4a443d;border-style:dashed}.cap-it.sg .cap-st{color:var(--muted-d)}
 .cap-sem{margin-top:12px;background:none;border:1px dashed #4a443d;color:var(--muted-d);border-radius:999px;padding:9px 16px;font:700 13px var(--body);cursor:pointer}.cap-sem:hover{color:var(--bone);border-color:var(--muted-d)}
 .cap-v{margin:10px 0 0;color:var(--muted-d);font-size:14px}
+.dias-op{grid-template-columns:repeat(3,1fr)}.dias-op label{justify-content:center;padding:10px 6px}
 .rec-t{margin:14px 0 0;font:700 12px var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
 .pp{margin-top:16px;padding-top:16px;border-top:1px solid #3a352f}.pp-h{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;justify-content:space-between}.pp-h>div{flex:1 1 260px}.pp h4{margin:0 0 4px;font:500 19px var(--serif)}.pp-h small{color:var(--muted-d);font-size:13.5px;line-height:1.45;display:block}
 .pp-l{display:grid;gap:10px;margin-top:12px}.pp-it{padding:12px 14px;border-radius:14px;border:1px solid rgba(127,182,230,.45);background:var(--graphite-2);display:grid;gap:3px}.pp-it.ok{border-color:rgba(127,196,154,.5)}.pp-it.ok .cap-st{color:#7fc49a}.pp-it p{margin:2px 0;font-size:14px;white-space:pre-wrap;color:var(--bone)}.pp-it small{color:var(--muted-d);font-size:12.5px}
@@ -1427,9 +1428,33 @@ function barraAdmin(g){
     if(g.id&&/Ativo|Acesso enviado/.test(g.statusPlanilha))bt('🔔 Avisar cliente dos novos posts',b=>admStatus(g,'Avisar novos posts',b),1);
     if(!/Ativo|Acesso enviado/.test(g.statusPlanilha))bt('✉️ Enviar acesso ao cliente',b=>{if(!g.id){chamarSemId(g,b);return}admStatus(g,'Enviar acesso',b)},1);}
   else{bt('+ Adicionar fotos',()=>formArquivos('Adicionar fotos · '+escH(g.cliente),g.pastaId));
+    if(g.id){bt('💬 Mensagem para o WhatsApp',()=>msgWhats(g),1);bt('⏳ Acesso: '+(g.dias||7)+' dias',()=>formDias(g),1)}
     if(!/Ativo|Acesso enviado/.test(g.statusPlanilha))bt('✉️ Enviar acesso ao cliente',b=>admStatus(g,'Enviar acesso',b),1);
     else bt('🔒 Encerrar galeria',b=>{if(!b.dataset.c){b.dataset.c=1;b.textContent='Toque de novo para encerrar';return}admStatus(g,'Encerrar agora',b)},1)}
 }
+// ---- galeria de fotos: dias de acesso e mensagem pronta para o WhatsApp
+function formDias(g){const op=[[3,'3 dias'],[7,'7 dias'],[15,'15 dias'],[30,'30 dias'],[60,'60 dias'],[90,'90 dias']];
+  modal('Dias de acesso · '+escH(g.cliente),'<p class="am-dica" style="margin-top:0">Por quantos dias o cliente pode ver e baixar as fotos e vídeos. Depois disso a galeria fecha sozinha (dá para reabrir).</p>'+
+    '<div class="pp-tp dias-op">'+op.map(([n,t])=>'<label><input type="radio" name="dias" value="'+n+'"'+(n===(g.dias||7)?' checked':'')+'><span><b>'+t+'</b></span></label>').join('')+'</div>'+
+    campo('outro','Ou outro número de dias','number',' min="1" max="730" placeholder="Ex.: 45"')+
+    '<label>Começa a contar<select name="desde"><option value="Primeiro acesso"'+(g.desde!=='Envio do acesso'?' selected':'')+'>No primeiro acesso do cliente (recomendado)</option><option value="Envio do acesso"'+(g.desde==='Envio do acesso'?' selected':'')+'>Quando enviamos o acesso</option></select></label>'+
+    (g.expira?'<p class="am-dica">Hoje a galeria está liberada até <b>'+escH(g.expira)+'</b>. Ao salvar, a data é recalculada.</p>':''),
+    async f=>{const n=Number(f.outro.value)||Number((f.querySelector('[name=dias]:checked')||{}).value);if(!(n>=1))throw new Error('Escolha os dias.');
+      const j=await chamar({acao:'adm_dias',id:g.id,dias:n,desde:f.desde.value});g.dias=j.dias;g.desde=j.desde;if(j.expira)g.expira=j.expira;barraAdmin(g);
+      toast('✓ Acesso de '+j.dias+' dias'+(j.expira?', até '+j.expira:''))},'Salvar')}
+function textoWhats(g){const dias=g.dias||7;const ctr=(contratos||[]).some(c=>String(c.email||'').trim().toLowerCase()===String(g.email).trim().toLowerCase()&&c.status!=='Aceito'&&!c.assinado);
+  const prazo=g.expira?'*até '+g.expira+'*':'por *'+dias+' dias*'+(g.desde==='Envio do acesso'?' a partir de hoje':' a partir do seu primeiro acesso');
+  return 'Oi! Tudo bem? 🤍\n\nAs fotos e vídeos de *'+g.evento+'* já estão prontinhos na sua Área do Cliente da Brius ✨\n\n'+
+    '*Como acessar:*\n1️⃣ Abra o e-mail que enviamos para *'+g.email+'* com o assunto _"Suas fotos chegaram! · Brius Agência"_ (se não encontrar, dê uma olhadinha no spam ou lixo eletrônico)\n'+
+    '2️⃣ Toque no botão do e-mail e crie a sua senha\n3️⃣ Prontinho! Nas próximas vezes é só entrar em agenciabrius.com.br/cliente com seu e-mail e senha\n\n'+
+    '*Por lá você pode:*\n• ver todas as fotos e vídeos em alta qualidade\n• baixar tudo de uma vez ou só as que quiser\n• marcar suas favoritas ❤️'+(ctr?'\n• ler e aceitar o contrato do serviço':'')+'\n\n'+
+    '⏳ *Importante:* os arquivos ficam disponíveis '+prazo+'. Por isso, recomendamos baixar e salvar no seu celular, computador ou no seu próprio Drive.\n\n'+
+    'Qualquer dúvida, é só me chamar por aqui. Foi um prazer registrar esse momento! 🤍\n\n_Brius Agência_'}
+function msgWhats(g){const enviado=/Ativo|Acesso enviado/.test(g.statusPlanilha);
+  modal('Mensagem para o WhatsApp','<p class="am-dica" style="margin-top:0">'+(enviado?'':'⚠️ O acesso ainda <b>não foi enviado</b>. Envie o acesso primeiro (Mais ações › Enviar acesso) para o cliente receber o e-mail que a mensagem cita. ')+'Pode editar o texto antes de copiar.</p>'+
+    '<textarea name="t" rows="16" style="width:100%;font:14px/1.45 var(--body)">'+escH(textoWhats(g))+'</textarea>',
+    async f=>{const t=f.t.value;let ok=false;try{await navigator.clipboard.writeText(t);ok=true}catch(e){f.t.select();try{ok=document.execCommand('copy')}catch(x){}}
+      if(!ok)throw new Error('Não deu para copiar sozinho. Selecione o texto e copie.');toast('✓ Mensagem copiada. É só colar no WhatsApp.')},'📋 Copiar mensagem')}
 async function chamarSemId(g,b){toast('Use a planilha (Status = Enviar acesso) para este cliente.')}
 
 // ---- Agência: relatórios de cada mês de cada cliente
