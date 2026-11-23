@@ -98,7 +98,7 @@ window.Tarefas=function(opts){
     s.style.setProperty('--x',(Math.random()*240-120)+'px');s.style.setProperty('--y',(-80-Math.random()*160)+'px');s.style.setProperty('--r',(Math.random()*400-200)+'deg');document.body.appendChild(s);setTimeout(()=>s.remove(),1200)}})};
   const pendentes=[];// tarefas que já aparecem na tela mas ainda estão indo para a planilha
   function reinjetar(){pendentes.forEach(x=>{const p=D.projetos.find(q=>q.id===x.pid);if(p&&!p.itens.some(i=>i.id===x.it.id))p.itens.push(x.it)})}
-  async function call(op,d){const j=await opts.call(op,d||{});if(!j||!j.ok)throw new Error((j&&j.erro)||'Não foi possível agora.');if(j.projetos){D=j;reinjetar()}return j}
+  async function call(op,d){const j=await opts.call(op,d||{});if(!j||!j.ok)throw new Error((j&&j.erro)||'Não foi possível agora.');if(j.projetos){D=j;reinjetar();try{localStorage.setItem('tf_cache',JSON.stringify({t:Date.now(),a:!!opts.admin,j:j}))}catch(e){}}return j}
   function visivel(it){return !quem||it.resp===quem||it.resp==='Os dois'}
   function modal(titulo,html,enviar,rot,extra){const m=document.createElement('div');m.className='tf-mod';
     m.innerHTML='<form><h3>'+titulo+'</h3>'+html+'<p class="msg"></p><div class="rod">'+(extra||'')+'<button type="button" class="tf-btn cc">Cancelar</button>'+(enviar?'<button class="tf-btn pri">'+(rot||'Salvar')+'</button>':'')+'</div></form>';
@@ -215,7 +215,9 @@ window.Tarefas=function(opts){
     const box=f.querySelector('.tf-mt');const lg=()=>box.querySelectorAll('div>button').forEach(b=>b.onclick=()=>b.parentNode.remove());lg();
     f.querySelector('[data-ad]').onclick=()=>{box.insertAdjacentHTML('beforeend',linha({fase:'Preparação',resp:'Os dois',texto:'',dias:-1}));lg();box.lastElementChild.querySelector('[name=texto]').focus()}}
   async function carregar(silencioso){try{await call('listar');pintar()}catch(x){if(!silencioso)el.innerHTML='<div class="tf"><p class="tf-vz">'+esc(x.message)+'</p></div>'}}
-  pintar();carregar();
+  // abre na hora com a última lista guardada neste aparelho e atualiza em seguida
+  try{const c=JSON.parse(localStorage.getItem('tf_cache')||'null');if(c&&c.a===!!opts.admin&&Date.now()-c.t<3*864e5&&c.j&&c.j.projetos)D=c.j}catch(e){}
+  pintar();carregar(!!D);
   return {recarregar:()=>carregar(true),ativo:()=>document.body.contains(el)};
 };
 })();

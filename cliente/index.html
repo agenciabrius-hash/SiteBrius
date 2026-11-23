@@ -453,6 +453,7 @@ button.fin-l.rec-b{width:100%;text-align:left;font:inherit;color:inherit;cursor:
 .msgp{max-width:760px}.msgp-g{margin:22px 0 8px;font:500 19px var(--serif);color:var(--gold-soft)}.msgp-i{border:1px solid #3a352f;border-radius:14px;margin:8px 0;background:var(--graphite-2)}
 .msgp-i summary{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;cursor:pointer;list-style:none;font-weight:600;font-size:14.5px}.msgp-i summary::-webkit-details-marker{display:none}.msgp-c{padding:7px 12px!important;font-size:13px!important;flex:0 0 auto;width:auto!important;margin:0!important}.msgp-i summary span{flex:1;min-width:0}
 .msgp-i pre{margin:0;padding:4px 14px 14px;white-space:pre-wrap;font:14px/1.5 var(--body);color:var(--muted-d)}
+#syncBar{position:fixed;top:0;left:0;height:2px;width:0;background:linear-gradient(90deg,var(--gold),var(--gold-soft));z-index:9999;opacity:0;transition:opacity .3s,width .3s;pointer-events:none}#syncBar.on{opacity:1;width:70%;transition:width 6s cubic-bezier(.1,.7,.3,1),opacity .2s}
 .rec-t{margin:14px 0 0;font:700 12px var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
 .pp{margin-top:16px;padding-top:16px;border-top:1px solid #3a352f}.pp-h{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;justify-content:space-between}.pp-h>div{flex:1 1 260px}.pp h4{margin:0 0 4px;font:500 19px var(--serif)}.pp-h small{color:var(--muted-d);font-size:13.5px;line-height:1.45;display:block}
 .pp-l{display:grid;gap:10px;margin-top:12px}.pp-it{padding:12px 14px;border-radius:14px;border:1px solid rgba(127,182,230,.45);background:var(--graphite-2);display:grid;gap:3px}.pp-it.ok{border-color:rgba(127,196,154,.5)}.pp-it.ok .cap-st{color:#7fc49a}.pp-it p{margin:2px 0;font-size:14px;white-space:pre-wrap;color:var(--bone)}.pp-it small{color:var(--muted-d);font-size:12.5px}
@@ -616,7 +617,7 @@ const API_URL='https://script.google.com/macros/s/AKfycbxv6WLxKRDICMjAqAGWB8Uu5o
 const $=id=>document.getElementById(id);
 const telas=['telaCodigo','telaLogin','telaSenha','telaEsqueci','telaGal','telaCarregando'];
 function mostrar(t){telas.forEach(x=>$(x).hidden=x!==t);$('sair').hidden=t!=='telaGal';$('voltar').hidden=t==='telaGal';window.scrollTo(0,0);if(t==='telaGal')setTimeout(()=>{try{appInst.mostrar()}catch(e){}},1500)}
-const guardar={get(){try{return localStorage.getItem('brius_sessao')||''}catch(e){return memo}},set(v){memo=v;try{v?localStorage.setItem('brius_sessao',v):localStorage.removeItem('brius_sessao')}catch(e){}}};
+const guardar={get(){try{return localStorage.getItem('brius_sessao')||''}catch(e){return memo}},set(v){memo=v;try{v?localStorage.setItem('brius_sessao',v):(localStorage.removeItem('brius_sessao'),localStorage.removeItem('brius_gal'),localStorage.removeItem('tf_cache'))}catch(e){}}};
 let memo='';
 async function api(dados){
   const r=await fetch(API_URL,{method:'POST',body:JSON.stringify(dados)});
@@ -679,10 +680,25 @@ $('sair').onclick=()=>{guardar.set('');mostrar('telaLogin')};
 const thumb=id=>'https://drive.google.com/thumbnail?id='+id+'&sz=w600';
 const grande=id=>'https://lh3.googleusercontent.com/d/'+id+'=w2200';
 let galerias=[],atual=0,lista=[];
-async function carregarGaleria(){
-  mostrar('telaCarregando');
+// Abre na hora com os últimos dados guardados neste aparelho e atualiza em segundo plano (o servidor do Google demora alguns segundos)
+const CACHE_K='brius_gal';
+function cacheLer(){try{const o=JSON.parse(localStorage.getItem(CACHE_K)||'null');if(o&&o.s===guardar.get()&&Date.now()-o.t<7*864e5)return o.j}catch(e){}return null}
+function cacheGravar(j){try{localStorage.setItem(CACHE_K,JSON.stringify({s:guardar.get(),t:Date.now(),j:j}))}catch(e){try{localStorage.removeItem(CACHE_K)}catch(x){}}}
+function sincronizando(on){let b=$('syncBar');if(!b){b=document.createElement('div');b.id='syncBar';document.body.appendChild(b)}b.classList.toggle('on',!!on)}
+async function carregarGaleria(forcar){
+  const jaTela=galerias.length&&!$('telaGal').hidden;let rapido=false;
+  if(!jaTela){const c=cacheLer();if(c){try{pintarTudo(c);ultimoHash=hashDados(c);rapido=true}catch(e){rapido=false}}}
+  if(!jaTela&&!rapido)mostrar('telaCarregando');
+  sincronizando(true);
   try{const j=await api({acao:'galeria',sessao:guardar.get()});
     if(!j.ok){guardar.set('');mostrar('telaLogin');msg($('mLogin'),j.erro,true);return}
+    cacheGravar(j);
+    if(jaTela||rapido){if(hashDados(j)!==ultimoHash&&(forcar||!ocupadoAgora()))aplicarDados(j)}
+    else{pintarTudo(j)}
+  }catch(err){if(!jaTela&&!rapido){mostrar('telaLogin');msg($('mLogin'),'Não foi possível carregar agora. Tente de novo.',true)}else if(rapido)toast('Sem conexão agora: mostrando os últimos dados.')}
+  finally{sincronizando(false)}
+}
+function pintarTudo(j){
     galerias=j.galerias;$('gOla').textContent='Olá, '+(j.nome||'')+'!'+(j.parceiro?' · acesso de visualização':'');ultimoHash=hashDados(j);
     pintarContratos(j.contratos||[],!!j.admin);
     if(j.admin){mostrar('telaGal');montarAdmin(j);return}
@@ -696,7 +712,6 @@ async function carregarGaleria(){
       else b.textContent=g.evento;
       b.dataset.i=i;b.onclick=()=>{gsMes=null;gsF='todos';abrir(i)};abas.appendChild(b)});
     abrir(Math.max(0,galerias.findIndex(g=>g.aberto)));mostrar('telaGal');
-  }catch(err){mostrar('telaLogin');msg($('mLogin'),'Não foi possível carregar agora. Tente de novo.',true)}
 }
 // ---- Atualiza sozinho (sem F5): a cada 60 s, só com a aba visível e quando ninguém está digitando ou com janela aberta
 let ultimoHash='';
@@ -711,7 +726,8 @@ function ocupadoAgora(){if(salvandoFundo>0)return true;const vis=id=>{const e=$(
 async function atualizarSozinho(){
   if(document.hidden||!guardar.get()||$('telaGal').hidden||ocupadoAgora())return;
   let j;try{j=await api({acao:'galeria',sessao:guardar.get()})}catch(e){return}
-  if(!j||!j.ok)return;const h=hashDados(j);if(h===ultimoHash||ocupadoAgora())return;ultimoHash=h;
+  if(!j||!j.ok)return;cacheGravar(j);const h=hashDados(j);if(h===ultimoHash||ocupadoAgora())return;aplicarDados(j)}
+function aplicarDados(j){ultimoHash=hashDados(j);
   const y=scrollY;const g0=galerias[atual]||{};const chave=g0.id||g0.pastaId||g0.evento;
   galerias=j.galerias;const i=galerias.findIndex(g=>(g.id||g.pastaId||g.evento)===chave);if(i>=0)atual=i;
   pintarContratos(j.contratos||[],!!j.admin);
@@ -1339,7 +1355,7 @@ async function subirGrande(pasta,f,nome,pct,publico){
     await api({acao:'adm_upload_fim',sessao:guardar.get(),pasta:pasta,id:id,publico:!!publico});return id}
   finally{window.onbeforeunload=ant||null}}
 const ext=f=>{const m=f.name.match(/\.[^.]+$/);return m?m[0].toLowerCase():''};
-async function admRecarregar(msgTxt){if(msgTxt)toast(msgTxt);const sec=admSec;const at=galerias[atual]&&(galerias[atual].id||galerias[atual].pastaId);await carregarGaleria();admSec=sec;
+async function admRecarregar(msgTxt){if(msgTxt)toast(msgTxt);const sec=admSec;const at=galerias[atual]&&(galerias[atual].id||galerias[atual].pastaId);await carregarGaleria(true);admSec=sec;
   const i=galerias.findIndex(g=>(g.id||g.pastaId)===at);if(i>=0){atual=i}if(admDados)montarAdmin(admDados)}
 async function chamar(d){const j=await api(Object.assign({sessao:guardar.get()},d));if(!j.ok)throw new Error(j.erro||'Não foi possível agora.');return j}
 
