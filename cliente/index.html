@@ -1205,7 +1205,10 @@ function montarAdmin(j){
   abas.querySelectorAll('[data-sec]').forEach(b=>b.onclick=()=>{admSec=b.dataset.sec;montarAdmin(admDados)});
   {const seg=abas.querySelector('.adm-seg'),sel=seg&&seg.querySelector('[aria-selected="true"]');if(sel)seg.scrollLeft=Math.max(0,sel.offsetLeft-seg.clientWidth/2+sel.offsetWidth/2)}
   abas.querySelectorAll('[data-ir]').forEach(b=>b.onclick=()=>{admSec='gestao';atual=+b.dataset.ir;montarAdmin(admDados);setTimeout(()=>gsIr('mens',true),200)});
-  const cards=$('admCards');$('gContratos').hidden=admSec!=='gestao';
+  const cards=$('admCards');
+  // contratos: na Gestão só os de clientes de gestão; em Fotos só os de clientes de fotos/vídeo
+  {const tudo=j.contratos||[];const sec=admSec;const em=new Set(galerias.filter(g=>sec==='gestao'?g.tipo==='gestao':g.tipo!=='gestao').map(g=>String(g.email||'').trim().toLowerCase()));
+    const vis=tudo.filter(c=>em.has(String(c.email||'').trim().toLowerCase()));pintarContratos(vis,true);contratos=tudo;$('gContratos').hidden=!(sec==='gestao'||sec==='fotos')||!vis.length}
   if(admSec==='tarefas'){cards.hidden=true;pintarTarefasAdmin();return}
   if(admSec==='agenda'){cards.hidden=true;pintarAgenda(j);return}
   if(admSec==='relatorios'){cards.hidden=true;pintarRelatoriosAdmin();return}
