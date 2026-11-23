@@ -471,6 +471,7 @@ button.fin-l.rec-b{width:100%;text-align:left;font:inherit;color:inherit;cursor:
 #gTrab{margin:0 0 18px}.trb-l{display:grid;gap:14px}.trb{display:grid;gap:10px;padding:18px;border-radius:20px;border:1px solid rgba(184,149,90,.45);background:var(--graphite)}.trb.ok{border-color:rgba(127,196,154,.45)}.trb.ok .cap-st{color:#7fc49a}.trb h3{margin:4px 0 0;font:500 22px/1.2 var(--serif)}
 .trb-g{display:grid;gap:6px;font-size:14.5px}.trb-g a{color:var(--gold-soft)}.trb-ins{padding:12px 14px;border-radius:14px;background:var(--graphite-2);border:1px solid #3a352f}.trb-ins small{color:var(--gold);font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase}.trb-ins p{margin:6px 0 0;white-space:pre-wrap;font-size:14.5px;line-height:1.5}.trb-ins .muted{color:var(--muted-d);font-size:12.5px}.trb-ins a{color:var(--gold-soft)}
 .trb-nota{display:grid;gap:6px;font-weight:600;font-size:14px}.trb-nota textarea{background:var(--graphite-2);color:var(--bone);border:1px solid #3a352f;border-radius:12px;padding:10px 12px;font:14px/1.45 var(--body);resize:vertical}.trb .btn{width:auto;justify-self:start}.trb-up{display:grid;gap:6px;padding:14px;border-radius:14px;border:1px dashed rgba(184,149,90,.5)}.trb-up small{color:var(--muted-d);font-size:13px;line-height:1.45}.trb-up label.btn{cursor:pointer}.trb-pg{margin:0;font-size:13px;color:var(--gold-soft);min-height:1em}.trb-vz{padding:16px;border-radius:16px;border:1px dashed #3a352f;color:var(--muted-d)}
+#verBar{position:sticky;top:0;z-index:80;display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 16px;background:#b8955a;color:#141210;font:600 13.5px/1.4 var(--body)}#verBar button{background:#141210;color:#fbf8f3;border:0;border-radius:999px;padding:7px 14px;font:700 12.5px var(--body);cursor:pointer;flex:0 0 auto}
 .rec-t{margin:14px 0 0;font:700 12px var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
 .pp{margin-top:16px;padding-top:16px;border-top:1px solid #3a352f}.pp-h{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;justify-content:space-between}.pp-h>div{flex:1 1 260px}.pp h4{margin:0 0 4px;font:500 19px var(--serif)}.pp-h small{color:var(--muted-d);font-size:13.5px;line-height:1.45;display:block}
 .pp-l{display:grid;gap:10px;margin-top:12px}.pp-it{padding:12px 14px;border-radius:14px;border:1px solid rgba(127,182,230,.45);background:var(--graphite-2);display:grid;gap:3px}.pp-it.ok{border-color:rgba(127,196,154,.5)}.pp-it.ok .cap-st{color:#7fc49a}.pp-it p{margin:2px 0;font-size:14px;white-space:pre-wrap;color:var(--bone)}.pp-it small{color:var(--muted-d);font-size:12.5px}
@@ -636,7 +637,9 @@ const API_URL='https://script.google.com/macros/s/AKfycbxv6WLxKRDICMjAqAGWB8Uu5o
 const $=id=>document.getElementById(id);
 const telas=['telaCodigo','telaLogin','telaSenha','telaEsqueci','telaGal','telaCarregando'];
 function mostrar(t){telas.forEach(x=>$(x).hidden=x!==t);$('sair').hidden=t!=='telaGal';$('voltar').hidden=t==='telaGal';window.scrollTo(0,0);if(t==='telaGal')setTimeout(()=>{try{appInst.mostrar()}catch(e){}},1500)}
-const guardar={get(){try{return localStorage.getItem('brius_sessao')||''}catch(e){return memo}},set(v){memo=v;try{v?localStorage.setItem('brius_sessao',v):(localStorage.removeItem('brius_sessao'),localStorage.removeItem('brius_gal'),localStorage.removeItem('tf_cache'))}catch(e){}}};
+// "Ver como o cliente": a aba aberta pelo painel usa uma sessão só dela (sessionStorage), sem mexer no login da agência
+const VER=(()=>{try{const q=new URLSearchParams(location.search).get('ver');if(q){sessionStorage.setItem('brius_ver',q);history.replaceState(null,'',location.pathname)}return sessionStorage.getItem('brius_ver')||''}catch(e){return ''}})();
+const guardar={get(){if(VER)return VER;try{return localStorage.getItem('brius_sessao')||''}catch(e){return memo}},set(v){if(VER){if(!v){try{sessionStorage.removeItem('brius_ver')}catch(e){}window.close();location.href='./'}return}memo=v;try{v?localStorage.setItem('brius_sessao',v):(localStorage.removeItem('brius_sessao'),localStorage.removeItem('brius_gal'),localStorage.removeItem('tf_cache'))}catch(e){}}};
 let memo='';
 async function api(dados){
   const r=await fetch(API_URL,{method:'POST',body:JSON.stringify(dados)});
@@ -701,8 +704,8 @@ const grande=id=>'https://lh3.googleusercontent.com/d/'+id+'=w2200';
 let galerias=[],atual=0,lista=[];
 // Abre na hora com os últimos dados guardados neste aparelho e atualiza em segundo plano (o servidor do Google demora alguns segundos)
 const CACHE_K='brius_gal';
-function cacheLer(){try{const o=JSON.parse(localStorage.getItem(CACHE_K)||'null');if(o&&o.s===guardar.get()&&Date.now()-o.t<7*864e5)return o.j}catch(e){}return null}
-function cacheGravar(j){try{localStorage.setItem(CACHE_K,JSON.stringify({s:guardar.get(),t:Date.now(),j:j}))}catch(e){try{localStorage.removeItem(CACHE_K)}catch(x){}}}
+function cacheLer(){if(VER)return null;try{const o=JSON.parse(localStorage.getItem(CACHE_K)||'null');if(o&&o.s===guardar.get()&&Date.now()-o.t<7*864e5)return o.j}catch(e){}return null}
+function cacheGravar(j){if(VER)return;try{localStorage.setItem(CACHE_K,JSON.stringify({s:guardar.get(),t:Date.now(),j:j}))}catch(e){try{localStorage.removeItem(CACHE_K)}catch(x){}}}
 function sincronizando(on){let b=$('syncBar');if(!b){b=document.createElement('div');b.id='syncBar';document.body.appendChild(b)}b.classList.toggle('on',!!on)}
 async function carregarGaleria(forcar){
   const jaTela=galerias.length&&!$('telaGal').hidden;let rapido=false;
@@ -718,6 +721,7 @@ async function carregarGaleria(forcar){
   finally{sincronizando(false)}
 }
 function pintarTudo(j){
+    if(VER&&!$('verBar')){const b=document.createElement('div');b.id='verBar';b.innerHTML='<span>👁️ Você está vendo como <b>'+escH(j.nome||'o cliente')+'</b> vê. Modo só de olhar: nada que você tocar aqui muda para o cliente.</span><button type="button">Fechar</button>';document.body.prepend(b);b.querySelector('button').onclick=()=>{try{sessionStorage.removeItem('brius_ver')}catch(e){}window.close();setTimeout(()=>location.href='./',300)}}
     galerias=j.galerias;$('gOla').textContent='Olá, '+(j.nome||'')+'!'+(j.parceiro?(j.galerias.length?' · acesso de visualização':' · equipe Brius'):'');ultimoHash=hashDados(j);
     pintarContratos(j.contratos||[],!!j.admin);pintarIndicacao(j.admin?null:j.indicacao);pintarTrabalhos(j.admin?null:j.trabalhos);
     if(j.admin){mostrar('telaGal');montarAdmin(j);return}
@@ -1161,6 +1165,7 @@ function pintarImpressoes(j,ib){const L=j.impressoes||[];const ST=['Fazer orçam
     L.map((p,k)=>'<div class="pp-it'+(p.status==='Fechou'||p.status==='Entregue'?' ok':'')+'"><span class="cap-st">'+escH(p.status||'Fazer orçamento')+'</span><b>'+escH(p.cliente)+' · '+escH(p.tipos)+'</b><small>'+escH(p.data)+' · '+escH(p.evento)+'</small>'+(p.obs?'<p>'+escH(p.obs)+'</p>':'')+'<small>'+escH(p.fotos)+'</small>'+
       '<span class="cap-ac imp-ac"><select data-is="'+k+'">'+ST.map(s=>'<option'+(s===p.status?' selected':'')+'>'+s+'</option>').join('')+'</select><input data-iv="'+k+'" inputmode="decimal" placeholder="Valor passado (R$)" value="'+escH(p.valor||'')+'"><button type="button" class="btn sec" data-ik="'+k+'">Salvar</button><a class="btn sec" href="'+escH(p.pasta)+'" target="_blank" rel="noopener">Pasta</a></span></div>').join('')+'</div></div>';
   ib.querySelectorAll('[data-ik]').forEach(b=>b.onclick=async()=>{const k=+b.dataset.ik;b.disabled=true;try{const r=await chamar({acao:'adm_imp',id:L[k].id,status:ib.querySelector('[data-is="'+k+'"]').value,valor:ib.querySelector('[data-iv="'+k+'"]').value});j.impressoes=r.impressoes;pintarImpressoes(j,ib);toast('✓ Pedido atualizado')}catch(e){b.disabled=false;toast(e.message)}})}
+async function verComo(g,b){const w=window.open('about:blank','_blank');try{const r=await chamar({acao:'adm_vercomo',id:g.id});const u='./?ver='+encodeURIComponent(r.sessao);if(w)w.location.href=u;else location.href=u}catch(e){if(w)w.close();toast(e.message)}}
 // ---- cliente: editar dados (sem abrir a planilha)
 function formEditarCliente(g){const D=g.dados||{};
   modal('✏️ Dados · '+escH(g.cliente),campo('cliente','Nome do cliente','text',' required maxlength="80" value="'+escH(D.cliente)+'"')+campo('email','E-mail de acesso','email',' maxlength="80" value="'+escH(D.email)+'"')+
@@ -1556,7 +1561,7 @@ function barraAdmin(g){
   const bt=(t,fn,sec)=>{const b=document.createElement('button');b.className='btn adm-b'+(sec?' sec':'');b.textContent=t;b.onclick=()=>fn(b);(sec?mais():ac).appendChild(b)};
   const senha=()=>{if(g.id&&/Ativo|Acesso enviado/.test(g.statusPlanilha))bt('🔑 Redefinir senha',b=>{if(!b.dataset.c){b.dataset.c=1;b.textContent='Toque de novo: enviar para '+g.email;return}admStatus(g,'Redefinir senha',b)},1)};
   if(!g.propria)setTimeout(senha,0);
-  if(!g.propria&&g.dados){setTimeout(()=>{bt('✏️ Editar dados',()=>formEditarCliente(g),1);bt('📄 Adicionar contrato',()=>formContrato(g),1)},0)}
+  if(!g.propria&&g.dados){setTimeout(()=>{if(g.email)bt('👁️ Ver como o cliente',b=>verComo(g,b),1);bt('✏️ Editar dados',()=>formEditarCliente(g),1);bt('📄 Adicionar contrato',()=>formContrato(g),1)},0)}
   if(g.indicacao){setTimeout(()=>{bt('🎁 Indicações'+(g.indicacao.lista.length?' ('+g.indicacao.lista.length+')':''),()=>admIndicacoes(g),1);chipInd(g)},0)}
   if(g.tipo==='gestao'&&g.id){const ins=g.insights;bt(ins&&ins.conectado?'📸 @'+ins.usuario+' conectado':'📸 Conectar Instagram',()=>{if(ins&&ins.conectado){gsIr('rel',true)}else conectarIG(g)},1)}
   if(g.propria){bt('+ Adicionar post',()=>formPost(g));return}
