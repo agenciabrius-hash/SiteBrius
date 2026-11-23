@@ -1302,6 +1302,7 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbxv6WLxKRDICMjAqAGWB8Uu
       return}
     next.disabled=true;next.textContent='Enviando...';err.textContent='';
     const data=Object.fromEntries(new FormData(f).entries());data.rascunho=RID;data.t=Date.now()-(inicioForm||Date.now());
+    try{const ii=JSON.parse(localStorage.getItem('brius_ind')||'null');if(ii&&ii.c&&Date.now()-ii.t<60*864e5)data.ind=ii.c}catch(e){}
     if(data.tipo==='gestao'){['data','inicio','horas','estilo','local','servicos','convidados','obs'].forEach(x=>delete data[x]);data.obs=data.obs_gestao||''}
     else{['empresa','instagram','segmento','redes','posts','videos','inicio_gestao','obs_gestao','reuniao_data','reuniao_hora'].forEach(x=>delete data[x])}
     try{const j=await (await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)})).json();
@@ -1651,5 +1652,13 @@ document.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',(
 
 <script src="eventos/cal.js" defer></script>
 <script>addEventListener('DOMContentLoaded',()=>{const el=document.getElementById('evCal');if(!el||!window.BriusCalendario)return;const io=new IntersectionObserver(es=>{if(es.some(x=>x.isIntersecting)){io.disconnect();BriusCalendario(el,'')}},{rootMargin:'400px'});io.observe(el)})</script>
+<script>
+// Indicação: quem chega por agenciabrius.com.br/?ind=CODIGO ganha desconto no 1º serviço (o código vai junto no pedido de orçamento)
+(function(){try{const q=new URLSearchParams(location.search).get('ind');
+  if(q&&/^[A-Za-z0-9]{1,10}-[A-Za-z0-9]{3}$/.test(q)){localStorage.setItem('brius_ind',JSON.stringify({c:q.toUpperCase(),t:Date.now()}));history.replaceState(null,'',location.pathname+location.hash);
+    const b=document.createElement('div');b.className='ind-b';b.innerHTML='<span>🎁 Você chegou por indicação de um cliente da Brius: tem <b>desconto no seu primeiro serviço</b>. Peça seu orçamento!</span><button type="button" aria-label="Fechar">✕</button>';
+    document.body.appendChild(b);b.querySelector('button').onclick=()=>b.remove();setTimeout(()=>b.classList.add('on'),600)}}catch(e){}})();
+</script>
+<style>.ind-b{position:fixed;left:50%;bottom:18px;transform:translate(-50%,140%);z-index:60;display:flex;gap:10px;align-items:center;max-width:min(560px,calc(100% - 24px));padding:12px 14px 12px 18px;border-radius:18px;background:#141210;color:#fbf8f3;border:1px solid #b8955a;box-shadow:0 18px 40px rgba(0,0,0,.35);font:500 14px/1.4 Manrope,system-ui,sans-serif;transition:transform .6s cubic-bezier(.2,.9,.3,1)}.ind-b.on{transform:translate(-50%,0)}.ind-b b{color:#e6d3ae}.ind-b button{background:none;border:0;color:#b4ab9d;font-size:16px;cursor:pointer;padding:4px}</style>
 </body>
 </html>
