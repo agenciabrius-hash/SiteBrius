@@ -391,7 +391,7 @@ input:focus{border-color:var(--gold)}
 .cm{position:fixed;inset:0;z-index:78;background:rgba(10,9,8,.9);display:flex;align-items:center;justify-content:center;padding:12px}
 .cm-c{width:100%;max-width:860px;height:calc(100dvh - 24px);background:var(--graphite);border:1px solid #3a352f;border-radius:20px;display:flex;flex-direction:column;overflow:hidden}
 .cm-h{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid #3a352f}.cm-h h2{font:500 18px var(--serif);margin:0;flex:1}
-.cm-doc{flex:1;border:0;background:#fff;width:100%}
+.cm-doc{flex:1;border:0;background:#fff;width:100%}.cm-pdf{overflow:auto;background:#d9d4cc;padding:8px;display:flex;flex-direction:column;align-items:center;gap:8px;min-height:0}.cm-pdf canvas{display:block;max-width:100%;height:auto!important;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.2)}.cm-car{margin:auto;color:#6b6359}
 .cm-f{padding:14px 16px;border-top:1px solid #3a352f;display:grid;gap:10px;max-height:52vh;overflow:auto}
 .cm-f .am-2{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:8px}.cm-f .am-2 input{width:100%;box-sizing:border-box;min-width:0}.cm-f{overflow-x:hidden}.cm-f{gap:8px;padding:12px 14px}.cm-f label{margin:0}.cm-f input:not([type=checkbox]){margin-top:4px;padding:10px 12px}.cm-f .msg:empty{display:none}.cm-f .btn{padding:12px}
 .cm-f label{font-size:13px}.cm-li{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.4;cursor:pointer}.cm-li input{width:20px;height:20px;margin-top:1px;accent-color:var(--gold);flex:none}
@@ -1178,6 +1178,10 @@ function formEditarCliente(g){const D=g.dados||{};
     async f=>{const d=Object.fromEntries(new FormData(f).entries());const r=await chamar(Object.assign({acao:'adm_cliente_edit',id:g.id},d));
       await admRecarregar(r.trocouEmail?'✓ Salvo. Agora envie o acesso de novo para o e-mail novo.':'✓ Dados salvos')},'Salvar')}
 // ---- contrato padrão de foto/vídeo (mesmo modelo do orçamento do site), para o cliente aceitar na Área do Cliente
+function verPrevia(titulo,html){let m=$('prevModal');if(!m){m=document.createElement('div');m.id='prevModal';m.className='cm';m.style.zIndex=95;m.setAttribute('role','dialog');m.setAttribute('aria-modal','true');document.body.appendChild(m)}
+  m.innerHTML='<div class="cm-c"><div class="cm-h"><h2>'+escH(titulo)+'</h2><button type="button" class="am-x" aria-label="Fechar">✕</button></div><div class="cm-f"><p class="am-dica" style="margin:0">É só uma prévia: nada foi salvo nem enviado. Feche para voltar e ajustar o que quiser.</p><button type="button" class="btn">Voltar ao formulário</button></div></div>';
+  const ifr=document.createElement('iframe');ifr.className='cm-doc';ifr.title='Prévia do contrato';ifr.setAttribute('sandbox','');ifr.srcdoc=html;m.querySelector('.cm-c').insertBefore(ifr,m.querySelector('.cm-f'));
+  m.hidden=false;const fechar=()=>{m.hidden=true;m.innerHTML=''};m.querySelector('.am-x').onclick=fechar;m.querySelector('.cm-f .btn').onclick=fechar}
 async function formContratoPadrao(g){const D=g.dados||{};const ev=D.evento||g.evento||'';
   toast('Buscando os dados do cliente…');let S={},FALTA=[],CONF=[],fontes=[];
   try{const r=await chamar({acao:'adm_contrato',op:'sugestao',id:g.id});S=r.s||{};FALTA=r.falta||[];CONF=r.conferir||[];fontes=S.fontes||[]}catch(e){FALTA=['não consegui buscar os dados ('+(e.message||e)+'), preencha à mão']}
@@ -1196,14 +1200,20 @@ async function formContratoPadrao(g){const D=g.dados||{};const ev=D.evento||g.ev
     '<p class="am-dica">Serviços:</p><div class="pp-tp imp-tp"><label><input type="checkbox" name="sv" value="fotografia"'+ck('fotografia')+'><span><b>📷 Fotografia</b></span></label><label><input type="checkbox" name="sv" value="videomaker"'+ck('videomaker')+'><span><b>🎥 Videomaker</b></span></label><label><input type="checkbox" name="sv" value="storymaker"'+ck('storymaker')+'><span><b>📱 Storymaker</b></span></label></div>'+
     '<div class="am-2"><label'+fx(!S.total)+'>Valor total combinado (R$)<input name="total" type="text" inputmode="decimal" value="'+v(n2(S.total))+'" placeholder="Vazio = preços da tabela"></label>'+campo('pago','Quanto já pagou (R$)','text',' inputmode="decimal" value="'+v(n2(S.pago))+'" placeholder="0"')+'</div>'+
     '<div class="am-2">'+campo('sinal','Sinal / entrada (R$)','text',' inputmode="decimal" value="'+v(n2(S.pago))+'" placeholder="Vazio = % padrão"')+campo('prazo','Restante pago até','date',' value="'+v(S.prazoRestante)+'"')+'</div>'+
-    '<p class="am-dica" id="ctpConta"></p>'+
+    '<p class="am-dica" id="ctpConta"></p><button type="button" class="btn sec" id="ctpPrev" style="width:100%;margin:0 0 12px">👁️ Ver prévia do contrato</button>'+
     '<label class="am-chk"><input type="checkbox" name="enviar"> Mandar e-mail para o cliente assinar agora</label><p class="am-dica">Desmarcado (o normal): nada é enviado agora. O contrato fica guardado e aparece para o cliente assinar quando ele entrar no site para ver as fotos. Só marque se quiser mandar o e-mail agora.</p>',
     async(f,st)=>{const sv=[...f.querySelectorAll('[name=sv]:checked')].map(x=>x.value);if(!sv.length)throw new Error('Escolha pelo menos um serviço.');
       const vaz=[['nome','o nome completo'],['data','a data'],['inicio','o horário'],['local','o local']].filter(([k])=>!String(f[k].value).trim()).map(x=>x[1]);
       if(vaz.length)throw new Error('Falta preencher: '+vaz.join(', ')+'.');st&&st('Gerando o contrato…');
-      const r=await chamar({acao:'adm_contrato',op:'padrao',id:g.id,nome:f.nome.value,estilo:f.estilo.value,whatsapp:f.whatsapp.value,data:f.data.value,inicio:f.inicio.value,horas:f.horas.value,local:f.local.value,servicos:sv,total:f.total.value,sinal:f.sinal.value,pago:f.pago.value,prazo:f.prazo.value,enviar:f.enviar.checked});
+      const r=await chamar(ctpDados(f,sv,{enviar:f.enviar.checked}));
       if(admDados)admDados.contratos=r.contratos;contratos=r.contratos;await admRecarregar('✓ Contrato gerado'+(r.enviado?' e enviado para o cliente assinar':'')+' · total '+brl(r.total)+', sinal '+brl(r.sinal));
-      window.open(r.pdf,'_blank')},'Gerar contrato');
+      const nv=(r.contratos||[]).find(c=>c.id===r.id);if(nv)abrirContrato(nv,true)},'Gerar contrato');
+  const ctpDados=(f,sv,x)=>Object.assign({acao:'adm_contrato',op:'padrao',id:g.id,nome:f.nome.value,estilo:f.estilo.value,whatsapp:f.whatsapp.value,data:f.data.value,inicio:f.inicio.value,horas:f.horas.value,local:f.local.value,servicos:sv,total:f.total.value,sinal:f.sinal.value,pago:f.pago.value,prazo:f.prazo.value},x);
+  const pb=$('ctpPrev');pb.onclick=async()=>{const fm=pb.closest('form');const sv=[...fm.querySelectorAll('[name=sv]:checked')].map(x=>x.value);
+    if(!sv.length)return msg($('amMsg'),'Escolha pelo menos um serviço.',true);if(!fm.data.value)return msg($('amMsg'),'Escolha a data do evento.',true);
+    const t0=pb.textContent;pb.disabled=true;pb.textContent='Montando a prévia…';
+    try{const r=await chamar(ctpDados(fm,sv,{previa:true}));verPrevia('Prévia · '+g.cliente,r.html)}catch(e){msg($('amMsg'),e.message||'Não foi possível montar a prévia.',true)}
+    pb.disabled=false;pb.textContent=t0};
   const f=document.querySelector('#admModal form')||document.querySelector('#admModal');const num=x=>Number(String(x||'').replace(/\./g,'').replace(',','.'))||0;
   const conta=()=>{const c=document.getElementById('ctpConta');if(!c||!f.querySelector('[name=total]'))return;const t=num(f.querySelector('[name=total]').value),p=num(f.querySelector('[name=pago]').value);
     c.innerHTML=t?'Total '+brl(t)+' · já pagou <b>'+(brl(p)||'R$ 0,00')+'</b> · falta <b>'+(brl(Math.max(0,t-p))||'R$ 0,00')+'</b>':'';};
@@ -1264,6 +1274,14 @@ async function baixarContrato(c,b){const t=b.textContent;b.disabled=true;b.textC
     const blob=new Blob([u],{type:'application/pdf'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=j.nome||'contrato.pdf';
     if(IOS){window.open(url,'_blank')}else{document.body.appendChild(a);a.click();a.remove()}setTimeout(()=>URL.revokeObjectURL(url),60000)}
   catch(e){toast(e.message||'Não foi possível baixar agora.')}b.disabled=false;b.textContent=t}
+// mostra um PDF (base64) dentro da página, página por página, sem baixar
+let _pdfjs=null;function pdfjs(){if(_pdfjs)return _pdfjs;_pdfjs=new Promise((ok,erro)=>{const sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+  sc.onload=()=>{window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';ok(window.pdfjsLib)};sc.onerror=()=>{_pdfjs=null;erro(new Error('pdf'))};document.head.appendChild(sc)});return _pdfjs}
+async function pdfVer(el,b64){const lib=await pdfjs();const bin=atob(b64),u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);
+  const doc=await lib.getDocument({data:u}).promise;el.innerHTML='';const larg=Math.min(el.clientWidth||800,900)-16,dpr=Math.min(window.devicePixelRatio||1,2);
+  for(let n=1;n<=doc.numPages;n++){const pg=await doc.getPage(n);const v0=pg.getViewport({scale:1});const vp=pg.getViewport({scale:larg/v0.width*dpr});
+    const cv=document.createElement('canvas');cv.width=vp.width;cv.height=vp.height;cv.style.width=(vp.width/dpr)+'px';cv.setAttribute('aria-label','Página '+n+' de '+doc.numPages);el.appendChild(cv);
+    await pg.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise}}
 async function abrirContrato(c,admin){
   let m=$('ctrModal');if(!m){m=document.createElement('div');m.id='ctrModal';m.className='cm';m.setAttribute('role','dialog');m.setAttribute('aria-modal','true');document.body.appendChild(m)}
   m.innerHTML='<div class="cm-c"><div class="cm-h"><h2>'+escH(c.titulo)+'</h2><button type="button" class="am-x" aria-label="Fechar">✕</button></div><div class="cm-f"><p class="vazio" style="margin:0">Carregando o contrato…</p></div></div>';
@@ -1273,7 +1291,9 @@ async function abrirContrato(c,admin){
   catch(e){m.querySelector('.cm-f').innerHTML='<p class="msg erro">'+escH(e.message||'Não foi possível abrir.')+'</p>';return}
   const cc=m.querySelector('.cm-c'),f=m.querySelector('.cm-f');
   if(j.html){const ifr=document.createElement('iframe');ifr.className='cm-doc';ifr.title='Texto do contrato';ifr.setAttribute('sandbox','');ifr.srcdoc=j.html;cc.insertBefore(ifr,f)}
-  else f.insertAdjacentHTML('beforebegin','<div style="flex:1;display:grid;place-items:center;padding:24px;text-align:center;color:var(--muted-d)"><div><div style="font-size:42px">📄</div><p>Este contrato foi assinado em PDF'+(j.data?' em '+escH(j.data):'')+'.<br>Toque abaixo para abrir ou baixar.</p></div></div>');
+  else{const dv=document.createElement('div');dv.className='cm-doc cm-pdf';dv.innerHTML='<p class="cm-car">Carregando o contrato…</p>';cc.insertBefore(dv,f);
+    (async()=>{try{const r=await api({acao:'contrato',sessao:guardar.get(),id:c.id,pdf:1});if(!r.ok)throw new Error(r.erro);await pdfVer(dv,r.pdf)}
+      catch(e){dv.innerHTML='<div style="height:100%;display:grid;place-items:center;padding:24px;text-align:center;color:#6b6359"><div><div style="font-size:42px">📄</div><p>Não deu para mostrar aqui.<br>Toque abaixo para baixar.</p></div></div>'}})()}
   const pend=j.status==='Aguardando aceite';
   if(pend&&!admin){
     f.innerHTML='<label class="cm-li"><input type="checkbox" id="ctrLi"> <span>Li o contrato inteiro e concordo com todas as cláusulas.</span></label>'+
