@@ -60,6 +60,7 @@ input:focus{border-color:var(--gold)}
 .abas button{background:var(--graphite);border:1px solid #3a352f;color:var(--muted-d);padding:9px 16px;border-radius:999px;font:600 13px var(--body);cursor:pointer}
 .abas button[aria-pressed="true"]{background:var(--gold-soft);color:var(--ink);border-color:var(--gold-soft)}
 .grupo{font-family:var(--serif);font-size:22px;margin:30px 0 12px;color:var(--gold-soft)}
+.lay-g{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 0 14px}.lay-s{display:grid;gap:6px;align-content:start}.lay-s small{color:var(--muted-d);font-size:12px;margin-top:-4px}.lay-p{border-radius:10px;overflow:hidden;display:grid;place-items:center;color:var(--muted-d);font-size:13px;background:repeating-conic-gradient(#3a352f 0 25%,#2a2622 0 50%) 0 0/16px 16px}.lay-p.h{aspect-ratio:3/2}.lay-p.v{aspect-ratio:2/3}.lay-p img{width:100%;height:100%;object-fit:fill}.lay-b{width:100%;padding:9px 12px;font-size:13px;text-align:center;cursor:pointer}
 .ev-grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:12px}.ev-card{display:flex;gap:14px;align-items:center;text-align:left;padding:10px;border-radius:18px;background:var(--graphite);border:1px solid #3a352f;color:inherit;font:inherit;cursor:pointer;transition:border-color .2s}.ev-card:hover{border-color:var(--gold)}.ev-capa{flex:0 0 92px;height:92px;border-radius:12px;overflow:hidden;background:var(--graphite-2);display:grid;place-items:center;font-size:30px}.ev-capa img{width:100%;height:100%;object-fit:cover}.ev-tx{display:grid;gap:3px;min-width:0}.ev-tx b{font-family:var(--serif);font-size:19px;font-weight:500;color:var(--bone)}.ev-tx small{color:var(--muted-d);font-size:13px}.ev-tx em{font-style:normal;font-size:12px;color:var(--gold-soft)}.ev-volta{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:0 0 14px}.ev-volta .btn{width:auto}
 .grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(46%,210px),1fr));gap:8px}
 .cel{position:relative}
@@ -1654,7 +1655,7 @@ function barraAdmin(g){
   if(g.tipo==='gestao'){bt('+ Adicionar post',()=>formPost(g));
     if(g.id&&/Ativo|Acesso enviado/.test(g.statusPlanilha))bt('🔔 Avisar cliente dos novos posts',b=>admStatus(g,'Avisar novos posts',b),1);
     if(!/Ativo|Acesso enviado/.test(g.statusPlanilha))bt('✉️ Enviar acesso ao cliente',b=>{if(!g.id){chamarSemId(g,b);return}admStatus(g,'Enviar acesso',b)},1);}
-  else{bt('+ Adicionar fotos',()=>(g.subpastas&&g.subpastas.length?formArquivosGaleria(g):formArquivos('Adicionar fotos · '+escH(g.cliente),g.pastaId)));bt('📁 Novo evento (subpasta)',()=>formSubpasta(g),1);
+  else{bt('+ Adicionar fotos',()=>(g.subpastas&&g.subpastas.length?formArquivosGaleria(g):formArquivos('Adicionar fotos · '+escH(g.cliente),g.pastaId)));bt('📁 Novo evento (subpasta)',()=>formSubpasta(g),1);bt('🖼️ Layout das fotos com marca',()=>formLayout(),1);
     if(g.id){bt('💬 Mensagem para o WhatsApp',()=>msgWhats(g),1);bt('⏳ Acesso: '+(g.dias||7)+' dias',()=>formDias(g),1)}
     if(!/Ativo|Acesso enviado/.test(g.statusPlanilha))bt('✉️ Enviar acesso ao cliente',b=>admStatus(g,'Enviar acesso',b),1);
     else bt('🔒 Encerrar galeria',b=>{if(!b.dataset.c){b.dataset.c=1;b.textContent='Toque de novo para encerrar';return}admStatus(g,'Encerrar agora',b)},1)}
@@ -1672,18 +1673,36 @@ function formArquivosGaleria(g){const sp=g.subpastas||[];const pre=evSel?sp.find
     async(f,st)=>{const fs=[...f.arqs.files];if(!fs.length)throw new Error('Escolha pelo menos um arquivo.');const p=sp.find(x=>x.id===f.dest.value);
       if(p&&p.pub){await subirComMarca(g,p,fs,st)}else await subir(p?p.id:g.pastaId,fs,null,st);
       await admRecarregar('✓ '+fs.length+' arquivo(s) enviados'+(p&&p.pub?' (bruta + com marca)':''))},'Enviar');
-  const dica=()=>{const p=sp.find(x=>x.id===f.querySelector('[name=dest]').value);$('destDica').textContent=p&&p.pub?'📸 Cada foto vai em duas versões: a bruta (só o cliente vê) e a com marca da Brius · '+(p.evento||p.nome)+(p.local?' · '+p.local:'')+' (vai para o reconhecimento facial).':''};
+  const dica=()=>{const p=sp.find(x=>x.id===f.querySelector('[name=dest]').value);$('destDica').textContent=p&&p.pub?'📸 Cada foto vai em duas versões: a bruta (só o cliente vê) e a com o seu layout (ou a faixa da Brius, se não tiver layout) · '+(p.evento||p.nome)+(p.local?' · '+p.local:'')+' (vai para o reconhecimento facial).':''};
   f.querySelector('[name=dest]').onchange=dica;dica()}
-// carimbo: faixa no rodapé com a marca da Brius, o evento e o local (o modelo final o Matheus ainda vai mandar)
+// layout das fotos com marca (PNG do Matheus, horizontal e vertical); sem layout, usa a faixa simples
+let LAYOUT=null;const b64Bmp=async b=>createImageBitmap(new Blob([Uint8Array.from(atob(b),c=>c.charCodeAt(0))],{type:'image/png'}));
+async function layoutCarregar(forcar){if(LAYOUT&&!forcar)return LAYOUT;const r=await chamar({acao:'adm_layout',op:'ler'});const L={texto:r.texto||'dir',info:r};
+  for(const l of ['h','v'])if(r[l]&&r[l].b64)try{L[l]=await b64Bmp(r[l].b64)}catch(e){}return LAYOUT=L}
+function textoEvento(x,w,h,info,pos,comFaixa){const fh=Math.max(60,Math.round(Math.min(w,h)*0.085)),pad=Math.round(fh*0.32),t1=Math.round(fh*0.32),t2=Math.round(fh*0.22),y1=h-pad-t2-Math.round(fh*0.1),y2=h-pad;
+  x.textBaseline='alphabetic';x.shadowColor='rgba(0,0,0,.55)';x.shadowBlur=Math.round(fh*0.1);const X=pos==='esq'?pad:pos==='centro'?w/2:w-pad;x.textAlign=pos==='esq'?'left':pos==='centro'?'center':'right';
+  x.fillStyle='#fbf8f3';x.font='700 '+t1+'px Manrope, "Segoe UI", sans-serif';x.fillText(info.evento||'',X,y1);
+  x.fillStyle='#e6d3ae';x.font='600 '+t2+'px Manrope, "Segoe UI", sans-serif';x.fillText([info.local,info.data].filter(Boolean).join(' · '),X,y2);x.shadowBlur=0}
 async function carimbar(file,info){const bmp=await createImageBitmap(file);const w=bmp.width,h=bmp.height;const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');x.drawImage(bmp,0,0);
-  const fh=Math.max(60,Math.round(Math.min(w,h)*0.085)),pad=Math.round(fh*0.32);const gr=x.createLinearGradient(0,h-fh*1.6,0,h);gr.addColorStop(0,'rgba(10,9,8,0)');gr.addColorStop(1,'rgba(10,9,8,.72)');x.fillStyle=gr;x.fillRect(0,h-fh*1.6,w,fh*1.6);
-  const t1=Math.round(fh*0.32),t2=Math.round(fh*0.22),y1=h-pad-t2-Math.round(fh*0.1),y2=h-pad;x.textBaseline='alphabetic';x.shadowColor='rgba(0,0,0,.45)';x.shadowBlur=Math.round(fh*0.08);
-  x.fillStyle='#fbf8f3';x.textAlign='left';x.font='800 '+t1+'px Manrope, "Segoe UI", sans-serif';x.fillText('BRIUS AGÊNCIA',pad,y1);
-  x.fillStyle='#e6d3ae';x.font='600 '+t2+'px Manrope, "Segoe UI", sans-serif';x.fillText('@agenciabrius · agenciabrius.com.br',pad,y2);
-  x.textAlign='right';x.fillStyle='#fbf8f3';x.font='700 '+t1+'px Manrope, "Segoe UI", sans-serif';x.fillText(info.evento||'',w-pad,y1);
-  x.fillStyle='#e6d3ae';x.font='600 '+t2+'px Manrope, "Segoe UI", sans-serif';x.fillText([info.local,info.data].filter(Boolean).join(' · '),w-pad,y2);
+  const L=LAYOUT||{};const lay=w>=h?L.h:L.v;
+  if(lay){x.drawImage(lay,0,0,w,h);if(L.texto!=='nao')textoEvento(x,w,h,info,L.texto)}
+  else{const fh=Math.max(60,Math.round(Math.min(w,h)*0.085)),pad=Math.round(fh*0.32);const gr=x.createLinearGradient(0,h-fh*1.6,0,h);gr.addColorStop(0,'rgba(10,9,8,0)');gr.addColorStop(1,'rgba(10,9,8,.72)');x.fillStyle=gr;x.fillRect(0,h-fh*1.6,w,fh*1.6);
+    const t1=Math.round(fh*0.32),t2=Math.round(fh*0.22),y1=h-pad-t2-Math.round(fh*0.1),y2=h-pad;x.textBaseline='alphabetic';x.shadowColor='rgba(0,0,0,.45)';x.shadowBlur=Math.round(fh*0.08);
+    x.fillStyle='#fbf8f3';x.textAlign='left';x.font='800 '+t1+'px Manrope, "Segoe UI", sans-serif';x.fillText('BRIUS AGÊNCIA',pad,y1);
+    x.fillStyle='#e6d3ae';x.font='600 '+t2+'px Manrope, "Segoe UI", sans-serif';x.fillText('@agenciabrius · agenciabrius.com.br',pad,y2);textoEvento(x,w,h,info,'dir')}
   const blob=await new Promise(ok=>c.toBlob(ok,'image/jpeg',0.9));bmp.close&&bmp.close();return new File([blob],file.name.replace(/\.[^.]+$/,'')+'.jpg',{type:'image/jpeg'})}
-async function subirComMarca(g,p,fs,st){let feito=0,i=0;const info={evento:p.evento||p.nome.replace(/ · \d{2}\/\d{2}\/\d{4}$/,''),local:p.local,data:p.data};const erros=[];
+async function formLayout(){toast('Abrindo o layout…');let L;try{L=await layoutCarregar(true)}catch(e){toast(e.message);return}
+  const r=L.info||{};const slot=(l,rot,dim)=>'<div class="lay-s"><b>'+rot+'</b><small>'+dim+'</small><div class="lay-p '+l+'">'+(r[l]&&r[l].b64?'<img alt="" src="data:image/png;base64,'+r[l].b64+'">':'<span>Sem layout</span>')+'</div>'+
+    '<label class="btn sec lay-b">'+(r[l]?'Trocar':'Escolher PNG')+'<input type="file" accept="image/png" data-l="'+l+'" hidden></label>'+(r[l]?'<button type="button" class="btn sec lay-b" data-rm="'+l+'">Tirar</button>':'')+'</div>';
+  const f=modal('🖼️ Layout das fotos com marca','<p class="am-dica" style="margin-top:0">Vale para todos os eventos com reconhecimento facial. Quando você sobe as fotos, o site coloca o layout certo em cada uma (deitada ou em pé) e guarda também a foto bruta. PNG com fundo transparente: horizontal 3000 × 2000 e vertical 2000 × 3000. Deixe a marca nas bordas, sem cobrir o meio.</p>'+
+    '<div class="lay-g">'+slot('h','Horizontal','3000 × 2000')+slot('v','Vertical','2000 × 3000')+'</div>'+
+    '<label>Nome do evento, local e data por cima do layout<select name="texto"><option value="dir">Embaixo, à direita</option><option value="esq">Embaixo, à esquerda</option><option value="centro">Embaixo, no centro</option><option value="nao">Não escrever (o layout já tem tudo)</option></select></label>'+
+    '<p class="am-dica">'+(r.h||r.v?'':'Sem layout, o site usa a faixa simples da Brius.')+'</p>',async(fm,st)=>{st&&st('Salvando…');await chamar({acao:'adm_layout',op:'texto',texto:fm.texto.value});await layoutCarregar(true);toast('✓ Layout salvo');$('admModal').hidden=true;document.body.style.overflow=''},'Salvar');
+  f.texto.value=L.texto||'dir';
+  f.querySelectorAll('input[data-l]').forEach(i=>i.onchange=async()=>{const a=i.files[0];if(!a)return;if(a.type!=='image/png'){msg($('amMsg'),'Precisa ser PNG.',true);return}
+    msg($('amMsg'),'Enviando o layout…');try{await chamar({acao:'adm_layout',op:'salvar',lado:i.dataset.l,tipo:'image/png',b64:await lerB64(a)});formLayout()}catch(e){msg($('amMsg'),e.message,true)}});
+  f.querySelectorAll('[data-rm]').forEach(b=>b.onclick=async()=>{if(!b.dataset.c){b.dataset.c=1;b.textContent='Toque de novo';return}await chamar({acao:'adm_layout',op:'remover',lado:b.dataset.rm});formLayout()})}
+async function subirComMarca(g,p,fs,st){try{await layoutCarregar()}catch(e){}let feito=0,i=0;const info={evento:p.evento||p.nome.replace(/ · \d{2}\/\d{2}\/\d{4}$/,''),local:p.local,data:p.data};const erros=[];
   const um=async f=>{const foto=/^image\//.test(f.type)&&!/heic|heif/i.test(f.type);
     await subirAPI(p.brutas||p.id,f,false,g.pastaId);
     if(foto){const m=await carimbar(f,info);await subirAPI(p.pub,m,true,g.pastaId)}};
