@@ -145,8 +145,21 @@ const msg=(t,erro)=>{$('msg').textContent=t||'';$('msg').classList.toggle('erro'
 const barra=p=>{$('barra').hidden=p==null;if(p!=null)$('barra').firstElementChild.style.width=Math.round(p*100)+'%'};
 const foto=(fid,w)=>'https://lh3.googleusercontent.com/d/'+fid+'=w'+w;
 
-if(!id){$('todos').hidden=false;BriusCalendario($('cal'),'../')}
+const qrT=new URLSearchParams(location.search).get('q');
+if(qrT)abrirQr(qrT);
+else if(!id){$('todos').hidden=false;BriusCalendario($('cal'),'../')}
 else iniciarEvento();
+
+// veio pelo QR code do evento: confere se ainda vale e leva para a página do evento
+async function abrirQr(t){
+  $('evento').hidden=false;$('evCapa').hidden=true;$('evNome').textContent='Abrindo o evento…';$('evInfo').textContent='';$('passo').hidden=true;
+  let r=null;try{r=await (await fetch(API+'?acao=qr&t='+encodeURIComponent(t))).json()}catch(x){}
+  if(r&&r.ok&&r.pronto){location.replace('?e='+encodeURIComponent(r.e)+(r.c?'&c='+encodeURIComponent(r.c):''));return}
+  if(r&&r.ok){$('evNome').textContent=r.nome;$('evData').textContent='Fotos a caminho';$('evInfo').textContent='As fotos deste evento ainda estão sendo preparadas. Volte por este mesmo QR code depois do evento para tirar a selfie e achar as suas.';return}
+  $('evNome').textContent=r&&r.motivo==='expirado'?'Este QR code venceu':'QR code inválido';
+  $('evInfo').textContent=r&&r.motivo==='expirado'?'O prazo para achar as fotos por este QR terminou. Veja os eventos que ainda estão no ar:':'Confira se leu o QR certo. Veja os eventos que estão no ar:';
+  $('todos').hidden=false;BriusCalendario($('cal'),'../');
+}
 
 async function iniciarEvento(){
   $('evento').hidden=false;

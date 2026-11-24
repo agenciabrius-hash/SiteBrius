@@ -128,6 +128,13 @@ html{scroll-padding-top:66px}
 .band.dark{background:var(--graphite);color:var(--bone)}
 .band.dark2{background:var(--graphite-2);color:var(--bone)}
 .band.light{background:var(--paper)}
+.depos{margin-top:clamp(36px,6vw,64px)}.dep-row{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(180px,230px);gap:16px;overflow-x:auto;padding:6px 2px 14px;scroll-snap-type:x mandatory}
+.dep{margin:0;scroll-snap-align:start;display:grid;gap:10px}.dep-v,.dep-f{position:relative;display:block;width:100%;aspect-ratio:9/16;border:0;padding:0;border-radius:18px;overflow:hidden;background:#1d1a17;cursor:pointer}
+.dep-v img{width:100%;height:100%;object-fit:cover;transition:transform .5s}.dep-v:hover img{transform:scale(1.04)}.dep-v:focus-visible{outline:2px solid var(--gold,#b8955a);outline-offset:3px}
+.dep-play{position:absolute;left:50%;top:50%;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;background:rgba(251,248,243,.92);box-shadow:0 6px 24px rgba(0,0,0,.35)}.dep-play::after{content:"";position:absolute;left:26px;top:20px;border-left:18px solid #141210;border-top:12px solid transparent;border-bottom:12px solid transparent}
+.dep figcaption b{display:block;font-size:15px}.dep figcaption span{font-size:13px;opacity:.7}
+@media (prefers-reduced-motion:reduce){.dep-v img{transition:none}}
+
 .eyebrow{font:600 12px var(--body);letter-spacing:.2em;text-transform:uppercase;margin:0 0 14px;color:var(--gold);display:flex;align-items:center;gap:12px}
 .eyebrow::before{content:"";width:28px;height:1px;background:currentColor}
 .dark .eyebrow,.dark2 .eyebrow,.contact .eyebrow{color:var(--gold-soft)!important}
@@ -1084,6 +1091,7 @@ footer .wrap{padding-block:22px;display:flex;justify-content:space-between;gap:1
           <span class="aud-time">0:00</span>
         </div>
       </div>
+      <div class="depos" id="depos" hidden><p class="eyebrow">Depoimentos em vídeo</p><div class="dep-row" id="depRow"></div></div>
     </div>
   </div>
 </section>
@@ -1372,6 +1380,12 @@ const ALBUNS=[{"t": "Ensaio de bodas Sirlene & Valdinei", "c": "casamentos", "p"
   let foi=false;const go=()=>{if(foi)return;foi=true;sec.classList.add('vis');sec.querySelectorAll('li:not([hidden]) b[data-n]').forEach(contar)};
   const set=(id,n,mais)=>{const b=document.getElementById(id);if(!b||!(n>0))return;b.dataset.n=n;if(mais)b.dataset.mais=1;const li=b.closest('li');if(li)li.hidden=false;
     const suf=b.querySelector('small');b.innerHTML=(mais?'+':'')+fmt(foi?n:0)+(suf?suf.outerHTML:'');if(foi)contar(b)};
+  // depoimentos em vídeo (subidos pelo painel): só aparecem quando existir algum
+  if(API_URL)fetch(API_URL+'?acao=depoimentos').then(r=>r.json()).then(j=>{const l=(j&&j.ok&&j.lista)||[];if(!l.length)return;const row=document.getElementById('depRow');
+    const esc=t=>String(t||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    row.innerHTML=l.slice(0,8).map(d=>'<figure class="dep"><button type="button" class="dep-v" data-id="'+esc(d.id)+'" aria-label="Assistir ao depoimento de '+esc(d.nome)+'"><img loading="lazy" alt="" onerror="this.style.visibility=\'hidden\'" src="https://lh3.googleusercontent.com/d/'+esc(d.id)+'=w480"><span class="dep-play" aria-hidden="true"></span></button><figcaption><b>'+esc(d.nome)+'</b>'+(d.evento?'<span>'+esc(d.evento)+'</span>':'')+'</figcaption></figure>').join('');
+    row.querySelectorAll('.dep-v').forEach(b=>b.onclick=()=>{const f=document.createElement('iframe');f.src='https://drive.google.com/file/d/'+b.dataset.id+'/preview';f.allow='autoplay; fullscreen';f.allowFullscreen=true;f.title='Depoimento';f.className='dep-f';b.replaceWith(f)});
+    document.getElementById('depos').hidden=false}).catch(()=>{});
   if(API_URL)fetch(API_URL+'?acao=numeros').then(r=>r.json()).then(j=>{if(!j||!j.ok)return;
     set('nEv',j.eventos,true);
     const anos=new Date().getFullYear()-(j.desde||2024);const a=document.getElementById('nAnos');if(a&&anos>0){a.dataset.n=anos;a.querySelector('small').textContent=anos>1?'anos':'ano'}}).catch(()=>{});
