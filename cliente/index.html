@@ -1197,7 +1197,7 @@ async function formContratoPadrao(g){const D=g.dados||{};const ev=D.evento||g.ev
     '<div class="am-2"><label'+fx(!S.total)+'>Valor total combinado (R$)<input name="total" type="text" inputmode="decimal" value="'+v(n2(S.total))+'" placeholder="Vazio = preços da tabela"></label>'+campo('pago','Quanto já pagou (R$)','text',' inputmode="decimal" value="'+v(n2(S.pago))+'" placeholder="0"')+'</div>'+
     '<div class="am-2">'+campo('sinal','Sinal / entrada (R$)','text',' inputmode="decimal" value="'+v(n2(S.pago))+'" placeholder="Vazio = % padrão"')+campo('prazo','Restante pago até','date',' value="'+v(S.prazoRestante)+'"')+'</div>'+
     '<p class="am-dica" id="ctpConta"></p>'+
-    '<label class="am-chk"><input type="checkbox" name="enviar" checked> Mandar e-mail para o cliente assinar agora</label><p class="am-dica">Se ele ainda não tem acesso, o e-mail já vem com o link para criar a senha. Os dias de acesso às fotos só começam a contar quando as fotos estiverem lá.</p>',
+    '<label class="am-chk"><input type="checkbox" name="enviar"> Mandar e-mail para o cliente assinar agora</label><p class="am-dica">Desmarcado (o normal): nada é enviado agora. O contrato fica guardado e aparece para o cliente assinar quando ele entrar no site para ver as fotos. Só marque se quiser mandar o e-mail agora.</p>',
     async(f,st)=>{const sv=[...f.querySelectorAll('[name=sv]:checked')].map(x=>x.value);if(!sv.length)throw new Error('Escolha pelo menos um serviço.');
       const vaz=[['nome','o nome completo'],['data','a data'],['inicio','o horário'],['local','o local']].filter(([k])=>!String(f[k].value).trim()).map(x=>x[1]);
       if(vaz.length)throw new Error('Falta preencher: '+vaz.join(', ')+'.');st&&st('Gerando o contrato…');
