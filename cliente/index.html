@@ -60,6 +60,7 @@ input:focus{border-color:var(--gold)}
 .abas button{background:var(--graphite);border:1px solid #3a352f;color:var(--muted-d);padding:9px 16px;border-radius:999px;font:600 13px var(--body);cursor:pointer}
 .abas button[aria-pressed="true"]{background:var(--gold-soft);color:var(--ink);border-color:var(--gold-soft)}
 .grupo{font-family:var(--serif);font-size:22px;margin:30px 0 12px;color:var(--gold-soft)}
+.ev-grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:12px}.ev-card{display:flex;gap:14px;align-items:center;text-align:left;padding:10px;border-radius:18px;background:var(--graphite);border:1px solid #3a352f;color:inherit;font:inherit;cursor:pointer;transition:border-color .2s}.ev-card:hover{border-color:var(--gold)}.ev-capa{flex:0 0 92px;height:92px;border-radius:12px;overflow:hidden;background:var(--graphite-2);display:grid;place-items:center;font-size:30px}.ev-capa img{width:100%;height:100%;object-fit:cover}.ev-tx{display:grid;gap:3px;min-width:0}.ev-tx b{font-family:var(--serif);font-size:19px;font-weight:500;color:var(--bone)}.ev-tx small{color:var(--muted-d);font-size:13px}.ev-tx em{font-style:normal;font-size:12px;color:var(--gold-soft)}.ev-volta{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:0 0 14px}.ev-volta .btn{width:auto}
 .grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(46%,210px),1fr));gap:8px}
 .cel{position:relative}
 .fav{position:absolute;top:6px;right:6px;width:36px;height:36px;border-radius:50%;border:0;background:rgba(20,18,16,.55);color:#fbf8f3;font-size:19px;line-height:1;cursor:pointer;display:grid;place-items:center;transition:transform .2s,background .2s}
@@ -764,11 +765,12 @@ function aplicarDados(j){ultimoHash=hashDados(j);
   window.scrollTo(0,y)}
 setInterval(atualizarSozinho,60000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)atualizarSozinho()});
-let filtro='todas';
+let filtro='todas',evSel=null,subSel=null;
+const topo=a=>a.gp?(a.gp[0]||''):String(a.g||'').split(' · ')[0];const sub=a=>a.gp?a.gp.slice(1).join(' · '):String(a.g||'').split(' · ').slice(1).join(' · ');
 function abrir(i,manterFiltro){
   setTimeout(()=>{const g0=galerias[i];if(g0&&g0.admin)barraAdmin(g0)},0);
   atual=i;const g=galerias[i];$('gAbas').querySelectorAll('button[data-i]').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.i===i));
-  if(!manterFiltro)filtro='todas';
+  if(!manterFiltro){filtro='todas';evSel=null;subSel=null}
   $('lbFav').hidden=g.tipo==='gestao';
   if(g.tipo==='gestao'){abrirGestao(g);return}
   $('gTitulo').textContent=g.evento;const cont=$('gConteudo');cont.innerHTML='';$('gAcoes').innerHTML='';
@@ -783,10 +785,20 @@ function abrir(i,manterFiltro){
     bf.onclick=()=>abrirBaixarTudo({evento:g.evento+' - favoritas',arquivos:g.arquivos.filter(a=>g.fav.has(a.id))});$('gAcoes').appendChild(bf)}
   if(!g.admin&&!g.leitura&&g.arquivos.length){const bi=document.createElement('button');bi.className='btn sec';bi.textContent='📖 Álbum ou quadro';bi.onclick=()=>pedirImpressao(g);$('gAcoes').appendChild(bi);
     setTimeout(()=>{const c=$('gConteudo');if(!c||c.querySelector('.imp-card'))return;c.insertAdjacentHTML('afterbegin','<div class="imp-card"><span class="ic">📖</span><div><b>Que tal ter essas fotos impressas?</b><small>Marque suas favoritas ❤️ e peça o orçamento de um álbum, quadro ou fotos impressas. A gente orça com a gráfica e te passa o valor.</small></div><button type="button" class="btn sec">Pedir orçamento</button></div>');c.querySelector('.imp-card button').onclick=()=>pedirImpressao(g)},0)}
-  if(!g.arquivos.length){cont.innerHTML='<p class="vazio">Seus arquivos ainda estão sendo preparados. Volte em breve!</p>';return}
-  const fotos=g.arquivos.filter(a=>a.t==='foto').length,videos=g.arquivos.length-fotos;
+  const evs=[];g.arquivos.forEach(a=>{const t=topo(a);if(t&&evs.indexOf(t)<0)evs.push(t)});if(g.admin)(g.subpastas||[]).forEach(p=>{if(evs.indexOf(p.nome)<0)evs.push(p.nome)});
+  const multi=evs.length>=2||(evs.length>=1&&/eventos/i.test(g.evento+' '+g.cliente));
+  if(!g.arquivos.length&&!multi){cont.innerHTML='<p class="vazio">Seus arquivos ainda estão sendo preparados. Volte em breve!</p>';return}
+  if(multi&&!evSel&&filtro!=='fav'){pintarEventosGaleria(g,evs,cont);return}
+  const noEv=multi&&evSel?g.arquivos.filter(a=>topo(a)===evSel):g.arquivos;
+  if(multi&&evSel){tudo.onclick=()=>abrirBaixarTudo({evento:g.evento+' - '+evSel,arquivos:noEv.filter(a=>!subSel||sub(a)===subSel)});
+    const vt=document.createElement('div');vt.className='ev-volta';vt.innerHTML='<button type="button" class="btn sec">← Todos os eventos</button><h2 class="grupo" style="margin:0">'+escH(evSel)+'</h2>';vt.querySelector('button').onclick=()=>{evSel=null;subSel=null;abrir(atual,true);window.scrollTo(0,0)};cont.appendChild(vt);
+    const subs=[];noEv.forEach(a=>{const x=sub(a);if(subs.indexOf(x)<0)subs.push(x)});
+    if(subs.length>1){const ch=document.createElement('div');ch.className='filtro';ch.innerHTML='<button data-s="">Todas ('+noEv.length+')</button>'+subs.map(x=>'<button data-s="'+escH(x)+'">'+escH(x||'Outras')+' ('+noEv.filter(a=>sub(a)===x).length+')</button>').join('');
+      ch.querySelectorAll('button').forEach(b=>{b.setAttribute('aria-pressed',(subSel||'')===b.dataset.s);b.onclick=()=>{subSel=b.dataset.s||null;abrir(atual,true)}});cont.appendChild(ch)}
+    if(!noEv.length){cont.insertAdjacentHTML('beforeend','<p class="vazio">Ainda não tem fotos neste evento.</p>');return}}
+  const fotos=noEv.filter(a=>a.t==='foto').length,videos=noEv.length-fotos;
   const barra=document.createElement('div');barra.className='filtro';
-  barra.innerHTML='<button data-f="todas">Todas ('+g.arquivos.length+')</button><button data-f="fav">♥ Favoritas ('+favs.length+')</button>';
+  barra.innerHTML='<button data-f="todas">Todas ('+noEv.length+')</button><button data-f="fav">♥ Favoritas ('+favs.length+')</button>';
   barra.querySelectorAll('button').forEach(b=>{b.setAttribute('aria-pressed',b.dataset.f===filtro);b.onclick=()=>{filtro=b.dataset.f;abrir(atual,true)}});
   cont.appendChild(barra);
   const resumo=document.createElement('p');resumo.className='prazo';resumo.style.margin='0 0 6px';
@@ -795,9 +807,9 @@ function abrir(i,manterFiltro){
   cont.appendChild(resumo);
   if(g.avaliar&&!g.admin){const av=document.createElement('a');av.className='aval';av.href=g.avaliar;av.target='_blank';av.rel='noopener';
     av.innerHTML='<span class="st">★★★★★</span><span><b>Gostou das fotos?</b><small>Deixe uma avaliação da Brius no Google. Leva menos de 1 minuto e ajuda muito 💛</small></span><span class="go">Avaliar ↗</span>';cont.appendChild(av)}
-  lista=filtro==='fav'?favs:g.arquivos;let grupo=null,grade;
+  lista=filtro==='fav'?favs:noEv.filter(a=>!(multi&&evSel&&subSel)||sub(a)===subSel);let grupo=null,grade;
   lista.forEach((a,k)=>{
-    if(a.g!==grupo||!grade){grupo=a.g;if(grupo){const h=document.createElement('h2');h.className='grupo';h.textContent=grupo;cont.appendChild(h)}grade=document.createElement('div');grade.className='grade';cont.appendChild(grade)}
+    if(a.g!==grupo||!grade){grupo=a.g;const tit=multi&&evSel?sub(a):grupo;if(tit){const h=document.createElement('h2');h.className='grupo';h.textContent=tit;cont.appendChild(h)}grade=document.createElement('div');grade.className='grade';cont.appendChild(grade)}
     const cel=document.createElement('div');cel.className='cel';
     const b=document.createElement('button');b.className='item';b.setAttribute('aria-label',(a.t==='video'?'Vídeo ':'Foto ')+a.n);
     const im=new Image();im.loading='lazy';im.alt='';im.src=thumb(a.id);im.onload=()=>im.classList.add('ok');b.appendChild(im);
@@ -806,6 +818,19 @@ function abrir(i,manterFiltro){
     const f=document.createElement('button');f.className='fav';f.dataset.id=a.id;pintarFav(f,g.fav.has(a.id));f.onclick=()=>alternarFav(a);
     cel.append(b,f);grade.appendChild(cel);
   });
+}
+function pintarEventosGaleria(g,evs,cont){
+  const sp=g.subpastas||[];const cab=document.createElement('p');cab.className='prazo';cab.style.margin='0 0 12px';cab.textContent=evs.length+(evs.length>1?' eventos':' evento')+' · toque para ver as fotos';cont.appendChild(cab);
+  const gr=document.createElement('div');gr.className='ev-grade';
+  evs.forEach(nome=>{const arqs=g.arquivos.filter(a=>topo(a)===nome);const p=sp.find(x=>x.nome===nome)||{};const capa=arqs.find(a=>a.t==='foto')||arqs[0];
+    const fotos=arqs.filter(a=>a.t==='foto').length,vids=arqs.length-fotos;
+    const b=document.createElement('button');b.type='button';b.className='ev-card';
+    b.innerHTML='<span class="ev-capa">'+(capa?'<img loading="lazy" alt="" src="'+thumb(capa.id)+'">':'<i>📁</i>')+'</span><span class="ev-tx"><b>'+escH(nome)+'</b><small>'+
+      ([fotos?fotos+(fotos>1?' fotos':' foto'):'',vids?vids+(vids>1?' vídeos':' vídeo'):''].filter(Boolean).join(' · ')||'Sem fotos ainda')+(p.local?' · '+escH(p.local):'')+'</small>'+(p.pub?'<em>📸 Brutas + com marca (reconhecimento facial)</em>':'')+'</span>';
+    b.onclick=()=>{evSel=nome;subSel=null;abrir(atual,true);window.scrollTo(0,0)};gr.appendChild(b)});
+  cont.appendChild(gr);
+  const soltos=g.arquivos.filter(a=>!topo(a));if(soltos.length){const h=document.createElement('h2');h.className='grupo';h.textContent='Outros arquivos';cont.appendChild(h);
+    const gd=document.createElement('div');gd.className='grade';lista=soltos;soltos.forEach((a,k)=>{const b=document.createElement('button');b.className='item';const im=new Image();im.loading='lazy';im.alt='';im.src=thumb(a.id);im.onload=()=>im.classList.add('ok');b.appendChild(im);b.onclick=()=>verItem(k);const c=document.createElement('div');c.className='cel';c.appendChild(b);gd.appendChild(c)});cont.appendChild(gd)}
 }
 function pintarFav(b,on){b.textContent=on?'♥':'♡';b.classList.toggle('on',on);b.setAttribute('aria-pressed',on);b.setAttribute('aria-label',on?'Tirar das favoritas':'Marcar como favorita')}
 let favFila=Promise.resolve();
@@ -1187,38 +1212,43 @@ async function formContratoPadrao(g){const D=g.dados||{};const ev=D.evento||g.ev
   try{const r=await chamar({acao:'adm_contrato',op:'sugestao',id:g.id});S=r.s||{};FALTA=r.falta||[];CONF=r.conferir||[];fontes=S.fontes||[]}catch(e){FALTA=['não consegui buscar os dados ('+(e.message||e)+'), preencha à mão']}
   const v=x=>escH(x==null?'':String(x)),n2=x=>x?String(x).replace('.',','):'';const fx=c=>c?' class="ctp-falta"':'';
   const sv=S.servicos&&S.servicos.length?S.servicos:['fotografia'];const ck=k=>sv.indexOf(k)>-1?' checked':'';
+  const REC0=!S.data&&/eventos/i.test(ev+' '+g.cliente);
   const tem=(contratos||[]).filter(c=>String(c.email||'').toLowerCase()===String(g.email||'').toLowerCase()&&c.status!=='Cancelado');
   const caixa=(FALTA.length?'<div class="ctp-box ctp-r"><b>⚠️ Falta preencher:</b> '+FALTA.map(escH).join(' · ')+'</div>':'<div class="ctp-box ctp-ok"><b>✓ Tudo preenchido</b> com o que já estava no site.</div>')+
     (CONF.length?'<div class="ctp-box"><b>👀 Confira:</b> '+CONF.map(escH).join(' · ')+'</div>':'')+
     (fontes.length?'<p class="am-dica">Dados puxados de: '+escH(fontes.join(', '))+'. Os campos em vermelho estão vazios.</p>':'');
   modal('✍️ Contrato padrão · '+escH(g.cliente),(g.email?'':'<p class="msg erro" style="display:block">Este cliente ainda não tem e-mail. Use ✏️ Editar dados primeiro.</p>')+
-    (tem.length?'<p class="msg" style="display:block">⚠️ Este cliente já tem '+tem.length+' contrato'+(tem.length>1?'s':'')+' ('+escH(tem.map(c=>c.status).join(', '))+'). Gere outro só se for para substituir (depois cancele o antigo).</p>':'')+caixa+
+    (tem.length?'<p class="msg" style="display:block">⚠️ Este cliente já tem '+tem.length+' contrato'+(tem.length>1?'s':'')+' ('+escH(tem.map(c=>c.status).join(', '))+'). Gere outro só se for para substituir (depois cancele o antigo).</p>':'')+
+    '<label class="am-chk"><input type="checkbox" name="rec"'+(REC0?' checked':'')+'> <span><b>📚 Contrato para vários eventos</b> (cliente que faz eventos sempre). Sai sem data e sem local, e o valor de cada evento é combinado antes, conforme o local.</span></label>'+caixa+
     '<label'+fx(!S.nome)+'>Nome completo de quem assina<input name="nome" type="text" maxlength="100" value="'+v(S.nome)+'" placeholder="Precisa colocar"></label>'+
     '<div class="am-2">'+campo('estilo','Tipo de evento','text',' maxlength="80" placeholder="Ex.: Bodas, Casamento, Aniversário" value="'+v(S.estilo||ev.split('·')[0].trim())+'"')+campo('whatsapp','WhatsApp','tel',' maxlength="30" value="'+v(S.whatsapp||D.telefone)+'"')+'</div>'+
-    '<div class="am-2"><label'+fx(!S.data)+'>Data do evento<input name="data" type="date" value="'+v(S.data)+'"></label><label'+fx(!S.inicio)+'>Começa às<input name="inicio" type="time" value="'+v(S.inicio)+'"></label></div>'+
-    '<div class="am-2">'+campo('horas','Horas de cobertura','number',' min="1" max="24" value="'+v(S.horas||4)+'"')+'<label'+fx(!S.local)+'>Local / endereço<input name="local" type="text" maxlength="200" value="'+v(S.local)+'" placeholder="Precisa colocar"></label></div>'+
+    '<div class="am-2 ctp-um"><label'+fx(!S.data)+'>Data do evento<input name="data" type="date" value="'+v(S.data)+'"></label><label'+fx(!S.inicio)+'>Começa às<input name="inicio" type="time" value="'+v(S.inicio)+'"></label></div>'+
+    '<div class="am-2">'+campo('horas','Horas de cobertura','number',' min="1" max="24" value="'+v(S.horas||4)+'"')+'<label'+fx(!S.local)+' data-um>Local / endereço<input name="local" type="text" maxlength="200" value="'+v(S.local)+'" placeholder="Precisa colocar"></label></div>'+
     '<p class="am-dica">Serviços:</p><div class="pp-tp imp-tp"><label><input type="checkbox" name="sv" value="fotografia"'+ck('fotografia')+'><span><b>📷 Fotografia</b></span></label><label><input type="checkbox" name="sv" value="videomaker"'+ck('videomaker')+'><span><b>🎥 Videomaker</b></span></label><label><input type="checkbox" name="sv" value="storymaker"'+ck('storymaker')+'><span><b>📱 Storymaker</b></span></label></div>'+
-    '<div class="am-2"><label'+fx(!S.total)+'>Valor total combinado (R$)<input name="total" type="text" inputmode="decimal" value="'+v(n2(S.total))+'" placeholder="Vazio = preços da tabela"></label>'+campo('pago','Quanto já pagou (R$)','text',' inputmode="decimal" value="'+v(n2(S.pago))+'" placeholder="0"')+'</div>'+
-    '<div class="am-2">'+campo('sinal','Sinal / entrada (R$)','text',' inputmode="decimal" value="'+v(n2(S.pago))+'" placeholder="Vazio = % padrão"')+campo('prazo','Restante pago até','date',' value="'+v(S.prazoRestante)+'"')+'</div>'+
-    '<p class="am-dica" id="ctpConta"></p><button type="button" class="btn sec" id="ctpPrev" style="width:100%;margin:0 0 12px">👁️ Ver prévia do contrato</button>'+
+    '<div class="am-2"><label'+fx(!S.total)+'><span id="ctpTotRot">Valor total combinado (R$)</span><input name="total" type="text" inputmode="decimal" value="'+v(n2(S.total))+'" placeholder="Vazio = preços da tabela"></label>'+campo('pago','<span data-um>Quanto já pagou (R$)</span>','text',' inputmode="decimal" value="'+v(n2(S.pago))+'" placeholder="0"')+'</div>'+
+    '<div class="am-2 ctp-um">'+campo('sinal','Sinal / entrada (R$)','text',' inputmode="decimal" value="'+v(n2(S.pago))+'" placeholder="Vazio = % padrão"')+campo('prazo','Restante pago até','date',' value="'+v(S.prazoRestante)+'"')+'</div>'+
+    '<p class="am-dica ctp-um" id="ctpConta"></p><button type="button" class="btn sec" id="ctpPrev" style="width:100%;margin:0 0 12px">👁️ Ver prévia do contrato</button>'+
     '<label class="am-chk"><input type="checkbox" name="enviar"> Mandar e-mail para o cliente assinar agora</label><p class="am-dica">Desmarcado (o normal): nada é enviado agora. O contrato fica guardado e aparece para o cliente assinar quando ele entrar no site para ver as fotos. Só marque se quiser mandar o e-mail agora.</p>',
     async(f,st)=>{const sv=[...f.querySelectorAll('[name=sv]:checked')].map(x=>x.value);if(!sv.length)throw new Error('Escolha pelo menos um serviço.');
-      const vaz=[['nome','o nome completo'],['data','a data'],['inicio','o horário'],['local','o local']].filter(([k])=>!String(f[k].value).trim()).map(x=>x[1]);
+      const rec=f.rec.checked;const vaz=[['nome','o nome completo']].concat(rec?[]:[['data','a data'],['inicio','o horário'],['local','o local']]).filter(([k])=>!String(f[k].value).trim()).map(x=>x[1]);
       if(vaz.length)throw new Error('Falta preencher: '+vaz.join(', ')+'.');st&&st('Gerando o contrato…');
-      const r=await chamar(ctpDados(f,sv,{enviar:f.enviar.checked}));
+      const r=await chamar(ctpDados(f,sv,{enviar:f.enviar.checked,recorrente:rec}));
       if(admDados)admDados.contratos=r.contratos;contratos=r.contratos;await admRecarregar('✓ Contrato gerado'+(r.enviado?' e enviado para o cliente assinar':'')+' · total '+brl(r.total)+', sinal '+brl(r.sinal));
       const nv=(r.contratos||[]).find(c=>c.id===r.id);if(nv)abrirContrato(nv,true)},'Gerar contrato');
   const ctpDados=(f,sv,x)=>Object.assign({acao:'adm_contrato',op:'padrao',id:g.id,nome:f.nome.value,estilo:f.estilo.value,whatsapp:f.whatsapp.value,data:f.data.value,inicio:f.inicio.value,horas:f.horas.value,local:f.local.value,servicos:sv,total:f.total.value,sinal:f.sinal.value,pago:f.pago.value,prazo:f.prazo.value},x);
   const pb=$('ctpPrev');pb.onclick=async()=>{const fm=pb.closest('form');const sv=[...fm.querySelectorAll('[name=sv]:checked')].map(x=>x.value);
-    if(!sv.length)return msg($('amMsg'),'Escolha pelo menos um serviço.',true);if(!fm.data.value)return msg($('amMsg'),'Escolha a data do evento.',true);
+    if(!sv.length)return msg($('amMsg'),'Escolha pelo menos um serviço.',true);if(!fm.rec.checked&&!fm.data.value)return msg($('amMsg'),'Escolha a data do evento.',true);
     const t0=pb.textContent;pb.disabled=true;pb.textContent='Montando a prévia…';
-    try{const r=await chamar(ctpDados(fm,sv,{previa:true}));verPrevia('Prévia · '+g.cliente,r.html)}catch(e){msg($('amMsg'),e.message||'Não foi possível montar a prévia.',true)}
+    try{const r=await chamar(ctpDados(fm,sv,{previa:true,recorrente:fm.rec.checked}));verPrevia('Prévia · '+g.cliente,r.html)}catch(e){msg($('amMsg'),e.message||'Não foi possível montar a prévia.',true)}
     pb.disabled=false;pb.textContent=t0};
   const f=document.querySelector('#admModal form')||document.querySelector('#admModal');const num=x=>Number(String(x||'').replace(/\./g,'').replace(',','.'))||0;
   const conta=()=>{const c=document.getElementById('ctpConta');if(!c||!f.querySelector('[name=total]'))return;const t=num(f.querySelector('[name=total]').value),p=num(f.querySelector('[name=pago]').value);
     c.innerHTML=t?'Total '+brl(t)+' · já pagou <b>'+(brl(p)||'R$ 0,00')+'</b> · falta <b>'+(brl(Math.max(0,t-p))||'R$ 0,00')+'</b>':'';};
   ['total','pago'].forEach(k=>{const i=f.querySelector('[name='+k+']');i&&i.addEventListener('input',conta)});
-  f.querySelectorAll('.ctp-falta input').forEach(i=>i.addEventListener('input',()=>i.parentNode.classList.toggle('ctp-falta',!i.value.trim())));conta()}
+  f.querySelectorAll('.ctp-falta input').forEach(i=>i.addEventListener('input',()=>i.parentNode.classList.toggle('ctp-falta',!i.value.trim())));conta();
+  const recT=()=>{const r=f.querySelector('[name=rec]').checked;f.querySelectorAll('.ctp-um').forEach(x=>x.hidden=r);f.querySelectorAll('[data-um]').forEach(x=>{const l=x.closest('label');if(l)l.hidden=r});
+    $('ctpTotRot').textContent=r?'Valor de referência por evento (R$, opcional)':'Valor total combinado (R$)';const ti=f.querySelector('[name=total]');ti.placeholder=r?'Vazio = combinado a cada evento':'Vazio = preços da tabela';if(r)ti.parentNode.classList.remove('ctp-falta');else if(!ti.value)ti.parentNode.classList.add('ctp-falta');const bx=f.querySelector('.ctp-r');if(bx)bx.hidden=r};
+  f.querySelector('[name=rec]').addEventListener('change',recT);recT()}
 // ---- cliente: adicionar contrato (PDF) sem abrir a planilha
 function formContrato(g){
   modal('📄 Novo contrato · '+escH(g.cliente),(g.email?'':'<p class="msg erro" style="display:block">Este cliente ainda não tem e-mail. Use ✏️ Editar dados primeiro.</p>')+campo('titulo','Título','text',' required maxlength="140" value="'+escH(g.tipo==='gestao'?'Contrato de Gestão de Redes · '+g.cliente:'Contrato de Fotografia e Vídeo · '+(g.dados&&g.dados.evento||g.cliente))+'"')+
@@ -1624,11 +1654,43 @@ function barraAdmin(g){
   if(g.tipo==='gestao'){bt('+ Adicionar post',()=>formPost(g));
     if(g.id&&/Ativo|Acesso enviado/.test(g.statusPlanilha))bt('🔔 Avisar cliente dos novos posts',b=>admStatus(g,'Avisar novos posts',b),1);
     if(!/Ativo|Acesso enviado/.test(g.statusPlanilha))bt('✉️ Enviar acesso ao cliente',b=>{if(!g.id){chamarSemId(g,b);return}admStatus(g,'Enviar acesso',b)},1);}
-  else{bt('+ Adicionar fotos',()=>formArquivos('Adicionar fotos · '+escH(g.cliente),g.pastaId));
+  else{bt('+ Adicionar fotos',()=>(g.subpastas&&g.subpastas.length?formArquivosGaleria(g):formArquivos('Adicionar fotos · '+escH(g.cliente),g.pastaId)));bt('📁 Novo evento (subpasta)',()=>formSubpasta(g),1);
     if(g.id){bt('💬 Mensagem para o WhatsApp',()=>msgWhats(g),1);bt('⏳ Acesso: '+(g.dias||7)+' dias',()=>formDias(g),1)}
     if(!/Ativo|Acesso enviado/.test(g.statusPlanilha))bt('✉️ Enviar acesso ao cliente',b=>admStatus(g,'Enviar acesso',b),1);
     else bt('🔒 Encerrar galeria',b=>{if(!b.dataset.c){b.dataset.c=1;b.textContent='Toque de novo para encerrar';return}admStatus(g,'Encerrar agora',b)},1)}
 }
+// ---- galeria com vários eventos (ex.: Caique): uma subpasta por evento
+function formSubpasta(g){const rec0=/eventos/i.test(g.evento+' '+g.cliente);
+  modal('📁 Novo evento · '+escH(g.cliente),campo('nome','Nome do evento','text',' required maxlength="80" placeholder="Ex.: Entre Craques · Corinthians"')+
+    '<div class="am-2">'+campo('data','Data','date','')+campo('local','Local','text',' maxlength="100" placeholder="Ex.: Neo Química Arena"')+'</div>'+
+    '<label class="am-chk"><input type="checkbox" name="rec"'+(rec0?' checked':'')+'> <span><b>📸 Reconhecimento facial</b> (estádio): quando você subir as fotos, o site guarda a <b>bruta</b> para o cliente e faz uma cópia <b>com a marca da Brius, o evento e o local</b> para o público achar a foto pelo rosto.</span></label>'+
+    '<p class="am-dica">O cliente vê cada evento como um cartão dentro do acesso dele.</p>',
+    async(f,st)=>{st&&st('Criando…');const r=await chamar({acao:'adm_subpasta',id:g.id,nome:f.nome.value,data:f.data.value,local:f.local.value,rec:f.rec.checked});g.subpastas=r.subpastas;await admRecarregar('✓ Evento criado. Agora é só subir as fotos nele.')},'Criar evento')}
+function formArquivosGaleria(g){const sp=g.subpastas||[];const pre=evSel?sp.find(p=>p.nome===evSel):null;
+  const f=modal('Adicionar fotos · '+escH(g.cliente),'<label>Onde colocar<select name="dest"><option value="">Pasta principal (fora dos eventos)</option>'+sp.map(p=>'<option value="'+escH(p.id)+'"'+(pre&&pre.id===p.id?' selected':'')+'>'+escH(p.nome)+(p.pub?' · 📸 com marca':'')+'</option>').join('')+'</select></label>'+
+    '<p class="am-dica" id="destDica"></p>'+arqCampo('arqs','Escolha os arquivos',true)+'<p class="am-dica">Deixe esta página aberta até terminar.</p>',
+    async(f,st)=>{const fs=[...f.arqs.files];if(!fs.length)throw new Error('Escolha pelo menos um arquivo.');const p=sp.find(x=>x.id===f.dest.value);
+      if(p&&p.pub){await subirComMarca(g,p,fs,st)}else await subir(p?p.id:g.pastaId,fs,null,st);
+      await admRecarregar('✓ '+fs.length+' arquivo(s) enviados'+(p&&p.pub?' (bruta + com marca)':''))},'Enviar');
+  const dica=()=>{const p=sp.find(x=>x.id===f.querySelector('[name=dest]').value);$('destDica').textContent=p&&p.pub?'📸 Cada foto vai em duas versões: a bruta (só o cliente vê) e a com marca da Brius · '+(p.evento||p.nome)+(p.local?' · '+p.local:'')+' (vai para o reconhecimento facial).':''};
+  f.querySelector('[name=dest]').onchange=dica;dica()}
+// carimbo: faixa no rodapé com a marca da Brius, o evento e o local (o modelo final o Matheus ainda vai mandar)
+async function carimbar(file,info){const bmp=await createImageBitmap(file);const w=bmp.width,h=bmp.height;const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');x.drawImage(bmp,0,0);
+  const fh=Math.max(60,Math.round(Math.min(w,h)*0.085)),pad=Math.round(fh*0.32);const gr=x.createLinearGradient(0,h-fh*1.6,0,h);gr.addColorStop(0,'rgba(10,9,8,0)');gr.addColorStop(1,'rgba(10,9,8,.72)');x.fillStyle=gr;x.fillRect(0,h-fh*1.6,w,fh*1.6);
+  const t1=Math.round(fh*0.32),t2=Math.round(fh*0.22),y1=h-pad-t2-Math.round(fh*0.1),y2=h-pad;x.textBaseline='alphabetic';x.shadowColor='rgba(0,0,0,.45)';x.shadowBlur=Math.round(fh*0.08);
+  x.fillStyle='#fbf8f3';x.textAlign='left';x.font='800 '+t1+'px Manrope, "Segoe UI", sans-serif';x.fillText('BRIUS AGÊNCIA',pad,y1);
+  x.fillStyle='#e6d3ae';x.font='600 '+t2+'px Manrope, "Segoe UI", sans-serif';x.fillText('@agenciabrius · agenciabrius.com.br',pad,y2);
+  x.textAlign='right';x.fillStyle='#fbf8f3';x.font='700 '+t1+'px Manrope, "Segoe UI", sans-serif';x.fillText(info.evento||'',w-pad,y1);
+  x.fillStyle='#e6d3ae';x.font='600 '+t2+'px Manrope, "Segoe UI", sans-serif';x.fillText([info.local,info.data].filter(Boolean).join(' · '),w-pad,y2);
+  const blob=await new Promise(ok=>c.toBlob(ok,'image/jpeg',0.9));bmp.close&&bmp.close();return new File([blob],file.name.replace(/\.[^.]+$/,'')+'.jpg',{type:'image/jpeg'})}
+async function subirComMarca(g,p,fs,st){let feito=0,i=0;const info={evento:p.evento||p.nome.replace(/ · \d{2}\/\d{2}\/\d{4}$/,''),local:p.local,data:p.data};const erros=[];
+  const um=async f=>{const foto=/^image\//.test(f.type)&&!/heic|heif/i.test(f.type);
+    await subirAPI(p.brutas||p.id,f,false,g.pastaId);
+    if(foto){const m=await carimbar(f,info);await subirAPI(p.pub,m,true,g.pastaId)}};
+  const worker=async()=>{while(i<fs.length){const f=fs[i++];try{await um(f)}catch(e){erros.push(f.name)}feito++;st&&st('Enviando '+feito+' de '+fs.length+'… (bruta + com marca)')}};
+  await Promise.all([worker(),worker(),worker()]);if(erros.length)throw new Error('Não foram: '+erros.slice(0,5).join(', ')+(erros.length>5?'…':'')+'. Tente de novo só com essas.')}
+async function subirAPI(pasta,f,publico,raiz){if(f.size>30*1024*1024)return subirGrande(pasta,f,f.name,()=>{},publico);
+  const j=await api({acao:'adm_arquivo',sessao:guardar.get(),pasta:pasta,raiz:raiz,nome:f.name,tipo:f.type||'application/octet-stream',b64:await lerB64(f),publico:!!publico});if(!j.ok)throw new Error(j.erro||'Falha');return j.id}
 // ---- equipe (fotógrafo, videomaker, storymaker…): trabalhos no login do parceiro
 const fmtD=d=>{if(!/^\d{4}-\d{2}-\d{2}$/.test(d||''))return escH(d||'');const x=new Date(d+'T12:00:00');return ['dom','seg','ter','qua','qui','sex','sáb'][x.getDay()]+', '+d.split('-').reverse().join('/')};
 const brl=v=>{const n=Number(String(v||'').replace(/[^\d,.-]/g,'').replace(/\.(?=\d{3}(\D|$))/g,'').replace(',','.'));return n?'R$ '+n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):''};
