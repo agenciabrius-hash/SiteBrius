@@ -1176,6 +1176,23 @@ function formEditarCliente(g){const D=g.dados||{};
     campo('instagram','Instagram (sem @)','text',' maxlength="60" value="'+escH(D.instagram)+'"')+(D.email?'<p class="am-dica">Se trocar o e-mail, o cliente vai precisar receber o acesso de novo (Mais ações › Enviar acesso).</p>':''),
     async f=>{const d=Object.fromEntries(new FormData(f).entries());const r=await chamar(Object.assign({acao:'adm_cliente_edit',id:g.id},d));
       await admRecarregar(r.trocouEmail?'✓ Salvo. Agora envie o acesso de novo para o e-mail novo.':'✓ Dados salvos')},'Salvar')}
+// ---- contrato padrão de foto/vídeo (mesmo modelo do orçamento do site), para o cliente aceitar na Área do Cliente
+function formContratoPadrao(g){const D=g.dados||{};const ev=D.evento||g.evento||'';const m=ev.match(/(\d{2})\/(\d{2})\/(\d{4})/);const dIso=m?m[3]+'-'+m[2]+'-'+m[1]:'';
+  const tem=(contratos||[]).filter(c=>String(c.email||'').toLowerCase()===String(g.email||'').toLowerCase()&&c.status!=='Cancelado');
+  modal('✍️ Contrato padrão · '+escH(g.cliente),(g.email?'':'<p class="msg erro" style="display:block">Este cliente ainda não tem e-mail. Use ✏️ Editar dados primeiro.</p>')+
+    (tem.length?'<p class="msg" style="display:block">⚠️ Este cliente já tem '+tem.length+' contrato'+(tem.length>1?'s':'')+' ('+escH(tem.map(c=>c.status).join(', '))+'). Gere outro só se for para substituir (depois cancele o antigo).</p>':'')+
+    '<p class="am-dica" style="margin-top:0">Usa o mesmo modelo de contrato do orçamento do site (serviços, valores, sinal, entrega, uso de imagem, cancelamento). O cliente lê e aceita na Área do Cliente dele.</p>'+
+    campo('nome','Nome completo de quem assina','text',' maxlength="100" value="'+escH(D.responsavel&&D.responsavel.split(' ').length>1?D.responsavel:'')+'"')+
+    '<div class="am-2">'+campo('estilo','Tipo de evento','text',' maxlength="80" placeholder="Ex.: Bodas, Casamento, Aniversário" value="'+escH(ev.split('·')[0].trim())+'"')+campo('whatsapp','WhatsApp','tel',' maxlength="30" value="'+escH(D.telefone||'')+'"')+'</div>'+
+    '<div class="am-2">'+campo('data','Data do evento','date',' value="'+dIso+'"')+campo('inicio','Começa às','time','')+'</div>'+
+    '<div class="am-2">'+campo('horas','Horas de cobertura','number',' min="1" max="24" value="4"')+campo('local','Local / endereço','text',' maxlength="200"')+'</div>'+
+    '<p class="am-dica">Serviços:</p><div class="pp-tp imp-tp"><label><input type="checkbox" name="sv" value="fotografia" checked><span><b>📷 Fotografia</b></span></label><label><input type="checkbox" name="sv" value="videomaker"><span><b>🎥 Videomaker</b></span></label><label><input type="checkbox" name="sv" value="storymaker"><span><b>📱 Storymaker</b></span></label></div>'+
+    '<div class="am-2">'+campo('total','Valor total combinado (R$)','text',' inputmode="decimal" placeholder="Vazio = preços da tabela"')+campo('sinal','Sinal / entrada (R$)','text',' inputmode="decimal" placeholder="Vazio = % padrão"')+'</div>'+
+    '<label class="am-chk"><input type="checkbox" name="enviar" checked> Mandar e-mail para o cliente assinar agora</label><p class="am-dica">Se ele ainda não tem acesso, o e-mail já vem com o link para criar a senha. Os dias de acesso às fotos só começam a contar quando as fotos estiverem lá.</p>',
+    async(f,st)=>{const sv=[...f.querySelectorAll('[name=sv]:checked')].map(x=>x.value);if(!sv.length)throw new Error('Escolha pelo menos um serviço.');st&&st('Gerando o contrato…');
+      const r=await chamar({acao:'adm_contrato',op:'padrao',id:g.id,nome:f.nome.value,estilo:f.estilo.value,whatsapp:f.whatsapp.value,data:f.data.value,inicio:f.inicio.value,horas:f.horas.value,local:f.local.value,servicos:sv,total:f.total.value,sinal:f.sinal.value,enviar:f.enviar.checked});
+      if(admDados)admDados.contratos=r.contratos;contratos=r.contratos;await admRecarregar('✓ Contrato gerado'+(r.enviado?' e enviado para o cliente assinar':'')+' · total '+brl(r.total)+', sinal '+brl(r.sinal));
+      window.open(r.pdf,'_blank')},'Gerar contrato')}
 // ---- cliente: adicionar contrato (PDF) sem abrir a planilha
 function formContrato(g){
   modal('📄 Novo contrato · '+escH(g.cliente),(g.email?'':'<p class="msg erro" style="display:block">Este cliente ainda não tem e-mail. Use ✏️ Editar dados primeiro.</p>')+campo('titulo','Título','text',' required maxlength="140" value="'+escH(g.tipo==='gestao'?'Contrato de Gestão de Redes · '+g.cliente:'Contrato de Fotografia e Vídeo · '+(g.dados&&g.dados.evento||g.cliente))+'"')+
@@ -1564,7 +1581,7 @@ function barraAdmin(g){
   const bt=(t,fn,sec)=>{const b=document.createElement('button');b.className='btn adm-b'+(sec?' sec':'');b.textContent=t;b.onclick=()=>fn(b);(sec?mais():ac).appendChild(b)};
   const senha=()=>{if(g.id&&/Ativo|Acesso enviado/.test(g.statusPlanilha))bt('🔑 Redefinir senha',b=>{if(!b.dataset.c){b.dataset.c=1;b.textContent='Toque de novo: enviar para '+g.email;return}admStatus(g,'Redefinir senha',b)},1)};
   if(!g.propria)setTimeout(senha,0);
-  if(!g.propria&&g.dados){setTimeout(()=>{if(g.email)bt('👁️ Ver como o cliente',b=>verComo(g,b),1);bt('✏️ Editar dados',()=>formEditarCliente(g),1);bt('📄 Adicionar contrato',()=>formContrato(g),1)},0)}
+  if(!g.propria&&g.dados){setTimeout(()=>{if(g.email)bt('👁️ Ver como o cliente',b=>verComo(g,b),1);bt('✏️ Editar dados',()=>formEditarCliente(g),1);if(g.tipo!=='gestao')bt('✍️ Contrato padrão (para assinar)',()=>formContratoPadrao(g),1);bt('📄 Adicionar contrato (PDF)',()=>formContrato(g),1)},0)}
   if(g.indicacao){setTimeout(()=>{bt('🎁 Indicações'+(g.indicacao.lista.length?' ('+g.indicacao.lista.length+')':''),()=>admIndicacoes(g),1);chipInd(g)},0)}
   if(g.tipo==='gestao'&&g.id){const ins=g.insights;bt(ins&&ins.conectado?'📸 @'+ins.usuario+' conectado':'📸 Conectar Instagram',()=>{if(ins&&ins.conectado){gsIr('rel',true)}else conectarIG(g)},1)}
   if(g.propria){bt('+ Adicionar post',()=>formPost(g));return}
