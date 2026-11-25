@@ -125,7 +125,7 @@ footer{border-top:1px solid #2c2925;padding:24px 16px;text-align:center;color:#8
       <p class="lead rv">Você escolhe: a gente grava e entrega os vídeos prontos todo mês, ou a gente te ensina a gravar e editar com o seu próprio celular.</p>
       <div class="cam">
         <a class="rv" href="#planos"><i>🎬</i><b>A Brius grava pra você</b><p>Vamos até você uma vez por mês, gravamos tudo num dia e entregamos os vídeos editados, prontos para postar.</p></a>
-        <a class="rv" href="#mentoria"><i>🎓</i><b>Você aprende a gravar</b><p>Mentoria com o seu equipamento: como gravar, deixar a luz certa, enquadrar e editar, com um playbook para seguir.</p></a>
+        <a class="rv" href="#mentoria"><i>🎓</i><b>Você aprende a gravar</b><p>Mentoria de uma vez, com o seu equipamento: como gravar, deixar a luz certa, enquadrar e editar, com um playbook para seguir.</p></a>
       </div>
     </div>
   </section>
@@ -144,8 +144,7 @@ footer{border-top:1px solid #2c2925;padding:24px 16px;text-align:center;color:#8
     <div class="wrap">
       <div class="kick rv">Você aprende a gravar</div>
       <h2 class="rv">Mentoria de <em>conteúdo</em></h2>
-      <p class="lead rv">Com o seu celular e o seu equipamento. A gente não grava por você: ensina o jeito certo, do roteiro à edição, até você fazer sozinho com segurança.</p>
-      <div class="rv"><div class="dur" role="group" aria-label="Duração da mentoria"><button type="button" data-m="3">3 meses</button><button type="button" data-m="6">6 meses</button><button type="button" data-m="12">12 meses</button></div><p class="dur-n">Valor por mês.</p></div>
+      <p class="lead rv">Uma vez só, com o seu celular e o seu equipamento. A gente não grava por você: ensina o jeito certo, do roteiro à edição, para você seguir sozinho com o playbook.</p>
       <div class="planos dois" id="gMentoria"></div>
     </div>
   </section>
@@ -167,7 +166,7 @@ footer{border-top:1px solid #2c2925;padding:24px 16px;text-align:center;color:#8
         <details class="rv"><summary>Quanto tempo leva para os vídeos ficarem prontos?</summary><p>Até 7 dias depois da gravação, com legendas, trilha e no formato vertical. Você ainda tem uma rodada de ajustes.</p></details>
         <details class="rv"><summary>Na mentoria, preciso comprar equipamento?</summary><p>Não. A gente ensina a tirar o melhor do que você já tem, começando pelo celular. Se fizer sentido comprar algo (um microfone, uma luz), indicamos opções para o seu caso.</p></details>
         <details class="rv"><summary>O que é o playbook?</summary><p>Um guia só seu, com roteiros prontos, como enquadrar, como acertar a luz, como editar no celular e uma rotina de postagem para seguir no dia a dia.</p></details>
-        <details class="rv"><summary>Como é o pagamento?</summary><p>Mensal, via Pix. O primeiro mês é pago na assinatura do contrato.</p></details>
+        <details class="rv"><summary>Como é o pagamento?</summary><p>Nos planos, mensal via Pix, com o primeiro mês pago na assinatura do contrato. A mentoria é paga uma vez só, via Pix, para marcar a data.</p></details>
         <details class="rv"><summary>Posso mudar de plano depois?</summary><p>Pode. É só falar com a gente; o novo valor vale a partir do mês seguinte.</p></details>
       </div>
     </div>
@@ -198,14 +197,14 @@ const PLANOS=[
   {k:'total',n:'Presença Total',q:'8 vídeos por mês',it:['8 vídeos editados','Roteiro de cada vídeo','1 dia de gravação','Capas para o feed']},
   {k:'gestao',n:'Vídeos + Gestão',q:'6 vídeos + o perfil inteiro',it:['6 vídeos editados','Posts, legendas e stories planejados','A Brius publica por você','Calendário para aprovar no celular','Relatório de resultados todo mês']}];
 const MENTORIA=[
-  {k:'online',n:'Online',q:'2 encontros por mês, por vídeo',it:['2 encontros de 1 hora por mês','Playbook com roteiros, luz, enquadramento e edição','Correção dos seus vídeos antes de postar','Dúvidas pelo WhatsApp entre os encontros']},
-  {k:'presencial',n:'Presencial',q:'A gente vai até você ensinar na prática',it:['1 visita por mês no seu espaço','Na prática: gravar, luz, enquadrar e editar','+ 1 encontro online de acompanhamento','Playbook com roteiros e rotina de postagem','Dúvidas pelo WhatsApp entre os encontros']}];
+  {k:'online',n:'Online',q:'Por chamada de vídeo',it:['Aula de 2 horas por vídeo','Playbook com roteiros, luz, enquadramento e edição no celular','Um 2º encontro para corrigir os seus primeiros vídeos','Dúvidas pelo WhatsApp por 15 dias']},
+  {k:'presencial',n:'Presencial',q:'A gente vai até você ensinar na prática',it:['Visita de cerca de 3 horas no seu espaço','Na prática: gravar, acertar a luz, enquadrar e editar','Playbook com roteiros e rotina de postagem','Um encontro online para corrigir os seus primeiros vídeos','Dúvidas pelo WhatsApp por 30 dias']}];
 const evento=(ev,plano)=>{if(PREV||!T)return;try{fetch(API+'?acao=proposta&t='+encodeURIComponent(T)+'&ev='+ev+(plano?'&plano='+encodeURIComponent(plano):''),{keepalive:true})}catch(e){}};
 const linkZap=txt=>'https://wa.me/'+zap+'?text='+encodeURIComponent(txt);
-function cartoes(el,lista,precos,rotulo){const idx={3:0,6:1,12:2}[meses];const dest=D.destaque||(rotulo==='plano'?'crescimento':'');
+function cartoes(el,lista,precos,rotulo){const unico=rotulo==='mentoria';const idx=unico?0:{3:0,6:1,12:2}[meses];const dest=D.destaque||(rotulo==='plano'?'crescimento':'');
   el.innerHTML=lista.map(p=>{const v=(precos[p.k]||[])[idx]||0;const d=p.k===dest;
-    return '<div class="plano'+(d?' dest':'')+'">'+(d?'<span class="tag">'+(D.destaque?'Pensado pra você':'Mais escolhido')+'</span>':'')+'<h3>'+esc(p.n)+'</h3><span class="q">'+esc(p.q)+'</span><div class="preco">'+(v?brl(v):'—')+' <small>/mês</small></div><ul>'+p.it.map(i=>'<li>'+esc(i)+'</li>').join('')+'</ul>'+
-      '<a class="btn'+(d?'':' sec')+'" target="_blank" rel="noopener" data-plano="'+p.k+'-'+meses+'" href="'+linkZap('Oi! Vi a proposta da Brius e quero '+(rotulo==='mentoria'?'a mentoria '+p.n.toLowerCase():'o plano '+p.n)+' ('+meses+' meses, '+brl(v)+'/mês). Pode me passar os próximos passos?')+'">Quero '+(rotulo==='mentoria'?'essa mentoria':'esse plano')+'</a></div>'}).join('');
+    return '<div class="plano'+(d?' dest':'')+'">'+(d?'<span class="tag">'+(D.destaque?'Pensado pra você':'Mais escolhido')+'</span>':'')+'<h3>'+esc(p.n)+'</h3><span class="q">'+esc(p.q)+'</span><div class="preco">'+(v?brl(v):'—')+' <small>'+(unico?'valor único':'/mês')+'</small></div><ul>'+p.it.map(i=>'<li>'+esc(i)+'</li>').join('')+'</ul>'+
+      '<a class="btn'+(d?'':' sec')+'" target="_blank" rel="noopener" data-plano="'+p.k+(unico?'':'-'+meses)+'" href="'+linkZap('Oi! Vi a proposta da Brius e quero '+(unico?'a mentoria '+p.n.toLowerCase()+' ('+brl(v)+', valor único)':'o plano '+p.n+' ('+meses+' meses, '+brl(v)+'/mês)')+'. Pode me passar os próximos passos?')+'">Quero '+(rotulo==='mentoria'?'essa mentoria':'esse plano')+'</a></div>'}).join('');
   el.querySelectorAll('[data-plano]').forEach(a=>a.addEventListener('click',()=>evento('escolha',a.dataset.plano)))}
 function pintar(){cartoes($('gPlanos'),PLANOS,D.precos,'plano');cartoes($('gMentoria'),MENTORIA,D.precos,'mentoria');
   document.querySelectorAll('.dur button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.m===meses)))}
@@ -221,7 +220,6 @@ function video(id){const v=$('vid');if(!id){v.innerHTML='<div class="semvid">O v
   $('kick').textContent='Para '+D.nome;$('tit').innerHTML='Oi, '+esc(pn)+'! Gravamos um vídeo <em>pra você</em>';document.title='Oi, '+pn+'! · Brius Agência';
   const z=linkZap('Oi! Vi a proposta da Brius e queria conversar.');$('topZap').href=z;$('fimZap').href=z;$('fimZap').onclick=()=>evento('escolha','conversar');
   const m=String(D.prazo||'').match(/(\d{1,2})\/(\d{1,2})/);if(m){const ms=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];$('cDia').textContent=m[1];$('cMes').textContent=ms[+m[2]-1];$('cData').textContent=m[1]+'/'+m[2]}else $('cond').hidden=true;
-  if(['online','presencial'].indexOf(D.destaque)>-1)meses=3;
   video(D.video);pintar();$('carr').hidden=true;$('pagina').hidden=false;revelar()})();
 function mostrarErro(t){$('carr').hidden=true;$('erro').hidden=false;if(t)$('erroTx').textContent=t;$('topZap').href=linkZap('Oi! Recebi um link da Brius que não abriu.')}
 function revelar(){const els=document.querySelectorAll('.rv');if(!('IntersectionObserver' in window)||matchMedia('(prefers-reduced-motion:reduce)').matches){els.forEach(e=>e.classList.add('on'));return}
