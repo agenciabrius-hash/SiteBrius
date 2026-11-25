@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Fotos · Brius Agência</title>
+<meta name="theme-color" content="#141210">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../img/icone-180.png">
+<meta property="og:title" content="Fotos do evento · Brius Agência">
+<meta property="og:description" content="Fotos enviadas para você. Toque para ver e baixar.">
+<meta property="og:image" content="https://agenciabrius.com.br/img/capa-compartilhar.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..700;1,400..600&family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+/* Galeria enviada pela família: cabeçalho curto, grade de fotos, visualizador em tela cheia e um convite discreto da Brius no fim */
+:root{--ink:#141210;--graphite:#1b1916;--graphite-2:#24211d;--bone:#fbf8f3;--muted:#b4ab9d;--gold:#b8955a;--gold-soft:#e6d3ae;--line:#2f2b26;
+  --serif:"Playfair Display",Georgia,serif;--body:"Manrope","Segoe UI",system-ui,sans-serif;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--ink);color:var(--bone);font-family:var(--body);-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px max(16px,4vw);border-bottom:1px solid var(--line)}
+.top img{height:28px;filter:invert(1) brightness(.98)}
+.top a.lk{font-size:13.5px;font-weight:600;color:var(--muted);text-decoration:none}
+.wrap{max-width:1180px;margin:0 auto;padding:0 max(16px,4vw)}
+header.cab{padding:clamp(34px,6vw,64px) 0 24px}
+.kick{font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
+h1{font:400 clamp(36px,7vw,64px)/1.04 var(--serif);margin:10px 0 10px;text-wrap:balance}
+.sub{color:var(--muted);margin:0;font-size:15px}
+.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(46%,220px),1fr));gap:8px;padding-bottom:40px}
+.grade button{all:unset;cursor:pointer;display:block;aspect-ratio:1;border-radius:12px;overflow:hidden;background:var(--graphite-2);position:relative}
+.grade button:focus-visible{outline:2px solid var(--gold-soft);outline-offset:2px}
+.grade img{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s,transform .5s}
+.grade img.ok{opacity:1}.grade button:hover img{transform:scale(1.04)}
+.grade .vid::after{content:"▶";position:absolute;right:8px;bottom:6px;font-size:14px;color:#fff;text-shadow:0 1px 4px #000}
+.msg{padding:60px 0;text-align:center;color:var(--muted)}
+.msg b{display:block;font:400 28px var(--serif);color:var(--bone);margin-bottom:8px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--gold-soft);color:var(--ink);border:0;border-radius:999px;padding:13px 22px;font:700 15px var(--body);text-decoration:none;cursor:pointer}
+.btn.sec{background:transparent;color:var(--bone);border:1px solid #3a352f}
+.convite{margin:10px 0 50px;padding:22px;border-radius:20px;background:linear-gradient(135deg,rgba(230,211,174,.1),var(--graphite));border:1px solid rgba(184,149,90,.4);display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between}
+.convite b{display:block;font:400 22px var(--serif)}.convite small{color:var(--muted);font-size:14px}
+footer{border-top:1px solid var(--line);padding:22px 16px;text-align:center;color:#8d8478;font-size:13px}
+footer a{color:inherit}
+/* visualizador */
+.lb{position:fixed;inset:0;z-index:50;background:rgba(10,9,8,.96);display:grid;grid-template-rows:auto 1fr auto}
+.lb-t{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;color:var(--muted);font-size:14px}
+.lb-c{position:relative;display:grid;place-items:center;min-height:0;padding:0 8px}
+.lb-c img,.lb-c iframe{max-width:100%;max-height:100%;object-fit:contain;border:0}
+.lb-c iframe{width:min(100%,900px);aspect-ratio:16/9;height:auto}
+.lb-b{display:flex;gap:10px;justify-content:center;padding:14px 16px calc(14px + env(safe-area-inset-bottom))}
+.nav{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:50%;border:0;background:rgba(251,248,243,.12);color:#fff;font-size:26px;cursor:pointer}
+.nav.p{left:10px}.nav.n{right:10px}
+.x{background:none;border:0;color:var(--bone);font:600 15px var(--body);cursor:pointer;padding:8px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="top"><a href="../" aria-label="Brius Agência, início"><img src="../img/logo-brius.webp" alt="Brius Agência"></a><a class="lk" href="../">agenciabrius.com.br</a></div>
+<main class="wrap">
+  <header class="cab" id="cab" hidden><div class="kick" id="kick">Fotos enviadas para você</div><h1 id="tit"></h1><p class="sub" id="sub"></p></header>
+  <div class="msg" id="msg"><b>Carregando as fotos…</b></div>
+  <div class="grade" id="grade" aria-label="Fotos"></div>
+  <div class="convite" id="convite" hidden><div><b>Gostou das fotos?</b><small>Elas são da Brius Agência: fotografia, vídeo e stories para eventos em São Paulo e todo o Brasil.</small></div><a class="btn" href="../?orcamento">Fazer um orçamento</a></div>
+</main>
+<footer>Fotos por <a href="../">Brius Agência</a> · <a href="https://www.instagram.com/agenciabrius/" target="_blank" rel="noopener">@agenciabrius</a></footer>
+
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Foto ampliada">
+  <div class="lb-t"><span id="lbN"></span><button type="button" class="x" id="lbX">Fechar ✕</button></div>
+  <div class="lb-c" id="lbC"><button type="button" class="nav p" id="lbP" aria-label="Foto anterior">‹</button><button type="button" class="nav n" id="lbNx" aria-label="Próxima foto">›</button></div>
+  <div class="lb-b"><a class="btn" id="lbD" target="_blank" rel="noopener">Baixar esta foto</a></div>
+</div>
+
+<script>
+const API='https://script.google.com/macros/s/AKfycbxv6WLxKRDICMjAqAGWB8Uu5oZnL-zMWQWgFxdwFTwFRyiFFvH6YV5cxWbDOoV7hOQm/exec';
+const $=id=>document.getElementById(id);
+const esc=t=>String(t||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const thumb=(id,w)=>'https://drive.google.com/thumbnail?id='+encodeURIComponent(id)+'&sz=w'+(w||600);
+let L=[],k=0;
+(async()=>{const t=new URLSearchParams(location.search).get('t');
+  if(!t){$('msg').innerHTML='<b>Link incompleto</b>Confira se copiou o link inteiro.';return}
+  let r=null;try{r=await (await fetch(API+'?acao=familia&t='+encodeURIComponent(t))).json()}catch(e){}
+  if(!r||!r.ok){$('msg').innerHTML='<b>Não deu para abrir</b>'+esc(r&&r.erro||'Tente de novo daqui a pouco.');$('convite').hidden=false;return}
+  L=r.arquivos||[];$('msg').hidden=true;$('cab').hidden=false;$('tit').textContent=r.titulo||'Fotos';document.title=(r.titulo||'Fotos')+' · Brius Agência';
+  if(r.de)$('kick').textContent='Fotos enviadas por '+r.de;
+  $('sub').textContent=L.length+(L.length>1?' fotos':' foto')+' · toque para ver e baixar'+(r.ate?' · disponível até '+r.ate:'');
+  const g=$('grade');L.forEach((a,i)=>{const b=document.createElement('button');b.type='button';b.setAttribute('aria-label','Abrir '+(a.t==='video'?'vídeo':'foto')+' '+(i+1));if(a.t==='video')b.className='vid';
+    const im=new Image();im.loading='lazy';im.alt='';im.src=thumb(a.id);im.onload=()=>im.classList.add('ok');b.appendChild(im);b.onclick=()=>ver(i);g.appendChild(b)});
+  $('convite').hidden=false})();
+function ver(i){k=(i+L.length)%L.length;const a=L[k];const c=$('lbC');c.querySelectorAll('img,iframe').forEach(x=>x.remove());
+  if(a.t==='video'){const f=document.createElement('iframe');f.src='https://drive.google.com/file/d/'+encodeURIComponent(a.id)+'/preview';f.allow='autoplay; fullscreen';f.title='Vídeo';c.appendChild(f)}
+  else{const im=new Image();im.alt='Foto '+(k+1);im.src=thumb(a.id,1800);c.appendChild(im)}
+  $('lbN').textContent=(k+1)+' de '+L.length;$('lbD').href='https://drive.google.com/uc?export=download&id='+encodeURIComponent(a.id);$('lbD').textContent=a.t==='video'?'Baixar este vídeo':'Baixar esta foto';
+  $('lb').hidden=false;document.body.style.overflow='hidden'}
+function fechar(){$('lb').hidden=true;document.body.style.overflow='';$('lbC').querySelectorAll('iframe').forEach(x=>x.remove())}
+$('lbX').onclick=fechar;$('lbP').onclick=()=>ver(k-1);$('lbNx').onclick=()=>ver(k+1);
+addEventListener('keydown',e=>{if($('lb').hidden)return;if(e.key==='Escape')fechar();if(e.key==='ArrowLeft')ver(k-1);if(e.key==='ArrowRight')ver(k+1)});
+let x0=null;$('lbC').addEventListener('touchstart',e=>{x0=e.touches[0].clientX},{passive:true});$('lbC').addEventListener('touchend',e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>50)ver(k+(dx<0?1:-1));x0=null});
+</script>
+</body>
+</html>

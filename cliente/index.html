@@ -64,6 +64,7 @@ input:focus{border-color:var(--gold)}
 .qr-box{display:grid;gap:10px;justify-items:center;margin:0 0 6px}.qr-box img{width:min(100%,300px);border-radius:12px;border:1px solid #3a352f}.qr-st{margin:0;color:#7fc49a;font-size:14px}.qr-bts{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}.qr-bts .btn{width:auto;padding:10px 16px;font-size:14px}.qr-h{margin:16px 0 0;font-size:16px}
 .av-box{position:fixed;left:50%;bottom:max(16px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:120;width:min(420px,calc(100% - 32px));padding:16px 18px;border-radius:18px;background:#1d1a17;border:1px solid rgba(184,149,90,.6);box-shadow:0 12px 40px rgba(0,0,0,.5);display:grid;gap:6px;animation:avIn .35s ease}.av-box b{font-size:17px;color:#fbf8f3}.av-box p{margin:0;font-size:14px;color:#cfc6b8}.av-box div{display:flex;gap:8px;margin-top:6px}.av-box .btn{flex:1;width:auto;padding:10px 12px;font-size:14px;text-align:center}@keyframes avIn{from{opacity:0;transform:translate(-50%,12px)}}@media (prefers-reduced-motion:reduce){.av-box{animation:none}}
 .dp-l{display:grid;gap:8px;margin:0 0 8px}.dp-i{display:grid;grid-template-columns:56px 1fr;gap:12px;align-items:center;padding:8px;border-radius:12px;background:var(--graphite-2,#26221e)}.dp-i img,.dp-i>span{width:56px;height:76px;border-radius:8px;object-fit:cover;background:#2f2b26;display:grid;place-items:center;font-size:22px}.dp-i b{display:block}.dp-i small{display:block;color:var(--muted-d);font-size:12.5px}.dp-i small .ok{color:#7fc49a;font-style:normal}.dp-i span{font-size:13px}
+.lk-box{word-break:break-all;padding:10px 12px;border-radius:10px;background:var(--graphite-2,#24211d);font-size:13.5px;margin:6px 0 12px}.ache-st p{margin:0 0 6px;font-size:14.5px}.ache-card .qr-bts{justify-content:flex-start}.ache-card .qr-bts .btn{padding:9px 14px;font-size:13.5px;width:auto}
 .ev-grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:12px}.ev-card{display:flex;gap:14px;align-items:center;text-align:left;padding:10px;border-radius:18px;background:var(--graphite);border:1px solid #3a352f;color:inherit;font:inherit;cursor:pointer;transition:border-color .2s}.ev-card:hover{border-color:var(--gold)}.ev-capa{flex:0 0 92px;height:92px;border-radius:12px;overflow:hidden;background:var(--graphite-2);display:grid;place-items:center;font-size:30px}.ev-capa img{width:100%;height:100%;object-fit:cover}.ev-tx{display:grid;gap:3px;min-width:0}.ev-tx b{font-family:var(--serif);font-size:19px;font-weight:500;color:var(--bone)}.ev-tx small{color:var(--muted-d);font-size:13px}.ev-tx em{font-style:normal;font-size:12px;color:var(--gold-soft)}.ev-volta{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:0 0 14px}.ev-volta .btn{width:auto}
 .grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(46%,210px),1fr));gap:8px}
 .cel{position:relative}
@@ -789,6 +790,8 @@ function abrir(i,manterFiltro){
     bf.onclick=()=>abrirBaixarTudo({evento:g.evento+' - favoritas',arquivos:g.arquivos.filter(a=>g.fav.has(a.id))});$('gAcoes').appendChild(bf)}
   if(!g.admin&&!g.leitura&&g.arquivos.length){const bi=document.createElement('button');bi.className='btn sec';bi.textContent='📖 Álbum ou quadro';bi.onclick=()=>pedirImpressao(g);$('gAcoes').appendChild(bi);
     setTimeout(()=>{const c=$('gConteudo');if(!c||c.querySelector('.imp-card'))return;c.insertAdjacentHTML('afterbegin','<div class="imp-card"><span class="ic">📖</span><div><b>Que tal ter essas fotos impressas?</b><small>Marque suas favoritas ❤️ e peça o orçamento de um álbum, quadro ou fotos impressas. A gente orça com a gráfica e te passa o valor.</small></div><button type="button" class="btn sec">Pedir orçamento</button></div>');c.querySelector('.imp-card button').onclick=()=>pedirImpressao(g)},0)}
+  if(!g.admin&&!g.leitura&&!VER&&g.tipo!=='gestao'&&g.arquivos.length){const bs=document.createElement('button');bs.className='btn sec';bs.textContent='👨‍👩‍👧 Mandar para a família';bs.onclick=()=>compartilharFamilia(g);$('gAcoes').appendChild(bs)}
+  if(!g.admin&&g.ache)setTimeout(()=>pintarAcheCliente(g),0);
   const evs=[];g.arquivos.forEach(a=>{const t=topo(a);if(t&&evs.indexOf(t)<0)evs.push(t)});if(g.admin)(g.subpastas||[]).forEach(p=>{if(evs.indexOf(p.nome)<0)evs.push(p.nome)});
   const multi=evs.length>=2||(evs.length>=1&&/eventos/i.test(g.evento+' '+g.cliente));
   if(!g.arquivos.length&&!multi){cont.innerHTML='<p class="vazio">Seus arquivos ainda estão sendo preparados. Volte em breve!</p>';return}
@@ -1447,6 +1450,36 @@ function formFotosProx(data,nome){
     admSec='eventos';await admRecarregar('✓ '+f.fotos.files.length+' fotos enviadas para "'+j.nome+'"');
     setTimeout(()=>toast('Agora é só preparar as fotos (botão "Preparar fotos dos eventos")'),2800)},'Enviar fotos');
 }
+// ---- cliente: mandar as favoritas para a família (link sem senha, vale enquanto a galeria estiver aberta)
+function compartilharFamilia(g){const ids=[...(g.fav||[])];
+  if(!ids.length){toast('Toque no ♡ das fotos que você quer mandar e depois volte aqui.');return}
+  modal('👨‍👩‍👧 Mandar para a família','<p class="am-dica" style="margin-top:0">Vamos criar um link só com as suas <b>'+ids.length+' favorita'+(ids.length>1?'s':'')+'</b>. Quem receber vê e baixa essas fotos sem precisar de senha. O link vale enquanto a sua galeria estiver aberta'+(g.expira?' (até '+escH(g.expira)+')':'')+'.</p>'+
+    campo('de','Seu nome (aparece como "fotos enviadas por…")','text',' maxlength="40" placeholder="Opcional"'),
+    async(f,st)=>{st&&st('Criando o link…');const r=await chamar({acao:'compartilhar',id:g.id,ids:ids,de:f.de.value});setTimeout(()=>mostrarLinkFamilia(r),60)},'Criar link')}
+function mostrarLinkFamilia(r){const txt='Olha as fotos! 📸 '+r.link;
+  const f=modal('✓ Link pronto','<p class="am-dica" style="margin-top:0">'+r.qtd+' foto'+(r.qtd>1?'s':'')+' no link. Mande no grupo da família:</p><p class="lk-box">'+escH(r.link)+'</p>'+
+    '<div class="qr-bts"><a class="btn" href="https://wa.me/?text='+encodeURIComponent(txt)+'" target="_blank" rel="noopener">Mandar no WhatsApp</a><button type="button" class="btn sec" id="famCop">Copiar link</button></div>',async()=>{},'Fechar');
+  $('famCop').onclick=async()=>{try{await navigator.clipboard.writeText(r.link);$('famCop').textContent='Copiado ✓'}catch(e){toast(r.link)}}}
+// ---- cliente: "Ache sua foto" para os convidados (quando a Brius ligou para o evento)
+function pintarAcheCliente(g){const c=$('gConteudo');if(!c||c.querySelector('.ache-card'))return;const a=g.ache;
+  c.insertAdjacentHTML('afterbegin','<div class="imp-card ache-card"><span class="ic">🤳</span><div><b>Seus convidados acham as fotos deles pela selfie</b><small>Mande o link no grupo do evento: cada convidado tira uma selfie e baixa só as fotos em que aparece.</small></div><div class="qr-bts"><a class="btn" target="_blank" rel="noopener" href="https://wa.me/?text='+encodeURIComponent('Achem as suas fotos do '+(a.nome||'evento')+' pela selfie! 📸 '+a.link)+'">Mandar no WhatsApp</a><button type="button" class="btn sec" data-ac="cop">Copiar link</button>'+(a.qr?'<button type="button" class="btn sec" data-ac="qr">Cartaz com QR</button>':'')+'</div></div>');
+  const k=c.querySelector('.ache-card');k.querySelector('[data-ac=cop]').onclick=async e=>{try{await navigator.clipboard.writeText(a.link);e.target.textContent='Copiado ✓'}catch(x){toast(a.link)}};
+  const q=k.querySelector('[data-ac=qr]');if(q)q.onclick=async()=>{q.textContent='Gerando…';try{const u=await cartazQr({nome:a.nome,data:a.data},a.qr);const l=document.createElement('a');l.href=u;l.download='QR '+(a.nome||'evento')+'.png';document.body.appendChild(l);l.click();l.remove();q.textContent='Cartaz com QR'}catch(e){toast(e.message);q.textContent='Cartaz com QR'}}}
+// ---- admin: "Ache sua foto" para convidados de festa (evento privado com código, fotos copiadas da galeria)
+async function formAche(g,r){if(!r){toast('Abrindo…');try{r=await chamar({acao:'adm_ache',op:'ver',id:g.id})}catch(e){toast(e.message);return}}const a=r.ache;
+  if(!a){modal('🤳 Ache sua foto · '+escH(g.cliente),'<p class="am-dica" style="margin-top:0">Cria uma página <b>privada</b> do evento (só entra quem tem o link ou o QR) onde cada convidado tira uma selfie e baixa as fotos em que aparece. As fotos são copiadas desta galeria; a galeria do cliente continua igual.</p>'+
+      campo('nome','Nome que aparece para os convidados','text',' maxlength="80" value="'+escH(String(g.evento||'').split('·')[0].trim())+'"')+campo('data','Data do evento','date','')+'<p class="am-dica">Combine o valor desse extra com o cliente antes de ligar.</p>',
+      async(f,st)=>{st&&st('Criando…');let x=await chamar({acao:'adm_ache',op:'criar',id:g.id,nome:f.nome.value,data:f.data.value});x=await acheCopiar(g,x,st);setTimeout(()=>formAche(g,x),60)},'Criar e copiar as fotos');return}
+  const falta=Math.max(0,a.total-a.copiadas);
+  const f=modal('🤳 Ache sua foto · '+escH(g.cliente),'<div class="ache-st"><p><b>'+a.copiadas+'</b> de '+a.total+' fotos copiadas'+(falta?' · faltam '+falta:' ✓')+'</p><p><b>'+a.indexadas+'</b> fotos com rosto lido'+(a.indexadas<a.copiadas?' · rode <b>Preparar fotos dos eventos</b> (no topo do painel) para os convidados acharem pela selfie':' ✓')+'</p>'+
+      (a.link?'<p class="lk-box">'+escH(a.link)+'</p>':'')+'</div><div class="qr-bts">'+(falta?'<button type="button" class="btn" id="acCop">Copiar as fotos que faltam</button>':'')+(a.link?'<button type="button" class="btn sec" id="acLink">Copiar link</button>':'')+(a.e?'<button type="button" class="btn sec" id="acQr">📱 QR code</button>':'')+'<button type="button" class="btn sec" id="acOff">Desligar</button></div>'+
+      '<p class="am-dica">O cliente vê um cartão na galeria dele com o link para mandar aos convidados (quando as fotos estiverem lidas).</p>',async()=>{},'Fechar');
+  const cp=$('acCop');if(cp)cp.onclick=async()=>{cp.disabled=true;try{const x=await acheCopiar(g,r,t=>cp.textContent=t);formAche(g,x)}catch(e){toast(e.message);cp.disabled=false}};
+  const lk=$('acLink');if(lk)lk.onclick=async()=>{try{await navigator.clipboard.writeText(a.link);lk.textContent='Copiado ✓'}catch(e){toast(a.link)}};
+  const qq=$('acQr');if(qq)qq.onclick=()=>formQr({e:a.e,nome:String(g.evento||'').split('·')[0].trim(),data:'',qr:a.qr});
+  $('acOff').onclick=async()=>{const b=$('acOff');if(!b.dataset.c){b.dataset.c=1;b.textContent='Toque de novo (a pasta fica no Drive)';return}try{await chamar({acao:'adm_ache',op:'desligar',id:g.id});toast('Desligado');$('admModal').hidden=true;document.body.style.overflow=''}catch(e){toast(e.message)}}}
+async function acheCopiar(g,r,st){let x=r;for(let i=0;i<40;i++){const a=x.ache;if(!a||a.copiadas>=a.total)break;st&&st('Copiando fotos… '+a.copiadas+' de '+a.total);
+    const y=await chamar({acao:'adm_ache',op:'copiar',id:g.id});if(y.ache&&y.ache.copiadas===a.copiadas)break;x=y}return x}
 // ---- QR code "Ache sua foto" de cada evento (com prazo; gerar novo invalida o antigo)
 let _qrlib=null;function qrLib(){return _qrlib||(_qrlib=new Promise((ok,erro)=>{const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js';sc.onload=()=>ok(window.qrcode);sc.onerror=()=>{_qrlib=null;erro(new Error('Não consegui carregar o gerador de QR. Tente de novo.'))};document.head.appendChild(sc)}))}
 const qrRotulo=ev=>{const b=document.querySelector('[data-qr="'+ev.e+'"]');if(b)b.textContent='📱 QR code'+(ev.qr?(ev.qr.ativo?' (ativo'+(ev.qr.ate?' até '+new Date(ev.qr.ate).toLocaleDateString('pt-BR'):'')+')':' (vencido)'):'')};
@@ -1698,7 +1731,7 @@ function barraAdmin(g){
   if(g.tipo==='gestao'){bt('+ Adicionar post',()=>formPost(g));
     if(g.id&&/Ativo|Acesso enviado/.test(g.statusPlanilha))bt('🔔 Avisar cliente dos novos posts',b=>admStatus(g,'Avisar novos posts',b),1);
     if(!/Ativo|Acesso enviado/.test(g.statusPlanilha))bt('✉️ Enviar acesso ao cliente',b=>{if(!g.id){chamarSemId(g,b);return}admStatus(g,'Enviar acesso',b)},1);}
-  else{bt('+ Adicionar fotos',()=>(g.subpastas&&g.subpastas.length?formArquivosGaleria(g):formArquivos('Adicionar fotos · '+escH(g.cliente),g.pastaId)));bt('📁 Novo evento (subpasta)',()=>formSubpasta(g),1);bt('🖼️ Layout das fotos com marca',()=>formLayout(),1);
+  else{bt('+ Adicionar fotos',()=>(g.subpastas&&g.subpastas.length?formArquivosGaleria(g):formArquivos('Adicionar fotos · '+escH(g.cliente),g.pastaId)));bt('📁 Novo evento (subpasta)',()=>formSubpasta(g),1);bt('🖼️ Layout das fotos com marca',()=>formLayout(),1);bt('🤳 Ache sua foto (convidados)'+(g.acheLigado?' ✓':''),()=>formAche(g),1);
     if(g.id){bt('💬 Mensagem para o WhatsApp',()=>msgWhats(g),1);bt('⏳ Acesso: '+(g.dias||7)+' dias',()=>formDias(g),1)}
     if(!/Ativo|Acesso enviado/.test(g.statusPlanilha))bt('✉️ Enviar acesso ao cliente',b=>admStatus(g,'Enviar acesso',b),1);
     else bt('🔒 Encerrar galeria',b=>{if(!b.dataset.c){b.dataset.c=1;b.textContent='Toque de novo para encerrar';return}admStatus(g,'Encerrar agora',b)},1)}
@@ -2112,10 +2145,10 @@ function tipoArquivo(a,b){const e=(a.n.split('.').pop()||'').toLowerCase();retur
 function salvar(blob,nome){const u=URL.createObjectURL(blob),l=document.createElement('a');l.href=u;l.download=nome;document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),60000);setTimeout(pedirAvaliacao,2500)}
 // depois que o cliente baixa as fotos, pede (uma vez) uma avaliação no Google
 const AVALIAR_GOOGLE='https://g.page/r/Ca6OHRikMJo8EBM/review';
-function pedirAvaliacao(){const g=galerias[atual];if(!g||g.admin||VER||g.tipo==='gestao'||$('avBox'))return;const k='brius_av_'+(g.id||g.pastaId);
+function pedirAvaliacao(){const g=galerias[atual];if(!g||g.admin||VER||g.tipo==='gestao'||$('avBox'))return;const LINK_AV=g.avaliar||AVALIAR_GOOGLE;const k='brius_av_'+(g.id||g.pastaId);
   try{const v=localStorage.getItem(k);if(v==='ok'||(v&&Date.now()<+v))return}catch(e){}
   const d=document.createElement('div');d.id='avBox';d.className='av-box';d.setAttribute('role','dialog');d.setAttribute('aria-label','Avaliar a Brius');
-  d.innerHTML='<b>⭐ Gostou das fotos?</b><p>Sua avaliação no Google ajuda muito a Brius a chegar em mais gente. Leva 1 minutinho!</p><div><a class="btn" href="'+AVALIAR_GOOGLE+'" target="_blank" rel="noopener">Avaliar no Google</a><button type="button" class="btn sec">Agora não</button></div>';
+  d.innerHTML='<b>⭐ Gostou das fotos?</b><p>Sua avaliação no Google ajuda muito a Brius a chegar em mais gente. Leva 1 minutinho!</p><div><a class="btn" href="'+LINK_AV+'" target="_blank" rel="noopener">Avaliar no Google</a><button type="button" class="btn sec">Agora não</button></div>';
   const fechar=v=>{try{localStorage.setItem(k,v)}catch(e){}d.remove()};d.querySelector('a').onclick=()=>fechar('ok');d.querySelector('button').onclick=()=>fechar(String(Date.now()+7*864e5));document.body.appendChild(d)}
 async function pedaco(a,ini){
   for(let t=0;t<3;t++){try{const j=await api({acao:'parte',sessao:guardar.get(),id:a.id,ini:ini,tam:PEDACO});
