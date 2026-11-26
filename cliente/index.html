@@ -1406,7 +1406,8 @@ async function abrirContrato(c,admin){
     (async()=>{try{const r=await api({acao:'contrato',sessao:guardar.get(),id:c.id,pdf:1});if(!r.ok)throw new Error(r.erro);await pdfVer(dv,r.pdf)}
       catch(e){dv.innerHTML='<div style="height:100%;display:grid;place-items:center;padding:24px;text-align:center;color:#6b6359"><div><div style="font-size:42px">📄</div><p>Não deu para mostrar aqui.<br>Toque abaixo para baixar.</p></div></div>'}})()}
   const pend=j.status==='Aguardando aceite';
-  if(pend&&!admin){
+  if(pend&&!admin&&VER){f.innerHTML='<div class="cm-ok" style="background:rgba(184,149,90,.12);border-color:rgba(184,149,90,.4);color:var(--gold-soft)">👁️ Você está no modo <b>Ver como cliente</b>. Aqui não dá para assinar: o contrato precisa ser aceito pela própria cliente, entrando com o login dela no site.</div>'}
+  else if(pend&&!admin){
     f.innerHTML='<label class="cm-li"><input type="checkbox" id="ctrLi"> <span>Li o contrato inteiro e concordo com todas as cláusulas.</span></label>'+
       '<div class="am-2"><label>Nome completo<input id="ctrNome" autocomplete="name" maxlength="120" placeholder="Seu nome completo"></label><label>CPF<input id="ctrCpf" inputmode="numeric" autocomplete="off" maxlength="14" placeholder="000.000.000-00"></label></div>'+
       '<p class="msg" id="ctrMsg" role="status"></p><button type="button" class="btn" id="ctrOk">✍️ Aceitar contrato</button><p style="margin:0;font-size:12px;color:var(--muted-d)">Ao aceitar, registramos seu nome, CPF, e-mail de acesso, data e hora. Você recebe a cópia em PDF por e-mail.</p>';
