@@ -506,6 +506,7 @@ body.pt-serv #gAbas,body.pt-serv #gConteudo,body.pt-serv #gAcoes,body.pt-serv #g
 .cpk-g button.ok{background:rgba(127,196,154,.14);border-color:rgba(127,196,154,.5);color:var(--bone);cursor:pointer}.cpk-g button.ok:hover{background:rgba(127,196,154,.28)}
 .cpk-g button.sel{background:var(--gold);border-color:var(--gold);color:#141210}
 .cpk-t{margin:0 0 8px;font-weight:700}.cpk-t::first-letter{text-transform:uppercase}.cpk-hs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.cpk-rel{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}.cpk-rel button{display:flex;flex-direction:column;align-items:center;gap:2px;border-radius:14px!important;padding:10px 6px!important}.cpk-rel .rl{font-size:22px;line-height:1}.cpk-rel b{font-size:15px}.cpk-rel small{font:600 11px var(--body);opacity:.7}
 .cpk-hs button{border:1px solid #3a352f;background:transparent;color:var(--bone);border-radius:999px;padding:9px 16px;font:700 14px var(--body);cursor:pointer}.cpk-hs button.sel{background:var(--gold);border-color:var(--gold);color:#141210}
 .t-ev{background:#e6d3ae}.t-po{background:#c48af0}.t-pu{background:#f58fbf}.t-di{background:#7fc49a}.t-at{background:#f0a28f}
 .ag-cal{background:var(--graphite);border:1px solid #3a352f;border-radius:18px;padding:14px;margin-bottom:18px}
@@ -981,7 +982,8 @@ function escolherCapt(g){const C=g.capt;const disp={};(C.disp||[]).forEach(x=>di
     $('cpk').querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{const d=new Date(A,M-1+ +b.dataset.m,1);mes=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');pinta()});
     $('cpk').querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{sel=b.dataset.d;f.data.value=sel;f.hora.value='';pinta();horas()})};
   const horas=()=>{const x=disp[sel];if(!x){$('cpH').innerHTML='';return}
-    $('cpH').innerHTML='<p class="cpk-t">'+DSEM[new Date(sel+'T12:00:00').getDay()]+', '+sel.split('-').reverse().slice(0,2).join('/')+' · '+(x.h.length>1?'escolha o horário de início'+(C.dur?' (a gravação leva cerca de '+C.dur+'h)':''):'horário')+'</p><div class="cpk-hs">'+x.h.map(h=>'<button type="button" data-h="'+h+'">'+h.replace(':00','h')+'</button>').join('')+'</div>';
+    $('cpH').innerHTML='<p class="cpk-t">'+DSEM[new Date(sel+'T12:00:00').getDay()]+', '+sel.split('-').reverse().slice(0,2).join('/')+' · '+(x.h.length>1?'escolha o horário de início'+(C.dur?' (a gravação leva cerca de '+C.dur+'h)':''):'horário')+'</p><div class="cpk-hs cpk-rel">'+x.h.map(h=>{const [hh,mm]=h.split(':').map(Number);const rel=String.fromCodePoint((mm>=30?0x1F55C:0x1F550)+((hh+11)%12));const fim=C.dur?(hh+C.dur)+(mm?'h'+String(mm).padStart(2,'0'):'h'):'';
+      return '<button type="button" data-h="'+h+'"><span class="rl">'+rel+'</span><b>'+hh+'h'+(mm?String(mm).padStart(2,'0'):'')+'</b>'+(fim?'<small>até '+fim+'</small>':'')+'</button>'}).join('')+'</div>';
     $('cpH').querySelectorAll('[data-h]').forEach(b=>b.onclick=()=>{f.hora.value=b.dataset.h;$('cpH').querySelectorAll('[data-h]').forEach(o=>o.classList.toggle('sel',o===b))});
     if(x.h.length===1)$('cpH').querySelector('[data-h]').click()};
   pinta();
